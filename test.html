@@ -10,11 +10,12 @@
         .success { background-color: #d4edda; border-color: #c3e6cb; }
         .info { background-color: #d1ecf1; border-color: #bee5eb; }
         .warning { background-color: #fff3cd; border-color: #ffeaa7; }
+        .highlight { background-color: #fff3cd; border-color: #ffc107; }
         code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
     </style>
 </head>
 <body>
-    <h1>🚀 TravelLog 시스템 테스트</h1>
+    <h1>🚀 TravelLog 시스템 테스트 (로그인 UI + 데모 진입)</h1>
     
     <div class="test-section info">
         <h2>📋 테스트 체크리스트</h2>
@@ -31,15 +32,47 @@
         </ul>
     </div>
     
-    <div class="test-section">
-        <h3>2. 브라우저 테스트</h3>
+    <div class="test-section highlight">
+        <h3>2. 로그인 화면 테스트 (NEW!)</h3>
         <ol>
-            <li><code>index.html</code>을 웹 서버에서 실행하세요 (로컬 파일 직접 열기 시 CORS 오류 발생)</li>
-            <li>5개 탭 버튼이 모두 표시되는지 확인</li>
-            <li>각 탭을 클릭했을 때 콘텐츠가 변경되는지 확인</li>
-            <li>탭 전환 시 로딩 애니메이션이 표시되는지 확인</li>
-            <li>모바일과 데스크톱에서 모두 정상 작동하는지 확인</li>
+            <li>페이지 로드 시 로그인 화면이 표시되는가?</li>
+            <li>TravelLog 로고와 제목이 표시되는가?</li>
+            <li>이메일과 비밀번호 입력 필드가 있는가?</li>
+            <li>"로그인 상태 유지" 체크박스가 있는가?</li>
+            <li>"비밀번호 찾기" 링크가 있는가?</li>
+            <li>"로그인" 버튼이 있는가?</li>
+            <li>"🚀 데모로 시작하기" 버튼이 있는가?</li>
+            <li>"회원가입" 링크가 있는가?</li>
         </ol>
+    </div>
+    
+    <div class="test-section highlight">
+        <h3>3. 데모 진입 테스트 (NEW!)</h3>
+        <ol>
+            <li>"🚀 데모로 시작하기" 버튼을 클릭했을 때 5탭 구조로 전환되는가?</li>
+            <li>로그인 폼에 아무 값이나 입력하고 "로그인" 버튼을 클릭했을 때도 5탭 구조로 전환되는가?</li>
+            <li>로그인 화면에서 메인 앱 화면으로 부드럽게 전환되는가?</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. 5탭 구조 테스트</h3>
+        <ol>
+            <li>5개 탭 버튼이 모두 표시되는가?</li>
+            <li>각 탭을 클릭했을 때 콘텐츠가 변경되는가?</li>
+            <li>탭 전환 시 로딩 애니메이션이 표시되는가?</li>
+            <li>홈 탭에 환영 메시지와 빠른 시작 가이드가 표시되는가?</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. 반응형 테스트</h3>
+        <ul>
+            <li>모바일과 데스크톱에서 모두 정상 작동하는가?</li>
+            <li>브라우저 개발자 도구에서 다양한 화면 크기로 테스트</li>
+            <li>모바일 (375px), 태블릿 (768px), 데스크톱 (1024px+)</li>
+            <li>다크 모드 설정 시 테마 변경 확인</li>
+        </ul>
     </div>
     
     <div class="test-section warning">
@@ -48,6 +81,7 @@
             <li>로컬 파일을 직접 브라우저에서 열면 ES6 모듈 로딩 오류가 발생할 수 있습니다.</li>
             <li>반드시 웹 서버를 통해 실행해야 합니다.</li>
             <li>현재는 플레이스홀더만 구현되어 있으며, 실제 기능은 향후 개발 예정입니다.</li>
+            <li>로그인 기능은 UI만 구현되어 있으며, 실제 인증은 수행하지 않습니다.</li>
         </ul>
     </div>
     
@@ -65,22 +99,15 @@
     </div>
     
     <div class="test-section">
-        <h3>3. 기능 테스트</h3>
+        <h3>6. 기능 테스트</h3>
         <ul>
-            <li>✅ 홈 탭: 기본 플레이스홀더 표시</li>
+            <li>✅ 로그인 화면: 완전한 로그인 UI 표시</li>
+            <li>✅ 데모 진입: 버튼 클릭 시 5탭 구조로 전환</li>
+            <li>✅ 홈 탭: 환영 메시지 및 빠른 시작 가이드</li>
             <li>✅ 검색 탭: 검색 관련 플레이스홀더 표시</li>
             <li>✅ 일지 추가 탭: 일지 추가 관련 플레이스홀더 표시</li>
             <li>✅ 캘린더 탭: 캘린더 관련 플레이스홀더 표시</li>
             <li>✅ 내 일지 탭: 일지 관리 관련 플레이스홀더 표시</li>
-        </ul>
-    </div>
-    
-    <div class="test-section">
-        <h3>4. 반응형 테스트</h3>
-        <ul>
-            <li>브라우저 개발자 도구에서 다양한 화면 크기로 테스트</li>
-            <li>모바일 (375px), 태블릿 (768px), 데스크톱 (1024px+)</li>
-            <li>다크 모드 설정 시 테마 변경 확인</li>
         </ul>
     </div>
     
@@ -90,10 +117,22 @@
             <li>콘솔에 오류 메시지가 없는지 확인</li>
             <li>네트워크 탭에서 모듈 로딩이 정상적으로 되는지 확인</li>
             <li>탭 전환 시 메모리 누수가 없는지 확인</li>
+            <li>로그인 시도 시 콘솔에 입력값이 출력되는지 확인</li>
+        </ul>
+    </div>
+    
+    <div class="test-section highlight">
+        <h3>🚀 새로운 기능 요약</h3>
+        <ul>
+            <li><strong>로그인 UI:</strong> 완전한 로그인 폼 (이메일, 비밀번호, 체크박스, 링크들)</li>
+            <li><strong>데모 진입:</strong> 로그인 버튼 또는 데모 버튼 클릭 시 5탭 구조로 자동 전환</li>
+            <li><strong>화면 전환:</strong> 로그인 화면 ↔ 메인 앱 화면 간 부드러운 전환</li>
+            <li><strong>환영 메시지:</strong> 로그인 후 홈 탭에 표시되는 친근한 안내</li>
+            <li><strong>확장 가능:</strong> 향후 실제 로그인 기능을 쉽게 추가할 수 있는 구조</li>
         </ul>
     </div>
     
     <hr>
-    <p><strong>테스트 완료 후:</strong> <code>index.html</code>에서 실제 애플리케이션을 사용해보세요!</p>
+    <p><strong>테스트 완료 후:</strong> <code>index.html</code>에서 로그인 화면과 데모 진입을 체험해보세요!</p>
 </body>
 </html>
