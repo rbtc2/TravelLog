@@ -548,6 +548,23 @@ class AddLogTab {
         
         console.log('저장된 일지 데이터:', this.formData);
         
+        // 로컬 스토리지에 저장
+        try {
+            const existingLogs = JSON.parse(localStorage.getItem('travelLogs') || '[]');
+            const newLog = {
+                id: Date.now().toString(),
+                ...this.formData,
+                createdAt: new Date().toISOString()
+            };
+            
+            existingLogs.unshift(newLog); // 맨 앞에 추가 (최신 순)
+            localStorage.setItem('travelLogs', JSON.stringify(existingLogs));
+            
+            console.log('로컬 스토리지에 저장 완료:', newLog);
+        } catch (error) {
+            console.error('로컬 스토리지 저장 실패:', error);
+        }
+        
         // 성공 시뮬레이션
         return true;
     }

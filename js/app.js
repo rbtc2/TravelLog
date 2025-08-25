@@ -157,16 +157,31 @@ class AppManager {
     }
     
     async switchTab(tabName) {
-        if (this.currentTab === tabName) return;
-        
-        // 이전 탭 정리
-        await this.cleanupCurrentTab();
-        
-        // 새 탭 로드
-        await this.loadTab(tabName);
-        
-        // UI 상태 업데이트
-        this.updateTabUI(tabName);
+        try {
+            // 현재 탭 정리
+            await this.cleanupCurrentTab();
+            
+            // 새 탭 로드
+            const module = await this.loadTabModule(tabName);
+            
+            // 탭 콘텐츠 렌더링
+            this.renderTabContent(module);
+            
+            // "내 일지" 탭인 경우 데이터 새로고침
+            if (tabName === 'my-logs' && module.default && typeof module.default.refresh === 'function') {
+                module.default.refresh();
+            }
+            
+            // UI 업데이트
+            this.updateTabUI(tabName);
+            
+            // 현재 탭 업데이트
+            this.currentTab = tabName;
+            
+        } catch (error) {
+            console.error(`탭 전환 실패: ${tabName}`, error);
+            this.showError(tabName, error);
+        }
     }
     
     async loadTab(tabName) {
