@@ -247,16 +247,6 @@ class MyLogsTab {
                         <h2 class="section-title">📊 트래블 레포트</h2>
                     </div>
                     <div class="travel-report-content">
-                        <div class="report-summary">
-                            <div class="summary-text">일본을 가장 많이 방문했고, 주로 봄철에 여행을 떠나시는 패턴을 보이고 있어요</div>
-                        </div>
-                        
-                        <div class="report-tags">
-                            <div class="tag-chip">일본</div>
-                            <div class="tag-chip">봄철</div>
-                            <div class="tag-chip">장기체류</div>
-                        </div>
-                        
                         <div class="report-action">
                             <button class="view-report-btn" id="view-report-btn">레포트 보기</button>
                         </div>
@@ -866,6 +856,8 @@ class MyLogsTab {
                 this.currentView = 'travel-report';
                 this.renderContent();
                 this.bindEvents();
+                // 스크롤을 맨 위로 이동
+                window.scrollTo(0, 0);
             });
         }
 

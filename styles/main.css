@@ -1189,44 +1189,11 @@ body {
     gap: 20px;
 }
 
-.report-summary {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 16px;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
 
-.summary-text {
-    font-size: 16px;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.9);
-    text-align: center;
-}
 
-.report-tags {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
 
-.tag-chip {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    backdrop-filter: blur(10px);
-    transition: all 0.2s ease;
-}
 
-.tag-chip:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-}
+
 
 .report-action {
     display: flex;
@@ -2006,22 +1973,11 @@ input:disabled + .toggle-slider {
         gap: 16px;
     }
     
-    .report-summary {
-        padding: 14px;
-    }
+
     
-    .summary-text {
-        font-size: 15px;
-    }
+
     
-    .report-tags {
-        gap: 8px;
-    }
-    
-    .tag-chip {
-        padding: 6px 12px;
-        font-size: 13px;
-    }
+
     
     .view-report-btn {
         padding: 10px 20px;
