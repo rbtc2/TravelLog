@@ -2063,3 +2063,392 @@ input:disabled + .toggle-slider {
         transform: translateX(-50%) translateY(0);
     }
 }
+
+/* ===== 트래블 레포트 스타일 ===== */
+
+/* 여행 DNA 섹션 */
+.travel-dna-section .dna-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 20px;
+}
+
+.dna-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.dna-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+}
+
+.dna-icon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.dna-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.dna-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dna-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+/* 차트 섹션 */
+.charts-section {
+    margin-top: 24px;
+}
+
+.chart-frame {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chart-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.chart-tabs {
+    display: flex;
+    gap: 8px;
+}
+
+.chart-tab {
+    padding: 8px 16px;
+    border: 1px solid #cbd5e1;
+    background: white;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chart-tab:hover:not(.disabled) {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.chart-tab.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chart-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.chart-controls {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.year-selector {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+}
+
+.year-selector.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 차트 플레이스홀더 */
+.chart-placeholder {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    position: relative;
+}
+
+.placeholder-text {
+    font-size: 16px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.chart-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cbd5e1"><path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/></svg>') center/contain no-repeat;
+    opacity: 0.3;
+}
+
+/* 도시 랭킹 리스트 */
+.city-ranking-list {
+    padding: 0;
+}
+
+.city-ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.city-ranking-item:last-child {
+    border-bottom: none;
+}
+
+.city-ranking-item:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.city-rank {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.city-ranking-item:nth-child(1) .city-rank {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.city-ranking-item:nth-child(2) .city-rank {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+}
+
+.city-ranking-item:nth-child(3) .city-rank {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+
+.city-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.city-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.city-stats {
+    font-size: 14px;
+    color: #64748b;
+}
+
+.city-arrow {
+    color: #94a3b8;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* 히트맵 플레이스홀더 */
+.heatmap-placeholder {
+    padding: 20px;
+}
+
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.heatmap-month {
+    text-align: center;
+}
+
+.month-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.month-activity {
+    width: 100%;
+    height: 24px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.placeholder-box {
+    background: #e2e8f0;
+    border: 1px solid #cbd5e1;
+}
+
+.heatmap-caption {
+    text-align: center;
+    font-size: 14px;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* 인사이트 섹션 */
+.insights-section .insights-content {
+    padding: 20px;
+}
+
+.insight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.insight-item:last-child {
+    border-bottom: none;
+}
+
+.insight-icon {
+    font-size: 16px;
+    color: #fbbf24;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.insight-text {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.5;
+    flex: 1;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .travel-dna-section .dna-content {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .dna-item {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .dna-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .dna-label {
+        font-size: 13px;
+    }
+    
+    .dna-value {
+        font-size: 15px;
+    }
+    
+    .chart-header {
+        padding: 16px 16px 12px;
+    }
+    
+    .chart-tabs {
+        gap: 6px;
+    }
+    
+    .chart-tab {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .chart-placeholder {
+        height: 150px;
+    }
+    
+    .city-ranking-item {
+        padding: 12px 16px;
+        gap: 12px;
+    }
+    
+    .city-rank {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    
+    .city-name {
+        font-size: 15px;
+    }
+    
+    .city-stats {
+        font-size: 13px;
+    }
+    
+    .heatmap-grid {
+        gap: 6px;
+    }
+    
+    .month-activity {
+        height: 20px;
+    }
+    
+    .insight-item {
+        padding: 10px 0;
+        gap: 10px;
+    }
+    
+    .insight-text {
+        font-size: 14px;
+    }
+}
