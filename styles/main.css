@@ -1112,6 +1112,207 @@ body {
     font-size: 16px;
 }
 
+/* 허브 화면 스타일 */
+.hub-section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* 프로필 섹션 */
+.profile-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-avatar {
+    font-size: 48px;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 4px;
+}
+
+.profile-status {
+    color: #48bb78;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* 요약 섹션 */
+.summary-content {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    min-width: 200px;
+}
+
+.summary-icon {
+    font-size: 32px;
+}
+
+.summary-details {
+    flex: 1;
+}
+
+.summary-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 4px;
+}
+
+.summary-label {
+    color: #718096;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 보관함 섹션 */
+.archive-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.archive-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.archive-item:hover:not(.disabled) {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.archive-item.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.archive-icon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e2e8f0;
+}
+
+.archive-details {
+    flex: 1;
+}
+
+.archive-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 4px;
+}
+
+.archive-description {
+    color: #718096;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.archive-arrow {
+    font-size: 18px;
+    color: #a0aec0;
+    font-weight: bold;
+}
+
+.archive-status {
+    font-size: 14px;
+    color: #a0aec0;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: #edf2f7;
+    border-radius: 20px;
+}
+
+/* 뒤로 가기 버튼이 있는 헤더 */
+.header-with-back {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.back-btn {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    color: #4a5568;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.back-btn:hover {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+}
+
+.header-content {
+    flex: 1;
+    text-align: center;
+}
+
 /* 빈 상태 스타일 */
 .empty-state {
     text-align: center;
@@ -1369,6 +1570,57 @@ body {
 @media (max-width: 768px) {
     .my-logs-container {
         padding: 16px;
+    }
+    
+    .hub-section {
+        padding: 20px;
+    }
+    
+    .profile-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 32px;
+    }
+    
+    .summary-content {
+        justify-content: center;
+    }
+    
+    .summary-item {
+        min-width: 160px;
+        padding: 16px;
+    }
+    
+    .summary-icon {
+        font-size: 24px;
+    }
+    
+    .summary-value {
+        font-size: 24px;
+    }
+    
+    .archive-item {
+        padding: 16px;
+    }
+    
+    .archive-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .header-with-back {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .back-btn {
+        align-self: flex-start;
     }
     
     .log-item {

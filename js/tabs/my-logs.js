@@ -1,6 +1,6 @@
 /**
- * 내 일지 탭 모듈
- * 독립적으로 동작하며, 다른 탭에 영향을 주지 않음
+ * 나의 로그 탭 모듈
+ * 허브 화면으로 구성: 프로필, 요약, 보관함
  */
 
 class MyLogsTab {
@@ -10,6 +10,7 @@ class MyLogsTab {
         this.logs = [];
         this.currentPage = 1;
         this.logsPerPage = 10;
+        this.currentView = 'hub'; // 'hub' 또는 'logs'
     }
     
     render(container) {
@@ -137,35 +138,77 @@ class MyLogsTab {
     }
     
     renderContent() {
-        if (this.logs.length === 0) {
-            this.renderEmptyState();
+        if (this.currentView === 'hub') {
+            this.renderHub();
         } else {
             this.renderLogsList();
         }
     }
     
     /**
-     * 일지가 없을 때 표시할 빈 상태 UI
+     * 허브 화면을 렌더링합니다 (프로필, 요약, 보관함)
      */
-    renderEmptyState() {
+    renderHub() {
         this.container.innerHTML = `
             <div class="my-logs-container">
                 <div class="my-logs-header">
-                    <h1 class="my-logs-title">📝 내 여행 일지</h1>
-                    <p class="my-logs-subtitle">아직 등록된 여행 일지가 없습니다</p>
+                    <h1 class="my-logs-title">📝 나의 로그</h1>
+                    <p class="my-logs-subtitle">여행 기록과 계획을 한 곳에서 관리하세요</p>
                 </div>
                 
-                <div class="empty-state">
-                    <div class="empty-state-icon">✈️</div>
-                    <div class="empty-state-title">첫 번째 여행을 기록해보세요!</div>
-                    <div class="empty-state-description">
-                        "일지 추가" 탭에서 새로운 여행 경험을 기록하고<br>
-                        소중한 추억을 보관할 수 있습니다.
+                <!-- 프로필 섹션 -->
+                <div class="hub-section profile-section">
+                    <div class="section-header">
+                        <h2 class="section-title">👤 프로필</h2>
                     </div>
-                    <div class="empty-state-actions">
-                        <button class="add-first-log-btn" id="add-first-log-btn">
-                            ➕ 첫 일지 작성하기
-                        </button>
+                    <div class="profile-content">
+                        <div class="profile-avatar">✈️</div>
+                        <div class="profile-info">
+                            <div class="profile-name">여행자</div>
+                            <div class="profile-status">활발한 여행 중</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 요약 섹션 -->
+                <div class="hub-section summary-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📊 요약</h2>
+                    </div>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <div class="summary-icon">📝</div>
+                            <div class="summary-details">
+                                <div class="summary-value">${this.logs.length}</div>
+                                <div class="summary-label">여행 일지 수</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 보관함 섹션 -->
+                <div class="hub-section archive-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🗂️ 보관함</h2>
+                    </div>
+                    <div class="archive-content">
+                        <div class="archive-item" id="my-schedules-btn">
+                            <div class="archive-icon">📅</div>
+                            <div class="archive-details">
+                                <div class="archive-title">나의 일정</div>
+                                <div class="archive-description">등록된 여행 일지를 확인하고 관리하세요</div>
+                            </div>
+                            <div class="archive-arrow">▶</div>
+                        </div>
+                        
+                        <div class="archive-item disabled" id="bucket-list-btn">
+                            <div class="archive-icon">🎯</div>
+                            <div class="archive-details">
+                                <div class="archive-title">버킷리스트</div>
+                                <div class="archive-description">가고 싶은 곳들을 미리 계획해보세요</div>
+                            </div>
+                            <div class="archive-status">준비 중</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -184,8 +227,13 @@ class MyLogsTab {
         this.container.innerHTML = `
             <div class="my-logs-container">
                 <div class="my-logs-header">
-                    <h1 class="my-logs-title">📝 내 여행 일지</h1>
-                    <p class="my-logs-subtitle">총 ${this.logs.length}개의 여행 일지</p>
+                    <div class="header-with-back">
+                        <button class="back-btn" id="back-to-hub">◀ 뒤로</button>
+                        <div class="header-content">
+                            <h1 class="my-logs-title">📅 나의 일정</h1>
+                            <p class="my-logs-subtitle">총 ${this.logs.length}개의 여행 일지</p>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="logs-list">
@@ -359,15 +407,48 @@ class MyLogsTab {
     }
     
     bindEvents() {
-        // 첫 일지 작성 버튼
-        const addFirstLogBtn = document.getElementById('add-first-log-btn');
-        if (addFirstLogBtn) {
-            this.addEventListener(addFirstLogBtn, 'click', () => {
-                // "일지 추가" 탭으로 이동
-                const addLogTab = document.querySelector('[data-tab="add-log"]');
-                if (addLogTab) {
-                    addLogTab.click();
-                }
+        if (this.currentView === 'hub') {
+            this.bindHubEvents();
+        } else {
+            this.bindLogsEvents();
+        }
+    }
+    
+    /**
+     * 허브 화면의 이벤트를 바인딩합니다
+     */
+    bindHubEvents() {
+        // 나의 일정 버튼
+        const mySchedulesBtn = document.getElementById('my-schedules-btn');
+        if (mySchedulesBtn) {
+            this.addEventListener(mySchedulesBtn, 'click', () => {
+                this.currentView = 'logs';
+                this.renderContent();
+                this.bindEvents();
+            });
+        }
+        
+        // 버킷리스트 버튼 (미구현)
+        const bucketListBtn = document.getElementById('bucket-list-btn');
+        if (bucketListBtn) {
+            this.addEventListener(bucketListBtn, 'click', () => {
+                alert('버킷리스트 기능은 추후 구현 예정입니다.');
+            });
+        }
+    }
+    
+    /**
+     * 일지 목록 화면의 이벤트를 바인딩합니다
+     */
+    bindLogsEvents() {
+        // 뒤로 가기 버튼
+        const backBtn = document.getElementById('back-to-hub');
+        if (backBtn) {
+            this.addEventListener(backBtn, 'click', () => {
+                this.currentView = 'hub';
+                this.currentPage = 1; // 페이지 초기화
+                this.renderContent();
+                this.bindEvents();
             });
         }
         
@@ -430,6 +511,7 @@ class MyLogsTab {
         this.isInitialized = false;
         this.logs = [];
         this.currentPage = 1;
+        this.currentView = 'hub';
         
         // 메모리 정리
         this.container = null;
