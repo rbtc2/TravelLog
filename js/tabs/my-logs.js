@@ -10,7 +10,7 @@ class MyLogsTab {
         this.logs = [];
         this.currentPage = 1;
         this.logsPerPage = 10;
-        this.currentView = 'hub'; // 'hub' 또는 'logs'
+        this.currentView = 'hub'; // 'hub', 'logs', 'settings'
     }
     
     render(container) {
@@ -140,6 +140,8 @@ class MyLogsTab {
     renderContent() {
         if (this.currentView === 'hub') {
             this.renderHub();
+        } else if (this.currentView === 'settings') {
+            this.renderSettings();
         } else {
             this.renderLogsList();
         }
@@ -152,8 +154,15 @@ class MyLogsTab {
         this.container.innerHTML = `
             <div class="my-logs-container">
                 <div class="my-logs-header">
-                    <h1 class="my-logs-title">📝 나의 로그</h1>
-                    <p class="my-logs-subtitle">여행 기록과 계획을 한 곳에서 관리하세요</p>
+                    <div class="header-with-settings">
+                        <div class="header-content">
+                            <h1 class="my-logs-title">📝 나의 로그</h1>
+                            <p class="my-logs-subtitle">여행 기록과 계획을 한 곳에서 관리하세요</p>
+                        </div>
+                        <button class="settings-btn" id="settings-btn" title="설정">
+                            ⚙️
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- 프로필 섹션 -->
@@ -208,6 +217,179 @@ class MyLogsTab {
                                 <div class="archive-description">가고 싶은 곳들을 미리 계획해보세요</div>
                             </div>
                             <div class="archive-status">준비 중</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    /**
+     * 설정 화면을 렌더링합니다
+     */
+    renderSettings() {
+        this.container.innerHTML = `
+            <div class="my-logs-container">
+                <div class="my-logs-header">
+                    <div class="header-with-back">
+                        <button class="back-btn" id="back-to-hub-from-settings">◀ 뒤로</button>
+                        <div class="header-content">
+                            <h1 class="my-logs-title">⚙️ 설정</h1>
+                            <p class="my-logs-subtitle">앱과 계정 설정을 관리하세요</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 앱 설정 섹션 -->
+                <div class="hub-section app-settings-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📱 앱 설정</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🌙</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">다크 모드</div>
+                                    <div class="setting-description">어두운 테마로 앱을 사용하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" disabled>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🔔</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">알림</div>
+                                    <div class="setting-description">여행 관련 알림을 받으세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" disabled>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🌍</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">언어</div>
+                                    <div class="setting-description">앱 언어를 선택하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <select class="setting-select" disabled>
+                                    <option>한국어</option>
+                                    <option>English</option>
+                                    <option>日本語</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">💾</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">자동 저장</div>
+                                    <div class="setting-description">작성 중인 내용을 자동으로 저장합니다</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" disabled checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 계정 설정 섹션 -->
+                <div class="hub-section account-settings-section">
+                    <div class="section-header">
+                        <h2 class="section-title">👤 계정 설정</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">✏️</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">프로필 편집</div>
+                                    <div class="setting-description">사용자 프로필 정보를 수정하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-secondary" disabled>편집</button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🔒</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">비밀번호 변경</div>
+                                    <div class="setting-description">계정 보안을 위해 비밀번호를 변경하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-secondary" disabled>변경</button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">📧</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">이메일 설정</div>
+                                    <div class="setting-description">알림 및 마케팅 이메일 수신 설정</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" disabled checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">📱</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">계정 연동</div>
+                                    <div class="setting-description">소셜 미디어 계정과 연동하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-secondary" disabled>연동</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 하단 정보 섹션 -->
+                <div class="hub-section info-section">
+                    <div class="info-content">
+                        <div class="info-item">
+                            <span class="info-label">앱 버전:</span>
+                            <span class="info-value">1.0.0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">빌드 번호:</span>
+                            <span class="info-value">20241201</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">개발사:</span>
+                            <span class="info-value">TravelLog Team</span>
                         </div>
                     </div>
                 </div>
@@ -409,6 +591,8 @@ class MyLogsTab {
     bindEvents() {
         if (this.currentView === 'hub') {
             this.bindHubEvents();
+        } else if (this.currentView === 'settings') {
+            this.bindSettingsEvents();
         } else {
             this.bindLogsEvents();
         }
@@ -433,6 +617,16 @@ class MyLogsTab {
         if (bucketListBtn) {
             this.addEventListener(bucketListBtn, 'click', () => {
                 alert('버킷리스트 기능은 추후 구현 예정입니다.');
+            });
+        }
+
+        // 설정 버튼 (미구현)
+        const settingsBtn = document.getElementById('settings-btn');
+        if (settingsBtn) {
+            this.addEventListener(settingsBtn, 'click', () => {
+                this.currentView = 'settings';
+                this.renderContent();
+                this.bindEvents();
             });
         }
     }
@@ -482,6 +676,21 @@ class MyLogsTab {
                 }
             });
         });
+    }
+    
+    /**
+     * 설정 화면의 이벤트를 바인딩합니다
+     */
+    bindSettingsEvents() {
+        // 설정 화면에서 뒤로 가기 버튼
+        const backBtn = document.getElementById('back-to-hub-from-settings');
+        if (backBtn) {
+            this.addEventListener(backBtn, 'click', () => {
+                this.currentView = 'hub';
+                this.renderContent();
+                this.bindEvents();
+            });
+        }
     }
     
     /**
