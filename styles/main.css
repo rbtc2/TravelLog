@@ -1141,25 +1141,29 @@ body {
 }
 
 .settings-btn {
-    background: #f7fafc;
-    border: 2px solid #e2e8f0;
+    background: none;
+    border: none;
     color: #4a5568;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 8px;
+    border-radius: 8px;
     font-size: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: 48px;
-    height: 48px;
+    min-width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .settings-btn:hover {
-    background: #edf2f7;
-    border-color: #cbd5e0;
-    transform: scale(1.05);
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+.settings-btn:active {
+    transform: scale(0.95);
 }
 
 /* 설정 화면 스타일 */
@@ -1800,9 +1804,10 @@ input:disabled + .toggle-slider {
     
     .settings-btn {
         align-self: center;
-        width: 44px;
-        height: 44px;
+        width: 36px;
+        height: 36px;
         font-size: 18px;
+        padding: 6px;
     }
     
     .profile-content {
