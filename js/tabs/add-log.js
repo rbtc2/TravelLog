@@ -99,71 +99,97 @@ class AddLogTab {
                     <!-- 체류 목적 -->
                     <div class="form-group">
                         <label class="form-label required">체류 목적</label>
-                        <div class="radio-group" id="purpose-group">
-                            <label class="radio-label">
+                        <div class="chip-group purpose-chip-group" id="purpose-group">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="tourism" required>
-                                <span class="radio-custom"></span>
-                                관광/여행
+                                <span class="chip-custom">
+                                    <span class="chip-icon">🏖️</span>
+                                    <span class="chip-text">관광/여행</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="business" required>
-                                <span class="radio-custom"></span>
-                                업무/출장
+                                <span class="chip-custom">
+                                    <span class="chip-icon">💼</span>
+                                    <span class="chip-text">업무/출장</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="family" required>
-                                <span class="radio-custom"></span>
-                                가족·지인 방문
+                                <span class="chip-custom">
+                                    <span class="chip-icon">👨‍👩‍👧‍👦</span>
+                                    <span class="chip-text">가족/지인 방문</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="study" required>
-                                <span class="radio-custom"></span>
-                                학업
+                                <span class="chip-custom">
+                                    <span class="chip-icon">📚</span>
+                                    <span class="chip-text">학업</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="work" required>
-                                <span class="radio-custom"></span>
-                                취업/근로
+                                <span class="chip-custom">
+                                    <span class="chip-icon">💻</span>
+                                    <span class="chip-text">취업/근로</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="training" required>
-                                <span class="radio-custom"></span>
-                                파견/연수
+                                <span class="chip-custom">
+                                    <span class="chip-icon">🎯</span>
+                                    <span class="chip-text">파견/연수</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="event" required>
-                                <span class="radio-custom"></span>
-                                행사/컨퍼런스
+                                <span class="chip-custom">
+                                    <span class="chip-icon">🎪</span>
+                                    <span class="chip-text">행사/컨퍼런스</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="volunteer" required>
-                                <span class="radio-custom"></span>
-                                봉사활동
+                                <span class="chip-custom">
+                                    <span class="chip-icon">🤝</span>
+                                    <span class="chip-text">봉사활동</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="medical" required>
-                                <span class="radio-custom"></span>
-                                의료
+                                <span class="chip-custom">
+                                    <span class="chip-icon">🏥</span>
+                                    <span class="chip-text">의료</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="transit" required>
-                                <span class="radio-custom"></span>
-                                경유/환승(트랜짓)
+                                <span class="chip-custom">
+                                    <span class="chip-icon">✈️</span>
+                                    <span class="chip-text">경유/환승</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="research" required>
-                                <span class="radio-custom"></span>
-                                연구/학술
+                                <span class="chip-custom">
+                                    <span class="chip-icon">🔬</span>
+                                    <span class="chip-text">연구/학술</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="immigration" required>
-                                <span class="radio-custom"></span>
-                                이주/정착
+                                <span class="chip-custom">
+                                    <span class="chip-icon">🏠</span>
+                                    <span class="chip-text">이주/정착</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="purpose" value="other" required>
-                                <span class="radio-custom"></span>
-                                기타
+                                <span class="chip-custom">
+                                    <span class="chip-icon">❓</span>
+                                    <span class="chip-text">기타</span>
+                                </span>
                             </label>
                         </div>
                         <div class="form-error" id="purpose-error"></div>

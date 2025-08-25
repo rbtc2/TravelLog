@@ -747,6 +747,21 @@ body {
     margin-top: 8px;
 }
 
+/* 체류 목적용 칩 그룹 - 더 작은 크기로 조정 */
+.purpose-chip-group {
+    gap: 6px;
+}
+
+.purpose-chip-group .chip-custom {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: 32px;
+}
+
+.purpose-chip-group .chip-icon {
+    font-size: 14px;
+}
+
 .chip-label {
     display: flex;
     align-items: center;
