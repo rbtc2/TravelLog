@@ -316,6 +316,20 @@ class AddLogTab {
             const startDate = e.target.value;
             endDateInput.disabled = !startDate;
             
+            if (startDate) {
+                // 종료일의 최소값을 시작일로 설정
+                endDateInput.min = startDate;
+                
+                // 기존 종료일이 시작일보다 이전이면 초기화
+                if (endDateInput.value && endDateInput.value < startDate) {
+                    endDateInput.value = '';
+                    this.showFieldError('endDate', '');
+                }
+            } else {
+                // 시작일이 없으면 종료일 제한 해제
+                endDateInput.min = '';
+            }
+            
             if (startDate && endDateInput.value) {
                 this.validateDateRange(startDate, endDateInput.value);
             }
@@ -638,9 +652,10 @@ class AddLogTab {
         const cityInput = document.getElementById('city');
         cityInput.disabled = true;
         
-        // 종료일 입력 필드 비활성화
+        // 종료일 입력 필드 비활성화 및 제한 해제
         const endDateInput = document.getElementById('endDate');
         endDateInput.disabled = true;
+        endDateInput.min = '';
         
         // 글자 수 카운터 초기화
         document.getElementById('char-count').textContent = '0';
