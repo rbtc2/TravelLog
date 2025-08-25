@@ -1,13 +1,26 @@
+import { FORM_CONFIG, VALIDATION_RULES } from '../config/form-config.js';
+
 /**
  * 일지 추가 탭 모듈
  * 독립적으로 동작하며, 다른 탭에 영향을 주지 않음
  * 메모리 누수 없는 마운트/언마운트 구현
+ * 
+ * @class AddLogTab
+ * @description 여행 일지를 추가하는 탭 컴포넌트
  */
-
 class AddLogTab {
+    /**
+     * AddLogTab 생성자
+     * @description 탭의 초기 상태와 데이터를 설정합니다
+     */
     constructor() {
+        /** @type {boolean} 탭 초기화 상태 */
         this.isInitialized = false;
+        
+        /** @type {Array<{element: Element, event: string, handler: Function}>} 등록된 이벤트 리스너 목록 */
         this.eventListeners = [];
+        
+        /** @type {Object} 폼 데이터 객체 */
         this.formData = {
             country: '',
             city: '',
@@ -18,9 +31,15 @@ class AddLogTab {
             travelStyle: '',
             memo: ''
         };
+        
+        /** @type {Object} 검증 에러 상태 객체 */
         this.validationErrors = {};
     }
     
+    /**
+     * 탭을 컨테이너에 렌더링합니다
+     * @param {HTMLElement} container - 탭을 렌더링할 컨테이너 요소
+     */
     render(container) {
         this.container = container;
         this.renderContent();
@@ -28,6 +47,10 @@ class AddLogTab {
         this.isInitialized = true;
     }
     
+    /**
+     * 탭의 HTML 콘텐츠를 렌더링합니다
+     * @description 설정 파일의 상수값들을 사용하여 동적으로 HTML을 생성합니다
+     */
     renderContent() {
         this.container.innerHTML = `
             <div class="add-log-container">
@@ -45,11 +68,11 @@ class AddLogTab {
                             id="country" 
                             name="country" 
                             class="form-input" 
-                            placeholder="예: Japan / 일본"
-                            maxlength="56"
+                            placeholder="${FORM_CONFIG.country.placeholder}"
+                            maxlength="${FORM_CONFIG.country.maxLength}"
                             required
                         >
-                        <div class="form-hint">나중에 선택형으로 전환 예정</div>
+                        <div class="form-hint">${FORM_CONFIG.country.hint}</div>
                         <div class="form-error" id="country-error"></div>
                     </div>
                     
@@ -61,8 +84,8 @@ class AddLogTab {
                             id="city" 
                             name="city" 
                             class="form-input" 
-                            placeholder="도시명을 입력하세요"
-                            maxlength="85"
+                            placeholder="${FORM_CONFIG.city.placeholder}"
+                            maxlength="${FORM_CONFIG.city.maxLength}"
                             disabled
                             required
                         >
@@ -100,97 +123,15 @@ class AddLogTab {
                     <div class="form-group">
                         <label class="form-label required">체류 목적</label>
                         <div class="chip-group purpose-chip-group" id="purpose-group">
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="tourism" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">🏖️</span>
-                                    <span class="chip-text">관광/여행</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="business" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">💼</span>
-                                    <span class="chip-text">업무/출장</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="family" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">👨‍👩‍👧‍👦</span>
-                                    <span class="chip-text">가족/지인 방문</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="study" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">📚</span>
-                                    <span class="chip-text">학업</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="work" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">💻</span>
-                                    <span class="chip-text">취업/근로</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="training" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">🎯</span>
-                                    <span class="chip-text">파견/연수</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="event" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">🎪</span>
-                                    <span class="chip-text">행사/컨퍼런스</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="volunteer" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">🤝</span>
-                                    <span class="chip-text">봉사활동</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="medical" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">🏥</span>
-                                    <span class="chip-text">의료</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="transit" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">✈️</span>
-                                    <span class="chip-text">경유/환승</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="research" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">🔬</span>
-                                    <span class="chip-text">연구/학술</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="immigration" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">🏠</span>
-                                    <span class="chip-text">이주/정착</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="purpose" value="other" required>
-                                <span class="chip-custom">
-                                    <span class="chip-icon">❓</span>
-                                    <span class="chip-text">기타</span>
-                                </span>
-                            </label>
+                            ${FORM_CONFIG.purposeOptions.map(option => `
+                                <label class="chip-label">
+                                    <input type="radio" name="purpose" value="${option.value}" required>
+                                    <span class="chip-custom">
+                                        <span class="chip-icon">${option.icon}</span>
+                                        <span class="chip-text">${option.label}</span>
+                                    </span>
+                                </label>
+                            `).join('')}
                         </div>
                         <div class="form-error" id="purpose-error"></div>
                     </div>
@@ -213,41 +154,15 @@ class AddLogTab {
                     <div class="form-group">
                         <label class="form-label">여행 스타일</label>
                         <div class="chip-group" id="travel-style-group">
-                            <label class="chip-label">
-                                <input type="radio" name="travelStyle" value="alone">
-                                <span class="chip-custom">
-                                    <span class="chip-icon">👤</span>
-                                    <span class="chip-text">혼자</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="travelStyle" value="family">
-                                <span class="chip-custom">
-                                    <span class="chip-icon">👨‍👩‍👧‍👦</span>
-                                    <span class="chip-text">가족과</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="travelStyle" value="couple">
-                                <span class="chip-custom">
-                                    <span class="chip-icon">💑</span>
-                                    <span class="chip-text">연인과</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="travelStyle" value="friends">
-                                <span class="chip-custom">
-                                    <span class="chip-icon">👥</span>
-                                    <span class="chip-text">친구와</span>
-                                </span>
-                            </label>
-                            <label class="chip-label">
-                                <input type="radio" name="travelStyle" value="colleagues">
-                                <span class="chip-custom">
-                                    <span class="chip-icon">👔</span>
-                                    <span class="chip-text">동료와</span>
-                                </span>
-                            </label>
+                            ${FORM_CONFIG.travelStyleOptions.map(option => `
+                                <label class="chip-label">
+                                    <input type="radio" name="travelStyle" value="${option.value}">
+                                    <span class="chip-custom">
+                                        <span class="chip-icon">${option.icon}</span>
+                                        <span class="chip-text">${option.label}</span>
+                                    </span>
+                                </label>
+                            `).join('')}
                         </div>
                     </div>
                     
@@ -258,12 +173,12 @@ class AddLogTab {
                             id="memo" 
                             name="memo" 
                             class="form-textarea" 
-                            placeholder="여행에 대한 메모를 작성하세요 (최대 300자)"
-                            maxlength="300"
-                            rows="4"
+                            placeholder="${FORM_CONFIG.memo.placeholder}"
+                            maxlength="${FORM_CONFIG.memo.maxLength}"
+                            rows="${FORM_CONFIG.memo.rows}"
                         ></textarea>
                         <div class="char-counter">
-                            <span id="char-count">0</span>/300
+                            <span id="char-count">0</span>/${FORM_CONFIG.memo.maxLength}
                         </div>
                         <div class="form-error" id="memo-error"></div>
                     </div>
@@ -271,7 +186,7 @@ class AddLogTab {
                     <!-- 제출 버튼 -->
                     <div class="form-actions">
                         <button type="submit" class="submit-btn" id="submit-btn">
-                            📝 일지 저장하기
+                            ${FORM_CONFIG.messages.submit}
                         </button>
                         <button type="button" class="reset-btn" id="reset-btn">
                             🔄 초기화
@@ -282,6 +197,10 @@ class AddLogTab {
         `;
     }
     
+    /**
+     * 모든 이벤트 리스너를 바인딩합니다
+     * @description 폼 제출, 입력 검증, 별점 등의 이벤트를 관리합니다
+     */
     bindEvents() {
         const form = document.getElementById('add-log-form');
         const countryInput = document.getElementById('country');
@@ -373,12 +292,18 @@ class AddLogTab {
         });
     }
     
+    /**
+     * 별점 컴포넌트의 이벤트를 바인딩합니다
+     * @description 클릭, 호버 이벤트와 별점 표시 업데이트를 관리합니다
+     */
     bindStarRating() {
         const starRating = document.getElementById('star-rating');
         const stars = starRating.querySelectorAll('.star');
         const ratingInput = document.getElementById('rating-input');
         
+        /** @type {number} 현재 선택된 별점 */
         let currentRating = 0;
+        /** @type {number} 호버 중인 별점 */
         let hoverRating = 0;
         
         // 별 클릭 이벤트
@@ -416,40 +341,39 @@ class AddLogTab {
         };
     }
     
+    /**
+     * 이벤트 리스너를 등록하고 추적합니다
+     * @param {Element} element - 이벤트를 등록할 요소
+     * @param {string} event - 이벤트 타입
+     * @param {Function} handler - 이벤트 핸들러 함수
+     * @description cleanup 시 자동으로 제거되도록 추적합니다
+     */
     addEventListener(element, event, handler) {
         element.addEventListener(event, handler);
         this.eventListeners.push({ element, event, handler });
     }
     
+    /**
+     * 개별 필드 검증
+     * @param {string} fieldName - 검증할 필드명
+     * @param {string} value - 검증할 값
+     * @returns {boolean} 검증 결과
+     */
     validateField(fieldName, value) {
         let isValid = true;
         let errorMessage = '';
         
         switch (fieldName) {
             case 'country':
-                if (!value) {
-                    isValid = false;
-                    errorMessage = '국가를 입력해주세요';
-                } else if (value.length < 2) {
-                    isValid = false;
-                    errorMessage = '국가는 2자 이상 입력해주세요';
-                } else if (value.length > 56) {
-                    isValid = false;
-                    errorMessage = '국가는 56자 이하로 입력해주세요';
-                }
+                const countryValidation = VALIDATION_RULES.validateCountry(value);
+                isValid = countryValidation.isValid;
+                errorMessage = countryValidation.message;
                 break;
                 
             case 'city':
-                if (!value) {
-                    isValid = false;
-                    errorMessage = '도시를 입력해주세요';
-                } else if (value.length < 1) {
-                    isValid = false;
-                    errorMessage = '도시는 1자 이상 입력해주세요';
-                } else if (value.length > 85) {
-                    isValid = false;
-                    errorMessage = '도시는 85자 이하로 입력해주세요';
-                }
+                const cityValidation = VALIDATION_RULES.validateCity(value);
+                isValid = cityValidation.isValid;
+                errorMessage = cityValidation.message;
                 break;
         }
         
@@ -459,12 +383,17 @@ class AddLogTab {
         return isValid;
     }
     
+    /**
+     * 날짜 범위 검증
+     * @param {string} startDate - 시작일
+     * @param {string} endDate - 종료일
+     * @returns {boolean} 검증 결과
+     */
     validateDateRange(startDate, endDate) {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
+        const dateValidation = VALIDATION_RULES.validateDateRange(startDate, endDate);
         
-        if (end < start) {
-            this.showFieldError('endDate', '종료일은 시작일 이후여야 합니다');
+        if (!dateValidation.isValid) {
+            this.showFieldError('endDate', dateValidation.message);
             this.validationErrors['endDate'] = true;
             return false;
         }
@@ -474,6 +403,11 @@ class AddLogTab {
         return true;
     }
     
+    /**
+     * 특정 필드의 에러 메시지를 표시합니다
+     * @param {string} fieldName - 에러를 표시할 필드명
+     * @param {string} message - 표시할 에러 메시지 (빈 문자열이면 에러 숨김)
+     */
     showFieldError(fieldName, message) {
         const errorElement = document.getElementById(`${fieldName}-error`);
         if (errorElement) {
@@ -482,6 +416,11 @@ class AddLogTab {
         }
     }
     
+    /**
+     * 전체 폼의 유효성을 검증합니다
+     * @returns {boolean} 모든 필드가 유효한지 여부
+     * @description 모든 필수 필드와 제약 조건을 검증합니다
+     */
     validateForm() {
         const form = document.getElementById('add-log-form');
         const formData = new FormData(form);
@@ -504,7 +443,7 @@ class AddLogTab {
         // 시작일 검증
         const startDate = formData.get('startDate');
         if (!startDate) {
-            this.showFieldError('startDate', '시작일을 선택해주세요');
+            this.showFieldError('startDate', FORM_CONFIG.errorMessages.startDate.required);
             this.validationErrors['startDate'] = true;
             isValid = false;
         } else {
@@ -515,7 +454,7 @@ class AddLogTab {
         // 종료일 검증
         const endDate = formData.get('endDate');
         if (!endDate) {
-            this.showFieldError('endDate', '종료일을 선택해주세요');
+            this.showFieldError('endDate', FORM_CONFIG.errorMessages.endDate.required);
             this.validationErrors['endDate'] = true;
             isValid = false;
         } else if (startDate && !this.validateDateRange(startDate, endDate)) {
@@ -525,7 +464,7 @@ class AddLogTab {
         // 목적 검증
         const purpose = formData.get('purpose');
         if (!purpose) {
-            this.showFieldError('purpose', '체류 목적을 선택해주세요');
+            this.showFieldError('purpose', FORM_CONFIG.errorMessages.purpose.required);
             this.validationErrors['purpose'] = true;
             isValid = false;
         } else {
@@ -536,7 +475,7 @@ class AddLogTab {
         // 별점 검증
         const rating = formData.get('rating');
         if (!rating) {
-            this.showFieldError('rating', '별점을 선택해주세요');
+            this.showFieldError('rating', FORM_CONFIG.errorMessages.rating.required);
             this.validationErrors['rating'] = true;
             isValid = false;
         } else {
@@ -547,6 +486,10 @@ class AddLogTab {
         return isValid;
     }
     
+    /**
+     * 폼 제출을 처리합니다
+     * @description 폼 검증, 데이터 수집, 저장, 피드백을 순차적으로 처리합니다
+     */
     async handleSubmit() {
         if (!this.validateForm()) {
             return;
@@ -571,7 +514,7 @@ class AddLogTab {
             // 제출 버튼 비활성화
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.textContent = '저장 중...';
+            submitBtn.textContent = FORM_CONFIG.messages.saving;
             
             // 실제 저장 로직은 향후 구현 예정
             await this.saveLog();
@@ -589,14 +532,19 @@ class AddLogTab {
             // 제출 버튼 활성화
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = false;
-            submitBtn.textContent = '📝 일지 저장하기';
+            submitBtn.textContent = FORM_CONFIG.messages.submit;
         }
     }
     
+    /**
+     * 일지 데이터를 저장합니다
+     * @returns {Promise<boolean>} 저장 성공 여부
+     * @description 현재는 시뮬레이션만 구현되어 있습니다
+     */
     async saveLog() {
         // 실제 저장 로직은 향후 구현 예정
         // 현재는 가상의 지연 시간만 추가
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, FORM_CONFIG.ui.loadingDelay));
         
         console.log('저장된 일지 데이터:', this.formData);
         
@@ -604,26 +552,35 @@ class AddLogTab {
         return true;
     }
     
+    /**
+     * 성공 메시지를 표시합니다
+     * @description 설정 파일의 지속 시간을 사용하여 메시지를 표시합니다
+     */
     showSuccessMessage() {
         const message = document.createElement('div');
         message.className = 'success-message';
         message.innerHTML = `
             <div class="success-content">
                 <span class="success-icon">✅</span>
-                <span class="success-text">일지가 성공적으로 저장되었습니다!</span>
+                <span class="success-text">${FORM_CONFIG.messages.success}</span>
             </div>
         `;
         
         this.container.appendChild(message);
         
-        // 3초 후 자동 제거
+        // 설정된 시간 후 자동 제거
         setTimeout(() => {
             if (message.parentNode) {
                 message.parentNode.removeChild(message);
             }
-        }, 3000);
+        }, FORM_CONFIG.ui.successMessageDuration);
     }
     
+    /**
+     * 에러 메시지를 표시합니다
+     * @param {string} errorText - 표시할 에러 메시지
+     * @description 설정 파일의 지속 시간을 사용하여 메시지를 표시합니다
+     */
     showErrorMessage(errorText) {
         const message = document.createElement('div');
         message.className = 'error-message';
@@ -636,14 +593,18 @@ class AddLogTab {
         
         this.container.appendChild(message);
         
-        // 5초 후 자동 제거
+        // 설정된 시간 후 자동 제거
         setTimeout(() => {
             if (message.parentNode) {
                 message.parentNode.removeChild(message);
             }
-        }, 5000);
+        }, FORM_CONFIG.ui.errorMessageDuration);
     }
     
+    /**
+     * 폼을 초기 상태로 리셋합니다
+     * @description 모든 입력 필드, 에러 메시지, 상태를 초기화합니다
+     */
     resetForm() {
         const form = document.getElementById('add-log-form');
         form.reset();
@@ -688,6 +649,10 @@ class AddLogTab {
         };
     }
     
+    /**
+     * 탭을 정리하고 메모리를 해제합니다
+     * @description 등록된 이벤트 리스너를 제거하고 상태를 초기화합니다
+     */
     async cleanup() {
         // 이벤트 리스너 정리
         this.eventListeners.forEach(listener => {
