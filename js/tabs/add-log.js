@@ -200,31 +200,41 @@ class AddLogTab {
                     <!-- 여행 스타일 -->
                     <div class="form-group">
                         <label class="form-label">여행 스타일</label>
-                        <div class="radio-group" id="travel-style-group">
-                            <label class="radio-label">
+                        <div class="chip-group" id="travel-style-group">
+                            <label class="chip-label">
                                 <input type="radio" name="travelStyle" value="alone">
-                                <span class="radio-custom"></span>
-                                혼자
+                                <span class="chip-custom">
+                                    <span class="chip-icon">👤</span>
+                                    <span class="chip-text">혼자</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="travelStyle" value="family">
-                                <span class="radio-custom"></span>
-                                가족과
+                                <span class="chip-custom">
+                                    <span class="chip-icon">👨‍👩‍👧‍👦</span>
+                                    <span class="chip-text">가족과</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="travelStyle" value="couple">
-                                <span class="radio-custom"></span>
-                                연인과
+                                <span class="chip-custom">
+                                    <span class="chip-icon">💑</span>
+                                    <span class="chip-text">연인과</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="travelStyle" value="friends">
-                                <span class="radio-custom"></span>
-                                친구와
+                                <span class="chip-custom">
+                                    <span class="chip-icon">👥</span>
+                                    <span class="chip-text">친구와</span>
+                                </span>
                             </label>
-                            <label class="radio-label">
+                            <label class="chip-label">
                                 <input type="radio" name="travelStyle" value="colleagues">
-                                <span class="radio-custom"></span>
-                                동료와
+                                <span class="chip-custom">
+                                    <span class="chip-icon">👔</span>
+                                    <span class="chip-text">동료와</span>
+                                </span>
                             </label>
                         </div>
                     </div>
