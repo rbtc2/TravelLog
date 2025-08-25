@@ -238,14 +238,27 @@ class MyLogsTab {
                             </div>
                             <div class="archive-status">준비 중</div>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- 트래블 레포트 섹션 -->
+                <div class="hub-section travel-report-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📊 트래블 레포트</h2>
+                    </div>
+                    <div class="travel-report-content">
+                        <div class="report-summary">
+                            <div class="summary-text">일본을 가장 많이 방문했고, 주로 봄철에 여행을 떠나시는 패턴을 보이고 있어요</div>
+                        </div>
                         
-                        <div class="archive-item" id="travel-report-btn">
-                            <div class="archive-icon">📊</div>
-                            <div class="archive-details">
-                                <div class="archive-title">트래블 레포트</div>
-                                <div class="archive-description">여행 데이터를 분석하고 인사이트를 확인하세요</div>
-                            </div>
-                            <div class="archive-arrow">▶</div>
+                        <div class="report-tags">
+                            <div class="tag-chip">일본</div>
+                            <div class="tag-chip">봄철</div>
+                            <div class="tag-chip">장기체류</div>
+                        </div>
+                        
+                        <div class="report-action">
+                            <button class="view-report-btn" id="view-report-btn">레포트 보기</button>
                         </div>
                     </div>
                 </div>
@@ -847,9 +860,9 @@ class MyLogsTab {
         }
         
         // 트래블 레포트 버튼
-        const travelReportBtn = document.getElementById('travel-report-btn');
-        if (travelReportBtn) {
-            this.addEventListener(travelReportBtn, 'click', () => {
+        const viewReportBtn = document.getElementById('view-report-btn');
+        if (viewReportBtn) {
+            this.addEventListener(viewReportBtn, 'click', () => {
                 this.currentView = 'travel-report';
                 this.renderContent();
                 this.bindEvents();
