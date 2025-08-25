@@ -106,3 +106,5 @@ temp/
 *.njsproj
 *.sln
 *.sw?
+test-add-log.html
+js/modules/repository.js
