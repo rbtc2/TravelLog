@@ -458,19 +458,39 @@ class MyLogsTab {
         
         return `
             <div class="log-item" data-log-id="${log.id}">
+                <!-- 1행: 헤더 (국가명 + 기간/목적 칩 + 편집/삭제 아이콘) -->
                 <div class="log-header">
-                    <div class="log-location">
+                    <div class="log-header-left">
                         <div class="log-country">${log.country}</div>
-                        <div class="log-city">${log.city}</div>
+                        <div class="log-country-badge" title="국가 코드">🇰🇷</div>
                     </div>
-                    <div class="log-actions">
-                        <button class="log-edit-btn" data-log-id="${log.id}" title="편집">
+                    
+                    <div class="log-header-center">
+                        <div class="log-chips">
+                            <div class="log-chip duration-chip">
+                                <span class="chip-icon">📅</span>
+                                <span class="chip-text">${duration}일</span>
+                            </div>
+                            <div class="log-chip purpose-chip">
+                                <span class="chip-icon">${purposeIcon}</span>
+                                <span class="chip-text">${this.getPurposeText(log.purpose)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="log-header-right">
+                        <button class="log-action-btn edit-btn" data-log-id="${log.id}" title="편집" aria-label="일지 편집">
                             ✏️
                         </button>
-                        <button class="log-delete-btn" data-log-id="${log.id}" title="삭제">
+                        <button class="log-action-btn delete-btn" data-log-id="${log.id}" title="삭제" aria-label="일지 삭제">
                             🗑️
                         </button>
                     </div>
+                </div>
+                
+                <!-- 2행: 서브헤더 (도시명) -->
+                <div class="log-subheader">
+                    <div class="log-city">${log.city}</div>
                 </div>
                 
                 <div class="log-details">
@@ -479,12 +499,6 @@ class MyLogsTab {
                             <span class="date-label">📅</span>
                             ${startDate.toLocaleDateString('ko-KR')} ~ ${endDate.toLocaleDateString('ko-KR')}
                         </div>
-                        <div class="log-duration">(${duration}일)</div>
-                    </div>
-                    
-                    <div class="log-purpose">
-                        <span class="purpose-icon">${purposeIcon}</span>
-                        <span class="purpose-text">${this.getPurposeText(log.purpose)}</span>
                     </div>
                     
                     <div class="log-rating">
