@@ -198,28 +198,14 @@ class AddLogTab {
                     <!-- 별점 평가 -->
                     <div class="form-group">
                         <label class="form-label required">별점 평가</label>
-                        <div class="rating-group" id="rating-group">
-                            <label class="rating-label">
-                                <input type="radio" name="rating" value="1" required>
-                                <span class="rating-custom">1</span>
-                            </label>
-                            <label class="rating-label">
-                                <input type="radio" name="rating" value="2" required>
-                                <span class="rating-custom">2</span>
-                            </label>
-                            <label class="rating-label">
-                                <input type="radio" name="rating" value="3" required>
-                                <span class="rating-custom">3</span>
-                            </label>
-                            <label class="rating-label">
-                                <input type="radio" name="rating" value="4" required>
-                                <span class="rating-custom">4</span>
-                            </label>
-                            <label class="rating-label">
-                                <input type="radio" name="rating" value="5" required>
-                                <span class="rating-custom">5</span>
-                            </label>
+                        <div class="star-rating" id="star-rating">
+                            <div class="star" data-value="1">★</div>
+                            <div class="star" data-value="2">★</div>
+                            <div class="star" data-value="3">★</div>
+                            <div class="star" data-value="4">★</div>
+                            <div class="star" data-value="5">★</div>
                         </div>
+                        <input type="hidden" name="rating" id="rating-input" required>
                         <div class="form-error" id="rating-error"></div>
                     </div>
                     
@@ -349,6 +335,9 @@ class AddLogTab {
             document.getElementById('char-count').textContent = length;
         });
         
+        // 별점 이벤트
+        this.bindStarRating();
+        
         // 폼 제출
         this.addEventListener(form, 'submit', (e) => {
             e.preventDefault();
@@ -368,6 +357,49 @@ class AddLogTab {
         this.addEventListener(cityInput, 'blur', () => {
             this.validateField('city', cityInput.value.trim());
         });
+    }
+    
+    bindStarRating() {
+        const starRating = document.getElementById('star-rating');
+        const stars = starRating.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating-input');
+        
+        let currentRating = 0;
+        let hoverRating = 0;
+        
+        // 별 클릭 이벤트
+        stars.forEach((star, index) => {
+            this.addEventListener(star, 'click', () => {
+                const value = index + 1;
+                currentRating = value;
+                ratingInput.value = value;
+                this.updateStarDisplay();
+                this.showFieldError('rating', '');
+            });
+            
+            // 호버 이벤트 (데스크탑)
+            this.addEventListener(star, 'mouseenter', () => {
+                hoverRating = index + 1;
+                this.updateStarDisplay();
+            });
+            
+            this.addEventListener(star, 'mouseleave', () => {
+                hoverRating = 0;
+                this.updateStarDisplay();
+            });
+        });
+        
+        // 별점 표시 업데이트
+        this.updateStarDisplay = () => {
+            const displayRating = hoverRating || currentRating;
+            stars.forEach((star, index) => {
+                if (index < displayRating) {
+                    star.classList.add('filled');
+                } else {
+                    star.classList.remove('filled');
+                }
+            });
+        };
     }
     
     addEventListener(element, event, handler) {
@@ -612,6 +644,11 @@ class AddLogTab {
         
         // 글자 수 카운터 초기화
         document.getElementById('char-count').textContent = '0';
+        
+        // 별점 초기화
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => star.classList.remove('filled'));
+        document.getElementById('rating-input').value = '';
         
         // 모든 에러 메시지 숨기기
         const errorElements = document.querySelectorAll('.form-error');
