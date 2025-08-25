@@ -3,6 +3,82 @@
  * 로그인 화면과 탭 관리 및 동적 모듈 로딩을 담당
  */
 
+// 모바일 환경 최적화
+(function() {
+    'use strict';
+    
+    // 터치 이벤트 최적화
+    let touchStartY = 0;
+    let touchStartX = 0;
+    
+    // 터치 시작 이벤트
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    
+    // 터치 이동 이벤트 (스크롤 방지)
+    document.addEventListener('touchmove', function(e) {
+        const touchY = e.touches[0].clientY;
+        const touchX = e.touches[0].clientX;
+        const deltaY = Math.abs(touchY - touchStartY);
+        const deltaX = Math.abs(touchX - touchStartX);
+        
+        // 수직 스크롤만 허용 (가로 스크롤 방지)
+        if (deltaX > deltaY && deltaX > 10) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // 더블 탭 줌 방지
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+    
+    // 입력 필드 포커스 시 줌 방지
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            // 입력 필드가 화면 중앙에 오도록 스크롤
+            setTimeout(() => {
+                this.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 300);
+        });
+    });
+    
+    // 모바일 키보드 표시 시 레이아웃 조정
+    let initialViewportHeight = window.innerHeight;
+    window.addEventListener('resize', function() {
+        if (window.innerHeight < initialViewportHeight) {
+            // 키보드가 표시됨
+            document.body.style.height = window.innerHeight + 'px';
+        } else {
+            // 키보드가 숨겨짐
+            document.body.style.height = '100vh';
+        }
+    });
+    
+    // 터치 피드백 효과
+    const touchElements = document.querySelectorAll('button, .tab-btn, .login-btn, .demo-btn, a');
+    touchElements.forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        }, { passive: true });
+        
+        element.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        }, { passive: true });
+    });
+})();
+
 class AppManager {
     constructor() {
         this.currentTab = null;
