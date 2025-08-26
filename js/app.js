@@ -35,10 +35,13 @@
     document.addEventListener('touchend', function(e) {
         const now = (new Date()).getTime();
         if (now - lastTouchEnd <= 300) {
-            e.preventDefault();
+            // 스크롤 중일 때는 preventDefault를 호출하지 않음
+            if (e.cancelable) {
+                e.preventDefault();
+            }
         }
         lastTouchEnd = now;
-    }, false);
+    }, { passive: false });
     
     // 입력 필드 포커스 시 줌 방지
     const inputs = document.querySelectorAll('input, textarea, select');

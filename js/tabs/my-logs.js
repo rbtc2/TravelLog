@@ -8,21 +8,39 @@ import LogEditModule from '../modules/log-edit.js';
 import { ToastManager } from '../modules/ui-components/toast-manager.js';
 import { EventManager } from '../modules/utils/event-manager.js';
 import { ModalManager } from '../modules/ui-components/modal-manager.js';
+import { ViewManager } from '../modules/ui-components/view-manager.js';
+import { PaginationManager } from '../modules/ui-components/pagination-manager.js';
 import { StorageManager } from '../modules/utils/storage-manager.js';
 import { LogService } from '../modules/services/log-service.js';
 import { DemoData } from '../modules/utils/demo-data.js';
+
+// 전역에서 접근할 수 있도록 window 객체에 등록 (디버깅용)
+if (typeof window !== 'undefined') {
+    window.MyLogsTab = null; // 나중에 인스턴스 할당
+}
 
 class MyLogsTab {
     constructor() {
         this.isInitialized = false;
         this.eventManager = new EventManager();
         this.modalManager = new ModalManager();
+        this.viewManager = new ViewManager();
+        this.paginationManager = new PaginationManager();
         this.storageManager = new StorageManager();
         this.logService = new LogService();
         this.currentView = 'hub'; // 'hub', 'logs', 'settings', 'detail'
         this.currentLogId = null;
         this.logDetailModule = new LogDetailModule();
         this.logEditModule = new LogEditModule();
+        
+        // ViewManager 초기화 확인
+        console.log('MyLogsTab: ViewManager 초기화 확인', {
+            viewManager: this.viewManager,
+            hasGetPurposeIcon: typeof this.viewManager.getPurposeIcon === 'function',
+            hasGetPurposeText: typeof this.viewManager.getPurposeText === 'function',
+            hasGetTravelStyleText: typeof this.viewManager.getTravelStyleText === 'function',
+            hasTruncateMemo: typeof this.viewManager.truncateMemo === 'function'
+        });
     }
     
     render(container) {
@@ -142,6 +160,9 @@ class MyLogsTab {
     }
     
     renderContent() {
+        // ViewManager와 currentView 동기화
+        this.viewManager.setCurrentView(this.currentView);
+        
         if (this.currentView === 'hub') {
             this.renderHub();
         } else if (this.currentView === 'settings') {
@@ -620,31 +641,51 @@ class MyLogsTab {
      * 일정 상세 화면을 렌더링합니다
      */
     renderLogDetail() {
+        console.log('MyLogsTab: renderLogDetail 호출됨', { 
+            currentLogId: this.currentLogId, 
+            currentView: this.currentView 
+        });
+        
         if (!this.currentLogId) {
+            console.log('MyLogsTab: currentLogId가 없음, logs 뷰로 이동');
             this.currentView = 'logs';
             this.renderContent();
             return;
         }
         
         const log = this.logService.getLogById(this.currentLogId);
+        console.log('MyLogsTab: 로그 조회 결과', { log, logId: this.currentLogId });
+        
         if (!log) {
+            console.log('MyLogsTab: 로그를 찾을 수 없음, logs 뷰로 이동');
             this.currentView = 'logs';
             this.renderContent();
             return;
         }
         
+        console.log('MyLogsTab: LogDetailModule 렌더링 시작');
         this.logDetailModule.render(this.container, log);
+        console.log('MyLogsTab: LogDetailModule 렌더링 완료');
     }
     
     /**
      * 일지 목록을 표시하는 UI
      */
     renderLogsList() {
+        console.log('MyLogsTab: renderLogsList 시작');
+        
         // LogService를 사용하여 페이지네이션된 로그 가져오기
         const pageData = this.logService.getLogsByPage(
             this.logService.currentPage, 
             this.logService.logsPerPage
         );
+        
+        console.log('MyLogsTab: 페이지 데이터', {
+            currentPage: this.logService.currentPage,
+            logsPerPage: this.logService.logsPerPage,
+            totalLogs: pageData.logs.length,
+            totalPages: pageData.totalPages
+        });
         
         this.container.innerHTML = `
             <div class="my-logs-container">
@@ -658,14 +699,16 @@ class MyLogsTab {
                     </div>
                 </div>
                 
-                <div class="logs-list">
-                    ${pageData.logs.map(log => this.renderLogItem(log)).join('')}
-                </div>
-                
-                ${this.renderPagination(pageData.totalPages)}
-            </div>
-        `;
-    }
+                                 <div class="logs-list">
+                     ${pageData.logs.map(log => this.renderLogItem(log)).join('')}
+                 </div>
+                 
+                 ${this.renderPagination(pageData.totalPages)}
+             </div>
+         `;
+         
+         console.log('MyLogsTab: renderLogsList 완료');
+     }
     
     /**
      * 개별 일지 아이템을 렌더링합니다
@@ -675,7 +718,23 @@ class MyLogsTab {
         const endDate = new Date(log.endDate);
         const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
         
-        const purposeIcon = this.getPurposeIcon(log.purpose);
+        // ViewManager 메서드 호출 시 안전하게 처리
+        let purposeIcon, purposeText, travelStyleText, memoText;
+        
+        try {
+            purposeIcon = this.viewManager.getPurposeIcon(log.purpose);
+            purposeText = this.viewManager.getPurposeText(log.purpose);
+            travelStyleText = log.travelStyle ? this.viewManager.getTravelStyleText(log.travelStyle) : '';
+            memoText = log.memo ? this.viewManager.truncateMemo(log.memo) : '';
+        } catch (error) {
+            console.error('ViewManager 메서드 호출 중 오류:', error);
+            // 폴백 값 사용
+            purposeIcon = '✈️';
+            purposeText = log.purpose || '기타';
+            travelStyleText = log.travelStyle || '';
+            memoText = log.memo ? (log.memo.length > 50 ? log.memo.substring(0, 50) + '...' : log.memo) : '';
+        }
+        
         const ratingStars = '★'.repeat(parseInt(log.rating)) + '☆'.repeat(5 - parseInt(log.rating));
         
         return `
@@ -693,10 +752,10 @@ class MyLogsTab {
                                 <span class="chip-icon">📅</span>
                                 <span class="chip-text">${duration}일</span>
                             </div>
-                            <div class="log-chip purpose-chip">
-                                <span class="chip-icon">${purposeIcon}</span>
-                                <span class="chip-text">${this.getPurposeText(log.purpose)}</span>
-                            </div>
+                                                         <div class="log-chip purpose-chip">
+                                 <span class="chip-icon">${purposeIcon}</span>
+                                 <span class="chip-text">${purposeText}</span>
+                             </div>
                         </div>
                     </div>
                     
@@ -729,17 +788,17 @@ class MyLogsTab {
                         <span class="rating-value">(${log.rating}/5)</span>
                     </div>
                     
-                    ${log.travelStyle ? `
-                        <div class="log-travel-style">
-                            <span class="style-icon">🎒</span>
-                            <span class="style-text">${this.getTravelStyleText(log.travelStyle)}</span>
-                        </div>
-                    ` : ''}
+                                         ${log.travelStyle ? `
+                         <div class="log-travel-style">
+                             <span class="style-icon">🎒</span>
+                             <span class="style-text">${travelStyleText}</span>
+                         </div>
+                     ` : ''}
                     
-                                         ${log.memo ? `
+                                                              ${log.memo ? `
                          <div class="log-memo">
                              <span class="memo-icon">💭</span>
-                             <span class="memo-text">${this.truncateMemo(log.memo)}</span>
+                             <span class="memo-text">${memoText}</span>
                          </div>
                      ` : ''}
                 </div>
@@ -795,96 +854,7 @@ class MyLogsTab {
         `;
     }
     
-    /**
-     * 목적에 따른 아이콘을 반환합니다
-     */
-    getPurposeIcon(purpose) {
-        const purposeIcons = {
-            'tourism': '🏖️',
-            'business': '💼',
-            'family': '👨‍👩‍👧‍👦',
-            'study': '📚',
-            'work': '💻',
-            'training': '🎯',
-            'event': '🎪',
-            'volunteer': '🤝',
-            'medical': '🏥',
-            'transit': '✈️',
-            'research': '🔬',
-            'immigration': '🏠',
-            'other': '❓'
-        };
-        return purposeIcons[purpose] || '✈️';
-    }
-    
-    /**
-     * 목적에 따른 텍스트를 반환합니다
-     */
-    getPurposeText(purpose) {
-        const purposeTexts = {
-            'tourism': '관광/여행',
-            'business': '업무/출장',
-            'family': '가족/지인 방문',
-            'study': '학업',
-            'work': '취업/근로',
-            'training': '파견/연수',
-            'event': '행사/컨퍼런스',
-            'volunteer': '봉사활동',
-            'medical': '의료',
-            'transit': '경유/환승',
-            'research': '연구/학술',
-            'immigration': '이주/정착',
-            'other': '기타'
-        };
-        return purposeTexts[purpose] || purpose;
-    }
-    
-    /**
-     * 여행 스타일에 따른 텍스트를 반환합니다
-     */
-    getTravelStyleText(style) {
-        const styleTexts = {
-            'solo': '솔로 여행',
-            'couple': '커플 여행',
-            'group': '단체 여행',
-            'family': '가족 여행',
-            'friends': '친구와 함께'
-        };
-        return styleTexts[style] || style;
-    }
-    
-    /**
-     * 메모를 적절한 길이로 자르고 말줄임표를 추가합니다
-     */
-    truncateMemo(memo) {
-        if (!memo) return '';
-        
-        // 화면 크기에 따른 동적 길이 제한
-        let maxLength;
-        if (window.innerWidth <= 480) {
-            maxLength = 60; // 매우 작은 모바일
-        } else if (window.innerWidth <= 768) {
-            maxLength = 80; // 일반 모바일
-        } else if (window.innerWidth <= 1024) {
-            maxLength = 100; // 태블릿
-        } else {
-            maxLength = 120; // 데스크톱
-        }
-        
-        if (memo.length <= maxLength) {
-            return memo;
-        }
-        
-        // 단어 단위로 자르기 (마지막 단어가 잘리지 않도록)
-        const truncated = memo.substring(0, maxLength);
-        const lastSpaceIndex = truncated.lastIndexOf(' ');
-        
-        if (lastSpaceIndex > maxLength * 0.7) { // 70% 이상이면 단어 단위로 자르기
-            return truncated.substring(0, lastSpaceIndex) + '...';
-        } else {
-            return truncated + '...';
-        }
-    }
+    // 유틸리티 메서드들은 ViewManager로 이동되었습니다
     
     bindEvents() {
         if (this.currentView === 'hub') {
@@ -1108,10 +1078,20 @@ class MyLogsTab {
      * 일정 상세 화면을 표시합니다
      */
     showLogDetail(logId) {
+        console.log('MyLogsTab: showLogDetail 호출됨', { logId, currentView: this.currentView });
+        
         this.currentLogId = logId;
         this.currentView = 'detail';
+        
+        console.log('MyLogsTab: 상태 변경 후', { 
+            currentLogId: this.currentLogId, 
+            currentView: this.currentView 
+        });
+        
         this.renderContent();
         this.bindEvents();
+        
+        console.log('MyLogsTab: showLogDetail 완료');
     }
     
     /**
@@ -1202,5 +1182,13 @@ class MyLogsTab {
     }
 }
 
-export default new MyLogsTab();
+const myLogsTabInstance = new MyLogsTab();
+
+// 전역에서 접근할 수 있도록 window 객체에 등록 (디버깅용)
+if (typeof window !== 'undefined') {
+    window.ToastManager = ToastManager;
+    window.MyLogsTab = myLogsTabInstance;
+}
+
+export default myLogsTabInstance;
 

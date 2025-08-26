@@ -86,3 +86,8 @@ export class ToastManager {
         this.show(`ℹ️ ${message}`, duration);
     }
 }
+
+// 전역에서 접근할 수 있도록 window 객체에 등록 (디버깅용)
+if (typeof window !== 'undefined') {
+    window.ToastManager = ToastManager;
+}
