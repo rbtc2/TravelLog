@@ -130,11 +130,98 @@ class MyLogsTab {
      * 일지를 삭제합니다
      */
     deleteLog(logId) {
-        if (confirm('정말로 이 일지를 삭제하시겠습니까?')) {
-            this.logs = this.logs.filter(log => log.id !== logId);
-            this.saveLogs();
-            this.renderContent(); // UI 업데이트
+        const logToDelete = this.logs.find(log => log.id === logId);
+        if (!logToDelete) return;
+        
+        this.showDeleteConfirmModal(logToDelete);
+    }
+    
+    /**
+     * 삭제 확인 모달을 표시합니다
+     */
+    showDeleteConfirmModal(log) {
+        // 기존 모달이 있으면 제거
+        const existingModal = document.querySelector('.delete-confirm-modal');
+        if (existingModal) {
+            existingModal.remove();
         }
+        
+        const modal = document.createElement('div');
+        modal.className = 'delete-confirm-modal';
+        modal.innerHTML = `
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>일지 삭제 확인</h3>
+                </div>
+                <div class="modal-body">
+                    <p>다음 일지를 정말로 삭제하시겠습니까?</p>
+                    <div class="log-preview">
+                        <div class="log-preview-header">
+                            <span class="log-preview-country">${log.country}</span>
+                            <span class="log-preview-city">${log.city}</span>
+                        </div>
+                        <div class="log-preview-dates">
+                            ${log.startDate} ~ ${log.endDate}
+                        </div>
+                        <div class="log-preview-memo">
+                            ${log.memo ? log.memo.substring(0, 50) + (log.memo.length > 50 ? '...' : '') : '메모 없음'}
+                        </div>
+                    </div>
+                    <p class="warning-text">⚠️ 삭제된 일지는 복구할 수 없습니다.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn cancel-btn" id="cancel-delete">취소</button>
+                    <button class="modal-btn confirm-btn" id="confirm-delete">삭제</button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // 모달 이벤트 바인딩
+        const cancelBtn = modal.querySelector('#cancel-delete');
+        const confirmBtn = modal.querySelector('#confirm-delete');
+        const overlay = modal.querySelector('.modal-overlay');
+        
+        const closeModal = () => {
+            modal.remove();
+        };
+        
+        cancelBtn.addEventListener('click', closeModal);
+        confirmBtn.addEventListener('click', () => {
+            this.performDelete(log.id);
+            closeModal();
+        });
+        overlay.addEventListener('click', closeModal);
+        
+        // ESC 키로 모달 닫기
+        const handleEscKey = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', handleEscKey);
+            }
+        };
+        document.addEventListener('keydown', handleEscKey);
+    }
+    
+    /**
+     * 실제 삭제를 수행합니다
+     */
+    performDelete(logId) {
+        this.logs = this.logs.filter(log => log.id !== logId);
+        this.saveLogs();
+        
+        // 현재 페이지가 비어있고 이전 페이지가 있으면 이전 페이지로 이동
+        const totalPages = Math.ceil(this.logs.length / this.logsPerPage);
+        if (this.currentPage > totalPages && totalPages > 0) {
+            this.currentPage = totalPages;
+        }
+        
+        this.renderContent(); // UI 업데이트
+        
+        // 삭제 완료 토스트 메시지
+        this.showToast('일지가 성공적으로 삭제되었습니다.', 3000);
     }
     
     renderContent() {
@@ -888,7 +975,7 @@ class MyLogsTab {
         }
         
         // 일지 편집 버튼들
-        const editBtns = document.querySelectorAll('.log-edit-btn');
+        const editBtns = document.querySelectorAll('.edit-btn');
         editBtns.forEach(btn => {
             this.addEventListener(btn, 'click', (e) => {
                 const logId = e.currentTarget.dataset.logId;
@@ -897,7 +984,7 @@ class MyLogsTab {
         });
         
         // 일지 삭제 버튼들
-        const deleteBtns = document.querySelectorAll('.log-delete-btn');
+        const deleteBtns = document.querySelectorAll('.delete-btn');
         deleteBtns.forEach(btn => {
             this.addEventListener(btn, 'click', (e) => {
                 const logId = e.currentTarget.dataset.logId;
