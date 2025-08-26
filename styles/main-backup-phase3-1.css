@@ -409,16 +409,238 @@ body {
     color: #6c757d;
 }
 
-/* 로딩 스피너는 utilities/animations.css로 분리됨 */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 12px;
+}
 
-/* 애니메이션은 utilities/animations.css로 분리됨 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-/* 반응형 디자인은 utilities/responsive.css로 분리됨 */
+/* 반응형 디자인 */
+@media (min-width: 768px) {
+    .login-container {
+        padding: 50px;
+        max-width: 450px;
+    }
+    
+    .main-app {
+        max-width: 768px;
+        border-left: 1px solid #e9ecef;
+        border-right: 1px solid #e9ecef;
+    }
+    
+    #main-content {
+        padding: 30px;
+    }
+    
+    .tab-btn {
+        padding: 16px 12px;
+        min-height: 70px;
+        font-size: 14px;
+    }
+    
+    .tab-icon {
+        font-size: 24px;
+    }
+}
 
-/* 다크 모드는 utilities/dark-mode.css로 분리됨 */
+@media (min-width: 1024px) {
+    .main-app {
+        max-width: 1024px;
+    }
+    
+    #main-content {
+        padding: 40px;
+    }
+}
 
-/* 모바일 환경 최적화는 utilities/responsive.css로 분리됨 */
-/* 접근성 개선은 utilities/accessibility.css로 분리됨 */
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #e9ecef;
+    }
+    
+    .login-container {
+        background-color: #2d2d2d;
+        color: #e9ecef;
+    }
+    
+    .login-title {
+        color: #f7fafc;
+    }
+    
+    .login-subtitle {
+        color: #a0aec0;
+    }
+    
+    .form-label {
+        color: #e2e8f0;
+    }
+    
+    .form-input {
+        background-color: #4a5568;
+        border-color: #4a5568;
+        color: #e9ecef;
+    }
+    
+    .form-input:focus {
+        background-color: #2d3748;
+        border-color: #667eea;
+    }
+    
+    .form-options {
+        color: #e2e8f0;
+    }
+    
+    .signup-link {
+        color: #e2e8f0;
+    }
+    
+    .main-app {
+        background-color: #1a1a1a;
+    }
+    
+    #main-content {
+        background-color: #2d2d2d;
+    }
+    
+    #tab-navigation {
+        background-color: #2d2d2d;
+        border-top-color: #404040;
+    }
+    
+    .tab-btn {
+        color: #adb5bd;
+    }
+    
+    .tab-btn:hover {
+        background-color: #404040;
+        color: #ced4da;
+    }
+    
+    .tab-btn.active {
+        color: #4dabf7;
+        background-color: #1e3a5f;
+    }
+    
+    .tab-placeholder-title {
+        color: #ced4da;
+    }
+    
+    .tab-placeholder-description {
+        color: #adb5bd;
+    }
+}
+
+/* 모바일 환경 최적화 */
+@media (max-width: 768px) {
+    /* 터치 영역 최적화 */
+    button, .tab-btn, .login-btn, .demo-btn {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* 입력 필드 최적화 */
+    .form-input {
+        font-size: 16px; /* iOS 자동 줌 방지 */
+        min-height: 44px;
+        touch-action: manipulation;
+        -webkit-appearance: none;
+        border-radius: 8px;
+    }
+    
+    /* 체크박스 터치 영역 확대 */
+    .checkbox-label input[type="checkbox"] {
+        min-width: 20px;
+        min-height: 20px;
+        margin-right: 12px;
+    }
+    
+    /* 링크 터치 영역 확대 */
+    .forgot-password, .signup-btn {
+        padding: 8px 4px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* 탭 네비게이션 터치 최적화 */
+    .tab-btn {
+        padding: 12px 8px;
+        touch-action: manipulation;
+    }
+    
+    /* 로그인 컨테이너 모바일 최적화 */
+    .login-container {
+        padding: 30px 20px;
+        margin: 20px;
+        border-radius: 16px;
+    }
+    
+    /* 폼 그룹 간격 조정 */
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    /* 버튼 간격 조정 */
+    .login-btn, .demo-btn {
+        margin-bottom: 24px;
+        padding: 16px;
+    }
+}
+
+/* 고해상도 디스플레이 최적화 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .form-input {
+        border-width: 1px;
+    }
+    
+    button, .tab-btn, .login-btn, .demo-btn {
+        border-width: 1px;
+    }
+}
+
+/* 터치 디바이스 전용 스타일 */
+@media (hover: none) and (pointer: coarse) {
+    /* 터치 시 피드백 효과 */
+    button:active, .tab-btn:active, .login-btn:active, .demo-btn:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    /* 입력 필드 포커스 효과 */
+    .form-input:focus {
+        transform: scale(1.02);
+        transition: transform 0.2s ease;
+    }
+    
+    /* 링크 터치 효과 */
+    .forgot-password:active, .signup-btn:active {
+        opacity: 0.7;
+        transition: opacity 0.1s ease;
+    }
+}
+
+/* 접근성 개선 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
 
 /* ===== 일지 추가 탭 스타일 ===== */
 
@@ -808,7 +1030,16 @@ body {
 }
 
 /* 애니메이션 */
-/* slideInRight 애니메이션은 utilities/animations.css로 분리됨 */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
 
 /* 모바일 최적화 */
 @media (max-width: 768px) {
@@ -899,7 +1130,58 @@ body {
     }
 }
 
-/* 다크 모드는 utilities/dark-mode.css로 분리됨 */
+/* 다크 모드 지원 (향후 구현 예정) */
+@media (prefers-color-scheme: dark) {
+    .add-log-container {
+        background-color: #1a202c;
+        color: #e2e8f0;
+    }
+    
+    .add-log-title {
+        color: #f7fafc;
+    }
+    
+    .add-log-subtitle {
+        color: #a0aec0;
+    }
+    
+    .form-label {
+        color: #e2e8f0;
+    }
+    
+    .form-input, .form-textarea {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .form-input:focus, .form-textarea:focus {
+        background-color: #2d3748;
+        border-color: #667eea;
+    }
+    
+    .radio-label {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .radio-label:hover {
+        background-color: #4a5568;
+    }
+    
+    .star {
+        color: #4a5568;
+    }
+    
+    .star.filled {
+        color: #fbbf24;
+    }
+    
+    .star.filled:hover {
+        color: #f59e0b;
+    }
+}
 
 /* 내 일지 탭 스타일 */
 .my-logs-container {
@@ -1931,7 +2213,16 @@ input:disabled + .toggle-slider {
     font-size: 20px;
 }
 
-/* slideDown 애니메이션은 utilities/animations.css로 분리됨 */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
 
 /* ===== 트래블 레포트 스타일 ===== */
 
@@ -3025,7 +3316,16 @@ input:disabled + .toggle-slider {
     animation: modalSlideIn 0.3s ease-out;
 }
 
-/* modalSlideIn 애니메이션은 utilities/animations.css로 분리됨 */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
 
 .modal-header {
     padding: 24px 24px 16px;

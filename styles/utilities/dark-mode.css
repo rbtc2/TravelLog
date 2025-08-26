@@ -1,0 +1,131 @@
+/* ===== 다크 모드 유틸리티 ===== */
+/* 
+ * 시스템 다크 모드 자동 감지 및 적용
+ * 키워드: dark-mode, theme, color-scheme, prefers-color-scheme
+ */
+
+/* 기본 다크 모드 스타일 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #e9ecef;
+    }
+    
+    .login-container {
+        background-color: #2d2d2d;
+        color: #e9ecef;
+    }
+    
+    .login-title {
+        color: #f7fafc;
+    }
+    
+    .login-subtitle {
+        color: #a0aec0;
+    }
+    
+    .form-label {
+        color: #e2e8f0;
+    }
+    
+    .form-input {
+        background-color: #4a5568;
+        border-color: #4a5568;
+        color: #e9ecef;
+    }
+    
+    .form-input:focus {
+        background-color: #2d3748;
+        border-color: #667eea;
+    }
+    
+    .form-options {
+        color: #e2e8f0;
+    }
+    
+    .signup-link {
+        color: #e2e8f0;
+    }
+    
+    .main-app {
+        background-color: #1a1a1a;
+    }
+    
+    #main-content {
+        background-color: #2d2d2d;
+    }
+    
+    #tab-navigation {
+        background-color: #2d2d2d;
+        border-top-color: #404040;
+    }
+    
+    .tab-btn {
+        color: #adb5bd;
+    }
+    
+    .tab-btn:hover {
+        background-color: #404040;
+        color: #ced4da;
+    }
+    
+    .tab-btn.active {
+        color: #4dabf7;
+        background-color: #1e3a5f;
+    }
+    
+    .tab-placeholder-title {
+        color: #ced4da;
+    }
+    
+    .tab-placeholder-description {
+        color: #adb5bd;
+    }
+    
+    /* 일지 추가 탭 다크 모드 */
+    .add-log-container {
+        background-color: #1a202c;
+        color: #e2e8f0;
+    }
+    
+    .add-log-title {
+        color: #f7fafc;
+    }
+    
+    .add-log-subtitle {
+        color: #a0aec0;
+    }
+    
+    .form-textarea {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .form-textarea:focus {
+        background-color: #2d3748;
+        border-color: #667eea;
+    }
+    
+    .radio-label {
+        background-color: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .radio-label:hover {
+        background-color: #4a5568;
+    }
+    
+    .star {
+        color: #4a5568;
+    }
+    
+    .star.filled {
+        color: #fbbf24;
+    }
+    
+    .star.filled:hover {
+        color: #f59e0b;
+    }
+}
