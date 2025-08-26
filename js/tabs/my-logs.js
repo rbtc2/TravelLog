@@ -68,7 +68,7 @@ class MyLogsTab {
                 city: '도쿄',
                 startDate: '2024-03-15',
                 endDate: '2024-03-20',
-                purpose: 'leisure',
+                purpose: 'tourism',
                 rating: '5',
                 travelStyle: 'couple',
                 memo: '도쿄의 봄을 만끽한 환상적인 여행이었습니다. 벚꽃 축제와 맛집 탐방이 특히 인상적이었어요.',
@@ -80,7 +80,7 @@ class MyLogsTab {
                 city: '파리',
                 startDate: '2024-02-10',
                 endDate: '2024-02-15',
-                purpose: 'cultural',
+                purpose: 'tourism',
                 rating: '4',
                 travelStyle: 'solo',
                 memo: '루브르 박물관과 에펠탑을 방문했습니다. 예술의 도시 파리의 매력에 흠뻑 빠졌어요.',
@@ -92,7 +92,7 @@ class MyLogsTab {
                 city: '방콕',
                 startDate: '2024-01-05',
                 endDate: '2024-01-10',
-                purpose: 'leisure',
+                purpose: 'tourism',
                 rating: '4',
                 travelStyle: 'family',
                 memo: '가족과 함께한 태국 여행. 따뜻한 날씨와 맛있는 태국 음식이 기억에 남습니다.',
@@ -885,14 +885,19 @@ class MyLogsTab {
      */
     getPurposeIcon(purpose) {
         const purposeIcons = {
+            'tourism': '🏖️',
             'business': '💼',
-            'leisure': '🏖️',
-            'study': '📚',
             'family': '👨‍👩‍👧‍👦',
-            'backpacking': '🎒',
-            'luxury': '✨',
-            'cultural': '🏛️',
-            'adventure': '🧗‍♂️'
+            'study': '📚',
+            'work': '💻',
+            'training': '🎯',
+            'event': '🎪',
+            'volunteer': '🤝',
+            'medical': '🏥',
+            'transit': '✈️',
+            'research': '🔬',
+            'immigration': '🏠',
+            'other': '❓'
         };
         return purposeIcons[purpose] || '✈️';
     }
@@ -902,14 +907,19 @@ class MyLogsTab {
      */
     getPurposeText(purpose) {
         const purposeTexts = {
-            'business': '비즈니스',
-            'leisure': '레저/휴양',
-            'study': '학업/연수',
-            'family': '가족 여행',
-            'backpacking': '백패킹',
-            'luxury': '럭셔리',
-            'cultural': '문화 체험',
-            'adventure': '모험/액티비티'
+            'tourism': '관광/여행',
+            'business': '업무/출장',
+            'family': '가족/지인 방문',
+            'study': '학업',
+            'work': '취업/근로',
+            'training': '파견/연수',
+            'event': '행사/컨퍼런스',
+            'volunteer': '봉사활동',
+            'medical': '의료',
+            'transit': '경유/환승',
+            'research': '연구/학술',
+            'immigration': '이주/정착',
+            'other': '기타'
         };
         return purposeTexts[purpose] || purpose;
     }
