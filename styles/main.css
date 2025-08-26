@@ -94,6 +94,11 @@
 }
 
 /* ===== 기본 리셋 및 전역 스타일 ===== */
+/* 
+ * 기본 CSS 리셋 및 전역 스타일
+ * 모든 페이지에서 공통으로 사용되는 기본 스타일
+ */
+
 * {
     margin: 0;
     padding: 0;
@@ -116,6 +121,12 @@ body {
 }
 
 /* ===== 로그인 화면 ===== */
+/* 
+ * 로그인 및 회원가입 화면 스타일
+ * 그라데이션 배경과 카드 형태의 로그인 폼
+ * 키워드: login, auth, signin, authentication
+ */
+
 .login-screen {
     display: flex;
     align-items: center;
@@ -299,6 +310,12 @@ body {
 }
 
 /* ===== 메인 앱 화면 ===== */
+/* 
+ * 로그인 후 메인 애플리케이션 화면
+ * 탭 기반 네비게이션과 콘텐츠 영역
+ * 키워드: main, app, dashboard, home
+ */
+
 .main-app {
     display: flex;
     flex-direction: column;
@@ -324,6 +341,12 @@ body {
 }
 
 /* ===== 탭 네비게이션 ===== */
+/* 
+ * 하단 탭 네비게이션 바
+ * 홈, 일지 추가, 내 일지, 검색, 캘린더 탭
+ * 키워드: tab, navigation, menu, bottom-nav
+ */
+
 #tab-navigation {
     display: flex;
     background-color: var(--bg-primary);
@@ -424,7 +447,13 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* 반응형 디자인 */
+/* ===== 반응형 디자인 ===== */
+/* 
+ * 다양한 화면 크기에 대응하는 반응형 스타일
+ * 모바일, 태블릿, 데스크톱 최적화
+ * 키워드: responsive, mobile, tablet, desktop, media-query
+ */
+
 @media (min-width: 768px) {
     .login-container {
         padding: 50px;
@@ -462,7 +491,13 @@ body {
     }
 }
 
-/* 다크 모드 지원 */
+/* ===== 다크 모드 지원 ===== */
+/* 
+ * 시스템 다크 모드 자동 감지 및 적용
+ * 색상 스키마에 따른 자동 테마 전환
+ * 키워드: dark-mode, theme, color-scheme, prefers-color-scheme
+ */
+
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #1a1a1a;
@@ -541,7 +576,13 @@ body {
     }
 }
 
-/* 모바일 환경 최적화 */
+/* ===== 모바일 환경 최적화 ===== */
+/* 
+ * 모바일 디바이스 최적화 스타일
+ * 터치 영역, 입력 필드, 반응성 개선
+ * 키워드: mobile, touch, optimization, mobile-first
+ */
+
 @media (max-width: 768px) {
     /* 터치 영역 최적화 */
     button, .tab-btn, .login-btn, .demo-btn {
@@ -644,6 +685,11 @@ body {
 }
 
 /* ===== 일지 추가 탭 스타일 ===== */
+/* 
+ * 여행 일지를 추가하는 폼 화면
+ * 국가, 도시, 날짜, 평가, 메모 등 입력
+ * 키워드: add-log, travel-log, form, create, new
+ */
 
 .add-log-container {
     max-width: 800px;
@@ -680,6 +726,12 @@ body {
 }
 
 /* ===== 공통 폼 스타일 ===== */
+/* 
+ * 모든 폼에서 공통으로 사용되는 스타일
+ * 입력 필드, 라벨, 힌트, 에러 메시지 등
+ * 키워드: form, input, label, validation, error
+ */
+
 .form-group {
     display: flex;
     flex-direction: column;
@@ -945,6 +997,12 @@ body {
 }
 
 /* ===== 공통 버튼 스타일 ===== */
+/* 
+ * 폼 액션 버튼들의 공통 스타일
+ * 제출, 리셋, 취소 등 다양한 액션 버튼
+ * 키워드: button, submit, reset, action, form-actions
+ */
+
 .form-actions {
     display: flex;
     gap: var(--spacing-md);
@@ -995,6 +1053,12 @@ body {
 }
 
 /* ===== 공통 메시지 스타일 ===== */
+/* 
+ * 성공/에러 메시지의 공통 스타일
+ * 토스트 형태의 알림 메시지
+ * 키워드: message, toast, notification, success, error, alert
+ */
+
 .success-message, .error-message {
     position: fixed;
     top: var(--spacing-lg);
@@ -1184,7 +1248,13 @@ body {
     }
 }
 
-/* 내 일지 탭 스타일 */
+/* ===== 내 일지 탭 스타일 ===== */
+/* 
+ * 사용자가 작성한 여행 일지 목록 화면
+ * 일지 조회, 편집, 삭제 기능
+ * 키워드: my-logs, travel-logs, list, view, edit, delete
+ */
+
 .my-logs-container {
     padding: 20px;
     max-width: 800px;
@@ -1209,6 +1279,12 @@ body {
 }
 
 /* ===== 공통 섹션 스타일 ===== */
+/* 
+ * 허브 화면의 공통 섹션 스타일
+ * 카드 형태의 컨테이너와 헤더
+ * 키워드: section, card, container, hub, dashboard
+ */
+
 .hub-section {
     background: var(--white);
     border-radius: var(--border-radius-xl);
@@ -2226,6 +2302,11 @@ input:disabled + .toggle-slider {
 }
 
 /* ===== 트래블 레포트 스타일 ===== */
+/* 
+ * 여행 통계 및 분석 리포트 화면
+ * 여행 DNA, 차트, 인사이트 등
+ * 키워드: travel-report, analytics, statistics, charts, insights
+ */
 
 /* 여행 DNA 섹션 */
 .travel-dna-section .dna-content {
@@ -2614,7 +2695,13 @@ input:disabled + .toggle-slider {
     }
 }
 
-/* 검색 탭 스타일 */
+/* ===== 검색 탭 스타일 ===== */
+/* 
+ * 여행 일지 검색 및 필터링 화면
+ * 키워드 검색, 날짜, 국가, 평가 등 필터
+ * 키워드: search, filter, find, query, filter
+ */
+
 .search-container {
     padding: 20px;
     max-width: 800px;
