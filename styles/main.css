@@ -94,11 +94,6 @@
 }
 
 /* ===== 기본 리셋 및 전역 스타일 ===== */
-/* 
- * 기본 CSS 리셋 및 전역 스타일
- * 모든 페이지에서 공통으로 사용되는 기본 스타일
- */
-
 * {
     margin: 0;
     padding: 0;
@@ -121,12 +116,6 @@ body {
 }
 
 /* ===== 로그인 화면 ===== */
-/* 
- * 로그인 및 회원가입 화면 스타일
- * 그라데이션 배경과 카드 형태의 로그인 폼
- * 키워드: login, auth, signin, authentication
- */
-
 .login-screen {
     display: flex;
     align-items: center;
@@ -310,12 +299,6 @@ body {
 }
 
 /* ===== 메인 앱 화면 ===== */
-/* 
- * 로그인 후 메인 애플리케이션 화면
- * 탭 기반 네비게이션과 콘텐츠 영역
- * 키워드: main, app, dashboard, home
- */
-
 .main-app {
     display: flex;
     flex-direction: column;
@@ -341,12 +324,6 @@ body {
 }
 
 /* ===== 탭 네비게이션 ===== */
-/* 
- * 하단 탭 네비게이션 바
- * 홈, 일지 추가, 내 일지, 검색, 캘린더 탭
- * 키워드: tab, navigation, menu, bottom-nav
- */
-
 #tab-navigation {
     display: flex;
     background-color: var(--bg-primary);
@@ -447,13 +424,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* ===== 반응형 디자인 ===== */
-/* 
- * 다양한 화면 크기에 대응하는 반응형 스타일
- * 모바일, 태블릿, 데스크톱 최적화
- * 키워드: responsive, mobile, tablet, desktop, media-query
- */
-
+/* 반응형 디자인 */
 @media (min-width: 768px) {
     .login-container {
         padding: 50px;
@@ -491,13 +462,7 @@ body {
     }
 }
 
-/* ===== 다크 모드 지원 ===== */
-/* 
- * 시스템 다크 모드 자동 감지 및 적용
- * 색상 스키마에 따른 자동 테마 전환
- * 키워드: dark-mode, theme, color-scheme, prefers-color-scheme
- */
-
+/* 다크 모드 지원 */
 @media (prefers-color-scheme: dark) {
     body {
         background-color: #1a1a1a;
@@ -576,13 +541,7 @@ body {
     }
 }
 
-/* ===== 모바일 환경 최적화 ===== */
-/* 
- * 모바일 디바이스 최적화 스타일
- * 터치 영역, 입력 필드, 반응성 개선
- * 키워드: mobile, touch, optimization, mobile-first
- */
-
+/* 모바일 환경 최적화 */
 @media (max-width: 768px) {
     /* 터치 영역 최적화 */
     button, .tab-btn, .login-btn, .demo-btn {
@@ -598,7 +557,6 @@ body {
         min-height: 44px;
         touch-action: manipulation;
         -webkit-appearance: none;
-        appearance: none;
         border-radius: 8px;
     }
     
@@ -685,11 +643,6 @@ body {
 }
 
 /* ===== 일지 추가 탭 스타일 ===== */
-/* 
- * 여행 일지를 추가하는 폼 화면
- * 국가, 도시, 날짜, 평가, 메모 등 입력
- * 키워드: add-log, travel-log, form, create, new
- */
 
 .add-log-container {
     max-width: 800px;
@@ -725,71 +678,65 @@ body {
     gap: 24px;
 }
 
-/* ===== 공통 폼 스타일 ===== */
-/* 
- * 모든 폼에서 공통으로 사용되는 스타일
- * 입력 필드, 라벨, 힌트, 에러 메시지 등
- * 키워드: form, input, label, validation, error
- */
-
+/* 폼 그룹 스타일 */
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: 8px;
 }
 
 .form-label {
-    font-weight: var(--font-semibold);
-    color: var(--text-secondary);
-    font-size: var(--font-sm);
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 14px;
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: 4px;
 }
 
 .form-label.required::after {
     content: '*';
-    color: var(--error-color);
-    font-weight: var(--font-bold);
+    color: #e53e3e;
+    font-weight: 700;
 }
 
 .form-input {
-    padding: var(--spacing-md) var(--spacing-md);
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius-md);
-    font-size: var(--font-base);
-    transition: all var(--transition-normal);
-    background-color: var(--bg-tertiary);
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #f7fafc;
     width: 100%;
 }
 
 .form-input:focus {
     outline: none;
-    border-color: var(--primary-color);
-    background-color: var(--white);
+    border-color: #667eea;
+    background-color: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-input:disabled {
-    background-color: var(--gray-100);
-    color: var(--gray-500);
+    background-color: #f1f3f4;
+    color: #9ca3af;
     cursor: not-allowed;
 }
 
 .form-input:invalid {
-    border-color: var(--error-color);
+    border-color: #e53e3e;
 }
 
 .form-hint {
-    font-size: var(--font-xs);
-    color: var(--text-muted);
+    font-size: 12px;
+    color: #718096;
     font-style: italic;
 }
 
 .form-error {
-    font-size: var(--font-xs);
-    color: var(--error-color);
-    min-height: var(--spacing-md);
+    font-size: 12px;
+    color: #e53e3e;
+    min-height: 16px;
     display: none;
 }
 
@@ -799,12 +746,12 @@ body {
 
 /* 텍스트 영역 */
 .form-textarea {
-    padding: var(--spacing-md) var(--spacing-md);
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius-md);
-    font-size: var(--font-base);
-    transition: all var(--transition-normal);
-    background-color: var(--bg-tertiary);
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background-color: #f7fafc;
     width: 100%;
     resize: vertical;
     font-family: inherit;
@@ -812,8 +759,8 @@ body {
 
 .form-textarea:focus {
     outline: none;
-    border-color: var(--primary-color);
-    background-color: var(--white);
+    border-color: #667eea;
+    background-color: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -996,96 +943,84 @@ body {
     filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.4));
 }
 
-/* ===== 공통 버튼 스타일 ===== */
-/* 
- * 폼 액션 버튼들의 공통 스타일
- * 제출, 리셋, 취소 등 다양한 액션 버튼
- * 키워드: button, submit, reset, action, form-actions
- */
-
+/* 폼 액션 버튼 */
 .form-actions {
     display: flex;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-xl);
-    border-top: 2px solid var(--gray-200);
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid #f1f3f4;
 }
 
 .submit-btn, .reset-btn {
     flex: 1;
-    padding: var(--spacing-md) var(--spacing-xl);
+    padding: 16px 24px;
     border: none;
-    border-radius: var(--border-radius-md);
-    font-size: var(--font-base);
-    font-weight: var(--font-semibold);
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-normal);
-    min-height: var(--spacing-3xl);
+    transition: all 0.3s ease;
+    min-height: 48px;
 }
 
 .submit-btn {
-    background-color: var(--primary-color);
-    color: var(--white);
+    background-color: #667eea;
+    color: white;
 }
 
 .submit-btn:hover:not(:disabled) {
-    background-color: var(--primary-dark);
+    background-color: #5a67d8;
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
 .submit-btn:disabled {
-    background-color: var(--gray-400);
+    background-color: #cbd5e0;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
 }
 
 .reset-btn {
-    background-color: var(--gray-300);
-    color: var(--text-secondary);
+    background-color: #e2e8f0;
+    color: #4a5568;
 }
 
 .reset-btn:hover {
-    background-color: var(--gray-400);
+    background-color: #cbd5e0;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(203, 213, 224, 0.3);
 }
 
-/* ===== 공통 메시지 스타일 ===== */
-/* 
- * 성공/에러 메시지의 공통 스타일
- * 토스트 형태의 알림 메시지
- * 키워드: message, toast, notification, success, error, alert
- */
-
+/* 메시지 스타일 */
 .success-message, .error-message {
     position: fixed;
-    top: var(--spacing-lg);
-    right: var(--spacing-lg);
-    z-index: var(--z-modal);
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
     animation: slideInRight 0.3s ease;
 }
 
 .success-content, .error-content {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-lg);
-    font-weight: var(--font-medium);
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    font-weight: 500;
 }
 
 .success-content {
     background-color: #f0fff4;
-    border: 2px solid var(--success-color);
+    border: 2px solid #68d391;
     color: #22543d;
 }
 
 .error-content {
     background-color: #fed7d7;
-    border: 2px solid var(--error-color);
+    border: 2px solid #fc8181;
     color: #742a2a;
 }
 
@@ -1248,13 +1183,7 @@ body {
     }
 }
 
-/* ===== 내 일지 탭 스타일 ===== */
-/* 
- * 사용자가 작성한 여행 일지 목록 화면
- * 일지 조회, 편집, 삭제 기능
- * 키워드: my-logs, travel-logs, list, view, edit, delete
- */
-
+/* 내 일지 탭 스타일 */
 .my-logs-container {
     padding: 20px;
     max-width: 800px;
@@ -1278,30 +1207,24 @@ body {
     font-size: 16px;
 }
 
-/* ===== 공통 섹션 스타일 ===== */
-/* 
- * 허브 화면의 공통 섹션 스타일
- * 카드 형태의 컨테이너와 헤더
- * 키워드: section, card, container, hub, dashboard
- */
-
+/* 허브 화면 스타일 */
 .hub-section {
-    background: var(--white);
-    border-radius: var(--border-radius-xl);
-    padding: var(--spacing-xl);
-    margin-bottom: var(--spacing-lg);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--gray-300);
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
 }
 
 .section-header {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 20px;
 }
 
 .section-title {
-    font-size: var(--font-xl);
-    font-weight: var(--font-semibold);
-    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
 }
 
 /* 설정 버튼이 있는 헤더 */
@@ -2302,11 +2225,6 @@ input:disabled + .toggle-slider {
 }
 
 /* ===== 트래블 레포트 스타일 ===== */
-/* 
- * 여행 통계 및 분석 리포트 화면
- * 여행 DNA, 차트, 인사이트 등
- * 키워드: travel-report, analytics, statistics, charts, insights
- */
 
 /* 여행 DNA 섹션 */
 .travel-dna-section .dna-content {
@@ -2695,13 +2613,7 @@ input:disabled + .toggle-slider {
     }
 }
 
-/* ===== 검색 탭 스타일 ===== */
-/* 
- * 여행 일지 검색 및 필터링 화면
- * 키워드 검색, 날짜, 국가, 평가 등 필터
- * 키워드: search, filter, find, query, filter
- */
-
+/* 검색 탭 스타일 */
 .search-container {
     padding: 20px;
     max-width: 800px;
