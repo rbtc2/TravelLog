@@ -824,12 +824,12 @@ class MyLogsTab {
                         </div>
                     ` : ''}
                     
-                    ${log.memo ? `
-                        <div class="log-memo">
-                            <span class="memo-icon">💭</span>
-                            <span class="memo-text">${log.memo}</span>
-                        </div>
-                    ` : ''}
+                                         ${log.memo ? `
+                         <div class="log-memo">
+                             <span class="memo-icon">💭</span>
+                             <span class="memo-text">${this.truncateMemo(log.memo)}</span>
+                         </div>
+                     ` : ''}
                 </div>
                 
                 <div class="log-footer">
@@ -941,6 +941,39 @@ class MyLogsTab {
         return styleTexts[style] || style;
     }
     
+    /**
+     * 메모를 적절한 길이로 자르고 말줄임표를 추가합니다
+     */
+    truncateMemo(memo) {
+        if (!memo) return '';
+        
+        // 화면 크기에 따른 동적 길이 제한
+        let maxLength;
+        if (window.innerWidth <= 480) {
+            maxLength = 60; // 매우 작은 모바일
+        } else if (window.innerWidth <= 768) {
+            maxLength = 80; // 일반 모바일
+        } else if (window.innerWidth <= 1024) {
+            maxLength = 100; // 태블릿
+        } else {
+            maxLength = 120; // 데스크톱
+        }
+        
+        if (memo.length <= maxLength) {
+            return memo;
+        }
+        
+        // 단어 단위로 자르기 (마지막 단어가 잘리지 않도록)
+        const truncated = memo.substring(0, maxLength);
+        const lastSpaceIndex = truncated.lastIndexOf(' ');
+        
+        if (lastSpaceIndex > maxLength * 0.7) { // 70% 이상이면 단어 단위로 자르기
+            return truncated.substring(0, lastSpaceIndex) + '...';
+        } else {
+            return truncated + '...';
+        }
+    }
+    
     bindEvents() {
         if (this.currentView === 'hub') {
             this.bindHubEvents();
@@ -953,6 +986,9 @@ class MyLogsTab {
         } else {
             this.bindLogsEvents();
         }
+        
+        // 윈도우 리사이즈 시 메모 길이 재조정
+        this.bindResizeEvent();
     }
     
     /**
@@ -1239,6 +1275,26 @@ class MyLogsTab {
                 }
             }, 300);
         }, duration);
+    }
+    
+    /**
+     * 윈도우 리사이즈 이벤트를 바인딩합니다
+     */
+    bindResizeEvent() {
+        let resizeTimeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // 현재 뷰가 로그 목록인 경우에만 메모 재렌더링
+                if (this.currentView === 'logs') {
+                    this.renderContent();
+                    this.bindEvents();
+                }
+            }, 250); // 250ms 디바운싱
+        };
+        
+        window.addEventListener('resize', handleResize);
+        this.eventListeners.push({ element: window, event: 'resize', handler: handleResize });
     }
     
     /**

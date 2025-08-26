@@ -282,7 +282,7 @@
 .log-travel-style,
 .log-memo {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--spacing-sm);
     font-size: var(--font-sm);
     color: var(--text-secondary);
@@ -296,6 +296,16 @@
 .style-text,
 .memo-text {
     font-weight: var(--font-medium);
+}
+
+.memo-text {
+    line-height: 1.4;
+    max-height: 4.2em; /* 약 3줄 높이로 제한 */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* 3줄로 제한 */
+    -webkit-box-orient: vertical;
+    word-break: break-word;
 }
 
 .rating-label {
@@ -761,6 +771,12 @@
     
     .insight-text {
         font-size: 14px;
+    }
+    
+    /* 모바일에서 메모 높이 제한 */
+    .memo-text {
+        max-height: 3.5em; /* 모바일에서는 2-3줄로 제한 */
+        -webkit-line-clamp: 2;
     }
 }
 
