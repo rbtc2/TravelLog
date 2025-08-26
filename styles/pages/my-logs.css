@@ -64,6 +64,21 @@
     margin-bottom: 30px;
 }
 
+/* 클릭 가능한 일지 아이템 */
+.log-item.clickable {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.log-item.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.log-item.clickable:active {
+    transform: translateY(0);
+}
+
 /* Ghost 스타일 액션 버튼 */
 .log-action-btn {
     background: none;

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelLog - 일정 상세 화면 테스트</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        /* 테스트용 추가 스타일 */
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            color: white;
+        }
+        
+        .test-title {
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+        }
+        
+        .test-subtitle {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: #4299e1;
+            color: white;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+        }
+        
+        .test-btn.secondary {
+            background: #718096;
+        }
+        
+        .test-btn.secondary:hover {
+            background: #4a5568;
+        }
+        
+        .demo-data-info {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .demo-data-info h3 {
+            margin: 0 0 15px 0;
+            color: #2d3748;
+        }
+        
+        .demo-data-info ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #4a5568;
+        }
+        
+        .demo-data-info li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">🗺️ TravelLog - 일정 상세 화면 테스트</h1>
+            <p class="test-subtitle">나의 일정 상세 화면의 스켈레톤 UI를 테스트합니다</p>
+        </div>
+        
+        <div class="demo-data-info">
+            <h3>📋 테스트 데이터 정보</h3>
+            <ul>
+                <li><strong>일본 - 도쿄:</strong> 2024-03-15 ~ 2024-03-20 (6일), 레저/휴양, 평점 5/5</li>
+                <li><strong>프랑스 - 파리:</strong> 2024-02-10 ~ 2024-02-15 (6일), 문화 체험, 평점 4/5</li>
+                <li><strong>태국 - 방콕:</strong> 2024-01-05 ~ 2024-01-10 (6일), 가족 여행, 평점 4/5</li>
+            </ul>
+        </div>
+        
+        <div class="test-controls">
+            <button class="test-btn" onclick="showHub()">🏠 허브 화면</button>
+            <button class="test-btn" onclick="showLogsList()">📅 일정 목록</button>
+            <button class="test-btn" onclick="showLogDetail('demo1')">🇯🇵 도쿄 상세</button>
+            <button class="test-btn" onclick="showLogDetail('demo2')">🇫🇷 파리 상세</button>
+            <button class="test-btn" onclick="showLogDetail('demo3')">🇹🇭 방콕 상세</button>
+            <button class="test-btn secondary" onclick="clearContainer()">🗑️ 컨테이너 비우기</button>
+        </div>
+        
+        <div id="test-container"></div>
+    </div>
+
+    <script type="module">
+        import MyLogsTab from './js/tabs/my-logs.js';
+        
+        const testContainer = document.getElementById('test-container');
+        const myLogsTab = MyLogsTab;
+        
+        // 전역 함수들
+        window.showHub = () => {
+            myLogsTab.currentView = 'hub';
+            myLogsTab.currentLogId = null;
+            myLogsTab.render(testContainer);
+            myLogsTab.bindEvents();
+        };
+        
+        window.showLogsList = () => {
+            myLogsTab.currentView = 'logs';
+            myLogsTab.currentLogId = null;
+            myLogsTab.render(testContainer);
+            myLogsTab.bindEvents();
+        };
+        
+        window.showLogDetail = (logId) => {
+            myLogsTab.currentView = 'detail';
+            myLogsTab.currentLogId = logId;
+            myLogsTab.render(testContainer);
+            myLogsTab.bindEvents();
+        };
+        
+        window.clearContainer = () => {
+            testContainer.innerHTML = '';
+        };
+        
+        // 초기 로드
+        window.showHub();
+    </script>
+</body>
+</html>

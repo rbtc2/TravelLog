@@ -3,6 +3,8 @@
  * 허브 화면으로 구성: 프로필, 요약, 보관함
  */
 
+import LogDetailModule from '../modules/log-detail.js';
+
 class MyLogsTab {
     constructor() {
         this.isInitialized = false;
@@ -10,7 +12,9 @@ class MyLogsTab {
         this.logs = [];
         this.currentPage = 1;
         this.logsPerPage = 10;
-        this.currentView = 'hub'; // 'hub', 'logs', 'settings'
+        this.currentView = 'hub'; // 'hub', 'logs', 'settings', 'detail'
+        this.currentLogId = null;
+        this.logDetailModule = new LogDetailModule();
     }
     
     render(container) {
@@ -231,6 +235,8 @@ class MyLogsTab {
             this.renderSettings();
         } else if (this.currentView === 'travel-report') {
             this.renderTravelReport();
+        } else if (this.currentView === 'detail') {
+            this.renderLogDetail();
         } else {
             this.renderLogsList();
         }
@@ -698,6 +704,26 @@ class MyLogsTab {
     }
     
     /**
+     * 일정 상세 화면을 렌더링합니다
+     */
+    renderLogDetail() {
+        if (!this.currentLogId) {
+            this.currentView = 'logs';
+            this.renderContent();
+            return;
+        }
+        
+        const log = this.logs.find(l => l.id === this.currentLogId);
+        if (!log) {
+            this.currentView = 'logs';
+            this.renderContent();
+            return;
+        }
+        
+        this.logDetailModule.render(this.container, log);
+    }
+    
+    /**
      * 일지 목록을 표시하는 UI
      */
     renderLogsList() {
@@ -739,7 +765,7 @@ class MyLogsTab {
         const ratingStars = '★'.repeat(parseInt(log.rating)) + '☆'.repeat(5 - parseInt(log.rating));
         
         return `
-            <div class="log-item" data-log-id="${log.id}">
+            <div class="log-item clickable" data-log-id="${log.id}">
                 <!-- 1행: 헤더 (국가명 + 기간/목적 칩 + 편집/삭제 아이콘) -->
                 <div class="log-header">
                     <div class="log-header-left">
@@ -909,6 +935,8 @@ class MyLogsTab {
             this.bindSettingsEvents();
         } else if (this.currentView === 'travel-report') {
             this.bindTravelReportEvents();
+        } else if (this.currentView === 'detail') {
+            this.bindDetailEvents();
         } else {
             this.bindLogsEvents();
         }
@@ -974,10 +1002,25 @@ class MyLogsTab {
             });
         }
         
+        // 일지 아이템 클릭 (상세 화면으로 이동)
+        const logItems = document.querySelectorAll('.log-item.clickable');
+        logItems.forEach(item => {
+            this.addEventListener(item, 'click', (e) => {
+                // 편집/삭제 버튼 클릭 시에는 상세 화면으로 이동하지 않음
+                if (e.target.closest('.log-action-btn')) {
+                    return;
+                }
+                
+                const logId = e.currentTarget.dataset.logId;
+                this.showLogDetail(logId);
+            });
+        });
+        
         // 일지 편집 버튼들
         const editBtns = document.querySelectorAll('.edit-btn');
         editBtns.forEach(btn => {
             this.addEventListener(btn, 'click', (e) => {
+                e.stopPropagation(); // 상세 화면 이동 방지
                 const logId = e.currentTarget.dataset.logId;
                 this.editLog(logId);
             });
@@ -987,6 +1030,7 @@ class MyLogsTab {
         const deleteBtns = document.querySelectorAll('.delete-btn');
         deleteBtns.forEach(btn => {
             this.addEventListener(btn, 'click', (e) => {
+                e.stopPropagation(); // 상세 화면 이동 방지
                 const logId = e.currentTarget.dataset.logId;
                 this.deleteLog(logId);
             });
@@ -1062,6 +1106,40 @@ class MyLogsTab {
     }
     
     /**
+     * 상세 화면의 이벤트를 바인딩합니다
+     */
+    bindDetailEvents() {
+        // 상세 화면에서 뒤로 가기 이벤트
+        this.container.addEventListener('logDetailBack', (e) => {
+            this.currentView = 'logs';
+            this.currentLogId = null;
+            this.renderContent();
+            this.bindEvents();
+        });
+        
+        // 상세 화면에서 삭제 이벤트
+        this.container.addEventListener('logDetailDelete', (e) => {
+            const logId = e.detail.logId;
+            this.deleteLog(logId);
+            // 삭제 후 목록으로 돌아가기
+            this.currentView = 'logs';
+            this.currentLogId = null;
+            this.renderContent();
+            this.bindEvents();
+        });
+    }
+    
+    /**
+     * 일정 상세 화면을 표시합니다
+     */
+    showLogDetail(logId) {
+        this.currentLogId = logId;
+        this.currentView = 'detail';
+        this.renderContent();
+        this.bindEvents();
+    }
+    
+    /**
      * 일지 편집 (향후 구현 예정)
      */
     editLog(logId) {
@@ -1128,11 +1206,17 @@ class MyLogsTab {
             }
         });
         
+        // 상세 모듈 정리
+        if (this.logDetailModule) {
+            this.logDetailModule.cleanup();
+        }
+        
         this.eventListeners = [];
         this.isInitialized = false;
         this.logs = [];
         this.currentPage = 1;
         this.currentView = 'hub';
+        this.currentLogId = null;
         
         // 메모리 정리
         this.container = null;
