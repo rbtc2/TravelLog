@@ -166,6 +166,10 @@ class LogEditModule {
         confirmBtn.addEventListener('click', () => {
             if (this.validateForm(form)) {
                 const updatedData = this.getFormData(form);
+                console.log('LogEditModule: 편집 완료, 콜백 호출', {
+                    logId: this.currentLog.id,
+                    updatedData: updatedData
+                });
                 onSave(this.currentLog.id, updatedData);
                 closeModal();
             }

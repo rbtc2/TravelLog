@@ -8,15 +8,17 @@ import LogEditModule from '../modules/log-edit.js';
 import { ToastManager } from '../modules/ui-components/toast-manager.js';
 import { EventManager } from '../modules/utils/event-manager.js';
 import { ModalManager } from '../modules/ui-components/modal-manager.js';
+import { StorageManager } from '../modules/utils/storage-manager.js';
+import { LogService } from '../modules/services/log-service.js';
+import { DemoData } from '../modules/utils/demo-data.js';
 
 class MyLogsTab {
     constructor() {
         this.isInitialized = false;
         this.eventManager = new EventManager();
         this.modalManager = new ModalManager();
-        this.logs = [];
-        this.currentPage = 1;
-        this.logsPerPage = 10;
+        this.storageManager = new StorageManager();
+        this.logService = new LogService();
         this.currentView = 'hub'; // 'hub', 'logs', 'settings', 'detail'
         this.currentLogId = null;
         this.logDetailModule = new LogDetailModule();
@@ -47,19 +49,22 @@ class MyLogsTab {
      */
     loadLogs() {
         try {
-            const storedLogs = localStorage.getItem('travelLogs');
-            this.logs = storedLogs ? JSON.parse(storedLogs) : [];
+            // StorageManager를 사용하여 데이터 로드
+            const storedLogs = this.storageManager.loadLogs();
+            
+            // LogService에 데이터 설정
+            this.logService.setLogs(storedLogs);
             
             // 데모 데이터가 없으면 샘플 데이터 추가
-            if (this.logs.length === 0) {
+            if (this.logService.getAllLogs().length === 0) {
                 this.addDemoData();
             }
             
             // 날짜 순으로 정렬 (최신이 맨 위)
-            this.logs.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+            this.logService.sortLogsByDate('desc');
         } catch (error) {
             console.error('일지 데이터 로드 실패:', error);
-            this.logs = [];
+            this.logService.setLogs([]);
         }
     }
     
@@ -67,80 +72,37 @@ class MyLogsTab {
      * 데모 데이터를 추가합니다
      */
     addDemoData() {
-        const demoLogs = [
-            {
-                id: 'demo1',
-                country: '일본',
-                city: '도쿄',
-                startDate: '2024-03-15',
-                endDate: '2024-03-20',
-                purpose: 'tourism',
-                rating: '5',
-                travelStyle: 'couple',
-                memo: '도쿄의 봄을 만끽한 환상적인 여행이었습니다. 벚꽃 축제와 맛집 탐방이 특히 인상적이었어요.',
-                createdAt: '2024-03-21T10:00:00.000Z'
-            },
-            {
-                id: 'demo2',
-                country: '프랑스',
-                city: '파리',
-                startDate: '2024-02-10',
-                endDate: '2024-02-15',
-                purpose: 'tourism',
-                rating: '4',
-                travelStyle: 'solo',
-                memo: '루브르 박물관과 에펠탑을 방문했습니다. 예술의 도시 파리의 매력에 흠뻑 빠졌어요.',
-                createdAt: '2024-02-16T14:30:00.000Z'
-            },
-            {
-                id: 'demo3',
-                country: '태국',
-                city: '방콕',
-                startDate: '2024-01-05',
-                endDate: '2024-01-10',
-                purpose: 'tourism',
-                rating: '4',
-                travelStyle: 'family',
-                memo: '가족과 함께한 태국 여행. 따뜻한 날씨와 맛있는 태국 음식이 기억에 남습니다.',
-                createdAt: '2024-01-11T09:15:00.000Z'
-            }
-        ];
+        // DemoData 모듈을 사용하여 데모 데이터 가져오기
+        const demoLogs = DemoData.getDefaultLogs();
         
-        this.logs = demoLogs;
-        this.saveLogs();
+        // LogService에 데모 데이터 설정
+        this.logService.setLogs(demoLogs);
+        
+        // StorageManager를 사용하여 저장
+        this.storageManager.saveLogs(demoLogs);
     }
     
-    /**
-     * 일지 데이터를 로컬 스토리지에 저장합니다
-     */
-    saveLogs() {
-        try {
-            localStorage.setItem('travelLogs', JSON.stringify(this.logs));
-        } catch (error) {
-            console.error('일지 데이터 저장 실패:', error);
-        }
-    }
+
     
     /**
      * 새로운 일지를 추가합니다
      */
     addLog(logData) {
-        const newLog = {
-            id: Date.now().toString(),
-            ...logData,
-            createdAt: new Date().toISOString()
-        };
+        // LogService를 사용하여 로그 생성
+        const newLog = this.logService.createLog(logData);
         
-        this.logs.unshift(newLog); // 맨 앞에 추가
-        this.saveLogs();
-        this.renderContent(); // UI 업데이트
+        // StorageManager를 사용하여 저장
+        this.storageManager.saveLogs(this.logService.getAllLogs());
+        
+        // UI 업데이트
+        this.renderContent();
     }
     
     /**
      * 일지를 삭제합니다
      */
     deleteLog(logId) {
-        const logToDelete = this.logs.find(log => log.id === logId);
+        const logToDelete = this.logService.getLogById(logId);
         if (!logToDelete) return;
         
         this.showDeleteConfirmModal(logToDelete);
@@ -159,19 +121,24 @@ class MyLogsTab {
      * 실제 삭제를 수행합니다
      */
     performDelete(logId) {
-        this.logs = this.logs.filter(log => log.id !== logId);
-        this.saveLogs();
+        // LogService를 사용하여 로그 삭제
+        const deleted = this.logService.deleteLog(logId);
         
-        // 현재 페이지가 비어있고 이전 페이지가 있으면 이전 페이지로 이동
-        const totalPages = Math.ceil(this.logs.length / this.logsPerPage);
-        if (this.currentPage > totalPages && totalPages > 0) {
-            this.currentPage = totalPages;
+        if (deleted) {
+            // StorageManager를 사용하여 저장
+            this.storageManager.saveLogs(this.logService.getAllLogs());
+            
+            // 현재 페이지가 비어있고 이전 페이지가 있으면 이전 페이지로 이동
+            const totalPages = Math.ceil(this.logService.getAllLogs().length / this.logService.logsPerPage);
+            if (this.logService.currentPage > totalPages && totalPages > 0) {
+                this.logService.setCurrentPage(totalPages);
+            }
+            
+            this.renderContent(); // UI 업데이트
+            
+            // 삭제 완료 토스트 메시지
+            ToastManager.success('일지가 성공적으로 삭제되었습니다.', 3000);
         }
-        
-        this.renderContent(); // UI 업데이트
-        
-        // 삭제 완료 토스트 메시지
-                    ToastManager.success('일지가 성공적으로 삭제되었습니다.', 3000);
     }
     
     renderContent() {
@@ -229,7 +196,7 @@ class MyLogsTab {
                         <div class="summary-item">
                             <div class="summary-icon">📝</div>
                             <div class="summary-details">
-                                <div class="summary-value">${this.logs.length}</div>
+                                <div class="summary-value">${this.logService.getAllLogs().length}</div>
                                 <div class="summary-label">여행 일지 수</div>
                             </div>
                         </div>
@@ -659,7 +626,7 @@ class MyLogsTab {
             return;
         }
         
-        const log = this.logs.find(l => l.id === this.currentLogId);
+        const log = this.logService.getLogById(this.currentLogId);
         if (!log) {
             this.currentView = 'logs';
             this.renderContent();
@@ -673,10 +640,11 @@ class MyLogsTab {
      * 일지 목록을 표시하는 UI
      */
     renderLogsList() {
-        const startIndex = (this.currentPage - 1) * this.logsPerPage;
-        const endIndex = startIndex + this.logsPerPage;
-        const currentLogs = this.logs.slice(startIndex, endIndex);
-        const totalPages = Math.ceil(this.logs.length / this.logsPerPage);
+        // LogService를 사용하여 페이지네이션된 로그 가져오기
+        const pageData = this.logService.getLogsByPage(
+            this.logService.currentPage, 
+            this.logService.logsPerPage
+        );
         
         this.container.innerHTML = `
             <div class="my-logs-container">
@@ -685,16 +653,16 @@ class MyLogsTab {
                         <button class="back-btn" id="back-to-hub">◀ 뒤로</button>
                         <div class="header-content">
                             <h1 class="my-logs-title">📅 나의 일정</h1>
-                            <p class="my-logs-subtitle">총 ${this.logs.length}개의 여행 일지</p>
+                            <p class="my-logs-subtitle">총 ${this.logService.getAllLogs().length}개의 여행 일지</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="logs-list">
-                    ${currentLogs.map(log => this.renderLogItem(log)).join('')}
+                    ${pageData.logs.map(log => this.renderLogItem(log)).join('')}
                 </div>
                 
-                ${this.renderPagination(totalPages)}
+                ${this.renderPagination(pageData.totalPages)}
             </div>
         `;
     }
@@ -794,7 +762,7 @@ class MyLogsTab {
         
         const pages = [];
         const maxVisiblePages = 5;
-        let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+        let startPage = Math.max(1, this.logService.currentPage - Math.floor(maxVisiblePages / 2));
         let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
         
         if (endPage - startPage + 1 < maxVisiblePages) {
@@ -802,22 +770,22 @@ class MyLogsTab {
         }
         
         // 이전 페이지 버튼
-        if (this.currentPage > 1) {
-            pages.push(`<button class="page-btn prev-page" data-page="${this.currentPage - 1}">◀ 이전</button>`);
+        if (this.logService.currentPage > 1) {
+            pages.push(`<button class="page-btn prev-page" data-page="${this.logService.currentPage - 1}">◀ 이전</button>`);
         }
         
         // 페이지 번호들
         for (let i = startPage; i <= endPage; i++) {
             pages.push(`
-                <button class="page-btn ${i === this.currentPage ? 'active' : ''}" data-page="${i}">
+                <button class="page-btn ${i === this.logService.currentPage ? 'active' : ''}" data-page="${i}">
                     ${i}
                 </button>
             `);
         }
         
         // 다음 페이지 버튼
-        if (this.currentPage < totalPages) {
-            pages.push(`<button class="page-btn next-page" data-page="${this.currentPage + 1}">다음 ▶</button>`);
+        if (this.logService.currentPage < totalPages) {
+            pages.push(`<button class="page-btn next-page" data-page="${this.logService.currentPage + 1}">다음 ▶</button>`);
         }
         
         return `
@@ -984,18 +952,44 @@ class MyLogsTab {
      * 일지 목록 화면의 이벤트를 바인딩합니다
      */
     bindLogsEvents() {
+        console.log('MyLogsTab: bindLogsEvents 시작');
+        
         // 뒤로 가기 버튼
         const backBtn = document.getElementById('back-to-hub');
         if (backBtn) {
             this.eventManager.add(backBtn, 'click', () => {
                 this.currentView = 'hub';
-                this.currentPage = 1; // 페이지 초기화
+                this.logService.setCurrentPage(1); // 페이지 초기화
                 this.renderContent();
                 this.bindEvents();
             });
         }
         
-        // 일지 아이템 클릭 (상세 화면으로 이동)
+        // 일지 편집 버튼들 (먼저 바인딩)
+        const editBtns = document.querySelectorAll('.edit-btn');
+        console.log('MyLogsTab: 편집 버튼 개수:', editBtns.length);
+        editBtns.forEach((btn, index) => {
+            this.eventManager.add(btn, 'click', (e) => {
+                e.stopPropagation(); // 상세 화면 이동 방지
+                const logId = e.currentTarget.dataset.logId;
+                console.log(`MyLogsTab: 편집 버튼 ${index} 클릭됨, logId:`, logId);
+                this.editLog(logId);
+            });
+        });
+        
+        // 일지 삭제 버튼들
+        const deleteBtns = document.querySelectorAll('.delete-btn');
+        console.log('MyLogsTab: 삭제 버튼 개수:', deleteBtns.length);
+        deleteBtns.forEach((btn, index) => {
+            this.eventManager.add(btn, 'click', (e) => {
+                e.stopPropagation(); // 상세 화면 이동 방지
+                const logId = e.currentTarget.dataset.logId;
+                console.log(`MyLogsTab: 삭제 버튼 ${index} 클릭됨, logId:`, logId);
+                this.deleteLog(logId);
+            });
+        });
+        
+        // 일지 아이템 클릭 (상세 화면으로 이동) - 마지막에 바인딩
         const logItems = document.querySelectorAll('.log-item.clickable');
         logItems.forEach(item => {
             this.eventManager.add(item, 'click', (e) => {
@@ -1009,38 +1003,20 @@ class MyLogsTab {
             });
         });
         
-        // 일지 편집 버튼들
-        const editBtns = document.querySelectorAll('.edit-btn');
-        editBtns.forEach(btn => {
-            this.eventManager.add(btn, 'click', (e) => {
-                e.stopPropagation(); // 상세 화면 이동 방지
-                const logId = e.currentTarget.dataset.logId;
-                this.editLog(logId);
-            });
-        });
-        
-        // 일지 삭제 버튼들
-        const deleteBtns = document.querySelectorAll('.delete-btn');
-        deleteBtns.forEach(btn => {
-            this.eventManager.add(btn, 'click', (e) => {
-                e.stopPropagation(); // 상세 화면 이동 방지
-                const logId = e.currentTarget.dataset.logId;
-                this.deleteLog(logId);
-            });
-        });
-        
         // 페이지네이션 버튼들
         const pageBtns = document.querySelectorAll('.page-btn');
         pageBtns.forEach(btn => {
             this.eventManager.add(btn, 'click', (e) => {
                 const page = parseInt(e.currentTarget.dataset.page);
-                if (page && page !== this.currentPage) {
-                    this.currentPage = page;
+                if (page && page !== this.logService.currentPage) {
+                    this.logService.setCurrentPage(page);
                     this.renderContent();
                     this.bindEvents();
                 }
             });
         });
+        
+        console.log('MyLogsTab: bindLogsEvents 완료');
     }
     
     /**
@@ -1142,7 +1118,7 @@ class MyLogsTab {
      * 일지를 편집합니다
      */
     editLog(logId) {
-        const logToEdit = this.logs.find(log => log.id === logId);
+        const logToEdit = this.logService.getLogById(logId);
         if (!logToEdit) return;
         
         this.logEditModule.showEditModal(logToEdit, (logId, updatedData) => {
@@ -1154,26 +1130,24 @@ class MyLogsTab {
      * 실제 편집을 수행합니다
      */
     performEdit(logId, updatedData) {
-        // 기존 데이터 유지 (id, createdAt 등)
-        const existingLog = this.logs.find(log => log.id === logId);
-        if (!existingLog) return;
+        console.log('MyLogsTab: performEdit 호출됨', { logId, updatedData });
         
-        const updatedLog = {
-            ...existingLog,
-            ...updatedData
-        };
+        // LogService를 사용하여 로그 업데이트
+        const updatedLog = this.logService.updateLog(logId, updatedData);
         
-        // 로그 배열에서 해당 항목 업데이트
-        const index = this.logs.findIndex(log => log.id === logId);
-        if (index !== -1) {
-            this.logs[index] = updatedLog;
-            this.saveLogs();
+        if (updatedLog) {
+            console.log('MyLogsTab: 로그 업데이트 성공', updatedLog);
+            
+            // StorageManager를 사용하여 저장
+            this.storageManager.saveLogs(this.logService.getAllLogs());
             
             // UI 업데이트
             this.renderContent();
             
             // 편집 완료 토스트 메시지
             ToastManager.success('일지가 성공적으로 수정되었습니다.', 3000);
+        } else {
+            console.error('MyLogsTab: 로그 업데이트 실패');
         }
     }
     
@@ -1218,8 +1192,8 @@ class MyLogsTab {
         }
         
         this.isInitialized = false;
-        this.logs = [];
-        this.currentPage = 1;
+        this.logService.setLogs([]);
+        this.logService.setCurrentPage(1);
         this.currentView = 'hub';
         this.currentLogId = null;
         
