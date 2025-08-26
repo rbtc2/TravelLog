@@ -15,40 +15,45 @@ export class PaginationManager {
      * @returns {string} HTML 문자열
      */
     renderPagination(totalPages, currentPage) {
-        if (totalPages <= 1) return '';
-        
-        const pages = [];
-        let startPage = Math.max(1, currentPage - Math.floor(this.maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + this.maxVisiblePages - 1);
-        
-        if (endPage - startPage + 1 < this.maxVisiblePages) {
-            startPage = Math.max(1, endPage - this.maxVisiblePages + 1);
+        try {
+            if (totalPages <= 1) return '';
+            
+            const pages = [];
+            let startPage = Math.max(1, currentPage - Math.floor(this.maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + this.maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < this.maxVisiblePages) {
+                startPage = Math.max(1, endPage - this.maxVisiblePages + 1);
+            }
+            
+            // 이전 페이지 버튼
+            if (currentPage > 1) {
+                pages.push(`<button class="page-btn prev-page" data-page="${currentPage - 1}">◀ 이전</button>`);
+            }
+            
+            // 페이지 번호들
+            for (let i = startPage; i <= endPage; i++) {
+                pages.push(`
+                    <button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
+                        ${i}
+                    </button>
+                `);
+            }
+            
+            // 다음 페이지 버튼
+            if (currentPage < totalPages) {
+                pages.push(`<button class="page-btn next-page" data-page="${currentPage + 1}">다음 ▶</button>`);
+            }
+            
+            return `
+                <div class="pagination">
+                    ${pages.join('')}
+                </div>
+            `;
+        } catch (error) {
+            console.error('PaginationManager: renderPagination 오류:', error);
+            return '';
         }
-        
-        // 이전 페이지 버튼
-        if (currentPage > 1) {
-            pages.push(`<button class="page-btn prev-page" data-page="${currentPage - 1}">◀ 이전</button>`);
-        }
-        
-        // 페이지 번호들
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(`
-                <button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">
-                    ${i}
-                </button>
-            `);
-        }
-        
-        // 다음 페이지 버튼
-        if (currentPage < totalPages) {
-            pages.push(`<button class="page-btn next-page" data-page="${currentPage + 1}">다음 ▶</button>`);
-        }
-        
-        return `
-            <div class="pagination">
-                ${pages.join('')}
-            </div>
-        `;
     }
 
     /**

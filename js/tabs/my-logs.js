@@ -1,6 +1,23 @@
 /**
  * 나의 로그 탭 모듈
- * 허브 화면으로 구성: 프로필, 요약, 보관함
+ * 
+ * 모듈 구조:
+ * - EventManager: 이벤트 리스너 관리 및 정리
+ * - ModalManager: 모달 다이얼로그 관리
+ * - ViewManager: 화면 렌더링 로직 분리
+ * - PaginationManager: 페이지네이션 로직 분리
+ * - StorageManager: 로컬 스토리지 관리
+ * - LogService: 로그 데이터 CRUD 및 비즈니스 로직
+ * - DemoData: 데모 데이터 제공
+ * - LogDetailModule: 로그 상세 화면
+ * - LogEditModule: 로그 편집 모달
+ * 
+ * 주요 기능:
+ * - 허브 화면 (프로필, 요약, 보관함)
+ * - 일정 목록 및 상세 화면
+ * - 일정 편집/삭제
+ * - 트래블 레포트
+ * - 설정 화면
  */
 
 import LogDetailModule from '../modules/log-detail.js';
@@ -33,14 +50,16 @@ class MyLogsTab {
         this.logDetailModule = new LogDetailModule();
         this.logEditModule = new LogEditModule();
         
-        // ViewManager 초기화 확인
-        console.log('MyLogsTab: ViewManager 초기화 확인', {
-            viewManager: this.viewManager,
-            hasGetPurposeIcon: typeof this.viewManager.getPurposeIcon === 'function',
-            hasGetPurposeText: typeof this.viewManager.getPurposeText === 'function',
-            hasGetTravelStyleText: typeof this.viewManager.getTravelStyleText === 'function',
-            hasTruncateMemo: typeof this.viewManager.truncateMemo === 'function'
-        });
+        // ViewManager 초기화 확인 (개발 모드에서만)
+        if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+            console.log('MyLogsTab: ViewManager 초기화 확인', {
+                viewManager: this.viewManager,
+                hasGetPurposeIcon: typeof this.viewManager.getPurposeIcon === 'function',
+                hasGetPurposeText: typeof this.viewManager.getPurposeText === 'function',
+                hasGetTravelStyleText: typeof this.viewManager.getTravelStyleText === 'function',
+                hasTruncateMemo: typeof this.viewManager.truncateMemo === 'function'
+            });
+        }
     }
     
     render(container) {
@@ -668,7 +687,7 @@ class MyLogsTab {
         console.log('MyLogsTab: LogDetailModule 렌더링 완료');
     }
     
-    /**
+        /**
      * 일지 목록을 표시하는 UI
      */
     renderLogsList() {
@@ -687,28 +706,15 @@ class MyLogsTab {
             totalPages: pageData.totalPages
         });
         
-        this.container.innerHTML = `
-            <div class="my-logs-container">
-                <div class="my-logs-header">
-                    <div class="header-with-back">
-                        <button class="back-btn" id="back-to-hub">◀ 뒤로</button>
-                        <div class="header-content">
-                            <h1 class="my-logs-title">📅 나의 일정</h1>
-                            <p class="my-logs-subtitle">총 ${this.logService.getAllLogs().length}개의 여행 일지</p>
-                        </div>
-                    </div>
-                </div>
-                
-                                 <div class="logs-list">
-                     ${pageData.logs.map(log => this.renderLogItem(log)).join('')}
-                 </div>
-                 
-                 ${this.renderPagination(pageData.totalPages)}
-             </div>
-         `;
-         
-         console.log('MyLogsTab: renderLogsList 완료');
-     }
+        // ViewManager를 사용하여 로그 목록 렌더링
+        this.container.innerHTML = this.viewManager.renderLogsList(
+            this.logService,
+            (log) => this.renderLogItem(log),
+            (totalPages) => this.renderPagination(totalPages)
+        );
+        
+        console.log('MyLogsTab: renderLogsList 완료');
+    }
     
     /**
      * 개별 일지 아이템을 렌더링합니다
@@ -817,41 +823,8 @@ class MyLogsTab {
      * 페이지네이션을 렌더링합니다
      */
     renderPagination(totalPages) {
-        if (totalPages <= 1) return '';
-        
-        const pages = [];
-        const maxVisiblePages = 5;
-        let startPage = Math.max(1, this.logService.currentPage - Math.floor(maxVisiblePages / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-        
-        if (endPage - startPage + 1 < maxVisiblePages) {
-            startPage = Math.max(1, endPage - maxVisiblePages + 1);
-        }
-        
-        // 이전 페이지 버튼
-        if (this.logService.currentPage > 1) {
-            pages.push(`<button class="page-btn prev-page" data-page="${this.logService.currentPage - 1}">◀ 이전</button>`);
-        }
-        
-        // 페이지 번호들
-        for (let i = startPage; i <= endPage; i++) {
-            pages.push(`
-                <button class="page-btn ${i === this.logService.currentPage ? 'active' : ''}" data-page="${i}">
-                    ${i}
-                </button>
-            `);
-        }
-        
-        // 다음 페이지 버튼
-        if (this.logService.currentPage < totalPages) {
-            pages.push(`<button class="page-btn next-page" data-page="${this.logService.currentPage + 1}">다음 ▶</button>`);
-        }
-        
-        return `
-            <div class="pagination">
-                ${pages.join('')}
-            </div>
-        `;
+        // PaginationManager를 사용하여 페이지네이션 렌더링
+        return this.paginationManager.renderPagination(totalPages, this.logService.currentPage);
     }
     
     // 유틸리티 메서드들은 ViewManager로 이동되었습니다

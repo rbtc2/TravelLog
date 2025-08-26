@@ -497,30 +497,48 @@ export class ViewManager {
      * @returns {string} HTML 문자열
      */
     renderLogsList(logService, renderLogItem, renderPagination) {
-        const pageData = logService.getLogsByPage(
-            logService.currentPage, 
-            logService.logsPerPage
-        );
-        
-        return `
-            <div class="my-logs-container">
-                <div class="my-logs-header">
-                    <div class="header-with-back">
-                        <button class="back-btn" id="back-to-hub">◀ 뒤로</button>
-                        <div class="header-content">
-                            <h1 class="my-logs-title">📅 나의 일정</h1>
-                            <p class="my-logs-subtitle">총 ${logService.getAllLogs().length}개의 여행 일지</p>
+        try {
+            const pageData = logService.getLogsByPage(
+                logService.currentPage, 
+                logService.logsPerPage
+            );
+            
+            return `
+                <div class="my-logs-container">
+                    <div class="my-logs-header">
+                        <div class="header-with-back">
+                            <button class="back-btn" id="back-to-hub">◀ 뒤로</button>
+                            <div class="header-content">
+                                <h1 class="my-logs-title">📅 나의 일정</h1>
+                                <p class="my-logs-subtitle">총 ${logService.getAllLogs().length}개의 여행 일지</p>
+                            </div>
                         </div>
                     </div>
+                    
+                    <div class="logs-list">
+                        ${pageData.logs.map(log => renderLogItem(log)).join('')}
+                    </div>
+                    
+                    ${renderPagination(pageData.totalPages)}
                 </div>
-                
-                <div class="logs-list">
-                    ${pageData.logs.map(log => renderLogItem(log)).join('')}
+            `;
+        } catch (error) {
+            console.error('ViewManager: renderLogsList 오류:', error);
+            return `
+                <div class="my-logs-container">
+                    <div class="my-logs-header">
+                        <div class="header-with-back">
+                            <button class="back-btn" id="back-to-hub">◀ 뒤로</button>
+                            <div class="header-content">
+                                <h1 class="my-logs-title">📅 나의 일정</h1>
+                                <p class="my-logs-subtitle">오류가 발생했습니다</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="error-message">데이터를 불러오는 중 오류가 발생했습니다.</div>
                 </div>
-                
-                ${renderPagination(pageData.totalPages)}
-            </div>
-        `;
+            `;
+        }
     }
 
     /**
