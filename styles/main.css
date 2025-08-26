@@ -462,6 +462,7 @@ body {
         min-height: 44px;
         touch-action: manipulation;
         -webkit-appearance: none;
+        appearance: none;
         border-radius: 8px;
     }
     
