@@ -5,11 +5,15 @@
 
 import LogDetailModule from '../modules/log-detail.js';
 import LogEditModule from '../modules/log-edit.js';
+import { ToastManager } from '../modules/ui-components/toast-manager.js';
+import { EventManager } from '../modules/utils/event-manager.js';
+import { ModalManager } from '../modules/ui-components/modal-manager.js';
 
 class MyLogsTab {
     constructor() {
         this.isInitialized = false;
-        this.eventListeners = [];
+        this.eventManager = new EventManager();
+        this.modalManager = new ModalManager();
         this.logs = [];
         this.currentPage = 1;
         this.logsPerPage = 10;
@@ -146,69 +150,9 @@ class MyLogsTab {
      * 삭제 확인 모달을 표시합니다
      */
     showDeleteConfirmModal(log) {
-        // 기존 모달이 있으면 제거
-        const existingModal = document.querySelector('.delete-confirm-modal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-        
-        const modal = document.createElement('div');
-        modal.className = 'delete-confirm-modal';
-        modal.innerHTML = `
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>일지 삭제 확인</h3>
-                </div>
-                <div class="modal-body">
-                    <p>다음 일지를 정말로 삭제하시겠습니까?</p>
-                    <div class="log-preview">
-                        <div class="log-preview-header">
-                            <span class="log-preview-country">${log.country}</span>
-                            <span class="log-preview-city">${log.city}</span>
-                        </div>
-                        <div class="log-preview-dates">
-                            ${log.startDate} ~ ${log.endDate}
-                        </div>
-                        <div class="log-preview-memo">
-                            ${log.memo ? log.memo.substring(0, 50) + (log.memo.length > 50 ? '...' : '') : '메모 없음'}
-                        </div>
-                    </div>
-                    <p class="warning-text">⚠️ 삭제된 일지는 복구할 수 없습니다.</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-btn cancel-btn" id="cancel-delete">취소</button>
-                    <button class="modal-btn confirm-btn" id="confirm-delete">삭제</button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        // 모달 이벤트 바인딩
-        const cancelBtn = modal.querySelector('#cancel-delete');
-        const confirmBtn = modal.querySelector('#confirm-delete');
-        const overlay = modal.querySelector('.modal-overlay');
-        
-        const closeModal = () => {
-            modal.remove();
-        };
-        
-        cancelBtn.addEventListener('click', closeModal);
-        confirmBtn.addEventListener('click', () => {
-            this.performDelete(log.id);
-            closeModal();
+        this.modalManager.showDeleteConfirmModal(log, (logId) => {
+            this.performDelete(logId);
         });
-        overlay.addEventListener('click', closeModal);
-        
-        // ESC 키로 모달 닫기
-        const handleEscKey = (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-                document.removeEventListener('keydown', handleEscKey);
-            }
-        };
-        document.addEventListener('keydown', handleEscKey);
     }
     
     /**
@@ -227,7 +171,7 @@ class MyLogsTab {
         this.renderContent(); // UI 업데이트
         
         // 삭제 완료 토스트 메시지
-        this.showToast('일지가 성공적으로 삭제되었습니다.', 3000);
+                    ToastManager.success('일지가 성공적으로 삭제되었습니다.', 3000);
     }
     
     renderContent() {
@@ -998,7 +942,7 @@ class MyLogsTab {
         // 나의 일정 버튼
         const mySchedulesBtn = document.getElementById('my-schedules-btn');
         if (mySchedulesBtn) {
-            this.addEventListener(mySchedulesBtn, 'click', () => {
+            this.eventManager.add(mySchedulesBtn, 'click', () => {
                 this.currentView = 'logs';
                 this.renderContent();
                 this.bindEvents();
@@ -1008,7 +952,7 @@ class MyLogsTab {
         // 버킷리스트 버튼 (미구현)
         const bucketListBtn = document.getElementById('bucket-list-btn');
         if (bucketListBtn) {
-            this.addEventListener(bucketListBtn, 'click', () => {
+            this.eventManager.add(bucketListBtn, 'click', () => {
                 alert('버킷리스트 기능은 추후 구현 예정입니다.');
             });
         }
@@ -1016,7 +960,7 @@ class MyLogsTab {
         // 트래블 레포트 버튼
         const viewReportBtn = document.getElementById('view-report-btn');
         if (viewReportBtn) {
-            this.addEventListener(viewReportBtn, 'click', () => {
+            this.eventManager.add(viewReportBtn, 'click', () => {
                 this.currentView = 'travel-report';
                 this.renderContent();
                 this.bindEvents();
@@ -1028,7 +972,7 @@ class MyLogsTab {
         // 설정 버튼 (미구현)
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
-            this.addEventListener(settingsBtn, 'click', () => {
+            this.eventManager.add(settingsBtn, 'click', () => {
                 this.currentView = 'settings';
                 this.renderContent();
                 this.bindEvents();
@@ -1043,7 +987,7 @@ class MyLogsTab {
         // 뒤로 가기 버튼
         const backBtn = document.getElementById('back-to-hub');
         if (backBtn) {
-            this.addEventListener(backBtn, 'click', () => {
+            this.eventManager.add(backBtn, 'click', () => {
                 this.currentView = 'hub';
                 this.currentPage = 1; // 페이지 초기화
                 this.renderContent();
@@ -1054,7 +998,7 @@ class MyLogsTab {
         // 일지 아이템 클릭 (상세 화면으로 이동)
         const logItems = document.querySelectorAll('.log-item.clickable');
         logItems.forEach(item => {
-            this.addEventListener(item, 'click', (e) => {
+            this.eventManager.add(item, 'click', (e) => {
                 // 편집/삭제 버튼 클릭 시에는 상세 화면으로 이동하지 않음
                 if (e.target.closest('.log-action-btn')) {
                     return;
@@ -1068,7 +1012,7 @@ class MyLogsTab {
         // 일지 편집 버튼들
         const editBtns = document.querySelectorAll('.edit-btn');
         editBtns.forEach(btn => {
-            this.addEventListener(btn, 'click', (e) => {
+            this.eventManager.add(btn, 'click', (e) => {
                 e.stopPropagation(); // 상세 화면 이동 방지
                 const logId = e.currentTarget.dataset.logId;
                 this.editLog(logId);
@@ -1078,7 +1022,7 @@ class MyLogsTab {
         // 일지 삭제 버튼들
         const deleteBtns = document.querySelectorAll('.delete-btn');
         deleteBtns.forEach(btn => {
-            this.addEventListener(btn, 'click', (e) => {
+            this.eventManager.add(btn, 'click', (e) => {
                 e.stopPropagation(); // 상세 화면 이동 방지
                 const logId = e.currentTarget.dataset.logId;
                 this.deleteLog(logId);
@@ -1088,7 +1032,7 @@ class MyLogsTab {
         // 페이지네이션 버튼들
         const pageBtns = document.querySelectorAll('.page-btn');
         pageBtns.forEach(btn => {
-            this.addEventListener(btn, 'click', (e) => {
+            this.eventManager.add(btn, 'click', (e) => {
                 const page = parseInt(e.currentTarget.dataset.page);
                 if (page && page !== this.currentPage) {
                     this.currentPage = page;
@@ -1106,7 +1050,7 @@ class MyLogsTab {
         // 뒤로 가기 버튼
         const backBtn = document.getElementById('back-to-hub-from-report');
         if (backBtn) {
-            this.addEventListener(backBtn, 'click', () => {
+            this.eventManager.add(backBtn, 'click', () => {
                 this.currentView = 'hub';
                 this.renderContent();
                 this.bindEvents();
@@ -1116,25 +1060,25 @@ class MyLogsTab {
         // 도시 랭킹 아이템 클릭
         const cityRankingItems = document.querySelectorAll('.city-ranking-item');
         cityRankingItems.forEach(item => {
-            this.addEventListener(item, 'click', (e) => {
+            this.eventManager.add(item, 'click', (e) => {
                 const cityName = e.currentTarget.dataset.city;
-                this.showToast(`"${cityName}" 상세 정보는 준비 중입니다.`);
+                ToastManager.info(`"${cityName}" 상세 정보는 준비 중입니다.`);
             });
         });
         
         // 차트 탭 클릭 (비활성)
         const chartTabs = document.querySelectorAll('.chart-tab');
         chartTabs.forEach(tab => {
-            this.addEventListener(tab, 'click', () => {
-                this.showToast('차트 기능은 준비 중입니다.');
+            this.eventManager.add(tab, 'click', () => {
+                ToastManager.info('차트 기능은 준비 중입니다.');
             });
         });
         
         // 연도 선택기 클릭 (비활성)
         const yearSelector = document.querySelector('.year-selector');
         if (yearSelector) {
-            this.addEventListener(yearSelector, 'change', () => {
-                this.showToast('연도 선택 기능은 준비 중입니다.');
+            this.eventManager.add(yearSelector, 'change', () => {
+                ToastManager.info('연도 선택 기능은 준비 중입니다.');
             });
         }
     }
@@ -1146,7 +1090,7 @@ class MyLogsTab {
         // 설정 화면에서 뒤로 가기 버튼
         const backBtn = document.getElementById('back-to-hub-from-settings');
         if (backBtn) {
-            this.addEventListener(backBtn, 'click', () => {
+            this.eventManager.add(backBtn, 'click', () => {
                 this.currentView = 'hub';
                 this.renderContent();
                 this.bindEvents();
@@ -1229,53 +1173,11 @@ class MyLogsTab {
             this.renderContent();
             
             // 편집 완료 토스트 메시지
-            this.showToast('일지가 성공적으로 수정되었습니다.', 3000);
+            ToastManager.success('일지가 성공적으로 수정되었습니다.', 3000);
         }
     }
     
-    /**
-     * 토스트 메시지를 표시합니다
-     */
-    showToast(message, duration = 2000) {
-        // 기존 토스트가 있으면 제거
-        const existingToast = document.querySelector('.toast-message');
-        if (existingToast) {
-            existingToast.remove();
-        }
-        
-        // 새 토스트 생성
-        const toast = document.createElement('div');
-        toast.className = 'toast-message';
-        toast.textContent = message;
-        
-        // 스타일 적용
-        Object.assign(toast.style, {
-            position: 'fixed',
-            top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: '#333',
-            color: 'white',
-            padding: '12px 20px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            zIndex: '10000',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            transition: 'opacity 0.3s ease'
-        });
-        
-        document.body.appendChild(toast);
-        
-        // 자동 제거
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 300);
-        }, duration);
-    }
+
     
     /**
      * 윈도우 리사이즈 이벤트를 바인딩합니다
@@ -1293,25 +1195,17 @@ class MyLogsTab {
             }, 250); // 250ms 디바운싱
         };
         
-        window.addEventListener('resize', handleResize);
-        this.eventListeners.push({ element: window, event: 'resize', handler: handleResize });
+        // EventManager를 사용하여 리사이즈 이벤트 바인딩
+        this.eventManager.add(window, 'resize', handleResize);
     }
     
-    /**
-     * 이벤트 리스너를 등록하고 추적합니다
-     */
-    addEventListener(element, event, handler) {
-        element.addEventListener(event, handler);
-        this.eventListeners.push({ element, event, handler });
-    }
+
     
     async cleanup() {
         // 이벤트 리스너 정리
-        this.eventListeners.forEach(listener => {
-            if (listener.element && listener.event && listener.handler) {
-                listener.element.removeEventListener(listener.event, listener.handler);
-            }
-        });
+        if (this.eventManager) {
+            this.eventManager.cleanup();
+        }
         
         // 상세 모듈 정리
         if (this.logDetailModule) {
@@ -1323,7 +1217,6 @@ class MyLogsTab {
             this.logEditModule.cleanup();
         }
         
-        this.eventListeners = [];
         this.isInitialized = false;
         this.logs = [];
         this.currentPage = 1;
@@ -1336,3 +1229,4 @@ class MyLogsTab {
 }
 
 export default new MyLogsTab();
+
