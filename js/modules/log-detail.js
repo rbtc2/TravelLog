@@ -3,10 +3,13 @@
  * 개별 여행 일정의 상세 정보와 분석/지도 섹션을 표시합니다
  */
 
+import LogEditModule from './log-edit.js';
+
 class LogDetailModule {
     constructor() {
         this.currentLog = null;
         this.eventListeners = [];
+        this.logEditModule = new LogEditModule();
     }
     
     /**
@@ -340,7 +343,15 @@ class LogDetailModule {
      * 일지 편집
      */
     editLog() {
-        this.showToast('편집 기능은 준비 중입니다.');
+        if (!this.currentLog) return;
+        
+        this.logEditModule.showEditModal(this.currentLog, (logId, updatedData) => {
+            // 편집 완료 시 이벤트를 통해 부모 컴포넌트에 업데이트 요청
+            const event = new CustomEvent('logDetailEdit', {
+                detail: { logId, updatedData }
+            });
+            this.container.dispatchEvent(event);
+        });
     }
     
     /**
@@ -396,14 +407,19 @@ class LogDetailModule {
      */
     getPurposeIcon(purpose) {
         const purposeIcons = {
+            'tourism': '🏖️',
             'business': '💼',
-            'leisure': '🏖️',
-            'study': '📚',
             'family': '👨‍👩‍👧‍👦',
-            'backpacking': '🎒',
-            'luxury': '✨',
-            'cultural': '🏛️',
-            'adventure': '🧗‍♂️'
+            'study': '📚',
+            'work': '💻',
+            'training': '🎯',
+            'event': '🎪',
+            'volunteer': '🤝',
+            'medical': '🏥',
+            'transit': '✈️',
+            'research': '🔬',
+            'immigration': '🏠',
+            'other': '❓'
         };
         return purposeIcons[purpose] || '✈️';
     }
@@ -413,14 +429,19 @@ class LogDetailModule {
      */
     getPurposeText(purpose) {
         const purposeTexts = {
-            'business': '비즈니스',
-            'leisure': '레저/휴양',
-            'study': '학업/연수',
-            'family': '가족 여행',
-            'backpacking': '백패킹',
-            'luxury': '럭셔리',
-            'cultural': '문화 체험',
-            'adventure': '모험/액티비티'
+            'tourism': '관광/여행',
+            'business': '업무/출장',
+            'family': '가족/지인 방문',
+            'study': '학업',
+            'work': '취업/근로',
+            'training': '파견/연수',
+            'event': '행사/컨퍼런스',
+            'volunteer': '봉사활동',
+            'medical': '의료',
+            'transit': '경유/환승',
+            'research': '연구/학술',
+            'immigration': '이주/정착',
+            'other': '기타'
         };
         return purposeTexts[purpose] || purpose;
     }
@@ -456,6 +477,11 @@ class LogDetailModule {
                 listener.element.removeEventListener(listener.event, listener.handler);
             }
         });
+        
+        // 편집 모듈 정리
+        if (this.logEditModule) {
+            this.logEditModule.cleanup();
+        }
         
         this.eventListeners = [];
         this.currentLog = null;

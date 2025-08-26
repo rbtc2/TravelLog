@@ -4,6 +4,7 @@
  */
 
 import LogDetailModule from '../modules/log-detail.js';
+import LogEditModule from '../modules/log-edit.js';
 
 class MyLogsTab {
     constructor() {
@@ -15,6 +16,7 @@ class MyLogsTab {
         this.currentView = 'hub'; // 'hub', 'logs', 'settings', 'detail'
         this.currentLogId = null;
         this.logDetailModule = new LogDetailModule();
+        this.logEditModule = new LogEditModule();
     }
     
     render(container) {
@@ -833,6 +835,7 @@ class MyLogsTab {
                 <div class="log-footer">
                     <div class="log-created">
                         작성일: ${new Date(log.createdAt).toLocaleDateString('ko-KR')}
+                        ${log.updatedAt ? `<span class="log-updated"> | 수정일: ${new Date(log.updatedAt).toLocaleDateString('ko-KR')}</span>` : ''}
                     </div>
                 </div>
             </div>
@@ -1137,6 +1140,12 @@ class MyLogsTab {
             this.renderContent();
             this.bindEvents();
         });
+        
+        // 상세 화면에서 편집 이벤트
+        this.container.addEventListener('logDetailEdit', (e) => {
+            const { logId, updatedData } = e.detail;
+            this.performEdit(logId, updatedData);
+        });
     }
     
     /**
@@ -1150,10 +1159,42 @@ class MyLogsTab {
     }
     
     /**
-     * 일지 편집 (향후 구현 예정)
+     * 일지를 편집합니다
      */
     editLog(logId) {
-        alert('일지 편집 기능은 향후 구현 예정입니다.');
+        const logToEdit = this.logs.find(log => log.id === logId);
+        if (!logToEdit) return;
+        
+        this.logEditModule.showEditModal(logToEdit, (logId, updatedData) => {
+            this.performEdit(logId, updatedData);
+        });
+    }
+    
+    /**
+     * 실제 편집을 수행합니다
+     */
+    performEdit(logId, updatedData) {
+        // 기존 데이터 유지 (id, createdAt 등)
+        const existingLog = this.logs.find(log => log.id === logId);
+        if (!existingLog) return;
+        
+        const updatedLog = {
+            ...existingLog,
+            ...updatedData
+        };
+        
+        // 로그 배열에서 해당 항목 업데이트
+        const index = this.logs.findIndex(log => log.id === logId);
+        if (index !== -1) {
+            this.logs[index] = updatedLog;
+            this.saveLogs();
+            
+            // UI 업데이트
+            this.renderContent();
+            
+            // 편집 완료 토스트 메시지
+            this.showToast('일지가 성공적으로 수정되었습니다.', 3000);
+        }
     }
     
     /**
@@ -1219,6 +1260,11 @@ class MyLogsTab {
         // 상세 모듈 정리
         if (this.logDetailModule) {
             this.logDetailModule.cleanup();
+        }
+        
+        // 편집 모듈 정리
+        if (this.logEditModule) {
+            this.logEditModule.cleanup();
         }
         
         this.eventListeners = [];
