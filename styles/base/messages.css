@@ -1,0 +1,157 @@
+/* ===== 기본 메시지 스타일 ===== */
+/* 
+ * 모든 메시지 및 알림 관련 스타일
+ * 키워드: messages, notifications, alerts, success, error
+ */
+
+/* 기본 메시지 */
+.message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: var(--z-modal);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    font-weight: var(--font-medium);
+    font-size: var(--font-base);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    max-width: 400px;
+    animation: slideInRight 0.3s ease;
+}
+
+/* 성공 메시지 */
+.success-message {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
+    color: var(--white);
+    border: 2px solid var(--success-dark);
+}
+
+.success-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    font-weight: var(--font-medium);
+}
+
+/* 에러 메시지 */
+.error-message {
+    background: linear-gradient(135deg, var(--error-color) 0%, var(--error-dark) 100%);
+    color: var(--white);
+    border: 2px solid var(--error-dark);
+}
+
+.error-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    font-weight: var(--font-medium);
+}
+
+/* 경고 메시지 */
+.warning-message {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-dark) 100%);
+    color: var(--white);
+    border: 2px solid var(--warning-dark);
+}
+
+.warning-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    font-weight: var(--font-medium);
+}
+
+/* 정보 메시지 */
+.info-message {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--white);
+    border: 2px solid var(--primary-dark);
+}
+
+.info-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
+    font-weight: var(--font-medium);
+}
+
+/* 메시지 아이콘 */
+.message-icon {
+    font-size: var(--font-lg);
+    flex-shrink: 0;
+}
+
+.success-icon {
+    color: var(--success-color);
+}
+
+.error-icon {
+    color: var(--error-color);
+}
+
+.warning-icon {
+    color: var(--warning-color);
+}
+
+.info-icon {
+    color: var(--primary-color);
+}
+
+/* 토스트 메시지 */
+.toast-message {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--gray-800);
+    color: var(--white);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-sm);
+    z-index: var(--z-tooltip);
+    opacity: 0;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-md);
+}
+
+.toast-message.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    .message {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+        max-width: none;
+    }
+    
+    .toast-message {
+        bottom: 80px;
+        left: 16px;
+        right: 16px;
+        transform: translateY(100px);
+        text-align: center;
+    }
+    
+    .toast-message.show {
+        transform: translateY(0);
+    }
+}
