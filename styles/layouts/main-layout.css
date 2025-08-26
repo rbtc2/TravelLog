@@ -1,0 +1,26 @@
+/* ===== 메인 앱 레이아웃 스타일 ===== */
+
+/* 메인 앱 화면 */
+.main-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.main-app.hidden {
+    display: none;
+}
+
+/* 메인 콘텐츠 영역 */
+#main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    background-color: var(--bg-primary);
+}
+
+#tab-content {
+    min-height: 100%;
+}
