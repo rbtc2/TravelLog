@@ -1,0 +1,45 @@
+/* ===== 트래블 레포트 페이지 스타일 ===== */
+
+/* 트래블 레포트 섹션 스타일 */
+.travel-report-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.travel-report-section .section-title {
+    color: white;
+}
+
+.travel-report-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.report-action {
+    display: flex;
+    justify-content: center;
+}
+
+/* ===== 트래블 레포트 페이지 반응형 스타일 ===== */
+@media (max-width: 768px) {
+    .travel-report-content {
+        gap: 16px;
+    }
+    
+    .report-action {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .travel-report-content {
+        gap: 24px;
+    }
+    
+    .report-action {
+        gap: 16px;
+    }
+}

@@ -1,0 +1,182 @@
+/* ===== 일지 추가 페이지 스타일 ===== */
+
+.add-log-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    min-height: calc(100vh - 80px); /* 탭 네비게이션 높이 제외 */
+}
+
+.add-log-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 24px 0;
+    border-bottom: 2px solid #f1f3f4;
+}
+
+.add-log-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.add-log-subtitle {
+    font-size: 16px;
+    color: #718096;
+    font-weight: 400;
+}
+
+.add-log-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* 폼 액션 버튼 */
+.form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid #f1f3f4;
+}
+
+.submit-btn, .reset-btn {
+    flex: 1;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px;
+}
+
+.submit-btn {
+    background-color: #667eea;
+    color: white;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.submit-btn:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.reset-btn {
+    background-color: #e2e8f0;
+    color: #4a5568;
+}
+
+.reset-btn:hover {
+    background-color: #cbd5e0;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(203, 213, 224, 0.3);
+}
+
+/* 메시지 스타일 */
+.success-message, .error-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+}
+
+.success-content, .error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    font-weight: 500;
+}
+
+.success-content {
+    background-color: #f0fff4;
+    border: 2px solid #68d391;
+    color: #22543d;
+}
+
+.error-content {
+    background-color: #fed7d7;
+    border: 2px solid #fc8181;
+    color: #742a2a;
+}
+
+.success-icon, .error-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+/* ===== 일지 추가 페이지 반응형 스타일 ===== */
+@media (max-width: 768px) {
+    .add-log-container {
+        padding: 16px;
+        margin: 0;
+    }
+    
+    .add-log-header {
+        margin-bottom: 24px;
+        padding: 16px 0;
+    }
+    
+    .add-log-title {
+        font-size: 24px;
+    }
+    
+    .add-log-subtitle {
+        font-size: 14px;
+    }
+    
+    .add-log-form {
+        gap: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .submit-btn, .reset-btn {
+        min-height: 44px;
+        font-size: 16px;
+    }
+    
+    .success-message, .error-message {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+        position: fixed;
+    }
+    
+    .success-content, .error-content {
+        padding: 14px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .add-log-container {
+        max-width: 900px;
+        padding: 32px;
+    }
+    
+    .form-actions {
+        justify-content: center;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

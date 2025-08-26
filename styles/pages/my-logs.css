@@ -1,0 +1,233 @@
+/* ===== 내 일지 페이지 스타일 ===== */
+
+.my-logs-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.my-logs-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.my-logs-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.my-logs-subtitle {
+    color: #718096;
+    font-size: 16px;
+}
+
+/* 설정 버튼이 있는 헤더 */
+.header-with-settings {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.header-content {
+    flex: 1;
+    text-align: center;
+}
+
+/* 빈 상태 스타일 */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.empty-state-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 12px;
+}
+
+.empty-state-description {
+    color: #718096;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* Ghost 스타일 액션 버튼 */
+.log-action-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    color: #718096;
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.log-action-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+.log-action-btn:active {
+    transform: scale(0.95);
+}
+
+.edit-btn:hover {
+    background: rgba(56, 178, 172, 0.1);
+    color: #38b2ac;
+}
+
+.delete-btn:hover {
+    background: rgba(229, 62, 62, 0.1);
+    color: #e53e3e;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    background: white;
+    border: 2px solid #e2e8f0;
+    color: #4a5568;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 44px;
+    text-align: center;
+}
+
+.page-btn:hover {
+    border-color: #cbd5e0;
+    background-color: #f7fafc;
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+.page-btn.prev-page,
+.page-btn.next-page {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+    color: #4a5568;
+}
+
+.page-btn.prev-page:hover,
+.page-btn.next-page:hover {
+    background: #edf2f7;
+    border-color: #a0aec0;
+}
+
+/* 성공/에러 메시지 스타일 */
+.success-message,
+.error-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    animation: slideDown 0.3s ease-out;
+}
+
+.success-message {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+}
+
+.error-message {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+}
+
+.success-content,
+.error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.success-icon,
+.error-icon {
+    font-size: 20px;
+}
+
+/* ===== 내 일지 페이지 반응형 스타일 ===== */
+@media (max-width: 768px) {
+    .my-logs-container {
+        padding: 16px;
+    }
+    
+    .my-logs-title {
+        font-size: 24px;
+    }
+    
+    .my-logs-subtitle {
+        font-size: 14px;
+    }
+    
+    .empty-state {
+        padding: 40px 16px;
+    }
+    
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    .empty-state-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .empty-state-description {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+    
+    .pagination {
+        gap: 6px;
+        margin-top: 30px;
+    }
+    
+    .page-btn {
+        padding: 8px 12px;
+        min-width: 40px;
+        font-size: 13px;
+    }
+}

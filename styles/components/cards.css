@@ -1,0 +1,798 @@
+/* ===== 카드/아이템 컴포넌트 스타일 ===== */
+
+/* ===== 허브 섹션 카드 ===== */
+.hub-section {
+    background: var(--white);
+    border-radius: var(--border-radius-2xl);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+.section-header {
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: var(--font-xl);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+}
+
+/* ===== 요약 아이템 카드 ===== */
+.summary-content {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-lg);
+    border: 2px solid var(--gray-200);
+    min-width: 200px;
+}
+
+.summary-icon {
+    font-size: var(--spacing-2xl);
+}
+
+.summary-details {
+    flex: 1;
+}
+
+.summary-value {
+    font-size: var(--font-2xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.summary-label {
+    color: var(--text-muted);
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+}
+
+/* ===== 보관함 아이템 카드 ===== */
+.archive-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.archive-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-lg);
+    border: 2px solid var(--gray-200);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.archive-item:hover:not(.disabled) {
+    background: var(--gray-100);
+    border-color: var(--gray-300);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.archive-item.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.archive-icon {
+    font-size: var(--font-xl);
+    width: 48px;
+    height: 48px;
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--gray-200);
+}
+
+.archive-details {
+    flex: 1;
+}
+
+.archive-title {
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.archive-description {
+    color: var(--text-muted);
+    font-size: var(--font-sm);
+    line-height: 1.4;
+}
+
+.archive-arrow {
+    font-size: var(--font-lg);
+    color: var(--text-muted);
+    font-weight: var(--font-bold);
+}
+
+.archive-status {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    font-weight: var(--font-medium);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--gray-100);
+    border-radius: var(--border-radius-full);
+}
+
+/* ===== 일지 아이템 카드 ===== */
+.logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.log-item {
+    background: var(--white);
+    border-radius: var(--border-radius-2xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    transition: all var(--transition-normal);
+}
+
+.log-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--gray-300);
+}
+
+/* 일지 헤더 */
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-lg);
+}
+
+.log-header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+.log-country {
+    font-size: var(--font-lg);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+}
+
+.log-country-badge {
+    font-size: var(--font-sm);
+    padding: 2px var(--spacing-sm);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--gray-200);
+    color: var(--text-secondary);
+}
+
+.log-header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.log-chips {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.log-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.duration-chip {
+    background: var(--teal-50);
+    border-color: var(--teal-200);
+    color: var(--teal-800);
+}
+
+.purpose-chip {
+    background: var(--orange-50);
+    border-color: var(--orange-200);
+    color: var(--orange-800);
+}
+
+.chip-icon {
+    font-size: var(--font-xs);
+}
+
+.chip-text {
+    font-weight: var(--font-medium);
+    font-size: 11px;
+}
+
+.log-header-right {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+}
+
+/* 일지 서브헤더 */
+.log-subheader {
+    margin-bottom: var(--spacing-lg);
+}
+
+.log-city {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    font-weight: var(--font-medium);
+}
+
+.log-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.log-dates {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.log-date-range {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-base);
+    color: var(--text-secondary);
+}
+
+.date-label {
+    font-size: var(--font-lg);
+}
+
+.log-rating,
+.log-travel-style,
+.log-memo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+}
+
+.style-icon,
+.memo-icon {
+    font-size: var(--font-lg);
+}
+
+.style-text,
+.memo-text {
+    font-weight: var(--font-medium);
+}
+
+.rating-label {
+    color: var(--text-muted);
+}
+
+.rating-stars {
+    color: var(--orange-400);
+    font-size: var(--font-base);
+    letter-spacing: 2px;
+}
+
+.rating-value {
+    color: var(--text-muted);
+    font-size: var(--font-sm);
+}
+
+.log-footer {
+    border-top: 1px solid var(--gray-200);
+    padding-top: var(--spacing-lg);
+}
+
+.log-created {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    text-align: right;
+}
+
+/* ===== 여행 DNA 아이템 카드 ===== */
+.dna-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    border-radius: var(--border-radius-2xl);
+    border: 1px solid var(--gray-200);
+    transition: all var(--transition-normal);
+}
+
+.dna-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--gray-300);
+}
+
+.dna-icon {
+    font-size: var(--font-xl);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    border-radius: var(--border-radius-lg);
+    flex-shrink: 0;
+}
+
+.dna-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.dna-label {
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dna-value {
+    font-size: var(--font-base);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+/* ===== 차트 프레임 카드 ===== */
+.chart-frame {
+    background: var(--white);
+    border-radius: var(--border-radius-2xl);
+    border: 1px solid var(--gray-200);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.chart-header {
+    padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+    border-bottom: 1px solid var(--gray-100);
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+}
+
+.chart-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.chart-tab {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: 1px solid var(--gray-300);
+    background: var(--white);
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.chart-tab:hover:not(.disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.chart-tab.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chart-title {
+    font-size: var(--font-lg);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.chart-controls {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.year-selector {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-sm);
+    background: var(--white);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.year-selector.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 차트 플레이스홀더 */
+.chart-placeholder {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    position: relative;
+}
+
+.placeholder-text {
+    font-size: var(--font-base);
+    color: var(--text-muted);
+    font-weight: var(--font-medium);
+}
+
+.chart-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cbd5e1"><path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4zm2 2H5V5h14v14z"/></svg>') center/contain no-repeat;
+    opacity: 0.3;
+}
+
+/* ===== 도시 랭킹 아이템 카드 ===== */
+.city-ranking-list {
+    padding: 0;
+}
+
+.city-ranking-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-lg);
+    border-bottom: 1px solid var(--gray-100);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.city-ranking-item:last-child {
+    border-bottom: none;
+}
+
+.city-ranking-item:hover {
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+}
+
+.city-rank {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-bold);
+    font-size: var(--font-sm);
+    flex-shrink: 0;
+}
+
+.city-ranking-item:nth-child(1) .city-rank {
+    background: linear-gradient(135deg, var(--yellow-400) 0%, var(--yellow-500) 100%);
+}
+
+.city-ranking-item:nth-child(2) .city-rank {
+    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-500) 100%);
+}
+
+.city-ranking-item:nth-child(3) .city-rank {
+    background: linear-gradient(135deg, var(--orange-500) 0%, var(--orange-600) 100%);
+}
+
+.city-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.city-name {
+    font-size: var(--font-base);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.city-stats {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+}
+
+.city-arrow {
+    color: var(--text-muted);
+    font-size: var(--font-base);
+    font-weight: var(--font-bold);
+}
+
+/* ===== 히트맵 플레이스홀더 ===== */
+.heatmap-placeholder {
+    padding: var(--spacing-lg);
+}
+
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.heatmap-month {
+    text-align: center;
+}
+
+.month-label {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-sm);
+    font-weight: var(--font-medium);
+}
+
+.month-activity {
+    width: 100%;
+    height: 24px;
+    background: var(--gray-200);
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-normal);
+}
+
+.placeholder-box {
+    background: var(--gray-200);
+    border: 1px solid var(--gray-300);
+}
+
+.heatmap-caption {
+    text-align: center;
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ===== 인사이트 아이템 카드 ===== */
+.insight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.insight-item:last-child {
+    border-bottom: none;
+}
+
+.insight-icon {
+    font-size: var(--font-base);
+    color: var(--yellow-400);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.insight-text {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
+    flex: 1;
+}
+
+/* ===== 반응형 카드 스타일 ===== */
+@media (max-width: 768px) {
+    .hub-section {
+        padding: var(--spacing-lg);
+    }
+    
+    .summary-content {
+        justify-content: center;
+    }
+    
+    .summary-item {
+        min-width: 160px;
+        padding: var(--spacing-md);
+    }
+    
+    .summary-icon {
+        font-size: var(--font-xl);
+    }
+    
+    .summary-value {
+        font-size: var(--font-xl);
+    }
+    
+    .archive-item {
+        padding: var(--spacing-md);
+    }
+    
+    .archive-icon {
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-lg);
+    }
+    
+    .log-item {
+        padding: var(--spacing-lg);
+    }
+    
+    .log-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: stretch;
+    }
+    
+    .log-header-left {
+        justify-content: center;
+    }
+    
+    .log-header-center {
+        order: -1;
+    }
+    
+    .log-chips {
+        justify-content: center;
+        gap: var(--spacing-xs);
+    }
+    
+    .log-chip {
+        padding: 3px var(--spacing-sm);
+        font-size: 11px;
+    }
+    
+    .log-header-right {
+        justify-content: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .log-subheader {
+        text-align: center;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .log-city {
+        font-size: 13px;
+    }
+    
+    .dna-item {
+        padding: var(--spacing-sm);
+        gap: var(--spacing-sm);
+    }
+    
+    .dna-icon {
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-lg);
+    }
+    
+    .dna-label {
+        font-size: 13px;
+    }
+    
+    .dna-value {
+        font-size: 15px;
+    }
+    
+    .chart-header {
+        padding: var(--spacing-md) var(--spacing-md) var(--spacing-sm);
+    }
+    
+    .chart-tabs {
+        gap: var(--spacing-xs);
+    }
+    
+    .chart-tab {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 13px;
+    }
+    
+    .chart-placeholder {
+        height: 150px;
+    }
+    
+    .city-ranking-item {
+        padding: var(--spacing-sm) var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+    
+    .city-rank {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+    
+    .city-name {
+        font-size: 15px;
+    }
+    
+    .city-stats {
+        font-size: 13px;
+    }
+    
+    .heatmap-grid {
+        gap: var(--spacing-xs);
+    }
+    
+    .month-activity {
+        height: 20px;
+    }
+    
+    .insight-item {
+        padding: var(--spacing-xs) 0;
+        gap: var(--spacing-xs);
+    }
+    
+    .insight-text {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .summary-item {
+        min-width: 200px;
+        padding: var(--spacing-lg);
+    }
+    
+    .dna-item {
+        padding: var(--spacing-lg);
+        gap: var(--spacing-lg);
+    }
+    
+    .dna-icon {
+        width: 48px;
+        height: 48px;
+        font-size: var(--font-xl);
+    }
+    
+    .chart-placeholder {
+        height: 200px;
+    }
+    
+    .city-ranking-item {
+        padding: var(--spacing-lg) var(--spacing-lg);
+        gap: var(--spacing-lg);
+    }
+    
+    .city-rank {
+        width: 32px;
+        height: 32px;
+        font-size: var(--font-sm);
+    }
+}
