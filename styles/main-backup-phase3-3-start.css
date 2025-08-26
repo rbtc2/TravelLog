@@ -14,9 +14,6 @@
 @import url('./utilities/dark-mode.css');
 @import url('./utilities/responsive.css');
 
-/* 컴포넌트 스타일 */
-@import url('./components/buttons.css');
-
 /* ===== 로그인 화면 ===== */
 .login-screen {
     display: flex;
@@ -122,7 +119,24 @@
     text-decoration: underline;
 }
 
-/* 로그인 버튼 스타일은 components/buttons.css로 분리됨 */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-lg);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
 
 .login-divider {
     text-align: center;
@@ -147,7 +161,25 @@
     padding: 0 16px;
 }
 
-/* 데모 버튼 스타일은 components/buttons.css로 분리됨 */
+.demo-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--success-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-lg);
+}
+
+.demo-btn:hover {
+    background: var(--success-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+}
 
 .signup-link {
     text-align: center;
@@ -199,7 +231,42 @@
     padding: var(--spacing-sm) 0;
 }
 
-/* 탭 버튼 스타일은 components/buttons.css로 분리됨 */
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-sm);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    color: #6c757d;
+    font-size: var(--font-xs);
+    min-height: 60px;
+}
+
+.tab-btn:hover {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+.tab-btn.active {
+    color: #007bff;
+    background-color: #e7f3ff;
+}
+
+.tab-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.tab-label {
+    font-weight: 500;
+    white-space: nowrap;
+}
 
 /* 탭 콘텐츠 플레이스홀더 */
 .tab-placeholder {
@@ -785,7 +852,31 @@
     gap: 20px;
 }
 
-/* 설정 버튼 스타일은 components/buttons.css로 분리됨 */
+.settings-btn {
+    background: none;
+    border: none;
+    color: #4a5568;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+.settings-btn:active {
+    transform: scale(0.95);
+}
 
 /* 설정 화면 스타일 */
 .settings-content {
@@ -821,7 +912,27 @@
     justify-content: center;
 }
 
-/* 보고서 보기 버튼 스타일은 components/buttons.css로 분리됨 */
+.view-report-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.view-report-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.view-report-btn:active {
+    transform: translateY(0);
+}
 
 .setting-item {
     display: flex;
@@ -1160,7 +1271,23 @@ input:disabled + .toggle-slider {
     gap: 20px;
 }
 
-/* 뒤로가기 버튼 스타일은 components/buttons.css로 분리됨 */
+.back-btn {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    color: #4a5568;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.back-btn:hover {
+    background: #edf2f7;
+    border-color: #cbd5e0;
+}
 
 .header-content {
     flex: 1;
@@ -1195,7 +1322,27 @@ input:disabled + .toggle-slider {
     margin-bottom: 30px;
 }
 
-/* 첫 번째 일지 추가 버튼 스타일은 components/buttons.css로 분리됨 */
+.add-first-log-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.add-first-log-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.add-first-log-btn:active {
+    transform: translateY(0);
+}
 
 /* 일지 목록 스타일 */
 .logs-list {
@@ -2856,7 +3003,37 @@ input:disabled + .toggle-slider {
     border-top: 1px solid #e5e7eb;
 }
 
-/* 모달 버튼 스타일은 components/buttons.css로 분리됨 */
+.modal-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    min-width: 80px;
+}
+
+.cancel-btn {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+.cancel-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.confirm-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.confirm-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
 
 /* 모달 반응형 */
 @media (max-width: 480px) {

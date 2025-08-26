@@ -1,0 +1,260 @@
+/* ===== 버튼 컴포넌트 스타일 ===== */
+/* 로그인 관련 버튼 */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-lg);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.demo-btn:active {
+    transform: translateY(0);
+}
+
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.demo-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--success-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-bottom: var(--spacing-lg);
+}
+
+.demo-btn:hover {
+    background: var(--success-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
+}
+
+.demo-btn:active {
+    transform: translateY(0);
+}
+
+.demo-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 탭 네비게이션 버튼 */
+.tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: var(--spacing-md);
+    background: var(--white);
+    border: none;
+    border-top: 3px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-height: 60px;
+    position: relative;
+}
+
+.tab-btn:hover {
+    background-color: var(--gray-50);
+}
+
+.tab-btn.active {
+    border-top-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.tab-btn.active .tab-icon {
+    transform: scale(1.1);
+}
+
+.tab-btn.active .tab-label {
+    color: var(--primary-color);
+    font-weight: var(--font-semibold);
+}
+
+.tab-icon {
+    font-size: var(--font-xl);
+    margin-bottom: var(--spacing-xs);
+    transition: transform var(--transition-normal);
+}
+
+.tab-label {
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+    transition: color var(--transition-normal);
+}
+
+/* 설정 및 뒤로가기 버튼 */
+.settings-btn {
+    background: none;
+    border: none;
+    color: #4a5568;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+.settings-btn:active {
+    transform: scale(0.95);
+}
+
+.back-btn {
+    position: absolute;
+    top: var(--spacing-lg);
+    left: var(--spacing-lg);
+    background: var(--white);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--border-radius-full);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.back-btn:hover {
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+/* 보고서 및 일지 관련 버튼 */
+.view-report-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.view-report-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.add-first-log-btn {
+    background: linear-gradient(135deg, var(--success-color) 0%, var(--success-dark) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-md);
+    width: 100%;
+    margin-top: var(--spacing-lg);
+}
+
+.add-first-log-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* 모달 버튼 */
+.modal-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    min-width: 80px;
+}
+
+.cancel-btn {
+    background: var(--gray-200);
+    color: var(--text-secondary);
+    border: 1px solid var(--gray-400);
+}
+
+.cancel-btn:hover {
+    background: var(--gray-300);
+    color: var(--text-primary);
+}
+
+.confirm-btn {
+    background: var(--error-color);
+    color: var(--white);
+}
+
+.confirm-btn:hover {
+    background: var(--error-dark);
+    transform: translateY(-1px);
+}
+
+/* 반응형 버튼 스타일 */
+@media (max-width: 768px) {
+    .tab-btn {
+        min-height: 50px;
+        padding: var(--spacing-sm);
+    }
+    
+    .tab-icon {
+        font-size: var(--font-lg);
+    }
+    
+    .tab-label {
+        font-size: var(--font-xs);
+    }
+    
+    .settings-btn,
+    .back-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .modal-btn {
+        width: 100%;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+}
