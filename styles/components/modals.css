@@ -41,11 +41,35 @@
     border-bottom: 1px solid var(--gray-200);
 }
 
+.modal-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 .modal-header h3 {
     font-size: var(--font-xl);
     font-weight: var(--font-semibold);
     color: var(--text-primary);
     margin: 0;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: var(--font-xl);
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-fast);
+    line-height: 1;
+    min-width: auto;
+}
+
+.modal-close-btn:hover {
+    background: var(--gray-100);
+    color: var(--text-primary);
 }
 
 /* ===== 모달 바디 ===== */
@@ -315,6 +339,14 @@
     min-height: 80px;
 }
 
+.memo-char-count {
+    text-align: right;
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    margin-top: var(--spacing-xs);
+    font-weight: var(--font-normal);
+}
+
 .form-info {
     background: var(--gray-50);
     border: 1px solid var(--gray-200);
@@ -353,5 +385,15 @@
     
     .edit-modal {
         padding: 20px;
+    }
+    
+    .modal-header-content {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .modal-close-btn {
+        align-self: flex-end;
+        margin-top: var(--spacing-xs);
     }
 }

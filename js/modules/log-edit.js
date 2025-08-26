@@ -45,8 +45,13 @@ class LogEditModule {
             <div class="modal-overlay"></div>
             <div class="modal-content edit-modal-content">
                 <div class="modal-header">
-                    <h3>일정 수정</h3>
-                    <p class="modal-subtitle">${log.country} ${log.city} 여행 일정을 수정하세요</p>
+                    <div class="modal-header-content">
+                        <div>
+                            <h3>일정 수정</h3>
+                            <p class="modal-subtitle">${log.country} ${log.city} 여행 일정을 수정하세요</p>
+                        </div>
+                        <button class="modal-close-btn" id="close-edit-modal" title="닫기" aria-label="모달 닫기">✕</button>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <form id="edit-log-form">
@@ -119,7 +124,10 @@ class LogEditModule {
                         
                         <div class="form-group">
                             <label for="edit-memo">메모</label>
-                            <textarea id="edit-memo" name="memo" rows="4" placeholder="여행에 대한 메모를 작성하세요...">${log.memo || ''}</textarea>
+                            <textarea id="edit-memo" name="memo" rows="4" placeholder="여행에 대한 메모를 작성하세요..." maxlength="300">${log.memo || ''}</textarea>
+                            <div class="memo-char-count">
+                                <span id="memo-char-display">${(log.memo || '').length}</span>/300
+                            </div>
                         </div>
                         
                         <div class="form-info">
@@ -142,6 +150,7 @@ class LogEditModule {
     bindModalEvents(onSave) {
         const cancelBtn = this.modal.querySelector('#cancel-edit');
         const confirmBtn = this.modal.querySelector('#confirm-edit');
+        const closeBtn = this.modal.querySelector('#close-edit-modal');
         const overlay = this.modal.querySelector('.modal-overlay');
         const form = this.modal.querySelector('#edit-log-form');
         
@@ -153,6 +162,7 @@ class LogEditModule {
         };
         
         cancelBtn.addEventListener('click', closeModal);
+        closeBtn.addEventListener('click', closeModal);
         confirmBtn.addEventListener('click', () => {
             if (this.validateForm(form)) {
                 const updatedData = this.getFormData(form);
@@ -182,6 +192,29 @@ class LogEditModule {
         endDateInput.addEventListener('change', () => {
             startDateInput.max = endDateInput.value;
         });
+        
+        // 메모 글자 수 카운터
+        const memoTextarea = this.modal.querySelector('#edit-memo');
+        const memoCharDisplay = this.modal.querySelector('#memo-char-display');
+        
+        if (memoTextarea && memoCharDisplay) {
+            const updateCharCount = () => {
+                const currentLength = memoTextarea.value.length;
+                memoCharDisplay.textContent = currentLength;
+                
+                // 글자 수에 따른 색상 변경
+                if (currentLength >= 280) {
+                    memoCharDisplay.style.color = '#e53e3e'; // 빨간색
+                } else if (currentLength >= 250) {
+                    memoCharDisplay.style.color = '#dd6b20'; // 주황색
+                } else {
+                    memoCharDisplay.style.color = 'var(--text-muted)'; // 기본색
+                }
+            };
+            
+            memoTextarea.addEventListener('input', updateCharCount);
+            memoTextarea.addEventListener('keyup', updateCharCount);
+        }
     }
     
     /**
