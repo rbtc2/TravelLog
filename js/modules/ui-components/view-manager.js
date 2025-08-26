@@ -498,6 +498,17 @@ export class ViewManager {
      */
     renderLogsList(logService, renderLogItem, renderPagination) {
         try {
+            // 콜백 함수들이 제대로 전달되었는지 확인
+            if (typeof renderLogItem !== 'function') {
+                console.error('ViewManager: renderLogItem 콜백이 함수가 아닙니다');
+                return '<div class="error-message">렌더링 함수를 찾을 수 없습니다.</div>';
+            }
+            
+            if (typeof renderPagination !== 'function') {
+                console.error('ViewManager: renderPagination 콜백이 함수가 아닙니다');
+                return '<div class="error-message">페이지네이션 함수를 찾을 수 없습니다.</div>';
+            }
+            
             const pageData = logService.getLogsByPage(
                 logService.currentPage, 
                 logService.logsPerPage
@@ -524,20 +535,7 @@ export class ViewManager {
             `;
         } catch (error) {
             console.error('ViewManager: renderLogsList 오류:', error);
-            return `
-                <div class="my-logs-container">
-                    <div class="my-logs-header">
-                        <div class="header-with-back">
-                            <button class="back-btn" id="back-to-hub">◀ 뒤로</button>
-                            <div class="header-content">
-                                <h1 class="my-logs-title">📅 나의 일정</h1>
-                                <p class="my-logs-subtitle">오류가 발생했습니다</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="error-message">데이터를 불러오는 중 오류가 발생했습니다.</div>
-                </div>
-            `;
+            return '<div class="error-message">일정 목록을 불러오는 중 오류가 발생했습니다.</div>';
         }
     }
 
