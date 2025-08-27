@@ -9,8 +9,7 @@ class SearchTab {
         this.eventListeners = [];
         this.searchInput = null;
         this.filters = {
-            country: '',
-            city: '',
+            continent: [],
             purpose: '',
             memo: '',
             travelStyle: '',
@@ -24,10 +23,10 @@ class SearchTab {
     
     render(container) {
         try {
-            this.container = container;
-            this.renderContent();
-            this.bindEvents();
-            this.isInitialized = true;
+        this.container = container;
+        this.renderContent();
+        this.bindEvents();
+        this.isInitialized = true;
         } catch (error) {
             console.error('검색 탭 렌더링 오류:', error);
             this.showErrorFallback(container);
@@ -67,7 +66,7 @@ class SearchTab {
     
     renderContent() {
         try {
-            this.container.innerHTML = `
+        this.container.innerHTML = `
                 <div class="search-container">
                     <!-- 검색 헤더 -->
                     <div class="search-header">
@@ -82,10 +81,13 @@ class SearchTab {
                             <input 
                                 type="text" 
                                 class="search-input" 
-                                placeholder="여행지, 메모, 태그 등을 검색하세요..."
+                                placeholder="국가, 도시, 여행지, 메모, 태그 등을 검색하세요..."
                                 id="search-input"
                             >
                             <button class="search-btn" id="search-btn">검색</button>
+                        </div>
+                        <div class="search-hint">
+                            💡 국가나 도시를 직접 검색창에 입력하여 찾을 수 있습니다
                         </div>
                     </div>
 
@@ -100,37 +102,41 @@ class SearchTab {
                         </div>
                         
                         <div class="filter-content" id="filter-content">
-                            <!-- 국가/도시 필터 -->
+                            <!-- 대륙별 필터 -->
                             <div class="filter-group">
-                                <label class="filter-label">🌍 국가</label>
-                                <select class="filter-select" id="country-filter">
-                                    <option value="">전체 국가</option>
-                                    <option value="korea">대한민국</option>
-                                    <option value="japan">일본</option>
-                                    <option value="thailand">태국</option>
-                                    <option value="vietnam">베트남</option>
-                                    <option value="singapore">싱가포르</option>
-                                    <option value="taiwan">대만</option>
-                                    <option value="hongkong">홍콩</option>
-                                    <option value="usa">미국</option>
-                                    <option value="europe">유럽</option>
-                                </select>
-                            </div>
-
-                            <div class="filter-group">
-                                <label class="filter-label">🏙️ 도시</label>
-                                <select class="filter-select" id="city-filter">
-                                    <option value="">전체 도시</option>
-                                    <option value="seoul">서울</option>
-                                    <option value="tokyo">도쿄</option>
-                                    <option value="bangkok">방콕</option>
-                                    <option value="hochiminh">호치민</option>
-                                    <option value="singapore">싱가포르</option>
-                                    <option value="taipei">타이페이</option>
-                                    <option value="hongkong">홍콩</option>
-                                    <option value="newyork">뉴욕</option>
-                                    <option value="paris">파리</option>
-                                </select>
+                                <label class="filter-label">🌍 대륙</label>
+                                <div class="filter-checkboxes">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="asia" id="continent-asia">
+                                        <span class="checkmark"></span>
+                                        아시아
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="europe" id="continent-europe">
+                                        <span class="checkmark"></span>
+                                        유럽
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="north-america" id="continent-north-america">
+                                        <span class="checkmark"></span>
+                                        북아메리카
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="south-america" id="continent-south-america">
+                                        <span class="checkmark"></span>
+                                        남아메리카
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="africa" id="continent-africa">
+                                        <span class="checkmark"></span>
+                                        아프리카
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="oceania" id="continent-oceania">
+                                        <span class="checkmark"></span>
+                                        오세아니아
+                                    </label>
+                                </div>
                             </div>
 
                             <!-- 여행 목적 필터 -->
@@ -292,10 +298,10 @@ class SearchTab {
                                 <input type="radio" name="sort" value="title-asc" id="sort-title-asc">
                                 <span class="sort-text">제목순</span>
                             </label>
-                        </div>
-                    </div>
                 </div>
-            `;
+                </div>
+            </div>
+        `;
         } catch (error) {
             console.error('검색 탭 콘텐츠 렌더링 오류:', error);
             this.showErrorFallback(this.container);
@@ -409,8 +415,7 @@ class SearchTab {
         try {
             // 필터 초기화
             this.filters = {
-                country: '',
-                city: '',
+                continent: [],
                 purpose: '',
                 memo: '',
                 travelStyle: '',
@@ -422,15 +427,17 @@ class SearchTab {
             };
 
             // UI 초기화
-            const countryFilter = document.getElementById('country-filter');
-            const cityFilter = document.getElementById('city-filter');
+            // 대륙 체크박스 초기화
+            const continentCheckboxes = document.querySelectorAll('input[id^="continent-"]');
+            continentCheckboxes.forEach(checkbox => checkbox.checked = false);
             
-            if (countryFilter) countryFilter.value = '';
-            if (cityFilter) cityFilter.value = '';
+            // 여행 목적 체크박스 초기화
+            const purposeCheckboxes = document.querySelectorAll('input[id^="purpose-"]');
+            purposeCheckboxes.forEach(checkbox => checkbox.checked = false);
             
-            // 체크박스 초기화
-            const checkboxes = document.querySelectorAll('.filter-checkboxes input[type="checkbox"]');
-            checkboxes.forEach(checkbox => checkbox.checked = false);
+            // 여행 스타일 체크박스 초기화
+            const styleCheckboxes = document.querySelectorAll('input[id^="style-"]');
+            styleCheckboxes.forEach(checkbox => checkbox.checked = false);
             
             // 라디오 버튼 초기화
             const ratingRadios = document.querySelectorAll('input[name="rating"]');
@@ -489,19 +496,19 @@ class SearchTab {
     
     async cleanup() {
         try {
-            // 이벤트 리스너 정리
-            this.eventListeners.forEach(listener => {
-                if (listener.element && listener.event && listener.handler) {
-                    listener.element.removeEventListener(listener.event, listener.handler);
-                }
-            });
-            
-            this.eventListeners = [];
-            this.isInitialized = false;
-            this.searchInput = null;
-            
-            // 메모리 정리
-            this.container = null;
+        // 이벤트 리스너 정리
+        this.eventListeners.forEach(listener => {
+            if (listener.element && listener.event && listener.handler) {
+                listener.element.removeEventListener(listener.event, listener.handler);
+            }
+        });
+        
+        this.eventListeners = [];
+        this.isInitialized = false;
+        this.searchInput = null;
+        
+        // 메모리 정리
+        this.container = null;
         } catch (error) {
             console.error('검색 탭 정리 오류:', error);
         }

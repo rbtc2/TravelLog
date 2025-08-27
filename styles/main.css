@@ -40,3 +40,68 @@
 @import url('./pages/settings.css');
 @import url('./pages/travel-report.css');
 @import url('./pages/error.css');
+
+/* 검색바 */
+.search-bar-container {
+    margin-bottom: 30px;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.search-input-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-icon {
+    font-size: 18px;
+    color: #a0aec0;
+    margin: 0 12px;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    font-size: 16px;
+    background: transparent;
+}
+
+.search-input::placeholder {
+    color: #a0aec0;
+}
+
+.search-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.search-btn:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+.search-hint {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #718096;
+    font-style: italic;
+}
