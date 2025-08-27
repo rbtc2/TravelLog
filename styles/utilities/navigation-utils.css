@@ -1,0 +1,242 @@
+/* ===== 네비게이션 유틸리티 클래스 ===== */
+/* 
+ * Phase 1: 안전한 전환을 위한 유틸리티 클래스
+ * 기존 코드와의 호환성 유지 및 점진적 전환 지원
+ */
+
+/* 네비게이션 높이 관련 유틸리티 */
+.nav-bottom-spacing {
+    padding-bottom: var(--navigation-height, 80px); /* 기본값 80px */
+}
+
+.nav-bottom-spacing-sm {
+    padding-bottom: calc(var(--spacing-sm, 8px) + var(--navigation-height, 80px));
+}
+
+.nav-bottom-spacing-md {
+    padding-bottom: calc(var(--spacing-md, 16px) + var(--navigation-height, 80px));
+}
+
+.nav-bottom-spacing-lg {
+    padding-bottom: calc(var(--spacing-lg, 24px) + var(--navigation-height, 80px));
+}
+
+.nav-bottom-spacing-xl {
+    padding-bottom: calc(var(--spacing-xl, 32px) + var(--navigation-height, 80px));
+}
+
+/* 네비게이션 여백 관련 유틸리티 */
+.nav-margin-bottom {
+    margin-bottom: var(--navigation-height, 80px);
+}
+
+.nav-margin-top {
+    margin-top: var(--navigation-height, 80px);
+}
+
+/* 네비게이션 높이 계산 유틸리티 */
+.nav-height {
+    height: var(--navigation-height, 80px);
+}
+
+.nav-min-height {
+    min-height: var(--navigation-height, 80px);
+}
+
+.nav-max-height {
+    max-height: var(--navigation-height, 80px);
+}
+
+/* 네비게이션 위치 관련 유틸리티 */
+.nav-fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed, 1030);
+}
+
+.nav-sticky-bottom {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-sticky, 1020);
+}
+
+/* 네비게이션 레이아웃 유틸리티 */
+.nav-flex {
+    display: flex;
+}
+
+.nav-flex-column {
+    flex-direction: column;
+}
+
+.nav-flex-1 {
+    flex: 1;
+}
+
+.nav-items-center {
+    align-items: center;
+}
+
+.nav-justify-center {
+    justify-content: center;
+}
+
+.nav-justify-between {
+    justify-content: space-between;
+}
+
+/* 네비게이션 간격 유틸리티 */
+.nav-gap-sm {
+    gap: var(--spacing-sm, 8px);
+}
+
+.nav-gap-md {
+    gap: var(--spacing-md, 16px);
+}
+
+.nav-gap-lg {
+    gap: var(--spacing-lg, 24px);
+}
+
+/* 네비게이션 테두리 유틸리티 */
+.nav-border-top {
+    border-top: 1px solid var(--gray-200, #e2e8f0);
+}
+
+.nav-border-top-primary {
+    border-top: 3px solid var(--primary-color, #667eea);
+}
+
+.nav-border-top-transparent {
+    border-top: 3px solid transparent;
+}
+
+/* 네비게이션 배경 유틸리티 */
+.nav-bg-white {
+    background-color: var(--white, #ffffff);
+}
+
+.nav-bg-primary-light {
+    background-color: var(--primary-light, #4dabf7);
+}
+
+.nav-bg-gray-50 {
+    background-color: var(--gray-50, #f8f9fa);
+}
+
+.nav-bg-gray-100 {
+    background-color: var(--gray-100, #f7fafc);
+}
+
+/* 네비게이션 그림자 유틸리티 */
+.nav-shadow {
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.nav-shadow-sm {
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.1));
+}
+
+.nav-shadow-md {
+    box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+/* 네비게이션 전환 효과 유틸리티 */
+.nav-transition {
+    transition: all var(--transition-normal, 0.3s ease);
+}
+
+.nav-transition-fast {
+    transition: all var(--transition-fast, 0.2s ease);
+}
+
+.nav-transition-slow {
+    transition: all var(--transition-slow, 0.5s ease);
+}
+
+/* 네비게이션 상태 유틸리티 */
+.nav-active {
+    border-top-color: var(--primary-color, #667eea);
+    background-color: var(--primary-light, #4dabf7);
+}
+
+.nav-hover:hover {
+    background-color: var(--gray-50, #f8f9fa);
+}
+
+.nav-active-hover:hover {
+    background-color: var(--gray-100, #f7fafc);
+}
+
+/* 네비게이션 텍스트 유틸리티 */
+.nav-text-primary {
+    color: var(--primary-color, #667eea);
+}
+
+.nav-text-secondary {
+    color: var(--text-secondary, #4a5568);
+}
+
+.nav-text-white {
+    color: var(--white, #ffffff);
+}
+
+.nav-font-medium {
+    font-weight: var(--font-medium, 500);
+}
+
+.nav-font-semibold {
+    font-weight: var(--font-semibold, 600);
+}
+
+/* 네비게이션 크기 유틸리티 */
+.nav-icon-size {
+    font-size: var(--navigation-icon-size, 24px);
+}
+
+.nav-label-size {
+    font-size: var(--navigation-label-size, 11px);
+}
+
+.nav-padding {
+    padding: var(--navigation-padding, 8px 4px);
+}
+
+/* 네비게이션 반응형 유틸리티 */
+@media (max-width: 768px) {
+    .nav-mobile-height {
+        height: var(--navigation-height, 80px);
+    }
+    
+    .nav-mobile-padding {
+        padding: var(--navigation-padding, 8px 4px);
+    }
+}
+
+@media (min-width: 1024px) {
+    .nav-desktop-height {
+        height: var(--navigation-height, 80px);
+    }
+    
+    .nav-desktop-padding {
+        padding: var(--navigation-padding, 8px 4px);
+    }
+}
+
+/* 안전한 전환을 위한 호환성 유틸리티 */
+.nav-compat {
+    /* 기존 클래스와의 호환성을 위한 스타일 */
+}
+
+/* 디버깅을 위한 유틸리티 */
+.nav-debug {
+    outline: 2px solid red;
+    outline-offset: -2px;
+}
+
+.nav-debug * {
+    outline: 1px solid blue;
+    outline-offset: -1px;
+}

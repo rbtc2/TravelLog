@@ -63,20 +63,27 @@
     transform: none;
 }
 
-/* 탭 네비게이션 버튼 */
+/* ===== 탭 네비게이션 버튼 ===== */
+/* 
+ * Phase 2: 기존 .tab-btn 스타일을 새로운 .navigation-tab으로 이전
+ * 기존 클래스는 호환성을 위해 유지하되 새로운 컴포넌트 우선 적용
+ */
+
+/* 기존 .tab-btn - 새로운 컴포넌트 스타일 적용 */
 .tab-btn {
+    /* 새로운 네비게이션 컴포넌트 스타일 직접 적용 */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     flex: 1;
-    padding: 8px 4px;
+    padding: var(--navigation-padding, 8px 4px);
     background: var(--white);
     border: none;
     border-top: 3px solid transparent;
     cursor: pointer;
     transition: all var(--transition-normal);
-    min-height: 80px; /* 네비게이션 높이와 동일 */
+    min-height: var(--navigation-height, 80px);
     position: relative;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
@@ -106,16 +113,86 @@
     font-weight: var(--font-semibold);
 }
 
+/* 새로운 네비게이션 컴포넌트 - 기존 .tab-btn와 동일한 스타일 */
+.navigation-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    padding: var(--navigation-padding, 8px 4px);
+    background: var(--white);
+    border: none;
+    border-top: 3px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-height: var(--navigation-height, 80px);
+    position: relative;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.navigation-tab:hover {
+    background-color: var(--gray-50);
+}
+
+.navigation-tab:active {
+    background-color: var(--gray-100);
+    transform: scale(0.98);
+}
+
+.navigation-tab.active {
+    border-top-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.navigation-tab.active .navigation-icon {
+    transform: scale(1.1);
+    color: var(--primary-color);
+}
+
+.navigation-tab.active .navigation-label {
+    color: var(--primary-color);
+    font-weight: var(--font-semibold);
+}
+
+/* ===== 탭 아이콘 및 레이블 ===== */
+/* 
+ * Phase 2: 기존 .tab-icon, .tab-label 스타일을 새로운 컴포넌트로 이전
+ */
+
+/* 기존 .tab-icon - 새로운 컴포넌트 스타일 직접 적용 */
 .tab-icon {
-    font-size: 24px; /* 고정 크기 */
+    font-size: var(--navigation-icon-size, 24px);
     margin-bottom: 4px;
     transition: all var(--transition-normal);
     color: var(--text-secondary);
     line-height: 1;
 }
 
+/* 새로운 네비게이션 컴포넌트 - 기존 .tab-icon와 동일한 스타일 */
+.navigation-icon {
+    font-size: var(--navigation-icon-size, 24px);
+    margin-bottom: 4px;
+    transition: all var(--transition-normal);
+    color: var(--text-secondary);
+    line-height: 1;
+}
+
+/* 기존 .tab-label - 새로운 컴포넌트 스타일 직접 적용 */
 .tab-label {
-    font-size: 11px; /* 고정 크기 */
+    font-size: var(--navigation-label-size, 11px);
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+    transition: all var(--transition-normal);
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* 새로운 네비게이션 컴포넌트 - 기존 .tab-label와 동일한 스타일 */
+.navigation-label {
+    font-size: var(--navigation-label-size, 11px);
     color: var(--text-secondary);
     font-weight: var(--font-medium);
     transition: all var(--transition-normal);

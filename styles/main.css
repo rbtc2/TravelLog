@@ -14,12 +14,14 @@
 @import url('./utilities/accessibility.css');
 @import url('./utilities/dark-mode.css');
 @import url('./utilities/responsive.css');
+@import url('./utilities/navigation-utils.css'); /* Phase 1: 네비게이션 유틸리티 추가 */
 
 /* 컴포넌트 스타일 */
 @import url('./components/buttons.css');
 @import url('./components/forms.css');
 @import url('./components/modals.css');
 @import url('./components/cards.css');
+@import url('./components/navigation.css'); /* Phase 1: 네비게이션 컴포넌트 추가 */
 
 /* 레이아웃 스타일 */
 @import url('./layouts/main-layout.css');

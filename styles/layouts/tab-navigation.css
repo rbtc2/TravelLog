@@ -1,6 +1,10 @@
 /* ===== 탭 네비게이션 레이아웃 스타일 ===== */
+/* 
+ * Phase 2: 기존 레이아웃을 새로운 네비게이션 컴포넌트로 이전
+ * 기존 #tab-navigation은 새로운 .navigation-container와 동일한 스타일 적용
+ */
 
-/* 탭 네비게이션 컨테이너 */
+/* 기존 #tab-navigation - 새로운 네비게이션 컴포넌트와 동일한 스타일 적용 */
 #tab-navigation {
     display: flex;
     background-color: var(--bg-primary);
@@ -12,7 +16,22 @@
     left: 0;
     right: 0;
     z-index: var(--z-fixed);
-    height: 80px; /* 고정 높이 설정 */
+    height: var(--navigation-height, 80px);
+}
+
+/* 새로운 네비게이션 컴포넌트 - 기존 #tab-navigation와 동일한 스타일 */
+.navigation-container {
+    display: flex;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--gray-200);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+    height: var(--navigation-height, 80px);
 }
 
 /* 탭 버튼 스타일은 components/buttons.css로 분리됨 */
