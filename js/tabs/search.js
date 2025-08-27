@@ -102,187 +102,214 @@ class SearchTab {
                         </div>
                         
                         <div class="filter-content" id="filter-content">
-                            <!-- 대륙별 필터 -->
-                            <div class="filter-group">
-                                <label class="filter-label">🌍 대륙</label>
-                                <div class="filter-checkboxes">
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="asia" id="continent-asia">
-                                        <span class="checkmark"></span>
-                                        아시아
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="europe" id="continent-europe">
-                                        <span class="checkmark"></span>
-                                        유럽
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="north-america" id="continent-north-america">
-                                        <span class="checkmark"></span>
-                                        북아메리카
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="south-america" id="continent-south-america">
-                                        <span class="checkmark"></span>
-                                        남아메리카
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="africa" id="continent-africa">
-                                        <span class="checkmark"></span>
-                                        아프리카
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="oceania" id="continent-oceania">
-                                        <span class="checkmark"></span>
-                                        오세아니아
-                                    </label>
-                                </div>
+                            <!-- 필터 탭 네비게이션 -->
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" data-tab="location">
+                                    <span class="tab-icon">🌍</span>
+                                    <span class="tab-label">위치</span>
+                                </button>
+                                <button class="filter-tab" data-tab="purpose">
+                                    <span class="tab-icon">🎯</span>
+                                    <span class="tab-label">목적</span>
+                                </button>
+                                <button class="filter-tab" data-tab="period">
+                                    <span class="tab-icon">📅</span>
+                                    <span class="tab-label">기간</span>
+                                </button>
+                                <button class="filter-tab" data-tab="rating">
+                                    <span class="tab-icon">⭐</span>
+                                    <span class="tab-label">평점</span>
+                                </button>
                             </div>
 
-                            <!-- 체류 목적 필터 -->
-                            <div class="filter-group">
-                                <label class="filter-label">🎯 체류 목적</label>
-                                <div class="filter-checkboxes">
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="tourism" id="purpose-tourism">
-                                        <span class="checkmark"></span>
-                                        🏖️ 관광/여행
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="business" id="purpose-business">
-                                        <span class="checkmark"></span>
-                                        💼 업무/출장
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="family" id="purpose-family">
-                                        <span class="checkmark"></span>
-                                        👨‍👩‍👧‍👦 가족/지인 방문
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="study" id="purpose-study">
-                                        <span class="checkmark"></span>
-                                        📚 학업
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="work" id="purpose-work">
-                                        <span class="checkmark"></span>
-                                        💻 취업/근로
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="training" id="purpose-training">
-                                        <span class="checkmark"></span>
-                                        🎯 파견/연수
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="event" id="purpose-event">
-                                        <span class="checkmark"></span>
-                                        🎪 행사/컨퍼런스
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="volunteer" id="purpose-volunteer">
-                                        <span class="checkmark"></span>
-                                        🤝 봉사활동
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="medical" id="purpose-medical">
-                                        <span class="checkmark"></span>
-                                        🏥 의료
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="transit" id="purpose-transit">
-                                        <span class="checkmark"></span>
-                                        ✈️ 경유/환승
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="research" id="purpose-research">
-                                        <span class="checkmark"></span>
-                                        🔬 연구/학술
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="immigration" id="purpose-immigration">
-                                        <span class="checkmark"></span>
-                                        🏠 이주/정착
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="other" id="purpose-other">
-                                        <span class="checkmark"></span>
-                                        ❓ 기타
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- 동행 유형 필터 -->
-                            <div class="filter-group">
-                                <label class="filter-label">👥 동행 유형</label>
-                                <div class="filter-checkboxes">
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="alone" id="style-alone">
-                                        <span class="checkmark"></span>
-                                        👤 혼자
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="family" id="style-family">
-                                        <span class="checkmark"></span>
-                                        👨‍👩‍👧‍👦 가족과
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="couple" id="style-couple">
-                                        <span class="checkmark"></span>
-                                        💑 연인과
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="friends" id="style-friends">
-                                        <span class="checkmark"></span>
-                                        👥 친구와
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="colleagues" id="style-colleagues">
-                                        <span class="checkmark"></span>
-                                        👔 동료와
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- 별점 필터 -->
-                            <div class="filter-group">
-                                <label class="filter-label">⭐ 별점</label>
-                                <div class="rating-filter">
-                                    <div class="rating-options">
-                                        <label class="rating-option">
-                                            <input type="radio" name="rating" value="5" id="rating-5">
-                                            <span class="rating-stars">★★★★★</span>
-                                            <span class="rating-text">5점</span>
+                            <!-- 위치 필터 패널 -->
+                            <div class="filter-panel active" data-panel="location">
+                                <div class="filter-group">
+                                    <label class="filter-label">🌍 대륙</label>
+                                    <div class="filter-checkboxes">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="asia" id="continent-asia">
+                                            <span class="checkmark"></span>
+                                            아시아
                                         </label>
-                                        <label class="rating-option">
-                                            <input type="radio" name="rating" value="4" id="rating-4">
-                                            <span class="rating-stars">★★★★☆</span>
-                                            <span class="rating-text">4점 이상</span>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="europe" id="continent-europe">
+                                            <span class="checkmark"></span>
+                                            유럽
                                         </label>
-                                        <label class="rating-option">
-                                            <input type="radio" name="rating" value="3" id="rating-3">
-                                            <span class="rating-stars">★★★☆☆</span>
-                                            <span class="rating-text">3점 이상</span>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="north-america" id="continent-north-america">
+                                            <span class="checkmark"></span>
+                                            북아메리카
                                         </label>
-                                        <label class="rating-option">
-                                            <input type="radio" name="rating" value="0" id="rating-all">
-                                            <span class="rating-text">전체</span>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="south-america" id="continent-south-america">
+                                            <span class="checkmark"></span>
+                                            남아메리카
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="africa" id="continent-africa">
+                                            <span class="checkmark"></span>
+                                            아프리카
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="oceania" id="continent-oceania">
+                                            <span class="checkmark"></span>
+                                            오세아니아
                                         </label>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 날짜 범위 필터 -->
-                            <div class="filter-group">
-                                <label class="filter-label">📅 일정 기간</label>
-                                <div class="date-range-filter">
-                                    <div class="date-input-group">
-                                        <label class="date-label">시작일</label>
-                                        <input type="date" class="date-input" id="start-date">
+                            <!-- 목적 필터 패널 -->
+                            <div class="filter-panel" data-panel="purpose">
+                                <div class="filter-group">
+                                    <label class="filter-label">🎯 체류 목적</label>
+                                    <div class="filter-checkboxes">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="tourism" id="purpose-tourism">
+                                            <span class="checkmark"></span>
+                                            🏖️ 관광/여행
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="business" id="purpose-business">
+                                            <span class="checkmark"></span>
+                                            💼 업무/출장
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="family" id="purpose-family">
+                                            <span class="checkmark"></span>
+                                            👨‍👩‍👧‍👦 가족/지인 방문
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="study" id="purpose-study">
+                                            <span class="checkmark"></span>
+                                            📚 학업
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="work" id="purpose-work">
+                                            <span class="checkmark"></span>
+                                            💻 취업/근로
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="training" id="purpose-training">
+                                            <span class="checkmark"></span>
+                                            🎯 파견/연수
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="event" id="purpose-event">
+                                            <span class="checkmark"></span>
+                                            🎪 행사/컨퍼런스
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="volunteer" id="purpose-volunteer">
+                                            <span class="checkmark"></span>
+                                            🤝 봉사활동
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="medical" id="purpose-medical">
+                                            <span class="checkmark"></span>
+                                            🏥 의료
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="transit" id="purpose-transit">
+                                            <span class="checkmark"></span>
+                                            ✈️ 경유/환승
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="research" id="purpose-research">
+                                            <span class="checkmark"></span>
+                                            🔬 연구/학술
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="immigration" id="purpose-immigration">
+                                            <span class="checkmark"></span>
+                                            🏠 이주/정착
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="other" id="purpose-other">
+                                            <span class="checkmark"></span>
+                                            ❓ 기타
+                                        </label>
                                     </div>
-                                    <div class="date-separator">~</div>
-                                    <div class="date-input-group">
-                                        <label class="date-label">종료일</label>
-                                        <input type="date" class="date-input" id="end-date">
+                                </div>
+
+                                <div class="filter-group">
+                                    <label class="filter-label">👥 동행 유형</label>
+                                    <div class="filter-checkboxes">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="alone" id="style-alone">
+                                            <span class="checkmark"></span>
+                                            👤 혼자
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="family" id="style-family">
+                                            <span class="checkmark"></span>
+                                            👨‍👩‍👧‍👦 가족과
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="couple" id="style-couple">
+                                            <span class="checkmark"></span>
+                                            💑 연인과
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="friends" id="style-friends">
+                                            <span class="checkmark"></span>
+                                            👥 친구와
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" value="colleagues" id="style-colleagues">
+                                            <span class="checkmark"></span>
+                                            👔 동료와
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 기간 필터 패널 -->
+                            <div class="filter-panel" data-panel="period">
+                                <div class="filter-group">
+                                    <label class="filter-label">📅 일정 기간</label>
+                                    <div class="date-range-filter">
+                                        <div class="date-input-group">
+                                            <label class="date-label">시작일</label>
+                                            <input type="date" class="date-input" id="start-date">
+                                        </div>
+                                        <div class="date-separator">~</div>
+                                        <div class="date-input-group">
+                                            <label class="date-label">종료일</label>
+                                            <input type="date" class="date-input" id="end-date">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 평점 필터 패널 -->
+                            <div class="filter-panel" data-panel="rating">
+                                <div class="filter-group">
+                                    <label class="filter-label">⭐ 별점</label>
+                                    <div class="rating-filter">
+                                        <div class="rating-options">
+                                            <label class="rating-option">
+                                                <input type="radio" name="rating" value="5" id="rating-5">
+                                                <span class="rating-stars">★★★★★</span>
+                                                <span class="rating-text">5점</span>
+                                            </label>
+                                            <label class="rating-option">
+                                                <input type="radio" name="rating" value="4" id="rating-4">
+                                                <span class="rating-stars">★★★★☆</span>
+                                                <span class="rating-text">4점 이상</span>
+                                            </label>
+                                            <label class="rating-option">
+                                                <input type="radio" name="rating" value="3" id="rating-3">
+                                                <span class="rating-stars">★★★☆☆</span>
+                                                <span class="rating-text">3점 이상</span>
+                                            </label>
+                                            <label class="rating-option">
+                                                <input type="radio" name="rating" value="0" id="rating-all">
+                                                <span class="rating-text">전체</span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -368,6 +395,12 @@ class SearchTab {
                 this.addEventListener(filterToggle, 'click', this.toggleFilters.bind(this));
             }
 
+            // 필터 탭 전환 이벤트
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                this.addEventListener(tab, 'click', this.switchFilterTab.bind(this));
+            });
+
             // 필터 적용 이벤트
             const filterApply = document.getElementById('filter-apply');
             if (filterApply) {
@@ -438,6 +471,36 @@ class SearchTab {
         } catch (error) {
             console.error('필터 토글 오류:', error);
             this.showToast('필터 토글 중 오류가 발생했습니다.');
+        }
+    }
+
+    /**
+     * 필터 탭을 전환합니다
+     */
+    switchFilterTab(event) {
+        try {
+            const clickedTab = event.currentTarget;
+            const targetTab = clickedTab.dataset.tab;
+            
+            // 모든 탭 비활성화
+            const allTabs = document.querySelectorAll('.filter-tab');
+            allTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // 모든 패널 숨기기
+            const allPanels = document.querySelectorAll('.filter-panel');
+            allPanels.forEach(panel => panel.classList.remove('active'));
+            
+            // 클릭된 탭 활성화
+            clickedTab.classList.add('active');
+            
+            // 해당 패널 표시
+            const targetPanel = document.querySelector(`[data-panel="${targetTab}"]`);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+        } catch (error) {
+            console.error('필터 탭 전환 오류:', error);
+            this.showToast('필터 탭 전환 중 오류가 발생했습니다.');
         }
     }
 
