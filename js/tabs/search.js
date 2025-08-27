@@ -288,28 +288,12 @@ class SearchTab {
                             <div class="filter-panel" data-panel="rating">
                                 <div class="filter-group">
                                     <label class="filter-label">⭐ 별점</label>
-                                    <div class="rating-filter">
-                                        <div class="rating-options">
-                                            <label class="rating-option">
-                                                <input type="radio" name="rating" value="5" id="rating-5">
-                                                <span class="rating-stars">★★★★★</span>
-                                                <span class="rating-text">5점</span>
-                                            </label>
-                                            <label class="rating-option">
-                                                <input type="radio" name="rating" value="4" id="rating-4">
-                                                <span class="rating-stars">★★★★☆</span>
-                                                <span class="rating-text">4점 이상</span>
-                                            </label>
-                                            <label class="rating-option">
-                                                <input type="radio" name="rating" value="3" id="rating-3">
-                                                <span class="rating-stars">★★★☆☆</span>
-                                                <span class="rating-text">3점 이상</span>
-                                            </label>
-                                            <label class="rating-option">
-                                                <input type="radio" name="rating" value="0" id="rating-all">
-                                                <span class="rating-text">전체</span>
-                                            </label>
-                                        </div>
+                                    <div class="star-rating" id="search-star-rating">
+                                        <div class="star" data-value="1">★</div>
+                                        <div class="star" data-value="2">★</div>
+                                        <div class="star" data-value="3">★</div>
+                                        <div class="star" data-value="4">★</div>
+                                        <div class="star" data-value="5">★</div>
                                     </div>
                                 </div>
                             </div>
@@ -400,6 +384,9 @@ class SearchTab {
             filterTabs.forEach(tab => {
                 this.addEventListener(tab, 'click', this.switchFilterTab.bind(this));
             });
+
+            // 별점 선택 이벤트
+            this.bindSearchStarRating();
 
             // 필터 적용 이벤트
             const filterApply = document.getElementById('filter-apply');
@@ -504,6 +491,66 @@ class SearchTab {
         }
     }
 
+    /**
+     * 검색 탭의 별점 컴포넌트 이벤트를 바인딩합니다
+     */
+    bindSearchStarRating() {
+        try {
+            const starRating = document.getElementById('search-star-rating');
+            const stars = starRating.querySelectorAll('.star');
+            
+            /** @type {number} 현재 선택된 별점 */
+            let currentRating = 0;
+            /** @type {number} 호버 중인 별점 */
+            let hoverRating = 0;
+            
+            // 별 클릭 이벤트
+            stars.forEach((star, index) => {
+                this.addEventListener(star, 'click', () => {
+                    const value = index + 1;
+                    
+                    // 이미 선택된 별을 다시 클릭하면 선택 해제
+                    if (currentRating === value) {
+                        currentRating = 0;
+                        this.filters.rating = null;
+                        this.showToast('별점 선택이 해제되었습니다.');
+                    } else {
+                        currentRating = value;
+                        this.filters.rating = value;
+                        this.showToast(`${value}점이 선택되었습니다.`);
+                    }
+                    
+                    this.updateSearchStarDisplay();
+                });
+                
+                // 호버 이벤트 (데스크탑)
+                this.addEventListener(star, 'mouseenter', () => {
+                    hoverRating = index + 1;
+                    this.updateSearchStarDisplay();
+                });
+                
+                this.addEventListener(star, 'mouseleave', () => {
+                    hoverRating = 0;
+                    this.updateSearchStarDisplay();
+                });
+            });
+            
+            // 별점 표시 업데이트
+            this.updateSearchStarDisplay = () => {
+                const displayRating = hoverRating || currentRating;
+                stars.forEach((star, index) => {
+                    if (index < displayRating) {
+                        star.classList.add('filled');
+                    } else {
+                        star.classList.remove('filled');
+                    }
+                });
+            };
+        } catch (error) {
+            console.error('검색 별점 바인딩 오류:', error);
+        }
+    }
+
     applyFilters() {
         try {
             // 필터 적용 (준비 중)
@@ -542,9 +589,9 @@ class SearchTab {
             const styleCheckboxes = document.querySelectorAll('input[id^="style-"]');
             styleCheckboxes.forEach(checkbox => checkbox.checked = false);
             
-            // 라디오 버튼 초기화
-            const ratingRadios = document.querySelectorAll('input[name="rating"]');
-            ratingRadios.forEach(radio => radio.checked = false);
+            // 별점 선택 초기화
+            const allStars = document.querySelectorAll('#search-star-rating .star');
+            allStars.forEach(star => star.classList.remove('filled'));
             
             // 날짜 초기화
             const startDate = document.getElementById('start-date');
