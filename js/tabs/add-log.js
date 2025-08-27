@@ -43,8 +43,59 @@ class AddLogTab {
     render(container) {
         this.container = container;
         this.renderContent();
-        this.bindEvents();
+        
+        // DOM 파싱 완료를 보장하는 방법으로 이벤트 바인딩
+        this.waitForDOMReady(() => {
+            this.bindEvents();
+        });
+        
         this.isInitialized = true;
+    }
+    
+    /**
+     * DOM이 완전히 파싱될 때까지 대기합니다
+     * @param {Function} callback - DOM 준비 완료 시 실행할 콜백
+     */
+    waitForDOMReady(callback) {
+        // 방법 1: DOMContentLoaded 이벤트 활용
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(callback, 0);
+            });
+        } else {
+            // 방법 2: setTimeout을 사용한 폴링 방식
+            let attempts = 0;
+            const maxAttempts = 100; // 최대 1초 대기
+            
+            const checkDOM = () => {
+                attempts++;
+                
+                // 필수 DOM 요소들이 모두 존재하는지 확인
+                const form = document.getElementById('add-log-form');
+                const countryInput = document.getElementById('country');
+                const cityInput = document.getElementById('city');
+                const startDateInput = document.getElementById('startDate');
+                const endDateInput = document.getElementById('endDate');
+                const memoTextarea = document.getElementById('memo');
+                const submitBtn = document.getElementById('submit-btn');
+                const resetBtn = document.getElementById('reset-btn');
+                
+                if (form && countryInput && cityInput && startDateInput && endDateInput && memoTextarea && submitBtn && resetBtn) {
+                    // 모든 요소가 준비되었으면 콜백 실행
+                    callback();
+                } else if (attempts < maxAttempts) {
+                    // 아직 준비되지 않았으면 10ms 후 재시도
+                    setTimeout(checkDOM, 10);
+                } else {
+                    // 최대 시도 횟수 초과 시 강제 실행 (fallback)
+                    console.warn('AddLogTab: DOM 준비 대기 시간 초과, 강제로 이벤트 바인딩을 시도합니다.');
+                    callback();
+                }
+            };
+            
+            // 즉시 첫 번째 확인 시작
+            checkDOM();
+        }
     }
     
     /**
@@ -202,6 +253,7 @@ class AddLogTab {
      * @description 폼 제출, 입력 검증, 별점 등의 이벤트를 관리합니다
      */
     bindEvents() {
+        // DOM 요소 존재 여부 확인
         const form = document.getElementById('add-log-form');
         const countryInput = document.getElementById('country');
         const cityInput = document.getElementById('city');
@@ -210,6 +262,12 @@ class AddLogTab {
         const memoTextarea = document.getElementById('memo');
         const submitBtn = document.getElementById('submit-btn');
         const resetBtn = document.getElementById('reset-btn');
+        
+        // 필수 DOM 요소가 없으면 이벤트 바인딩 건너뛰기
+        if (!form || !countryInput || !cityInput || !startDateInput || !endDateInput || !memoTextarea || !submitBtn || !resetBtn) {
+            console.warn('AddLogTab: 필수 DOM 요소를 찾을 수 없어 이벤트 바인딩을 건너뜁니다.');
+            return;
+        }
         
         // 국가 입력 시 도시 활성화
         this.addEventListener(countryInput, 'input', (e) => {
@@ -349,6 +407,12 @@ class AddLogTab {
      * @description cleanup 시 자동으로 제거되도록 추적합니다
      */
     addEventListener(element, event, handler) {
+        // 요소가 유효한지 확인
+        if (!element || !element.addEventListener) {
+            console.warn('AddLogTab: 유효하지 않은 요소에 이벤트 리스너를 등록할 수 없습니다:', element);
+            return;
+        }
+        
         element.addEventListener(event, handler);
         this.eventListeners.push({ element, event, handler });
     }
@@ -673,8 +737,15 @@ class AddLogTab {
     async cleanup() {
         // 이벤트 리스너 정리
         this.eventListeners.forEach(listener => {
-            if (listener.element && listener.event && listener.handler) {
-                listener.element.removeEventListener(listener.event, listener.handler);
+            try {
+                if (listener.element && listener.event && listener.handler) {
+                    // DOM 요소가 여전히 유효한지 확인
+                    if (listener.element.nodeType === Node.ELEMENT_NODE) {
+                        listener.element.removeEventListener(listener.event, listener.handler);
+                    }
+                }
+            } catch (error) {
+                console.warn('AddLogTab: 이벤트 리스너 제거 중 오류 발생:', error);
             }
         });
         
