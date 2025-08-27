@@ -18,8 +18,8 @@
     flex: 1;
     padding: var(--spacing-lg);
     background-color: var(--bg-primary);
-    /* Phase 4: 완전한 중앙화 - 네비게이션 여백을 유틸리티 클래스로 관리 */
-    /* 기존 하드코딩된 여백 제거 */
+    /* Phase 4: 네비게이션 여백 적용 - 콘텐츠가 가려지지 않도록 */
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
 }
 
 /* Phase 4 완료 후 제거 예정: 기존 네비게이션 여백 */
@@ -47,7 +47,8 @@
 @media (max-width: 768px) {
     #main-content {
         padding: var(--spacing-md);
-        /* Phase 4: 모바일에서도 네비게이션 유틸리티 클래스 사용 */
+        /* Phase 4: 모바일에서도 네비게이션 여백 적용 */
+        padding-bottom: calc(var(--spacing-md) + var(--navigation-height, 80px));
     }
     
     .page-container {

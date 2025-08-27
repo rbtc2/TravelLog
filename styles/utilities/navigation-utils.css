@@ -1,40 +1,33 @@
-/* ===== 네비게이션 유틸리티 클래스 ===== */
+/* ===== 네비게이션 유틸리티 스타일 ===== */
 /* 
- * Phase 1: 안전한 전환을 위한 유틸리티 클래스
- * 기존 코드와의 호환성 유지 및 점진적 전환 지원
+ * Phase 4: 네비게이션 관련 유틸리티 클래스
+ * 네비게이션 바와 관련된 여백, 간격, 높이 등을 중앙 관리
  */
 
-/* 네비게이션 높이 관련 유틸리티 */
+/* ===== 네비게이션 여백 유틸리티 ===== */
+/* 하단 네비게이션 바 높이만큼의 여백을 제공하여 콘텐츠가 가려지지 않도록 함 */
+
+/* 기본 네비게이션 하단 여백 */
 .nav-bottom-spacing {
-    padding-bottom: var(--navigation-height, 80px); /* 기본값 80px */
+    padding-bottom: var(--navigation-height, 80px);
 }
 
-.nav-bottom-spacing-sm {
-    padding-bottom: calc(var(--spacing-sm, 8px) + var(--navigation-height, 80px));
-}
-
-.nav-bottom-spacing-md {
-    padding-bottom: calc(var(--spacing-md, 16px) + var(--navigation-height, 80px));
-}
-
+/* 큰 네비게이션 하단 여백 (추가 여백이 필요한 경우) */
 .nav-bottom-spacing-lg {
-    padding-bottom: calc(var(--spacing-lg, 24px) + var(--navigation-height, 80px));
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
 }
 
-.nav-bottom-spacing-xl {
-    padding-bottom: calc(var(--spacing-xl, 32px) + var(--navigation-height, 80px));
+/* 중간 네비게이션 하단 여백 */
+.nav-bottom-spacing-md {
+    padding-bottom: calc(var(--spacing-md) + var(--navigation-height, 80px));
 }
 
-/* 네비게이션 여백 관련 유틸리티 */
-.nav-margin-bottom {
-    margin-bottom: var(--navigation-height, 80px);
+/* 작은 네비게이션 하단 여백 */
+.nav-bottom-spacing-sm {
+    padding-bottom: calc(var(--spacing-sm) + var(--navigation-height, 80px));
 }
 
-.nav-margin-top {
-    margin-top: var(--navigation-height, 80px);
-}
-
-/* 네비게이션 높이 계산 유틸리티 */
+/* ===== 네비게이션 높이 유틸리티 ===== */
 .nav-height {
     height: var(--navigation-height, 80px);
 }
@@ -43,155 +36,42 @@
     min-height: var(--navigation-height, 80px);
 }
 
-.nav-max-height {
-    max-height: var(--navigation-height, 80px);
+/* ===== 네비게이션 여백 유틸리티 (마진) ===== */
+.nav-bottom-margin {
+    margin-bottom: var(--navigation-height, 80px);
 }
 
-/* 네비게이션 위치 관련 유틸리티 */
-.nav-fixed-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: var(--z-fixed, 1030);
+.nav-bottom-margin-lg {
+    margin-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
 }
 
-.nav-sticky-bottom {
-    position: sticky;
-    bottom: 0;
-    z-index: var(--z-sticky, 1020);
+.nav-bottom-margin-md {
+    margin-bottom: calc(var(--spacing-md) + var(--navigation-height, 80px));
 }
 
-/* 네비게이션 레이아웃 유틸리티 */
-.nav-flex {
-    display: flex;
+.nav-bottom-margin-sm {
+    margin-bottom: calc(var(--spacing-sm) + var(--navigation-height, 80px));
 }
 
-.nav-flex-column {
-    flex-direction: column;
+/* ===== 네비게이션 위치 유틸리티 ===== */
+.nav-bottom {
+    bottom: var(--navigation-height, 80px);
 }
 
-.nav-flex-1 {
-    flex: 1;
+.nav-top {
+    top: var(--navigation-height, 80px);
 }
 
-.nav-items-center {
-    align-items: center;
+/* ===== 네비게이션 간격 유틸리티 ===== */
+.nav-gap {
+    gap: var(--navigation-padding, 8px 4px);
 }
 
-.nav-justify-center {
-    justify-content: center;
+.nav-padding {
+    padding: var(--navigation-padding, 8px 4px);
 }
 
-.nav-justify-between {
-    justify-content: space-between;
-}
-
-/* 네비게이션 간격 유틸리티 */
-.nav-gap-sm {
-    gap: var(--spacing-sm, 8px);
-}
-
-.nav-gap-md {
-    gap: var(--spacing-md, 16px);
-}
-
-.nav-gap-lg {
-    gap: var(--spacing-lg, 24px);
-}
-
-/* 네비게이션 테두리 유틸리티 */
-.nav-border-top {
-    border-top: 1px solid var(--gray-200, #e2e8f0);
-}
-
-.nav-border-top-primary {
-    border-top: 3px solid var(--primary-color, #667eea);
-}
-
-.nav-border-top-transparent {
-    border-top: 3px solid transparent;
-}
-
-/* 네비게이션 배경 유틸리티 */
-.nav-bg-white {
-    background-color: var(--white, #ffffff);
-}
-
-.nav-bg-primary-light {
-    background-color: var(--primary-light, #4dabf7);
-}
-
-.nav-bg-gray-50 {
-    background-color: var(--gray-50, #f8f9fa);
-}
-
-.nav-bg-gray-100 {
-    background-color: var(--gray-100, #f7fafc);
-}
-
-/* 네비게이션 그림자 유틸리티 */
-.nav-shadow {
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
-}
-
-.nav-shadow-sm {
-    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.1));
-}
-
-.nav-shadow-md {
-    box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
-}
-
-/* 네비게이션 전환 효과 유틸리티 */
-.nav-transition {
-    transition: all var(--transition-normal, 0.3s ease);
-}
-
-.nav-transition-fast {
-    transition: all var(--transition-fast, 0.2s ease);
-}
-
-.nav-transition-slow {
-    transition: all var(--transition-slow, 0.5s ease);
-}
-
-/* 네비게이션 상태 유틸리티 */
-.nav-active {
-    border-top-color: var(--primary-color, #667eea);
-    background-color: var(--primary-light, #4dabf7);
-}
-
-.nav-hover:hover {
-    background-color: var(--gray-50, #f8f9fa);
-}
-
-.nav-active-hover:hover {
-    background-color: var(--gray-100, #f7fafc);
-}
-
-/* 네비게이션 텍스트 유틸리티 */
-.nav-text-primary {
-    color: var(--primary-color, #667eea);
-}
-
-.nav-text-secondary {
-    color: var(--text-secondary, #4a5568);
-}
-
-.nav-text-white {
-    color: var(--white, #ffffff);
-}
-
-.nav-font-medium {
-    font-weight: var(--font-medium, 500);
-}
-
-.nav-font-semibold {
-    font-weight: var(--font-semibold, 600);
-}
-
-/* 네비게이션 크기 유틸리티 */
+/* ===== 네비게이션 아이콘 및 레이블 유틸리티 ===== */
 .nav-icon-size {
     font-size: var(--navigation-icon-size, 24px);
 }
@@ -200,43 +80,101 @@
     font-size: var(--navigation-label-size, 11px);
 }
 
-.nav-padding {
-    padding: var(--navigation-padding, 8px 4px);
-}
-
-/* 네비게이션 반응형 유틸리티 */
+/* ===== 반응형 네비게이션 유틸리티 ===== */
 @media (max-width: 768px) {
-    .nav-mobile-height {
-        height: var(--navigation-height, 80px);
+    /* 모바일에서 네비게이션 여백 조정 */
+    .nav-bottom-spacing {
+        padding-bottom: var(--navigation-height, 80px);
     }
     
-    .nav-mobile-padding {
-        padding: var(--navigation-padding, 8px 4px);
+    .nav-bottom-spacing-lg {
+        padding-bottom: calc(var(--spacing-md) + var(--navigation-height, 80px));
+    }
+    
+    .nav-bottom-spacing-md {
+        padding-bottom: calc(var(--spacing-sm) + var(--navigation-height, 80px));
+    }
+    
+    .nav-bottom-spacing-sm {
+        padding-bottom: calc(var(--spacing-xs) + var(--navigation-height, 80px));
     }
 }
 
 @media (min-width: 1024px) {
-    .nav-desktop-height {
-        height: var(--navigation-height, 80px);
-    }
-    
-    .nav-desktop-padding {
-        padding: var(--navigation-padding, 8px 4px);
+    /* 데스크톱에서 네비게이션 여백 조정 */
+    .nav-bottom-spacing-lg {
+        padding-bottom: calc(var(--spacing-xl) + var(--navigation-height, 80px));
     }
 }
 
-/* 안전한 전환을 위한 호환성 유틸리티 */
-.nav-compat {
-    /* 기존 클래스와의 호환성을 위한 스타일 */
+/* ===== 네비게이션 접근성 유틸리티 ===== */
+.nav-focus-visible:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
 }
 
-/* 디버깅을 위한 유틸리티 */
-.nav-debug {
-    outline: 2px solid red;
-    outline-offset: -2px;
+.nav-focus-visible:focus:not(:focus-visible) {
+    outline: none;
 }
 
-.nav-debug * {
-    outline: 1px solid blue;
-    outline-offset: -1px;
+/* ===== 네비게이션 애니메이션 유틸리티 ===== */
+.nav-transition {
+    transition: all var(--transition-normal);
+}
+
+.nav-transition-fast {
+    transition: all var(--transition-fast);
+}
+
+.nav-transition-slow {
+    transition: all var(--transition-slow);
+}
+
+/* ===== 네비게이션 그림자 유틸리티 ===== */
+.nav-shadow {
+    box-shadow: var(--navigation-shadow, 0 -2px 10px rgba(0, 0, 0, 0.08));
+}
+
+.nav-shadow-sm {
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.nav-shadow-lg {
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== 네비게이션 테두리 유틸리티 ===== */
+.nav-border {
+    border-top: 1px solid var(--navigation-border, var(--gray-200));
+}
+
+.nav-border-thick {
+    border-top: 2px solid var(--navigation-border, var(--gray-200));
+}
+
+/* ===== 네비게이션 배경 유틸리티 ===== */
+.nav-bg {
+    background-color: var(--navigation-bg, var(--bg-primary));
+}
+
+.nav-bg-transparent {
+    background-color: transparent;
+}
+
+.nav-bg-glass {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+}
+
+/* ===== 네비게이션 z-index 유틸리티 ===== */
+.nav-z-index {
+    z-index: var(--z-fixed);
+}
+
+.nav-z-index-high {
+    z-index: calc(var(--z-fixed) + 1);
+}
+
+.nav-z-index-low {
+    z-index: calc(var(--z-fixed) - 1);
 }
