@@ -23,6 +23,7 @@
 @import url('./components/modals.css');
 @import url('./components/cards.css');
 @import url('./components/navigation.css'); /* Phase 1: 네비게이션 컴포넌트 추가 */
+@import url('./components/country-selector.css'); /* 국가 선택기 컴포넌트 추가 */
 
 /* 레이아웃 스타일 */
 @import url('./layouts/main-layout.css');
