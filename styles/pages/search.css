@@ -1,11 +1,16 @@
 /* ===== 검색 페이지 스타일 ===== */
 
+/* 검색 컨테이너 */
 .search-container {
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
-    padding-bottom: calc(20px + 80px); /* 탭 네비게이션 높이만큼 하단 여백 추가 */
+    /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
+    padding-bottom: calc(20px + var(--navigation-height, 80px));
 }
+
+/* 기존 방식 - Phase 3 완료 후 제거 예정 */
+/* padding-bottom: calc(20px + 80px); */
 
 /* 검색 헤더 */
 .search-header {
@@ -333,6 +338,8 @@
 @media (max-width: 768px) {
     .search-container {
         padding: 16px;
+        /* Phase 3: 모바일에서도 네비게이션 유틸리티 클래스 직접 적용 */
+        padding-bottom: calc(16px + var(--navigation-height, 80px));
     }
     
     .search-title {

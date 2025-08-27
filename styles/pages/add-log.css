@@ -1,13 +1,14 @@
 /* ===== 일지 추가 페이지 스타일 ===== */
 
+/* 일지 추가 컨테이너 */
 .add-log-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background: white;
-    min-height: calc(100vh - 80px); /* 탭 네비게이션 높이 제외 */
-    padding-bottom: calc(20px + 80px); /* 탭 네비게이션 높이만큼 하단 여백 추가 */
+    padding: var(--spacing-lg);
+    /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
 }
+
+/* 기존 방식 - Phase 3 완료 후 제거 예정 */
+/* padding-bottom: calc(20px + 80px); */
 
 .add-log-header {
     text-align: center;
