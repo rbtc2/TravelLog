@@ -31,7 +31,25 @@ class LogEditModule {
         document.body.appendChild(this.modal);
         document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
         
+        // 초기 날짜 제약 조건 설정
+        this.setInitialDateConstraints();
+        
         this.bindModalEvents(onSave);
+    }
+    
+    /**
+     * 초기 날짜 제약 조건을 설정합니다
+     */
+    setInitialDateConstraints() {
+        const startDateInput = this.modal.querySelector('#edit-start-date');
+        const endDateInput = this.modal.querySelector('#edit-end-date');
+        
+        if (startDateInput && endDateInput) {
+            // 시작일의 최대값을 종료일로 설정
+            startDateInput.max = endDateInput.value;
+            // 종료일의 최소값을 시작일로 설정
+            endDateInput.min = startDateInput.value;
+        }
     }
     
     /**
@@ -69,11 +87,11 @@ class LogEditModule {
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="edit-start-date">시작일 *</label>
-                                <input type="date" id="edit-start-date" name="startDate" value="${log.startDate}" required>
+                                <input type="date" id="edit-start-date" name="startDate" value="${log.startDate}" max="${log.endDate}" required>
                             </div>
                             <div class="form-group">
                                 <label for="edit-end-date">종료일 *</label>
-                                <input type="date" id="edit-end-date" name="endDate" value="${log.endDate}" required>
+                                <input type="date" id="edit-end-date" name="endDate" value="${log.endDate}" min="${log.startDate}" required>
                             </div>
                         </div>
                         
@@ -189,12 +207,26 @@ class LogEditModule {
         const startDateInput = this.modal.querySelector('#edit-start-date');
         const endDateInput = this.modal.querySelector('#edit-end-date');
         
+        // 시작일 변경 시 종료일의 최소값 설정
         startDateInput.addEventListener('change', () => {
-            endDateInput.min = startDateInput.value;
+            const startDate = startDateInput.value;
+            endDateInput.min = startDate;
+            
+            // 현재 종료일이 시작일보다 이전이면 시작일로 설정
+            if (endDateInput.value && endDateInput.value < startDate) {
+                endDateInput.value = startDate;
+            }
         });
         
+        // 종료일 변경 시 시작일의 최대값 설정
         endDateInput.addEventListener('change', () => {
-            startDateInput.max = endDateInput.value;
+            const endDate = endDateInput.value;
+            startDateInput.max = endDate;
+            
+            // 현재 시작일이 종료일보다 이후면 종료일로 설정
+            if (startDateInput.value && startDateInput.value > endDate) {
+                startDateInput.value = endDate;
+            }
         });
         
         // 메모 글자 수 카운터
@@ -242,8 +274,15 @@ class LogEditModule {
         const endDate = new Date(form.endDate.value);
         
         if (startDate > endDate) {
-            alert('시작일은 종료일보다 이전이어야 합니다.');
+            alert('종료일은 시작일과 같거나 이후의 날짜여야 합니다.');
             isValid = false;
+            // 에러가 있는 필드에 시각적 표시
+            form.startDate.classList.add('error');
+            form.endDate.classList.add('error');
+        } else {
+            // 에러가 없으면 에러 표시 제거
+            form.startDate.classList.remove('error');
+            form.endDate.classList.remove('error');
         }
         
         return isValid;

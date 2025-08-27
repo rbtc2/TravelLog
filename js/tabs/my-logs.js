@@ -180,9 +180,11 @@ class MyLogsTab {
             
             this.renderContent(); // UI 업데이트
             
-            // DOM 렌더링 완료 후 이벤트 리스너 재바인딩
+            // DOM 렌더링 완료 후 이벤트 리스너 재바인딩 및 스크롤 초기화
             requestAnimationFrame(() => {
                 this.bindEvents();
+                // 삭제 완료 후 스크롤을 맨 위로 이동
+                this.scrollToTop();
             });
             
             // 삭제 완료 토스트 메시지
@@ -1068,9 +1070,11 @@ class MyLogsTab {
             // UI 업데이트
             this.renderContent();
             
-            // DOM 렌더링 완료 후 이벤트 리스너 재바인딩
+            // DOM 렌더링 완료 후 이벤트 리스너 재바인딩 및 스크롤 초기화
             requestAnimationFrame(() => {
                 this.bindEvents();
+                // 편집 완료 후 스크롤을 맨 위로 이동
+                this.scrollToTop();
             });
             
             // 편집 완료 토스트 메시지
@@ -1086,13 +1090,38 @@ class MyLogsTab {
      * 스크롤을 맨 위로 즉시 이동시킵니다 (DOM 렌더링 완료 후)
      */
     scrollToTop() {
-        // DOM 렌더링 완료 후 스크롤 실행
-        requestAnimationFrame(() => {
-            // 추가 안정성을 위해 약간의 지연 후 스크롤 실행
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'instant' });
-            }, 10);
+        // DOM 렌더링 완료를 보장하는 방법으로 스크롤 실행
+        this.waitForDOMReady(() => {
+            // 스크롤을 맨 위로 즉시 이동
+            window.scrollTo({ top: 0, behavior: 'instant' });
         });
+    }
+    
+    /**
+     * DOM이 완전히 렌더링될 때까지 대기합니다
+     * @param {Function} callback - DOM 준비 완료 시 실행할 콜백
+     */
+    waitForDOMReady(callback) {
+        // 방법 1: MutationObserver를 사용하여 DOM 변경 감지
+        const observer = new MutationObserver((mutations, obs) => {
+            // DOM 변경이 완료되었는지 확인
+            obs.disconnect();
+            
+            // 추가 안정성을 위해 약간의 지연 후 콜백 실행
+            setTimeout(callback, 50);
+        });
+        
+        // DOM 변경 감지 시작
+        observer.observe(this.container, {
+            childList: true,
+            subtree: true
+        });
+        
+        // 백업: 최대 500ms 후 강제 실행
+        setTimeout(() => {
+            observer.disconnect();
+            callback();
+        }, 500);
     }
     
     /**
