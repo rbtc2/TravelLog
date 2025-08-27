@@ -19,6 +19,7 @@
     overflow-y: auto;
     padding: var(--spacing-lg);
     background-color: var(--bg-primary);
+    padding-bottom: calc(var(--spacing-lg) + 80px); /* 탭 네비게이션 높이만큼 하단 여백 추가 */
 }
 
 #tab-content {

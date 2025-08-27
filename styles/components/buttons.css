@@ -70,18 +70,25 @@
     align-items: center;
     justify-content: center;
     flex: 1;
-    padding: var(--spacing-md);
+    padding: 8px 4px;
     background: var(--white);
     border: none;
     border-top: 3px solid transparent;
     cursor: pointer;
     transition: all var(--transition-normal);
-    min-height: 60px;
+    min-height: 80px; /* 네비게이션 높이와 동일 */
     position: relative;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .tab-btn:hover {
     background-color: var(--gray-50);
+}
+
+.tab-btn:active {
+    background-color: var(--gray-100);
+    transform: scale(0.98);
 }
 
 .tab-btn.active {
@@ -91,6 +98,7 @@
 
 .tab-btn.active .tab-icon {
     transform: scale(1.1);
+    color: var(--primary-color);
 }
 
 .tab-btn.active .tab-label {
@@ -99,16 +107,21 @@
 }
 
 .tab-icon {
-    font-size: var(--font-xl);
-    margin-bottom: var(--spacing-xs);
-    transition: transform var(--transition-normal);
+    font-size: 24px; /* 고정 크기 */
+    margin-bottom: 4px;
+    transition: all var(--transition-normal);
+    color: var(--text-secondary);
+    line-height: 1;
 }
 
 .tab-label {
-    font-size: var(--font-xs);
+    font-size: 11px; /* 고정 크기 */
     color: var(--text-secondary);
     font-weight: var(--font-medium);
-    transition: color var(--transition-normal);
+    transition: all var(--transition-normal);
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* 설정 및 뒤로가기 버튼 */
@@ -235,16 +248,16 @@
 /* 반응형 버튼 스타일 */
 @media (max-width: 768px) {
     .tab-btn {
-        min-height: 50px;
-        padding: var(--spacing-sm);
+        min-height: 80px; /* 모바일에서도 동일한 높이 유지 */
+        padding: 8px 4px;
     }
     
     .tab-icon {
-        font-size: var(--font-lg);
+        font-size: 24px; /* 모바일에서도 동일한 크기 유지 */
     }
     
     .tab-label {
-        font-size: var(--font-xs);
+        font-size: 11px; /* 모바일에서도 동일한 크기 유지 */
     }
     
     .settings-btn,

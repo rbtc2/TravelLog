@@ -37,6 +37,7 @@
 @media (min-width: 1024px) {
     .travel-report-content {
         gap: 24px;
+        padding-bottom: 80px; /* 탭 네비게이션 높이만큼 하단 여백 추가 */
     }
     
     .report-action {

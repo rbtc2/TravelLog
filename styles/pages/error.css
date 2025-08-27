@@ -73,7 +73,7 @@
 
 @media (min-width: 1024px) {
     .error-fallback {
-        padding: 80px 32px;
+        padding: 80px 32px 80px 32px; /* 탭 네비게이션 높이만큼 하단 여백 추가 */
     }
     
     .error-icon {

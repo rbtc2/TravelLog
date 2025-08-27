@@ -4,6 +4,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    padding-bottom: calc(20px + 80px); /* 탭 네비게이션 높이만큼 하단 여백 추가 */
 }
 
 /* 헤더 스타일 */

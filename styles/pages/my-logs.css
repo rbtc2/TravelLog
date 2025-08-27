@@ -4,6 +4,7 @@
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
+    padding-bottom: calc(20px + 80px); /* 탭 네비게이션 높이만큼 하단 여백 추가 */
 }
 
 .my-logs-header {
