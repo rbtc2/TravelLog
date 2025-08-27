@@ -77,17 +77,13 @@ class SearchTab {
                     <!-- 검색바 -->
                     <div class="search-bar-container">
                         <div class="search-input-wrapper">
-                            <span class="search-icon">🔍</span>
                             <input 
                                 type="text" 
                                 class="search-input" 
-                                placeholder="국가, 도시, 일정지, 메모, 태그 등을 검색하세요..."
+                                placeholder="국가, 도시, 일정지, 메모 등을 검색하세요..."
                                 id="search-input"
                             >
                             <button class="search-btn" id="search-btn">검색</button>
-                        </div>
-                        <div class="search-hint">
-                            💡 국가나 도시를 직접 검색창에 입력하여 찾을 수 있습니다
                         </div>
                     </div>
 
