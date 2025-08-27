@@ -1,28 +1,62 @@
-/* ===== 메인 앱 레이아웃 스타일 ===== */
+/* ===== 메인 레이아웃 스타일 ===== */
 
-/* 메인 앱 화면 */
+/* 메인 앱 컨테이너 */
 .main-app {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    max-width: 100%;
-    margin: 0 auto;
+    min-height: 100vh;
+    background-color: var(--bg-primary);
 }
 
+/* Phase 4: 로그인 화면 관련 스타일 복원 */
 .main-app.hidden {
-    display: none;
+    display: none !important;
 }
 
 /* 메인 콘텐츠 영역 */
 #main-content {
     flex: 1;
-    overflow-y: auto;
     padding: var(--spacing-lg);
     background-color: var(--bg-primary);
-    /* Phase 2: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
-    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
+    /* Phase 4: 완전한 중앙화 - 네비게이션 여백을 유틸리티 클래스로 관리 */
+    /* 기존 하드코딩된 여백 제거 */
 }
 
+/* Phase 4 완료 후 제거 예정: 기존 네비게이션 여백 */
+/*
+#main-content {
+    padding: var(--spacing-lg);
+    background-color: var(--bg-primary);
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
+}
+*/
+
+/* 탭 콘텐츠 영역 */
 #tab-content {
     min-height: 100%;
+}
+
+/* 페이지별 레이아웃 */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+/* 반응형 레이아웃 */
+@media (max-width: 768px) {
+    #main-content {
+        padding: var(--spacing-md);
+        /* Phase 4: 모바일에서도 네비게이션 유틸리티 클래스 사용 */
+    }
+    
+    .page-container {
+        padding: 0 var(--spacing-md);
+    }
+}
+
+@media (min-width: 1024px) {
+    .page-container {
+        max-width: 1400px;
+    }
 }

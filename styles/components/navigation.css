@@ -1,45 +1,100 @@
 /* ===== 네비게이션 컴포넌트 스타일 ===== */
 /* 
- * Phase 1: 안전한 전환을 위한 네비게이션 컴포넌트
- * 기존 코드와 병행 운영하여 점진적 전환 지원
+ * Phase 4: 완전한 중앙화 및 최적화
+ * 모든 네비게이션 관련 스타일을 이 파일에서 중앙 관리
  */
 
-/* 네비게이션 컨테이너 - 기존 #tab-navigation과 동일한 스타일 */
+/* ===== 네비게이션 CSS 변수 ===== */
+:root {
+    /* 네비게이션 기본 설정 */
+    --navigation-height: 80px;
+    --navigation-padding: 8px 4px;
+    --navigation-icon-size: 24px;
+    --navigation-label-size: 11px;
+    
+    /* 네비게이션 색상 */
+    --navigation-bg: var(--bg-primary);
+    --navigation-border: var(--gray-200);
+    --navigation-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    
+    /* 네비게이션 탭 상태 */
+    --navigation-tab-bg: var(--white);
+    --navigation-tab-hover: var(--gray-50);
+    --navigation-tab-active: var(--primary-light);
+    --navigation-tab-border: var(--primary-color);
+    
+    /* 네비게이션 아이콘 */
+    --navigation-icon-color: var(--text-secondary);
+    --navigation-icon-active: var(--primary-color);
+    
+    /* 네비게이션 레이블 */
+    --navigation-label-color: var(--text-secondary);
+    --navigation-label-active: var(--primary-color);
+}
+
+/* ===== 네비게이션 컨테이너 ===== */
 .navigation-container {
     display: flex;
-    background-color: var(--bg-primary);
-    border-top: 1px solid var(--gray-200);
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    background-color: var(--navigation-bg);
+    border-top: 1px solid var(--navigation-border);
+    box-shadow: var(--navigation-shadow);
     padding: 0;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: var(--z-fixed);
-    height: 80px; /* 고정 높이 설정 */
+    height: var(--navigation-height);
 }
 
-/* 네비게이션 탭 버튼 - 기존 .tab-btn와 동일한 스타일 */
+/* Phase 4: 기존 #tab-navigation과의 호환성을 위한 스타일 */
+#tab-navigation {
+    display: flex;
+    background-color: var(--navigation-bg);
+    border-top: 1px solid var(--navigation-border);
+    box-shadow: var(--navigation-shadow);
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+    height: var(--navigation-height);
+}
+
+/* Phase 4: 로그인 화면에서 네비게이션 숨김 처리 */
+.main-app.hidden #tab-navigation,
+.main-app.hidden .navigation-container {
+    display: none !important;
+}
+
+/* 로그인 화면이 표시될 때 네비게이션 완전 숨김 */
+#login-screen:not([style*="display: none"]) ~ #main-app #tab-navigation,
+#login-screen:not([style*="display: none"]) ~ #main-app .navigation-container {
+    display: none !important;
+}
+
+/* ===== 네비게이션 탭 ===== */
 .navigation-tab {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex: 1;
-    padding: 8px 4px;
-    background: var(--white);
+    padding: var(--navigation-padding);
+    background: var(--navigation-tab-bg);
     border: none;
     border-top: 3px solid transparent;
     cursor: pointer;
     transition: all var(--transition-normal);
-    min-height: 80px; /* 네비게이션 높이와 동일 */
+    min-height: var(--navigation-height);
     position: relative;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
 
 .navigation-tab:hover {
-    background-color: var(--gray-50);
+    background-color: var(--navigation-tab-hover);
 }
 
 .navigation-tab:active {
@@ -48,33 +103,85 @@
 }
 
 .navigation-tab.active {
-    border-top-color: var(--primary-color);
-    background-color: var(--primary-light);
+    border-top-color: var(--navigation-tab-border);
+    background-color: var(--navigation-tab-active);
 }
 
 .navigation-tab.active .navigation-icon {
     transform: scale(1.1);
-    color: var(--primary-color);
+    color: var(--navigation-icon-active);
 }
 
 .navigation-tab.active .navigation-label {
-    color: var(--primary-color);
+    color: var(--navigation-label-active);
     font-weight: var(--font-semibold);
 }
 
-/* 네비게이션 아이콘 - 기존 .tab-icon와 동일한 스타일 */
+/* Phase 4: 기존 .tab-btn과의 호환성을 위한 스타일 */
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--navigation-padding);
+    background: var(--navigation-tab-bg);
+    border: none;
+    border-top: 3px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-height: var(--navigation-height);
+    position: relative;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tab-btn:hover {
+    background-color: var(--navigation-tab-hover);
+}
+
+.tab-btn:active {
+    background-color: var(--gray-100);
+    transform: scale(0.98);
+}
+
+.tab-btn.active {
+    border-top-color: var(--navigation-tab-border);
+    background-color: var(--navigation-tab-active);
+}
+
+.tab-btn.active .tab-icon {
+    transform: scale(1.1);
+    color: var(--navigation-icon-active);
+}
+
+.tab-btn.active .tab-label {
+    color: var(--navigation-label-active);
+    font-weight: var(--font-semibold);
+}
+
+/* ===== 네비게이션 아이콘 ===== */
 .navigation-icon {
-    font-size: 24px; /* 고정 크기 */
+    font-size: var(--navigation-icon-size);
     margin-bottom: 4px;
     transition: all var(--transition-normal);
-    color: var(--text-secondary);
+    color: var(--navigation-icon-color);
     line-height: 1;
 }
 
-/* 네비게이션 레이블 - 기존 .tab-label와 동일한 스타일 */
+/* Phase 4: 기존 .tab-icon과의 호환성을 위한 스타일 */
+.tab-icon {
+    font-size: var(--navigation-icon-size);
+    margin-bottom: 4px;
+    transition: all var(--transition-normal);
+    color: var(--navigation-icon-color);
+    line-height: 1;
+}
+
+/* ===== 네비게이션 레이블 ===== */
 .navigation-label {
-    font-size: 11px; /* 고정 크기 */
-    color: var(--text-secondary);
+    font-size: var(--navigation-label-size);
+    color: var(--navigation-label-color);
     font-weight: var(--font-medium);
     transition: all var(--transition-normal);
     line-height: 1.2;
@@ -82,48 +189,83 @@
     white-space: nowrap;
 }
 
-/* 안전한 전환을 위한 호환성 클래스 */
-.navigation-tab.tab-btn {
-    /* 기존 .tab-btn 클래스와의 호환성 유지 */
+/* Phase 4: 기존 .tab-label과의 호환성을 위한 스타일 */
+.tab-label {
+    font-size: var(--navigation-label-size);
+    color: var(--navigation-label-color);
+    font-weight: var(--font-medium);
+    transition: all var(--transition-normal);
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
 }
 
-.navigation-icon.tab-icon {
-    /* 기존 .tab-icon 클래스와의 호환성 유지 */
-}
-
-.navigation-label.tab-label {
-    /* 기존 .tab-label 클래스와의 호환성 유지 */
-}
-
-/* 반응형 스타일 */
+/* ===== 반응형 네비게이션 ===== */
 @media (max-width: 768px) {
-    .navigation-container {
-        height: 80px; /* 모바일에서도 동일한 높이 유지 */
+    .navigation-container,
+    #tab-navigation {
+        height: var(--navigation-height);
     }
     
-    .navigation-tab {
-        min-height: 80px; /* 모바일에서도 동일한 높이 유지 */
-        padding: 8px 4px;
+    .navigation-tab,
+    .tab-btn {
+        min-height: var(--navigation-height);
+        padding: var(--navigation-padding);
     }
     
-    .navigation-icon {
-        font-size: 24px; /* 모바일에서도 동일한 크기 유지 */
+    .navigation-icon,
+    .tab-icon {
+        font-size: var(--navigation-icon-size);
     }
     
-    .navigation-label {
-        font-size: 11px; /* 모바일에서도 동일한 크기 유지 */
+    .navigation-label,
+    .tab-label {
+        font-size: var(--navigation-label-size);
     }
 }
 
-/* 향후 확장을 위한 유틸리티 클래스 */
-.navigation-utils {
-    /* 네비게이션 관련 유틸리티 스타일 */
+@media (min-width: 1024px) {
+    .navigation-container,
+    #tab-navigation {
+        height: var(--navigation-height);
+    }
 }
 
-/* 네비게이션 높이 변수 - 전역에서 사용 가능 */
-:root {
-    --navigation-height: 80px;
-    --navigation-padding: 8px 4px;
-    --navigation-icon-size: 24px;
-    --navigation-label-size: 11px;
+/* ===== 네비게이션 애니메이션 ===== */
+@keyframes navigationSlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.navigation-container,
+#tab-navigation {
+    animation: navigationSlideUp 0.3s ease-out;
+}
+
+/* ===== 네비게이션 접근성 ===== */
+.navigation-tab:focus,
+.tab-btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.navigation-tab:focus:not(:focus-visible),
+.tab-btn:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ===== 네비게이션 다크모드 지원 ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --navigation-bg: var(--bg-primary-dark, #1a202c);
+        --navigation-border: var(--gray-700, #4a5568);
+        --navigation-tab-bg: var(--bg-secondary-dark, #2d3748);
+        --navigation-tab-hover: var(--gray-600, #4a5568);
+    }
 }

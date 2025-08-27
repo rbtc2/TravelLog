@@ -1,5 +1,75 @@
 /* ===== 버튼 컴포넌트 스타일 ===== */
-/* 로그인 관련 버튼 */
+
+/* Phase 4: 완전한 중앙화 및 최적화 */
+/* 기존 .tab-btn, .tab-icon, .tab-label 스타일을 완전히 제거하고 새로운 네비게이션 컴포넌트로 이전 */
+
+/* Phase 4 완료 후 제거 예정: 기존 탭 버튼 스타일 */
+/*
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    background: var(--white);
+    border: none;
+    border-top: 3px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-height: 80px;
+    position: relative;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tab-btn:hover {
+    background-color: var(--gray-50);
+}
+
+.tab-btn:active {
+    background-color: var(--gray-100);
+    transform: scale(0.98);
+}
+
+.tab-btn.active {
+    border-top-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.tab-btn.active .tab-icon {
+    transform: scale(1.1);
+    color: var(--primary-color);
+}
+
+.tab-btn.active .tab-label {
+    color: var(--primary-color);
+    font-weight: var(--font-semibold);
+}
+
+.tab-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+    transition: all var(--transition-normal);
+    color: var(--text-secondary);
+    line-height: 1;
+}
+
+.tab-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+    transition: all var(--transition-normal);
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+}
+*/
+
+/* Phase 4: 새로운 네비게이션 컴포넌트 스타일 */
+/* 이제 모든 네비게이션 관련 스타일이 styles/components/navigation.css에서 관리됨 */
+
+/* ===== 로그인 관련 버튼 ===== */
 .login-btn {
     width: 100%;
     padding: 14px;
@@ -20,10 +90,6 @@
 }
 
 .login-btn:active {
-    transform: translateY(0);
-}
-
-.demo-btn:active {
     transform: translateY(0);
 }
 
@@ -63,194 +129,7 @@
     transform: none;
 }
 
-/* ===== 탭 네비게이션 버튼 ===== */
-/* 
- * Phase 2: 기존 .tab-btn 스타일을 새로운 .navigation-tab으로 이전
- * 기존 클래스는 호환성을 위해 유지하되 새로운 컴포넌트 우선 적용
- */
-
-/* 기존 .tab-btn - 새로운 컴포넌트 스타일 적용 */
-.tab-btn {
-    /* 새로운 네비게이션 컴포넌트 스타일 직접 적용 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    padding: var(--navigation-padding, 8px 4px);
-    background: var(--white);
-    border: none;
-    border-top: 3px solid transparent;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    min-height: var(--navigation-height, 80px);
-    position: relative;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.tab-btn:hover {
-    background-color: var(--gray-50);
-}
-
-.tab-btn:active {
-    background-color: var(--gray-100);
-    transform: scale(0.98);
-}
-
-.tab-btn.active {
-    border-top-color: var(--primary-color);
-    background-color: var(--primary-light);
-}
-
-.tab-btn.active .tab-icon {
-    transform: scale(1.1);
-    color: var(--primary-color);
-}
-
-.tab-btn.active .tab-label {
-    color: var(--primary-color);
-    font-weight: var(--font-semibold);
-}
-
-/* 새로운 네비게이션 컴포넌트 - 기존 .tab-btn와 동일한 스타일 */
-.navigation-tab {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    padding: var(--navigation-padding, 8px 4px);
-    background: var(--white);
-    border: none;
-    border-top: 3px solid transparent;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    min-height: var(--navigation-height, 80px);
-    position: relative;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.navigation-tab:hover {
-    background-color: var(--gray-50);
-}
-
-.navigation-tab:active {
-    background-color: var(--gray-100);
-    transform: scale(0.98);
-}
-
-.navigation-tab.active {
-    border-top-color: var(--primary-color);
-    background-color: var(--primary-light);
-}
-
-.navigation-tab.active .navigation-icon {
-    transform: scale(1.1);
-    color: var(--primary-color);
-}
-
-.navigation-tab.active .navigation-label {
-    color: var(--primary-color);
-    font-weight: var(--font-semibold);
-}
-
-/* ===== 탭 아이콘 및 레이블 ===== */
-/* 
- * Phase 2: 기존 .tab-icon, .tab-label 스타일을 새로운 컴포넌트로 이전
- */
-
-/* 기존 .tab-icon - 새로운 컴포넌트 스타일 직접 적용 */
-.tab-icon {
-    font-size: var(--navigation-icon-size, 24px);
-    margin-bottom: 4px;
-    transition: all var(--transition-normal);
-    color: var(--text-secondary);
-    line-height: 1;
-}
-
-/* 새로운 네비게이션 컴포넌트 - 기존 .tab-icon와 동일한 스타일 */
-.navigation-icon {
-    font-size: var(--navigation-icon-size, 24px);
-    margin-bottom: 4px;
-    transition: all var(--transition-normal);
-    color: var(--text-secondary);
-    line-height: 1;
-}
-
-/* 기존 .tab-label - 새로운 컴포넌트 스타일 직접 적용 */
-.tab-label {
-    font-size: var(--navigation-label-size, 11px);
-    color: var(--text-secondary);
-    font-weight: var(--font-medium);
-    transition: all var(--transition-normal);
-    line-height: 1.2;
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* 새로운 네비게이션 컴포넌트 - 기존 .tab-label와 동일한 스타일 */
-.navigation-label {
-    font-size: var(--navigation-label-size, 11px);
-    color: var(--text-secondary);
-    font-weight: var(--font-medium);
-    transition: all var(--transition-normal);
-    line-height: 1.2;
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* 설정 및 뒤로가기 버튼 */
-.settings-btn {
-    background: none;
-    border: none;
-    color: #4a5568;
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.settings-btn:hover {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    transform: scale(1.1);
-}
-
-.settings-btn:active {
-    transform: scale(0.95);
-}
-
-.back-btn {
-    position: absolute;
-    top: var(--spacing-lg);
-    left: var(--spacing-lg);
-    background: var(--white);
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius-full);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-sm);
-}
-
-.back-btn:hover {
-    border-color: var(--primary-color);
-    transform: scale(1.1);
-}
-
-/* 보고서 및 일지 관련 버튼 */
+/* ===== 보고서 및 일지 관련 버튼 ===== */
 .view-report-btn {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: var(--white);
@@ -289,7 +168,7 @@
     box-shadow: var(--shadow-lg);
 }
 
-/* 모달 버튼 */
+/* ===== 모달 버튼 ===== */
 .modal-btn {
     padding: var(--spacing-sm) var(--spacing-lg);
     border-radius: var(--border-radius-md);
@@ -322,29 +201,237 @@
     transform: translateY(-1px);
 }
 
-/* 반응형 버튼 스타일 */
+/* 설정 및 뒤로가기 버튼 */
+.settings-btn,
+.back-btn {
+    background: var(--white);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--border-radius-lg);
+    padding: 8px 16px;
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    min-width: fit-content;
+    flex-shrink: 0;
+}
+
+.settings-btn:hover,
+.back-btn:hover {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.settings-btn:active,
+.back-btn:active {
+    transform: translateY(0);
+}
+
+/* 액션 버튼 */
+.action-btn {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.action-btn:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+}
+
+.action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 보조 액션 버튼 */
+.secondary-action-btn {
+    background: var(--gray-100);
+    color: var(--text-primary);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.secondary-action-btn:hover {
+    background: var(--gray-200);
+    border-color: var(--gray-400);
+    transform: translateY(-1px);
+}
+
+.secondary-action-btn:active {
+    transform: translateY(0);
+}
+
+/* 위험 액션 버튼 */
+.danger-action-btn {
+    background: var(--error-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.danger-action-btn:hover:not(:disabled) {
+    background: var(--error-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.danger-action-btn:active {
+    transform: translateY(0);
+}
+
+.danger-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 성공 액션 버튼 */
+.success-action-btn {
+    background: var(--success-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.success-action-btn:hover:not(:disabled) {
+    background: var(--success-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.success-action-btn:active {
+    transform: translateY(0);
+}
+
+.success-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 아이콘 버튼 */
+.icon-btn {
+    background: none;
+    border: none;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+}
+
+.icon-btn:hover {
+    background: var(--gray-100);
+    transform: scale(1.1);
+}
+
+.icon-btn:active {
+    transform: scale(0.95);
+}
+
+/* 토글 버튼 */
+.toggle-btn {
+    background: var(--gray-200);
+    border: none;
+    border-radius: var(--border-radius-full);
+    padding: 4px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    width: 48px;
+    height: 24px;
+}
+
+.toggle-btn.active {
+    background: var(--primary-color);
+}
+
+.toggle-btn::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: var(--white);
+    border-radius: 50%;
+    transition: all var(--transition-normal);
+}
+
+.toggle-btn.active::before {
+    transform: translateX(24px);
+}
+
+/* 반응형 스타일 */
 @media (max-width: 768px) {
-    .tab-btn {
-        min-height: 80px; /* 모바일에서도 동일한 높이 유지 */
-        padding: 8px 4px;
+    .action-btn,
+    .secondary-action-btn,
+    .danger-action-btn,
+    .success-action-btn {
+        padding: var(--spacing-lg);
+        font-size: var(--font-lg);
     }
     
-    .tab-icon {
-        font-size: 24px; /* 모바일에서도 동일한 크기 유지 */
+    .icon-btn {
+        min-width: 44px;
+        height: 44px;
     }
     
-    .tab-label {
-        font-size: 11px; /* 모바일에서도 동일한 크기 유지 */
+    .toggle-btn {
+        width: 52px;
+        height: 28px;
     }
     
-    .settings-btn,
-    .back-btn {
-        width: 36px;
-        height: 36px;
+    .toggle-btn::before {
+        width: 24px;
+        height: 24px;
     }
     
-    .modal-btn {
-        width: 100%;
-        padding: var(--spacing-md) var(--spacing-lg);
+    .toggle-btn.active::before {
+        transform: translateX(24px);
     }
 }
