@@ -1,0 +1,134 @@
+/* ===== 스크롤 최적화 유틸리티 ===== */
+/* 
+ * 스크롤 성능 향상 및 부드러운 스크롤 동작을 위한 유틸리티
+ * 키워드: scroll, performance, optimization, smooth
+ */
+
+/* 기본 스크롤 최적화 */
+.scroll-optimized {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: scroll-position;
+}
+
+/* 부드러운 스크롤 */
+.scroll-smooth {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 하드웨어 가속 활성화 */
+.gpu-accelerated {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform;
+}
+
+/* 스크롤 성능 향상 */
+.scroll-performance {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: scroll-position;
+}
+
+/* 모바일 스크롤 최적화 */
+.mobile-scroll-optimized {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: scroll-position;
+    /* 모바일에서 스크롤 성능 향상 */
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+}
+
+/* 스크롤 중 상태 표시 */
+.is-scrolling {
+    /* 스크롤 중일 때 추가 최적화 */
+    pointer-events: none;
+}
+
+.is-scrolling * {
+    /* 스크롤 중일 때 모든 하위 요소의 포인터 이벤트 비활성화 */
+    pointer-events: none;
+}
+
+/* 스크롤바 숨김 (웹킷 기반 브라우저) */
+.scrollbar-hidden {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari and Opera */
+}
+
+/* 스크롤바 스타일링 */
+.scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* 스크롤 방향별 최적화 */
+.scroll-vertical-only {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.scroll-horizontal-only {
+    overflow-y: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 스크롤 성능 모니터링 */
+.scroll-performance-monitor {
+    /* 성능 모니터링을 위한 속성 */
+    will-change: scroll-position;
+    contain: layout style paint;
+}
+
+/* 반응형 스크롤 최적화 */
+@media (max-width: 768px) {
+    .mobile-scroll-optimized {
+        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        will-change: scroll-position;
+    }
+}
+
+@media (min-width: 1024px) {
+    .desktop-scroll-optimized {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+    }
+}

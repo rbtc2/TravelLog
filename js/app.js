@@ -10,11 +10,17 @@
     // 터치 이벤트 최적화
     let touchStartY = 0;
     let touchStartX = 0;
+    let isScrolling = false;
+    let scrollTimeout;
     
     // 터치 시작 이벤트
     document.addEventListener('touchstart', function(e) {
         touchStartY = e.touches[0].clientY;
         touchStartX = e.touches[0].clientX;
+        isScrolling = false;
+        
+        // 스크롤 타임아웃 초기화
+        clearTimeout(scrollTimeout);
     }, { passive: true });
     
     // 터치 이동 이벤트 (가로 스크롤 방지, 스크롤 중일 때는 방해하지 않음)
@@ -24,8 +30,22 @@
         const deltaY = Math.abs(touchY - touchStartY);
         const deltaX = Math.abs(touchX - touchStartX);
         
+        // 세로 스크롤 감지
+        if (deltaY > 10) {
+            isScrolling = true;
+            // 스크롤 중임을 표시
+            document.body.classList.add('is-scrolling');
+            
+            // 스크롤 종료 후 클래스 제거
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+                isScrolling = false;
+            }, 150);
+        }
+        
         // 가로 스크롤만 방지하고, 스크롤 중일 때는 방해하지 않음
-        if (deltaX > deltaY && deltaX > 10 && e.cancelable) {
+        if (deltaX > deltaY && deltaX > 10 && e.cancelable && !isScrolling) {
             e.preventDefault();
         }
     }, { passive: false });
@@ -34,8 +54,8 @@
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function(e) {
         const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300 && e.cancelable) {
-            // 더블 탭이면서 취소 가능한 경우에만 방지
+        if (now - lastTouchEnd <= 300 && e.cancelable && !isScrolling) {
+            // 더블 탭이면서 취소 가능하고 스크롤 중이 아닌 경우에만 방지
             e.preventDefault();
         }
         lastTouchEnd = now;
@@ -67,16 +87,32 @@
         }
     });
     
-    // 터치 피드백 효과
+    // 터치 피드백 효과 최적화
     const touchElements = document.querySelectorAll('button, .tab-btn, .login-btn, .demo-btn, a');
     touchElements.forEach(element => {
         element.addEventListener('touchstart', function() {
-            this.style.transform = 'scale(0.98)';
+            if (!isScrolling) {
+                this.style.transform = 'scale3d(0.98, 0.98, 1)';
+            }
         }, { passive: true });
         
         element.addEventListener('touchend', function() {
-            this.style.transform = 'scale(1)';
+            this.style.transform = 'scale3d(1, 1, 1)';
         }, { passive: true });
+    });
+    
+    // 스크롤 성능 최적화를 위한 추가 설정
+    document.addEventListener('DOMContentLoaded', function() {
+        // 모든 스크롤 가능한 요소에 최적화 적용
+        const scrollableElements = document.querySelectorAll('*');
+        scrollableElements.forEach(element => {
+            const style = window.getComputedStyle(element);
+            if (style.overflow === 'auto' || style.overflow === 'scroll' || style.overflowY === 'auto' || style.overflowY === 'scroll') {
+                element.style.webkitOverflowScrolling = 'touch';
+                element.style.transform = 'translate3d(0, 0, 0)';
+                element.style.backfaceVisibility = 'hidden';
+            }
+        });
     });
 })();
 

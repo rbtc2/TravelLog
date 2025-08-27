@@ -234,18 +234,72 @@
 /* ===== 네비게이션 애니메이션 ===== */
 @keyframes navigationSlideUp {
     from {
-        transform: translateY(100%);
+        transform: translate3d(0, 100%, 0);
         opacity: 0;
     }
     to {
-        transform: translateY(0);
+        transform: translate3d(0, 0, 0);
         opacity: 1;
     }
 }
 
 .navigation-container,
 #tab-navigation {
-    animation: navigationSlideUp 0.3s ease-out;
+    animation: navigationSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* GPU 가속 최적화 */
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+/* 네비게이션 탭 전환 효과 최적화 */
+.navigation-tab,
+.tab-btn {
+    /* 기존 transition 속성 유지하면서 GPU 가속 추가 */
+    transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+    /* GPU 가속 최적화 */
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: transform, background-color, border-color;
+}
+
+.navigation-tab:hover,
+.tab-btn:hover {
+    background-color: var(--navigation-tab-hover);
+    /* 호버 시 GPU 가속 유지 */
+    transform: translate3d(0, 0, 0);
+}
+
+.navigation-tab:active,
+.tab-btn:active {
+    background-color: var(--gray-100);
+    transform: scale3d(0.98, 0.98, 1);
+    /* 액티브 상태에서도 GPU 가속 유지 */
+    backface-visibility: hidden;
+}
+
+.navigation-tab.active,
+.tab-btn.active {
+    border-top-color: var(--navigation-tab-border);
+    background-color: var(--navigation-tab-active);
+    /* 액티브 상태에서 GPU 가속 유지 */
+    transform: translate3d(0, 0, 0);
+}
+
+.navigation-tab.active .navigation-icon,
+.tab-btn.active .tab-icon {
+    transform: scale3d(1.1, 1.1, 1);
+    color: var(--navigation-icon-active);
+    /* 아이콘 애니메이션 최적화 */
+    will-change: transform;
+}
+
+.navigation-tab.active .navigation-label,
+.tab-btn.active .tab-label {
+    color: var(--navigation-label-active);
+    font-weight: var(--font-semibold);
+    /* 레이블 전환 최적화 */
+    will-change: color, font-weight;
 }
 
 /* ===== 네비게이션 접근성 ===== */

@@ -117,31 +117,31 @@
         </div>
         
         <!-- 메인 앱 화면 (5탭 구조) -->
-        <div id="main-app" class="main-app hidden">
+        <div id="main-app" class="main-app hidden scroll-optimized">
             <!-- 메인 콘텐츠 영역 -->
-            <main id="main-content">
-                <div id="tab-content"></div>
+            <main id="main-content" class="scroll-optimized mobile-scroll-optimized">
+                <div id="tab-content" class="scroll-optimized"></div>
             </main>
             
             <!-- 하단 탭 네비게이션 -->
-            <nav id="tab-navigation">
-                <button class="tab-btn active" data-tab="home">
+            <nav id="tab-navigation" class="gpu-accelerated">
+                <button class="tab-btn active gpu-accelerated" data-tab="home">
                     <span class="tab-icon">🏠</span>
                     <span class="tab-label">홈</span>
                 </button>
-                <button class="tab-btn" data-tab="search">
+                <button class="tab-btn gpu-accelerated" data-tab="search">
                     <span class="tab-icon">🔍</span>
                     <span class="tab-label">검색</span>
                 </button>
-                <button class="tab-btn" data-tab="add-log">
+                <button class="tab-btn gpu-accelerated" data-tab="add-log">
                     <span class="tab-icon">➕</span>
                     <span class="tab-label">일지 추가</span>
                 </button>
-                <button class="tab-btn" data-tab="calendar">
+                <button class="tab-btn gpu-accelerated" data-tab="calendar">
                     <span class="tab-icon">📅</span>
                     <span class="tab-label">캘린더</span>
                 </button>
-                <button class="tab-btn" data-tab="my-logs">
+                <button class="tab-btn gpu-accelerated" data-tab="my-logs">
                     <span class="tab-icon">📝</span>
                     <span class="tab-label">나의 로그</span>
                 </button>
