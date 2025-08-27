@@ -200,6 +200,9 @@ class MyLogsTab {
         } else {
             this.renderLogsList();
         }
+        
+        // 모든 화면 전환 시 스크롤을 맨 위로 이동 (부드럽게)
+        this.scrollToTop();
     }
     
     /**
@@ -843,6 +846,10 @@ class MyLogsTab {
                 this.currentView = 'logs';
                 this.renderContent();
                 this.bindEvents();
+                // 스크롤을 맨 위로 이동 (부드럽게)
+                if (window.scrollY > 0) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
         }
         
@@ -861,8 +868,10 @@ class MyLogsTab {
                 this.currentView = 'travel-report';
                 this.renderContent();
                 this.bindEvents();
-                // 스크롤을 맨 위로 이동
-                window.scrollTo(0, 0);
+                // 스크롤을 맨 위로 이동 (부드럽게)
+                if (window.scrollY > 0) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
         }
 
@@ -873,6 +882,10 @@ class MyLogsTab {
                 this.currentView = 'settings';
                 this.renderContent();
                 this.bindEvents();
+                // 스크롤을 맨 위로 이동 (부드럽게)
+                if (window.scrollY > 0) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
         }
     }
@@ -889,6 +902,10 @@ class MyLogsTab {
                 this.logService.setCurrentPage(1); // 페이지 초기화
                 this.renderContent();
                 this.bindEvents();
+                // 스크롤을 맨 위로 이동 (부드럽게)
+                if (window.scrollY > 0) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
         }
         
@@ -935,6 +952,10 @@ class MyLogsTab {
                     this.logService.setCurrentPage(page);
                     this.renderContent();
                     this.bindEvents();
+                    // 스크롤을 맨 위로 이동 (부드럽게)
+                    if (window.scrollY > 0) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
                 }
             });
         });
@@ -951,6 +972,10 @@ class MyLogsTab {
                 this.currentView = 'hub';
                 this.renderContent();
                 this.bindEvents();
+                // 스크롤을 맨 위로 이동 (부드럽게)
+                if (window.scrollY > 0) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
         }
         
@@ -991,6 +1016,10 @@ class MyLogsTab {
                 this.currentView = 'hub';
                 this.renderContent();
                 this.bindEvents();
+                // 스크롤을 맨 위로 이동 (부드럽게)
+                if (window.scrollY > 0) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
         }
     }
@@ -1005,6 +1034,10 @@ class MyLogsTab {
             this.currentLogId = null;
             this.renderContent();
             this.bindEvents();
+            // 스크롤을 맨 위로 이동 (부드럽게)
+            if (window.scrollY > 0) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         });
         
         // 상세 화면에서 삭제 이벤트
@@ -1016,6 +1049,10 @@ class MyLogsTab {
             this.currentLogId = null;
             this.renderContent();
             this.bindEvents();
+            // 스크롤을 맨 위로 이동 (부드럽게)
+            if (window.scrollY > 0) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         });
         
         // 상세 화면에서 편집 이벤트
@@ -1070,6 +1107,15 @@ class MyLogsTab {
     }
     
 
+    
+    /**
+     * 스크롤을 맨 위로 부드럽게 이동시킵니다
+     */
+    scrollToTop() {
+        if (window.scrollY > 0) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
     
     /**
      * 윈도우 리사이즈 이벤트를 바인딩합니다

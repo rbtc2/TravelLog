@@ -17,28 +17,26 @@
         touchStartX = e.touches[0].clientX;
     }, { passive: true });
     
-    // 터치 이동 이벤트 (스크롤 방지)
+    // 터치 이동 이벤트 (가로 스크롤 방지, 스크롤 중일 때는 방해하지 않음)
     document.addEventListener('touchmove', function(e) {
         const touchY = e.touches[0].clientY;
         const touchX = e.touches[0].clientX;
         const deltaY = Math.abs(touchY - touchStartY);
         const deltaX = Math.abs(touchX - touchStartX);
         
-        // 수직 스크롤만 허용 (가로 스크롤 방지)
-        if (deltaX > deltaY && deltaX > 10) {
+        // 가로 스크롤만 방지하고, 스크롤 중일 때는 방해하지 않음
+        if (deltaX > deltaY && deltaX > 10 && e.cancelable) {
             e.preventDefault();
         }
     }, { passive: false });
     
-    // 더블 탭 줌 방지
+    // 더블 탭 줌 방지 (스크롤 중일 때는 방해하지 않음)
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function(e) {
         const now = (new Date()).getTime();
-        if (now - lastTouchEnd <= 300) {
-            // 스크롤 중일 때는 preventDefault를 호출하지 않음
-            if (e.cancelable) {
-                e.preventDefault();
-            }
+        if (now - lastTouchEnd <= 300 && e.cancelable) {
+            // 더블 탭이면서 취소 가능한 경우에만 방지
+            e.preventDefault();
         }
         lastTouchEnd = now;
     }, { passive: false });
