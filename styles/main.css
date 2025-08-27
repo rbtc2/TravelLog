@@ -105,3 +105,10 @@
     color: #718096;
     font-style: italic;
 }
+
+/* 체크박스 필터 */
+.filter-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}

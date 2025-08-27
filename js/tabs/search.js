@@ -70,8 +70,8 @@ class SearchTab {
                 <div class="search-container">
                     <!-- 검색 헤더 -->
                     <div class="search-header">
-                        <h1 class="search-title">🔍 여행 검색</h1>
-                        <p class="search-subtitle">나의 여행 기록을 빠르게 찾아보세요</p>
+                        <h1 class="search-title">🔍 일정 검색</h1>
+                        <p class="search-subtitle">나의 일정 기록을 빠르게 찾아보세요</p>
                     </div>
 
                     <!-- 검색바 -->
@@ -81,7 +81,7 @@ class SearchTab {
                             <input 
                                 type="text" 
                                 class="search-input" 
-                                placeholder="국가, 도시, 여행지, 메모, 태그 등을 검색하세요..."
+                                placeholder="국가, 도시, 일정지, 메모, 태그 등을 검색하세요..."
                                 id="search-input"
                             >
                             <button class="search-btn" id="search-btn">검색</button>
@@ -139,66 +139,106 @@ class SearchTab {
                                 </div>
                             </div>
 
-                            <!-- 여행 목적 필터 -->
+                            <!-- 체류 목적 필터 -->
                             <div class="filter-group">
-                                <label class="filter-label">🎯 여행 목적</label>
+                                <label class="filter-label">🎯 체류 목적</label>
                                 <div class="filter-checkboxes">
                                     <label class="checkbox-item">
-                                        <input type="checkbox" value="leisure" id="purpose-leisure">
+                                        <input type="checkbox" value="tourism" id="purpose-tourism">
                                         <span class="checkmark"></span>
-                                        휴양/휴식
+                                        🏖️ 관광/여행
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" value="culture" id="purpose-culture">
+                                        <input type="checkbox" value="business" id="purpose-business">
                                         <span class="checkmark"></span>
-                                        문화/역사
+                                        💼 업무/출장
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" value="food" id="purpose-food">
+                                        <input type="checkbox" value="family" id="purpose-family">
                                         <span class="checkmark"></span>
-                                        음식/맛집
+                                        👨‍👩‍👧‍👦 가족/지인 방문
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" value="shopping" id="purpose-shopping">
+                                        <input type="checkbox" value="study" id="purpose-study">
                                         <span class="checkmark"></span>
-                                        쇼핑
+                                        📚 학업
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" value="nature" id="purpose-nature">
+                                        <input type="checkbox" value="work" id="purpose-work">
                                         <span class="checkmark"></span>
-                                        자연/풍경
+                                        💻 취업/근로
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="training" id="purpose-training">
+                                        <span class="checkmark"></span>
+                                        🎯 파견/연수
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="event" id="purpose-event">
+                                        <span class="checkmark"></span>
+                                        🎪 행사/컨퍼런스
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="volunteer" id="purpose-volunteer">
+                                        <span class="checkmark"></span>
+                                        🤝 봉사활동
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="medical" id="purpose-medical">
+                                        <span class="checkmark"></span>
+                                        🏥 의료
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="transit" id="purpose-transit">
+                                        <span class="checkmark"></span>
+                                        ✈️ 경유/환승
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="research" id="purpose-research">
+                                        <span class="checkmark"></span>
+                                        🔬 연구/학술
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="immigration" id="purpose-immigration">
+                                        <span class="checkmark"></span>
+                                        🏠 이주/정착
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="other" id="purpose-other">
+                                        <span class="checkmark"></span>
+                                        ❓ 기타
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- 여행 스타일 필터 -->
+                            <!-- 동행 유형 필터 -->
                             <div class="filter-group">
                                 <label class="filter-label">👥 동행 유형</label>
                                 <div class="filter-checkboxes">
                                     <label class="checkbox-item">
-                                        <input type="checkbox" value="solo" id="style-solo">
+                                        <input type="checkbox" value="alone" id="style-alone">
                                         <span class="checkmark"></span>
-                                        혼자
-                                    </label>
-                                    <label class="checkbox-item">
-                                        <input type="checkbox" value="couple" id="style-couple">
-                                        <span class="checkmark"></span>
-                                        커플
+                                        👤 혼자
                                     </label>
                                     <label class="checkbox-item">
                                         <input type="checkbox" value="family" id="style-family">
                                         <span class="checkmark"></span>
-                                        가족
+                                        👨‍👩‍👧‍👦 가족과
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="couple" id="style-couple">
+                                        <span class="checkmark"></span>
+                                        💑 연인과
                                     </label>
                                     <label class="checkbox-item">
                                         <input type="checkbox" value="friends" id="style-friends">
                                         <span class="checkmark"></span>
-                                        친구
+                                        👥 친구와
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" value="business" id="style-business">
+                                        <input type="checkbox" value="colleagues" id="style-colleagues">
                                         <span class="checkmark"></span>
-                                        출장
+                                        👔 동료와
                                     </label>
                                 </div>
                             </div>
@@ -233,7 +273,7 @@ class SearchTab {
 
                             <!-- 날짜 범위 필터 -->
                             <div class="filter-group">
-                                <label class="filter-label">📅 여행 기간</label>
+                                <label class="filter-label">📅 일정 기간</label>
                                 <div class="date-range-filter">
                                     <div class="date-input-group">
                                         <label class="date-label">시작일</label>
@@ -260,7 +300,7 @@ class SearchTab {
                         <div class="results-header">
                             <h3 class="results-title">📊 검색 결과</h3>
                             <div class="results-count">
-                                <span class="count-number">0</span>개의 여행 기록
+                                <span class="count-number">0</span>개의 일정 기록
                             </div>
                         </div>
                         
@@ -270,7 +310,7 @@ class SearchTab {
                                 <div class="no-results-title">검색 결과가 없습니다</div>
                                 <div class="no-results-description">
                                     검색어나 필터를 변경해보세요.<br>
-                                    또는 새로운 여행 기록을 추가해보세요.
+                                    또는 새로운 일정 기록을 추가해보세요.
                                 </div>
                             </div>
                         </div>
@@ -431,11 +471,11 @@ class SearchTab {
             const continentCheckboxes = document.querySelectorAll('input[id^="continent-"]');
             continentCheckboxes.forEach(checkbox => checkbox.checked = false);
             
-            // 여행 목적 체크박스 초기화
+            // 체류 목적 체크박스 초기화
             const purposeCheckboxes = document.querySelectorAll('input[id^="purpose-"]');
             purposeCheckboxes.forEach(checkbox => checkbox.checked = false);
             
-            // 여행 스타일 체크박스 초기화
+            // 동행 유형 체크박스 초기화
             const styleCheckboxes = document.querySelectorAll('input[id^="style-"]');
             styleCheckboxes.forEach(checkbox => checkbox.checked = false);
             
