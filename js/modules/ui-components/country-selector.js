@@ -17,6 +17,7 @@ export class CountrySelector {
     /**
      * CountrySelector 인스턴스 생성
      * @constructor
+     * @param {HTMLElement} container - 컴포넌트를 렌더링할 컨테이너
      * @param {Object} options - 컴포넌트 옵션
      * @param {string} options.placeholder - 입력 필드 플레이스홀더
      * @param {string} options.selectedCountry - 초기 선택된 국가
@@ -25,7 +26,7 @@ export class CountrySelector {
      * @param {number} options.maxPopularCountries - 최대 인기 국가 수
      * @param {number} options.maxHeight - 드롭다운 최대 높이
      */
-    constructor(options = {}) {
+    constructor(container, options = {}) {
         this.options = {
             placeholder: '국가를 검색하세요...',
             selectedCountry: null,
@@ -45,7 +46,7 @@ export class CountrySelector {
         this.popularCountries = [];
 
         // DOM 요소 참조
-        this.container = null;
+        this.container = container;
         this.input = null;
         this.dropdown = null;
         this.popularGrid = null;
@@ -78,14 +79,15 @@ export class CountrySelector {
                 await countriesManager.initialize();
             }
             
+            // 초기 데이터 로드
+            this.popularCountries = countriesManager.getPopularCountries();
+            this.filteredCountries = countriesManager.getAllCountries();
+            
             // UI 렌더링
             this.render();
             
-            // 이벤트 바인딩
-            this.bindEvents();
-            
             // 초기 상태 설정
-            this.updateUI();
+            this.updateDisplay();
             
             console.log('CountrySelector 초기화 완료');
             
@@ -96,14 +98,13 @@ export class CountrySelector {
 
     /**
      * 컴포넌트를 컨테이너에 렌더링
-     * @param {HTMLElement} container - 렌더링할 컨테이너
+     * @private
      */
-    render(container) {
-        if (!container) {
+    render() {
+        if (!this.container) {
             throw new Error('컨테이너가 필요합니다.');
         }
 
-        this.container = container;
         this.createHTML();
         this.bindEvents();
         this.updateDisplay();
@@ -579,9 +580,8 @@ export class CountrySelector {
  * @returns {Promise<CountrySelector>} CountrySelector 인스턴스
  */
 export async function createCountrySelector(container, options = {}) {
-    const selector = new CountrySelector(options);
+    const selector = new CountrySelector(container, options);
     await selector.initialize();
-    selector.render(container);
     return selector;
 }
 
