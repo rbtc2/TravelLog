@@ -68,32 +68,29 @@ export class CountrySelector {
 
     /**
      * 컴포넌트 초기화
-     * @async
-     * @returns {Promise<boolean>} 초기화 성공 여부
+     * @private
      */
     async initialize() {
         try {
-            this.isLoading = true;
-
-            // CountriesManager 초기화
+            // CountriesManager 초기화 대기
             if (!countriesManager.isInitialized) {
+                console.log('CountrySelector: CountriesManager 초기화 대기 중...');
                 await countriesManager.initialize();
             }
-
-            // 인기 국가 로드
-            this.popularCountries = countriesManager.getPopularCountries()
-                .slice(0, this.options.maxPopularCountries);
-
-            // 전체 국가 로드
-            this.filteredCountries = countriesManager.countries;
-
-            this.isLoading = false;
-            return true;
-
+            
+            // UI 렌더링
+            this.render();
+            
+            // 이벤트 바인딩
+            this.bindEvents();
+            
+            // 초기 상태 설정
+            this.updateUI();
+            
+            console.log('CountrySelector 초기화 완료');
+            
         } catch (error) {
-            console.error('CountrySelector: 초기화 실패:', error);
-            this.isLoading = false;
-            return false;
+            console.error('CountrySelector 초기화 실패:', error);
         }
     }
 
