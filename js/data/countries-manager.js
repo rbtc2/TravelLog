@@ -58,13 +58,13 @@ export class CountriesManager {
     }
 
     /**
-     * 기본 국가 데이터 반환 (50개국)
+     * 전체 국가 데이터 반환 (195개국)
      * @private
-     * @returns {Country[]} 기본 국가 데이터 배열
+     * @returns {Country[]} 전체 국가 데이터 배열
      */
-    getFallbackCountries() {
+    getAllCountries() {
         return [
-            // 아시아 (15개국)
+            // 아시아 (48개국)
             { code: 'KR', nameEn: 'South Korea', nameKo: '대한민국', flag: '🇰🇷', continent: 'Asia', continentKo: '아시아', popular: true },
             { code: 'JP', nameEn: 'Japan', nameKo: '일본', flag: '🇯🇵', continent: 'Asia', continentKo: '아시아', popular: true },
             { code: 'CN', nameEn: 'China', nameKo: '중국', flag: '🇨🇳', continent: 'Asia', continentKo: '아시아', popular: true },
@@ -80,8 +80,43 @@ export class CountriesManager {
             { code: 'MO', nameEn: 'Macau', nameKo: '마카오', flag: '🇲🇴', continent: 'Asia', continentKo: '아시아', popular: true },
             { code: 'MV', nameEn: 'Maldives', nameKo: '몰디브', flag: '🇲🇻', continent: 'Asia', continentKo: '아시아', popular: true },
             { code: 'LK', nameEn: 'Sri Lanka', nameKo: '스리랑카', flag: '🇱🇰', continent: 'Asia', continentKo: '아시아', popular: true },
+            { code: 'BD', nameEn: 'Bangladesh', nameKo: '방글라데시', flag: '🇧🇩', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'PK', nameEn: 'Pakistan', nameKo: '파키스탄', flag: '🇵🇰', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'AF', nameEn: 'Afghanistan', nameKo: '아프가니스탄', flag: '🇦🇫', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'IR', nameEn: 'Iran', nameKo: '이란', flag: '🇮🇷', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'IQ', nameEn: 'Iraq', nameKo: '이라크', flag: '🇮🇶', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'SA', nameEn: 'Saudi Arabia', nameKo: '사우디아라비아', flag: '🇸🇦', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'AE', nameEn: 'United Arab Emirates', nameKo: '아랍에미리트', flag: '🇦🇪', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'QA', nameEn: 'Qatar', nameKo: '카타르', flag: '🇶🇦', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'KW', nameEn: 'Kuwait', nameKo: '쿠웨이트', flag: '🇰🇼', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'BH', nameEn: 'Bahrain', nameKo: '바레인', flag: '🇧🇭', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'OM', nameEn: 'Oman', nameKo: '오만', flag: '🇴🇲', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'YE', nameEn: 'Yemen', nameKo: '예멘', flag: '🇾🇪', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'JO', nameEn: 'Jordan', nameKo: '요르단', flag: '🇯🇴', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'LB', nameEn: 'Lebanon', nameKo: '레바논', flag: '🇱🇧', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'SY', nameEn: 'Syria', nameKo: '시리아', flag: '🇸🇾', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'IL', nameEn: 'Israel', nameKo: '이스라엘', flag: '🇮🇱', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'PS', nameEn: 'Palestine', nameKo: '팔레스타인', flag: '🇵🇸', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'CY', nameEn: 'Cyprus', nameKo: '키프로스', flag: '🇨🇾', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'TR', nameEn: 'Turkey', nameKo: '터키', flag: '🇹🇷', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'GE', nameEn: 'Georgia', nameKo: '조지아', flag: '🇬🇪', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'AM', nameEn: 'Armenia', nameKo: '아르메니아', flag: '🇦🇲', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'AZ', nameEn: 'Azerbaijan', nameKo: '아제르바이잔', flag: '🇦🇿', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'KZ', nameEn: 'Kazakhstan', nameKo: '카자흐스탄', flag: '🇰🇿', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'UZ', nameEn: 'Uzbekistan', nameKo: '우즈베키스탄', flag: '🇺🇿', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'KG', nameEn: 'Kyrgyzstan', nameKo: '키르기스스탄', flag: '🇰🇬', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'TJ', nameEn: 'Tajikistan', nameKo: '타지키스탄', flag: '🇹🇯', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'TM', nameEn: 'Turkmenistan', nameKo: '투르크메니스탄', flag: '🇹🇲', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'MN', nameEn: 'Mongolia', nameKo: '몽골', flag: '🇲🇳', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'NP', nameEn: 'Nepal', nameKo: '네팔', flag: '🇳🇵', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'BT', nameEn: 'Bhutan', nameKo: '부탄', flag: '🇧🇹', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'MM', nameEn: 'Myanmar', nameKo: '미얀마', flag: '🇲🇲', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'LA', nameEn: 'Laos', nameKo: '라오스', flag: '🇱🇦', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'KH', nameEn: 'Cambodia', nameKo: '캄보디아', flag: '🇰🇭', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'BN', nameEn: 'Brunei', nameKo: '브루나이', flag: '🇧🇳', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'TL', nameEn: 'Timor-Leste', nameKo: '동티모르', flag: '🇹🇱', continent: 'Asia', continentKo: '아시아', popular: false },
 
-            // 유럽 (15개국)
+            // 유럽 (44개국)
             { code: 'FR', nameEn: 'France', nameKo: '프랑스', flag: '🇫🇷', continent: 'Europe', continentKo: '유럽', popular: true },
             { code: 'DE', nameEn: 'Germany', nameKo: '독일', flag: '🇩🇪', continent: 'Europe', continentKo: '유럽', popular: true },
             { code: 'GB', nameEn: 'United Kingdom', nameKo: '영국', flag: '🇬🇧', continent: 'Europe', continentKo: '유럽', popular: true },
@@ -97,8 +132,37 @@ export class CountriesManager {
             { code: 'DK', nameEn: 'Denmark', nameKo: '덴마크', flag: '🇩🇰', continent: 'Europe', continentKo: '유럽', popular: true },
             { code: 'SE', nameEn: 'Sweden', nameKo: '스웨덴', flag: '🇸🇪', continent: 'Europe', continentKo: '유럽', popular: true },
             { code: 'NO', nameEn: 'Norway', nameKo: '노르웨이', flag: '🇳🇴', continent: 'Europe', continentKo: '유럽', popular: true },
+            { code: 'FI', nameEn: 'Finland', nameKo: '핀란드', flag: '🇫🇮', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'IS', nameEn: 'Iceland', nameKo: '아이슬란드', flag: '🇮🇸', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'IE', nameEn: 'Ireland', nameKo: '아일랜드', flag: '🇮🇪', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'PL', nameEn: 'Poland', nameKo: '폴란드', flag: '🇵🇱', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'HU', nameEn: 'Hungary', nameKo: '헝가리', flag: '🇭🇺', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'RO', nameEn: 'Romania', nameKo: '루마니아', flag: '🇷🇴', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'BG', nameEn: 'Bulgaria', nameKo: '불가리아', flag: '🇧🇬', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'HR', nameEn: 'Croatia', nameKo: '크로아티아', flag: '🇭🇷', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'SI', nameEn: 'Slovenia', nameKo: '슬로베니아', flag: '🇸🇮', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'SK', nameEn: 'Slovakia', nameKo: '슬로바키아', flag: '🇸🇰', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'LT', nameEn: 'Lithuania', nameKo: '리투아니아', flag: '🇱🇹', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'LV', nameEn: 'Latvia', nameKo: '라트비아', flag: '🇱🇻', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'EE', nameEn: 'Estonia', nameKo: '에스토니아', flag: '🇪🇪', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'LU', nameEn: 'Luxembourg', nameKo: '룩셈부르크', flag: '🇱🇺', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'MT', nameEn: 'Malta', nameKo: '몰타', flag: '🇲🇹', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'AD', nameEn: 'Andorra', nameKo: '안도라', flag: '🇦🇩', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'MC', nameEn: 'Monaco', nameKo: '모나코', flag: '🇲🇨', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'LI', nameEn: 'Liechtenstein', nameKo: '리히텐슈타인', flag: '🇱🇮', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'SM', nameEn: 'San Marino', nameKo: '산마리노', flag: '🇸🇲', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'VA', nameEn: 'Vatican City', nameKo: '바티칸', flag: '🇻🇦', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'RS', nameEn: 'Serbia', nameKo: '세르비아', flag: '🇷🇸', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'ME', nameEn: 'Montenegro', nameKo: '몬테네그로', flag: '🇲🇪', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'BA', nameEn: 'Bosnia and Herzegovina', nameKo: '보스니아헤르체고비나', flag: '🇧🇦', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'MK', nameEn: 'North Macedonia', nameKo: '북마케도니아', flag: '🇲🇰', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'AL', nameEn: 'Albania', nameKo: '알바니아', flag: '🇦🇱', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'XK', nameEn: 'Kosovo', nameKo: '코소보', flag: '🇽🇰', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'MD', nameEn: 'Moldova', nameKo: '몰도바', flag: '🇲🇩', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'UA', nameEn: 'Ukraine', nameKo: '우크라이나', flag: '🇺🇦', continent: 'Europe', continentKo: '유럽', popular: false },
+            { code: 'BY', nameEn: 'Belarus', nameKo: '벨라루스', flag: '🇧🇾', continent: 'Europe', continentKo: '유럽', popular: false },
 
-            // 북미 (8개국)
+            // 북미 (23개국)
             { code: 'US', nameEn: 'United States', nameKo: '미국', flag: '🇺🇸', continent: 'North America', continentKo: '북미', popular: true },
             { code: 'CA', nameEn: 'Canada', nameKo: '캐나다', flag: '🇨🇦', continent: 'North America', continentKo: '북미', popular: true },
             { code: 'MX', nameEn: 'Mexico', nameKo: '멕시코', flag: '🇲🇽', continent: 'North America', continentKo: '북미', popular: true },
@@ -107,24 +171,106 @@ export class CountriesManager {
             { code: 'CR', nameEn: 'Costa Rica', nameKo: '코스타리카', flag: '🇨🇷', continent: 'North America', continentKo: '북미', popular: true },
             { code: 'PA', nameEn: 'Panama', nameKo: '파나마', flag: '🇵🇦', continent: 'North America', continentKo: '북미', popular: true },
             { code: 'JM', nameEn: 'Jamaica', nameKo: '자메이카', flag: '🇯🇲', continent: 'North America', continentKo: '북미', popular: true },
+            { code: 'HT', nameEn: 'Haiti', nameKo: '아이티', flag: '🇭🇹', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'BB', nameEn: 'Barbados', nameKo: '바베이도스', flag: '🇧🇧', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'TT', nameEn: 'Trinidad and Tobago', nameKo: '트리니다드토바고', flag: '🇹🇹', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'GD', nameEn: 'Grenada', nameKo: '그레나다', flag: '🇬🇩', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'LC', nameEn: 'Saint Lucia', nameKo: '세인트루시아', flag: '🇱🇨', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'VC', nameEn: 'Saint Vincent and the Grenadines', nameKo: '세인트빈센트그레나딘', flag: '🇻🇨', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'AG', nameEn: 'Antigua and Barbuda', nameKo: '앤티가바부다', flag: '🇦🇬', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'KN', nameEn: 'Saint Kitts and Nevis', nameKo: '세인트키츠네비스', flag: '🇰🇳', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'DM', nameEn: 'Dominica', nameKo: '도미니카', flag: '🇩🇲', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'BZ', nameEn: 'Belize', nameKo: '벨리즈', flag: '🇧🇿', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'GT', nameEn: 'Guatemala', nameKo: '과테말라', flag: '🇬🇹', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'SV', nameEn: 'El Salvador', nameKo: '엘살바도르', flag: '🇸🇻', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'HN', nameEn: 'Honduras', nameKo: '온두라스', flag: '🇭🇳', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'NI', nameEn: 'Nicaragua', nameKo: '니카라과', flag: '🇳🇮', continent: 'North America', continentKo: '북미', popular: false },
+            { code: 'GL', nameEn: 'Greenland', nameKo: '그린란드', flag: '🇬🇱', continent: 'North America', continentKo: '북미', popular: false },
 
-            // 남미 (5개국)
+            // 남미 (12개국)
             { code: 'BR', nameEn: 'Brazil', nameKo: '브라질', flag: '🇧🇷', continent: 'South America', continentKo: '남미', popular: true },
             { code: 'AR', nameEn: 'Argentina', nameKo: '아르헨티나', flag: '🇦🇷', continent: 'South America', continentKo: '남미', popular: true },
             { code: 'CL', nameEn: 'Chile', nameKo: '칠레', flag: '🇨🇱', continent: 'South America', continentKo: '남미', popular: true },
             { code: 'PE', nameEn: 'Peru', nameKo: '페루', flag: '🇵🇪', continent: 'South America', continentKo: '남미', popular: true },
             { code: 'CO', nameEn: 'Colombia', nameKo: '콜롬비아', flag: '🇨🇴', continent: 'South America', continentKo: '남미', popular: true },
+            { code: 'VE', nameEn: 'Venezuela', nameKo: '베네수엘라', flag: '🇻🇪', continent: 'South America', continentKo: '남미', popular: false },
+            { code: 'EC', nameEn: 'Ecuador', nameKo: '에콰도르', flag: '🇪🇨', continent: 'South America', continentKo: '남미', popular: false },
+            { code: 'BO', nameEn: 'Bolivia', nameKo: '볼리비아', flag: '🇧🇴', continent: 'South America', continentKo: '남미', popular: false },
+            { code: 'PY', nameEn: 'Paraguay', nameKo: '파라과이', flag: '🇵🇾', continent: 'South America', continentKo: '남미', popular: false },
+            { code: 'UY', nameEn: 'Uruguay', nameKo: '우루과이', flag: '🇺🇾', continent: 'South America', continentKo: '남미', popular: false },
+            { code: 'GY', nameEn: 'Guyana', nameKo: '가이아나', flag: '🇬🇾', continent: 'South America', continentKo: '남미', popular: false },
+            { code: 'SR', nameEn: 'Suriname', nameKo: '수리남', flag: '🇸🇷', continent: 'South America', continentKo: '남미', popular: false },
 
-            // 오세아니아 (4개국)
+            // 오세아니아 (14개국)
             { code: 'AU', nameEn: 'Australia', nameKo: '호주', flag: '🇦🇺', continent: 'Oceania', continentKo: '오세아니아', popular: true },
             { code: 'NZ', nameEn: 'New Zealand', nameKo: '뉴질랜드', flag: '🇳🇿', continent: 'Oceania', continentKo: '오세아니아', popular: true },
             { code: 'FJ', nameEn: 'Fiji', nameKo: '피지', flag: '🇫🇯', continent: 'Oceania', continentKo: '오세아니아', popular: true },
             { code: 'GU', nameEn: 'Guam', nameKo: '괌', flag: '🇬🇺', continent: 'Oceania', continentKo: '오세아니아', popular: true },
+            { code: 'PG', nameEn: 'Papua New Guinea', nameKo: '파푸아뉴기니', flag: '🇵🇬', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'NC', nameEn: 'New Caledonia', nameKo: '뉴칼레도니아', flag: '🇳🇨', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'VU', nameEn: 'Vanuatu', nameKo: '바누아투', flag: '🇻🇺', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'SB', nameEn: 'Solomon Islands', nameKo: '솔로몬 제도', flag: '🇸🇧', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'TO', nameEn: 'Tonga', nameKo: '통가', flag: '🇹🇴', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'WS', nameEn: 'Samoa', nameKo: '사모아', flag: '🇼🇸', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'KI', nameEn: 'Kiribati', nameKo: '키리바시', flag: '🇰🇮', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'TV', nameEn: 'Tuvalu', nameKo: '투발루', flag: '🇹🇻', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'NR', nameEn: 'Nauru', nameKo: '나우루', flag: '🇳🇷', continent: 'Oceania', continentKo: '오세아니아', popular: false },
+            { code: 'PW', nameEn: 'Palau', nameKo: '팔라우', flag: '🇵🇼', continent: 'Oceania', continentKo: '오세아니아', popular: false },
 
-            // 아프리카 (3개국)
+            // 아프리카 (54개국)
             { code: 'ZA', nameEn: 'South Africa', nameKo: '남아프리카공화국', flag: '🇿🇦', continent: 'Africa', continentKo: '아프리카', popular: true },
             { code: 'EG', nameEn: 'Egypt', nameKo: '이집트', flag: '🇪🇬', continent: 'Africa', continentKo: '아프리카', popular: true },
-            { code: 'MA', nameEn: 'Morocco', nameKo: '모로코', flag: '🇲🇦', continent: 'Africa', continentKo: '아프리카', popular: true }
+            { code: 'MA', nameEn: 'Morocco', nameKo: '모로코', flag: '🇲🇦', continent: 'Africa', continentKo: '아프리카', popular: true },
+            { code: 'NG', nameEn: 'Nigeria', nameKo: '나이지리아', flag: '🇳🇬', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'ET', nameEn: 'Ethiopia', nameKo: '에티오피아', flag: '🇪🇹', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'KE', nameEn: 'Kenya', nameKo: '케냐', flag: '🇰🇪', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'TZ', nameEn: 'Tanzania', nameKo: '탄자니아', flag: '🇹🇿', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'UG', nameEn: 'Uganda', nameKo: '우간다', flag: '🇺🇬', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'GH', nameEn: 'Ghana', nameKo: '가나', flag: '🇬🇭', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'CI', nameEn: 'Ivory Coast', nameKo: '코트디부아르', flag: '🇨🇮', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'BF', nameEn: 'Burkina Faso', nameKo: '부르키나파소', flag: '🇧🇫', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'ML', nameEn: 'Mali', nameKo: '말리', flag: '🇲🇱', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'NE', nameEn: 'Niger', nameKo: '니제르', flag: '🇳🇪', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'TD', nameEn: 'Chad', nameKo: '차드', flag: '🇹🇩', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'SD', nameEn: 'Sudan', nameKo: '수단', flag: '🇸🇩', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'SS', nameEn: 'South Sudan', nameKo: '남수단', flag: '🇸🇸', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'CF', nameEn: 'Central African Republic', nameKo: '중앙아프리카공화국', flag: '🇨🇫', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'CM', nameEn: 'Cameroon', nameKo: '카메룬', flag: '🇨🇲', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'GQ', nameEn: 'Equatorial Guinea', nameKo: '적도기니', flag: '🇬🇶', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'GA', nameEn: 'Gabon', nameKo: '가봉', flag: '🇬🇦', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'CG', nameEn: 'Republic of the Congo', nameKo: '콩고공화국', flag: '🇨🇬', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'CD', nameEn: 'Democratic Republic of the Congo', nameKo: '콩고민주공화국', flag: '🇨🇩', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'AO', nameEn: 'Angola', nameKo: '앙골라', flag: '🇦🇴', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'ZM', nameEn: 'Zambia', nameKo: '잠비아', flag: '🇿🇲', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'ZW', nameEn: 'Zimbabwe', nameKo: '짐바브웨', flag: '🇿🇼', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'BW', nameEn: 'Botswana', nameKo: '보츠와나', flag: '🇧🇼', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'NA', nameEn: 'Namibia', nameKo: '나미비아', flag: '🇳🇦', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'SZ', nameEn: 'Eswatini', nameKo: '에스와티니', flag: '🇸🇿', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'LS', nameEn: 'Lesotho', nameKo: '레소토', flag: '🇱🇸', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'MG', nameEn: 'Madagascar', nameKo: '마다가스카르', flag: '🇲🇬', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'MU', nameEn: 'Mauritius', nameKo: '모리셔스', flag: '🇲🇺', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'SC', nameEn: 'Seychelles', nameKo: '세이셸', flag: '🇸🇨', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'KM', nameEn: 'Comoros', nameKo: '코모로', flag: '🇰🇲', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'DJ', nameEn: 'Djibouti', nameKo: '지부티', flag: '🇩🇯', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'SO', nameEn: 'Somalia', nameKo: '소말리아', flag: '🇸🇴', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'ER', nameEn: 'Eritrea', nameKo: '에리트레아', flag: '🇪🇷', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'LY', nameEn: 'Libya', nameKo: '리비아', flag: '🇱🇾', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'TN', nameEn: 'Tunisia', nameKo: '튀니지', flag: '🇹🇳', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'DZ', nameEn: 'Algeria', nameKo: '알제리', flag: '🇩🇿', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'RW', nameEn: 'Rwanda', nameKo: '르완다', flag: '🇷🇼', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'BI', nameEn: 'Burundi', nameKo: '부룬디', flag: '🇧🇮', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'SL', nameEn: 'Sierra Leone', nameKo: '시에라리온', flag: '🇸🇱', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'LR', nameEn: 'Liberia', nameKo: '라이베리아', flag: '🇱🇷', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'GW', nameEn: 'Guinea-Bissau', nameKo: '기니비사우', flag: '🇬🇼', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'GN', nameEn: 'Guinea', nameKo: '기니', flag: '🇬🇳', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'SN', nameEn: 'Senegal', nameKo: '세네갈', flag: '🇸🇳', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'GM', nameEn: 'Gambia', nameKo: '감비아', flag: '🇬🇲', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'CV', nameEn: 'Cape Verde', nameKo: '카보베르데', flag: '🇨🇻', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'ST', nameEn: 'Sao Tome and Principe', nameKo: '상투메프린시페', flag: '🇸🇹', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'TG', nameEn: 'Togo', nameKo: '토고', flag: '🇹🇬', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'BJ', nameEn: 'Benin', nameKo: '베냉', flag: '🇧🇯', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'MR', nameEn: 'Mauritania', nameKo: '모리타니', flag: '🇲🇷', continent: 'Africa', continentKo: '아프리카', popular: false },
+            { code: 'EH', nameEn: 'Western Sahara', nameKo: '서사하라', flag: '🇪🇭', continent: 'Africa', continentKo: '아프리카', popular: false },
         ];
     }
 
@@ -150,8 +296,14 @@ export class CountriesManager {
                 return true;
             }
 
-            // 기본 데이터 로드 (50개국)
-            this.countries = this.getFallbackCountries();
+            // 전체 데이터 로드 (195개국)
+            this.countries = this.getAllCountries();
+            
+            // 데이터 검증
+            if (!this.validateCountriesData()) {
+                throw new Error('국가 데이터 검증 실패');
+            }
+            
             this.isInitialized = true;
             this.lastUpdated = new Date();
             
@@ -276,6 +428,85 @@ export class CountriesManager {
      */
     clearError() {
         this.lastError = null;
+    }
+
+    /**
+     * 국가 데이터 검증
+     * @private
+     * @returns {boolean} 검증 성공 여부
+     */
+    validateCountriesData() {
+        try {
+            if (!Array.isArray(this.countries) || this.countries.length === 0) {
+                console.error('CountriesManager: 국가 데이터가 배열이 아니거나 비어있음');
+                return false;
+            }
+
+            // 필수 필드 검증
+            const requiredFields = ['code', 'nameEn', 'nameKo', 'flag', 'continent', 'continentKo', 'popular'];
+            const invalidCountries = this.countries.filter(country => {
+                return requiredFields.some(field => !(field in country));
+            });
+
+            if (invalidCountries.length > 0) {
+                console.error('CountriesManager: 필수 필드가 누락된 국가 데이터 발견:', invalidCountries.length);
+                return false;
+            }
+
+            // 국가 코드 중복 검증
+            const codes = this.countries.map(c => c.code);
+            const uniqueCodes = new Set(codes);
+            if (codes.length !== uniqueCodes.size) {
+                console.error('CountriesManager: 중복된 국가 코드 발견');
+                return false;
+            }
+
+            // 대륙별 국가 수 검증
+            const continentCounts = {};
+            this.countries.forEach(country => {
+                continentCounts[country.continent] = (continentCounts[country.continent] || 0) + 1;
+            });
+
+            console.log('CountriesManager: 대륙별 국가 수:', continentCounts);
+            console.log(`CountriesManager: 총 ${this.countries.length}개국 데이터 검증 완료`);
+
+            return true;
+        } catch (error) {
+            console.error('CountriesManager: 데이터 검증 중 오류 발생:', error);
+            return false;
+        }
+    }
+
+    /**
+     * 대륙별 국가 수 반환
+     * @public
+     * @returns {Object} 대륙별 국가 수 객체
+     */
+    getContinentCounts() {
+        const counts = {};
+        this.countries.forEach(country => {
+            counts[country.continent] = (counts[country.continent] || 0) + 1;
+        });
+        return counts;
+    }
+
+    /**
+     * 인기 국가 목록 반환
+     * @public
+     * @returns {Country[]} 인기 국가 배열
+     */
+    getPopularCountries() {
+        return this.countries.filter(country => country.popular);
+    }
+
+    /**
+     * 대륙별 국가 목록 반환
+     * @public
+     * @param {string} continent - 대륙명 (영어)
+     * @returns {Country[]} 해당 대륙의 국가 배열
+     */
+    getCountriesByContinent(continent) {
+        return this.countries.filter(country => country.continent === continent);
     }
 }
 
