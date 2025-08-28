@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CountrySelector 통합 테스트 - 여행 일지 추가</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        
+        .test-title {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-label.required::after {
+            content: ' *';
+            color: #e74c3c;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-input:disabled {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        .form-hint {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .form-error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+        
+        .test-info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .test-info h3 {
+            color: #1976d2;
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .test-info ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .test-info li {
+            margin-bottom: 5px;
+            color: #1565c0;
+        }
+        
+        .status-display {
+            background: #f1f8e9;
+            border: 1px solid #4caf50;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .status-display h4 {
+            color: #2e7d32;
+            margin: 0 0 10px 0;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 5px 0;
+            border-bottom: 1px solid #e8f5e8;
+        }
+        
+        .status-label {
+            font-weight: 500;
+            color: #2e7d32;
+        }
+        
+        .status-value {
+            color: #1b5e20;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🌍 CountrySelector 통합 테스트</h1>
+            <p>여행 일지 추가 탭에서 CountrySelector 컴포넌트 테스트</p>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-info">
+                <h3>테스트 기능</h3>
+                <ul>
+                    <li>✅ 검색 가능한 국가 드롭다운</li>
+                    <li>✅ 인기 국가 그리드 (최대 12개)</li>
+                    <li>✅ 전체 국가 스크롤 리스트</li>
+                    <li>✅ 키보드 네비게이션 (화살표, Enter, ESC)</li>
+                    <li>✅ 모바일 최적화</li>
+                    <li>✅ 국가 선택 시 도시 입력 필드 활성화</li>
+                </ul>
+            </div>
+            
+            <form class="add-log-form" id="add-log-form">
+                <!-- 국가 입력 -->
+                <div class="form-group">
+                    <label for="country" class="form-label required">국가</label>
+                    <div id="country-selector-container">
+                        <!-- CountrySelector 컴포넌트가 여기에 렌더링됩니다 -->
+                    </div>
+                    <input 
+                        type="hidden" 
+                        id="country" 
+                        name="country" 
+                        required
+                    >
+                    <div class="form-hint">여행할 국가를 선택해주세요. 검색으로 빠르게 찾을 수 있습니다.</div>
+                    <div class="form-error" id="country-error"></div>
+                </div>
+                
+                <!-- 도시 입력 -->
+                <div class="form-group">
+                    <label for="city" class="form-label required">도시</label>
+                    <input 
+                        type="text" 
+                        id="city" 
+                        name="city" 
+                        class="form-input" 
+                        placeholder="국가를 먼저 선택해주세요"
+                        maxlength="50"
+                        disabled
+                        required
+                    >
+                    <div class="form-error" id="city-error"></div>
+                </div>
+                
+                <!-- 체류 시작일 -->
+                <div class="form-group">
+                    <label for="startDate" class="form-label required">체류 시작일</label>
+                    <input 
+                        type="date" 
+                        id="startDate" 
+                        name="startDate" 
+                        class="form-input" 
+                        required
+                    >
+                    <div class="form-error" id="startDate-error"></div>
+                </div>
+                
+                <!-- 체류 종료일 -->
+                <div class="form-group">
+                    <label for="endDate" class="form-label required">체류 종료일</label>
+                    <input 
+                        type="date" 
+                        id="endDate" 
+                        name="endDate" 
+                        class="form-input" 
+                        disabled
+                        required
+                    >
+                    <div class="form-error" id="endDate-error"></div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="status-display">
+            <h4>컴포넌트 상태</h4>
+            <div id="status-content">
+                <div class="status-item">
+                    <span class="status-label">CountrySelector:</span>
+                    <span class="status-value" id="selector-status">초기화 중...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">선택된 국가:</span>
+                    <span class="status-value" id="selected-country">없음</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">도시 입력 상태:</span>
+                    <span class="status-value" id="city-status">비활성화</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createCountrySelector } from './js/modules/ui-components/country-selector.js';
+
+        // 상태 업데이트 함수
+        function updateStatus(selector) {
+            const statusContent = document.getElementById('status-content');
+            
+            if (selector) {
+                const status = selector.getStatus();
+                const selectedCountry = selector.getSelectedCountry();
+                
+                document.getElementById('selector-status').textContent = '초기화 완료';
+                document.getElementById('selected-country').textContent = 
+                    selectedCountry ? `${selectedCountry.nameKo} (${selectedCountry.code})` : '없음';
+                document.getElementById('city-status').textContent = 
+                    selectedCountry ? '활성화' : '비활성화';
+            } else {
+                document.getElementById('selector-status').textContent = '초기화 실패';
+            }
+        }
+
+        // CountrySelector 초기화
+        async function initializeCountrySelector() {
+            try {
+                const container = document.getElementById('country-selector-container');
+                if (!container) {
+                    console.error('컨테이너를 찾을 수 없습니다.');
+                    return;
+                }
+
+                // CountrySelector 생성 및 초기화
+                const selector = await createCountrySelector(container, {
+                    placeholder: '여행할 국가를 선택하세요',
+                    showFlags: true,
+                    showEnglishNames: true,
+                    maxPopularCountries: 12
+                });
+
+                // 국가 선택 이벤트 리스너
+                container.addEventListener('country-selected', (event) => {
+                    const selectedCountry = event.detail;
+                    console.log('선택된 국가:', selectedCountry);
+                    
+                    // hidden input 업데이트
+                    const countryInput = document.getElementById('country');
+                    if (countryInput) {
+                        countryInput.value = selectedCountry.code;
+                    }
+
+                    // 도시 입력 필드 활성화
+                    const cityInput = document.getElementById('city');
+                    if (cityInput) {
+                        cityInput.disabled = false;
+                        cityInput.placeholder = `${selectedCountry.nameKo}의 도시를 입력하세요`;
+                    }
+
+                    // 상태 업데이트
+                    updateStatus(selector);
+                });
+
+                // 상태 업데이트
+                updateStatus(selector);
+
+                console.log('CountrySelector 초기화 완료');
+
+            } catch (error) {
+                console.error('CountrySelector 초기화 실패:', error);
+                document.getElementById('selector-status').textContent = '초기화 실패';
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCountrySelector();
+        });
+
+        // 폼 제출 테스트
+        document.getElementById('add-log-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const country = formData.get('country');
+            const city = formData.get('city');
+            const startDate = formData.get('startDate');
+            const endDate = formData.get('endDate');
+            
+            console.log('폼 데이터:', {
+                country,
+                city,
+                startDate,
+                endDate
+            });
+            
+            alert(`테스트 완료!\n국가: ${country}\n도시: ${city}\n시작일: ${startDate}\n종료일: ${endDate}`);
+        });
+    </script>
+</body>
+</html>

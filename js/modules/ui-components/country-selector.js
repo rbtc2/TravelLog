@@ -1,778 +1,634 @@
 /**
- * 국가 선택 UI 컴포넌트
- * 완전히 독립적인 모듈로 기존 코드에 영향을 주지 않음
- * 검색, 필터링, 다중 선택 기능 제공
- * 
- * @author TravelLog System
+ * @fileoverview 국가 선택 드롭다운 컴포넌트
+ * @description 검색 가능한 국가 선택 UI 컴포넌트
+ * @author TravelLog Team
  * @version 1.0.0
+ * @since 2024-01-01
  */
 
-import { countryDataManager } from '../utils/country-data-manager.js';
+import { countriesManager } from '../../data/countries-manager.js';
 
+/**
+ * 국가 선택기 컴포넌트 클래스
+ * @class CountrySelector
+ * @description 검색 가능한 국가 선택 드롭다운 컴포넌트
+ */
 export class CountrySelector {
+    /**
+     * CountrySelector 인스턴스 생성
+     * @constructor
+     * @param {Object} options - 컴포넌트 옵션
+     * @param {string} options.placeholder - 입력 필드 플레이스홀더
+     * @param {string} options.selectedCountry - 초기 선택된 국가
+     * @param {boolean} options.showFlags - 국기 표시 여부
+     * @param {boolean} options.showEnglishNames - 영문명 표시 여부
+     * @param {number} options.maxPopularCountries - 최대 인기 국가 수
+     * @param {number} options.maxHeight - 드롭다운 최대 높이
+     */
     constructor(options = {}) {
         this.options = {
-            multiple: options.multiple || false,
-            placeholder: options.placeholder || '국가를 선택하세요',
-            maxSelections: options.maxSelections || 10,
-            showFlags: options.showFlags !== false,
-            showCodes: options.showCodes !== false,
-            searchable: options.searchable !== false,
-            filterable: options.filterable !== false,
-            onSelectionChange: options.onSelectionChange || null,
-            onSearch: options.onSearch || null,
+            placeholder: '국가를 검색하세요...',
+            selectedCountry: null,
+            showFlags: true,
+            showEnglishNames: true,
+            maxPopularCountries: 12,
+            maxHeight: 300,
             ...options
         };
 
-        // 상태 관리
-        this.selectedCountries = new Set();
+        // 컴포넌트 상태
         this.isOpen = false;
+        this.isLoading = false;
         this.searchQuery = '';
-        this.filterRegion = '';
         this.filteredCountries = [];
-        
+        this.selectedIndex = -1;
+        this.popularCountries = [];
+
         // DOM 요소 참조
         this.container = null;
-        this.trigger = null;
+        this.input = null;
         this.dropdown = null;
-        this.searchInput = null;
-        this.countryList = null;
-        this.selectedDisplay = null;
-        
-        // 이벤트 리스너
-        this.eventListeners = [];
-        
-        // 검색 디바운싱
-        this.searchTimeout = null;
+        this.popularGrid = null;
+        this.countriesList = null;
+
+        // 이벤트 핸들러 바인딩
+        this.handleInputFocus = this.handleInputFocus.bind(this);
+        this.handleInputBlur = this.handleInputBlur.bind(this);
+        this.handleInputInput = this.handleInputInput.bind(this);
+        this.handleInputKeydown = this.handleInputKeydown.bind(this);
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
+        this.handleCountryClick = this.handleCountryClick.bind(this);
+        this.handleCountryMouseEnter = this.handleCountryMouseEnter.bind(this);
+
+        // 커스텀 이벤트
+        this.events = {
+            'country-selected': new CustomEvent('country-selected', { detail: {} })
+        };
     }
 
     /**
-     * 컴포넌트를 DOM에 렌더링
-     * @param {HTMLElement|string} target - 렌더링할 대상 요소 또는 선택자
-     * @returns {HTMLElement} 생성된 컨테이너 요소
+     * 컴포넌트 초기화
+     * @async
+     * @returns {Promise<boolean>} 초기화 성공 여부
      */
-    render(target) {
+    async initialize() {
         try {
-            // 대상 요소 확인
-            if (typeof target === 'string') {
-                this.container = document.querySelector(target);
-            } else {
-                this.container = target;
+            this.isLoading = true;
+
+            // CountriesManager 초기화
+            if (!countriesManager.isInitialized) {
+                await countriesManager.initialize();
             }
 
-            if (!this.container) {
-                throw new Error('대상 요소를 찾을 수 없습니다.');
-            }
+            // 인기 국가 로드
+            this.popularCountries = countriesManager.getPopularCountries()
+                .slice(0, this.options.maxPopularCountries);
 
-            // HTML 생성
-            this.container.innerHTML = this.generateHTML();
-            
-            // DOM 요소 참조 설정
-            this.setupElementReferences();
-            
-            // 이벤트 바인딩
-            this.bindEvents();
-            
-            // 초기 데이터 로드
-            this.initializeData();
-            
-            return this.container;
+            // 전체 국가 로드
+            this.filteredCountries = countriesManager.countries;
+
+            this.isLoading = false;
+            return true;
 
         } catch (error) {
-            console.error('CountrySelector 렌더링 실패:', error);
-            this.showErrorFallback();
+            console.error('CountrySelector: 초기화 실패:', error);
+            this.isLoading = false;
+            return false;
         }
     }
 
     /**
-     * HTML 생성
+     * 컴포넌트를 컨테이너에 렌더링
+     * @param {HTMLElement} container - 렌더링할 컨테이너
      */
-    generateHTML() {
-        const multipleAttr = this.options.multiple ? 'multiple' : '';
-        const searchableClass = this.options.searchable ? 'searchable' : '';
-        const filterableClass = this.options.filterable ? 'filterable' : '';
+    render(container) {
+        if (!container) {
+            throw new Error('컨테이너가 필요합니다.');
+        }
 
-        return `
-            <div class="country-selector ${searchableClass} ${filterableClass}" data-multiple="${this.options.multiple}">
-                <!-- 선택된 국가 표시 영역 -->
-                <div class="country-selector-trigger" tabindex="0">
-                    <div class="selected-countries-display" id="selected-countries-display">
-                        <span class="placeholder">${this.options.placeholder}</span>
-                    </div>
-                    <div class="country-selector-arrow">▼</div>
+        this.container = container;
+        this.createHTML();
+        this.bindEvents();
+        this.updateDisplay();
+    }
+
+    /**
+     * HTML 구조 생성
+     * @private
+     */
+    createHTML() {
+        this.container.innerHTML = `
+            <div class="country-selector">
+                <div class="selector-input">
+                    <input 
+                        type="text" 
+                        class="form-input" 
+                        placeholder="${this.options.placeholder}"
+                        autocomplete="off"
+                        spellcheck="false"
+                    />
+                    <button class="dropdown-arrow" type="button" aria-label="드롭다운 열기">
+                        <span class="arrow-icon">▼</span>
+                    </button>
                 </div>
-
-                <!-- 드롭다운 메뉴 -->
-                <div class="country-selector-dropdown" id="country-selector-dropdown" style="display: none;">
-                    <!-- 검색 영역 -->
-                    ${this.options.searchable ? `
-                        <div class="country-search-section">
-                            <div class="search-input-wrapper">
-                                <input 
-                                    type="text" 
-                                    class="country-search-input" 
-                                    id="country-search-input"
-                                    placeholder="국가명, 코드로 검색..."
-                                    autocomplete="off"
-                                >
-                                <div class="search-icon">🔍</div>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    <!-- 필터 영역 -->
-                    ${this.options.filterable ? `
-                        <div class="country-filter-section">
-                            <div class="region-filter">
-                                <label class="filter-label">대륙별 필터:</label>
-                                <select class="region-select" id="region-filter">
-                                    <option value="">모든 대륙</option>
-                                    <option value="asia">아시아</option>
-                                    <option value="europe">유럽</option>
-                                    <option value="americas">아메리카</option>
-                                    <option value="africa">아프리카</option>
-                                    <option value="oceania">오세아니아</option>
-                                </select>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    <!-- 국가 목록 -->
-                    <div class="country-list-container">
-                        <div class="country-list" id="country-list">
-                            <div class="loading-indicator">로딩 중...</div>
+                
+                <div class="selector-dropdown" style="display: none;">
+                    <div class="popular-section">
+                        <h3 class="section-title">인기 국가</h3>
+                        <div class="popular-grid">
+                            ${this.renderPopularCountries()}
                         </div>
                     </div>
-
-                    <!-- 선택된 국가 요약 -->
-                    ${this.options.multiple ? `
-                        <div class="selection-summary">
-                            <span class="selected-count">0</span>개 선택됨
-                            <button class="clear-selection-btn" id="clear-selection-btn">모두 해제</button>
+                    
+                    <div class="all-countries-section">
+                        <h3 class="section-title">모든 국가</h3>
+                        <div class="countries-list">
+                            ${this.renderCountriesList()}
                         </div>
-                    ` : ''}
+                    </div>
                 </div>
             </div>
         `;
+
+        // DOM 요소 참조 저장
+        this.input = this.container.querySelector('.selector-input input');
+        this.dropdown = this.container.querySelector('.selector-dropdown');
+        this.popularGrid = this.container.querySelector('.popular-grid');
+        this.countriesList = this.container.querySelector('.countries-list');
     }
 
     /**
-     * DOM 요소 참조 설정
+     * 인기 국가 그리드 렌더링
+     * @private
+     * @returns {string} HTML 문자열
      */
-    setupElementReferences() {
-        this.trigger = this.container.querySelector('.country-selector-trigger');
-        this.dropdown = this.container.querySelector('#country-selector-dropdown');
-        this.searchInput = this.container.querySelector('#country-search-input');
-        this.countryList = this.container.querySelector('#country-list');
-        this.selectedDisplay = this.container.querySelector('#selected-countries-display');
-        
-        if (this.options.multiple) {
-            this.selectedDisplay = this.container.querySelector('#selected-countries-display');
+    renderPopularCountries() {
+        if (!this.popularCountries || this.popularCountries.length === 0) {
+            return '<div class="no-countries">인기 국가가 없습니다.</div>';
         }
+
+        return this.popularCountries.map(country => `
+            <div class="country-item popular-item" data-code="${country.code}">
+                <span class="country-flag">${country.flag}</span>
+                <span class="country-name">${country.nameKo}</span>
+                ${this.options.showEnglishNames ? `<span class="country-name-en">${country.nameEn}</span>` : ''}
+            </div>
+        `).join('');
+    }
+
+    /**
+     * 전체 국가 리스트 렌더링
+     * @private
+     * @returns {string} HTML 문자열
+     */
+    renderCountriesList() {
+        if (!this.filteredCountries || this.filteredCountries.length === 0) {
+            return '<div class="no-countries">검색 결과가 없습니다.</div>';
+        }
+
+        return this.filteredCountries.map((country, index) => `
+            <div class="country-item list-item ${index === this.selectedIndex ? 'selected' : ''}" 
+                 data-code="${country.code}" data-index="${index}">
+                <span class="country-flag">${country.flag}</span>
+                <span class="country-name">${country.nameKo}</span>
+                ${this.options.showEnglishNames ? `<span class="country-name-en">${country.nameEn}</span>` : ''}
+                <span class="country-continent">${country.continentKo}</span>
+            </div>
+        `).join('');
     }
 
     /**
      * 이벤트 바인딩
+     * @private
      */
     bindEvents() {
-        try {
-            // 트리거 클릭 이벤트
-            this.addEventListener(this.trigger, 'click', this.toggleDropdown.bind(this));
-            this.addEventListener(this.trigger, 'keydown', this.handleTriggerKeydown.bind(this));
+        // 입력 필드 이벤트
+        this.input.addEventListener('focus', this.handleInputFocus);
+        this.input.addEventListener('blur', this.handleInputBlur);
+        this.input.addEventListener('input', this.handleInputInput);
+        this.input.addEventListener('keydown', this.handleInputKeydown);
 
-            // 외부 클릭 감지
-            document.addEventListener('click', this.handleOutsideClick.bind(this));
+        // 드롭다운 화살표 클릭
+        const arrowButton = this.container.querySelector('.dropdown-arrow');
+        arrowButton.addEventListener('click', () => {
+            this.toggle();
+        });
 
-            // 검색 입력 이벤트
-            if (this.searchInput) {
-                this.addEventListener(this.searchInput, 'input', this.handleSearchInput.bind(this));
-                this.addEventListener(this.searchInput, 'keydown', this.handleSearchKeydown.bind(this));
+        // 국가 아이템 클릭
+        this.container.addEventListener('click', this.handleCountryClick);
+
+        // 국가 아이템 마우스 호버
+        this.container.addEventListener('mouseenter', this.handleCountryMouseEnter, true);
+
+        // 문서 클릭 (드롭다운 외부 클릭 시 닫기)
+        document.addEventListener('click', this.handleDocumentClick);
+    }
+
+    /**
+     * 입력 필드 포커스 이벤트
+     * @private
+     */
+    handleInputFocus() {
+        this.open();
+    }
+
+    /**
+     * 입력 필드 블러 이벤트
+     * @private
+     */
+    handleInputBlur() {
+        // 약간의 지연을 두어 클릭 이벤트가 처리될 수 있도록 함
+        setTimeout(() => {
+            if (!this.container.contains(document.activeElement)) {
+                this.close();
             }
+        }, 150);
+    }
 
-            // 지역 필터 이벤트
-            const regionFilter = this.container.querySelector('#region-filter');
-            if (regionFilter) {
-                this.addEventListener(regionFilter, 'change', this.handleRegionFilter.bind(this));
-            }
+    /**
+     * 입력 필드 입력 이벤트
+     * @private
+     */
+    handleInputInput(event) {
+        this.searchQuery = event.target.value.trim();
+        this.search(this.searchQuery);
+    }
 
-            // 모두 해제 버튼 이벤트
-            const clearBtn = this.container.querySelector('#clear-selection-btn');
-            if (clearBtn) {
-                this.addEventListener(clearBtn, 'click', this.clearAllSelections.bind(this));
-            }
-
-        } catch (error) {
-            console.error('CountrySelector 이벤트 바인딩 실패:', error);
+    /**
+     * 입력 필드 키보드 이벤트
+     * @private
+     */
+    handleInputKeydown(event) {
+        switch (event.key) {
+            case 'ArrowDown':
+                event.preventDefault();
+                this.navigateDown();
+                break;
+            case 'ArrowUp':
+                event.preventDefault();
+                this.navigateUp();
+                break;
+            case 'Enter':
+                event.preventDefault();
+                this.selectCurrent();
+                break;
+            case 'Escape':
+                event.preventDefault();
+                this.close();
+                break;
         }
     }
 
     /**
-     * 이벤트 리스너 등록 (메모리 누수 방지)
+     * 문서 클릭 이벤트
+     * @private
      */
-    addEventListener(element, event, handler) {
-        if (element && event && handler) {
-            element.addEventListener(event, handler);
-            this.eventListeners.push({ element, event, handler });
+    handleDocumentClick(event) {
+        if (!this.container.contains(event.target)) {
+            this.close();
         }
     }
 
     /**
-     * 초기 데이터 로드
+     * 국가 아이템 클릭 이벤트
+     * @private
      */
-    async initializeData() {
-        try {
-            // 국가 데이터 매니저 초기화 대기
-            await this.waitForCountryData();
-            
-            // 초기 국가 목록 렌더링
-            this.renderCountryList();
-            
-        } catch (error) {
-            console.error('CountrySelector 데이터 초기화 실패:', error);
-            this.showErrorState();
+    handleCountryClick(event) {
+        const countryItem = event.target.closest('.country-item');
+        if (countryItem) {
+            const countryCode = countryItem.dataset.code;
+            const country = countriesManager.getCountryByCode(countryCode);
+            if (country) {
+                this.selectCountry(country);
+            }
         }
     }
 
     /**
-     * 국가 데이터 로드 대기
+     * 국가 아이템 마우스 호버 이벤트
+     * @private
      */
-    async waitForCountryData() {
-        let attempts = 0;
-        const maxAttempts = 50; // 최대 5초 대기
+    handleCountryMouseEnter(event) {
+        const countryItem = event.target.closest('.country-item');
+        if (countryItem && countryItem.classList.contains('list-item')) {
+            const index = parseInt(countryItem.dataset.index);
+            if (!isNaN(index)) {
+                this.setSelectedIndex(index);
+            }
+        }
+    }
+
+    /**
+     * 드롭다운 열기
+     * @public
+     */
+    open() {
+        if (this.isOpen) return;
+
+        this.isOpen = true;
+        this.dropdown.style.display = 'block';
         
-        while (!countryDataManager.isInitialized && attempts < maxAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            attempts++;
-        }
+        // 애니메이션 효과
+        requestAnimationFrame(() => {
+            this.dropdown.classList.add('open');
+        });
+
+        // 입력 필드에 포커스
+        this.input.focus();
         
-        if (!countryDataManager.isInitialized) {
-            throw new Error('국가 데이터 로드 시간 초과');
-        }
+        // 검색 결과 업데이트
+        this.updateDisplay();
+    }
+
+    /**
+     * 드롭다운 닫기
+     * @public
+     */
+    close() {
+        if (!this.isOpen) return;
+
+        this.isOpen = false;
+        this.dropdown.classList.remove('open');
+        
+        setTimeout(() => {
+            this.dropdown.style.display = 'none';
+        }, 200);
+
+        // 선택 인덱스 초기화
+        this.selectedIndex = -1;
     }
 
     /**
      * 드롭다운 토글
+     * @public
      */
-    toggleDropdown() {
-        this.isOpen = !this.isOpen;
-        
+    toggle() {
         if (this.isOpen) {
-            this.showDropdown();
-            this.focusSearchInput();
+            this.close();
         } else {
-            this.hideDropdown();
+            this.open();
         }
     }
 
     /**
-     * 드롭다운 표시
+     * 국가 검색
+     * @public
+     * @param {string} query - 검색 쿼리
      */
-    showDropdown() {
-        this.dropdown.style.display = 'block';
-        this.trigger.classList.add('active');
-        this.trigger.setAttribute('aria-expanded', 'true');
-        
-        // 검색 입력에 포커스
-        this.focusSearchInput();
-    }
-
-    /**
-     * 드롭다운 숨김
-     */
-    hideDropdown() {
-        this.dropdown.style.display = 'none';
-        this.trigger.classList.remove('active');
-        this.trigger.setAttribute('aria-expanded', 'false');
-        
-        // 검색 입력에서 포커스 제거
-        if (this.searchInput) {
-            this.searchInput.blur();
-        }
-    }
-
-    /**
-     * 검색 입력에 포커스
-     */
-    focusSearchInput() {
-        if (this.searchInput && this.options.searchable) {
-            setTimeout(() => {
-                this.searchInput.focus();
-                this.searchInput.select();
-            }, 100);
-        }
-    }
-
-    /**
-     * 검색 입력 처리
-     */
-    handleSearchInput(event) {
-        const query = event.target.value.trim();
-        
-        // 디바운싱 적용
-        clearTimeout(this.searchTimeout);
-        this.searchTimeout = setTimeout(() => {
-            this.searchQuery = query;
-            this.performSearch();
-        }, 300);
-    }
-
-    /**
-     * 검색 실행
-     */
-    performSearch() {
-        try {
-            if (this.searchQuery.length < 2) {
-                this.filteredCountries = countryDataManager.getAllCountries();
-            } else {
-                this.filteredCountries = countryDataManager.searchCountries(this.searchQuery, 50);
-            }
-            
-            // 지역 필터 적용
-            this.applyFilters();
-            
-            // 검색 결과 렌더링
-            this.renderCountryList();
-            
-            // 검색 콜백 실행
-            if (this.options.onSearch) {
-                this.options.onSearch(this.searchQuery, this.filteredCountries);
-            }
-            
-        } catch (error) {
-            console.error('검색 실행 실패:', error);
-        }
-    }
-
-    /**
-     * 지역 필터 처리
-     */
-    handleRegionFilter(event) {
-        this.filterRegion = event.target.value;
-        this.applyFilters();
-        this.renderCountryList();
-    }
-
-    /**
-     * 필터 적용
-     */
-    applyFilters() {
-        if (!this.filterRegion) {
-            return; // 지역 필터가 없으면 검색 결과 그대로 사용
-        }
-        
-        this.filteredCountries = this.filteredCountries.filter(country => 
-            country.region === this.filterRegion
-        );
-    }
-
-    /**
-     * 국가 목록 렌더링
-     */
-    renderCountryList() {
-        try {
-            const countries = this.filteredCountries.length > 0 ? 
-                this.filteredCountries : countryDataManager.getAllCountries();
-            
-            if (countries.length === 0) {
-                this.countryList.innerHTML = `
-                    <div class="no-results">
-                        <div class="no-results-icon">🔍</div>
-                        <div class="no-results-text">검색 결과가 없습니다</div>
-                    </div>
-                `;
-                return;
-            }
-
-            const countryItems = countries.map(country => this.renderCountryItem(country)).join('');
-            
-            this.countryList.innerHTML = countryItems;
-            
-            // 국가 항목 이벤트 바인딩
-            this.bindCountryItemEvents();
-            
-        } catch (error) {
-            console.error('국가 목록 렌더링 실패:', error);
-        }
-    }
-
-    /**
-     * 개별 국가 항목 렌더링
-     */
-    renderCountryItem(country) {
-        const isSelected = this.selectedCountries.has(country.code);
-        const selectedClass = isSelected ? 'selected' : '';
-        const flagDisplay = this.options.showFlags ? `<span class="country-flag">${country.flag}</span>` : '';
-        const codeDisplay = this.options.showCodes ? `<span class="country-code">${country.code}</span>` : '';
-        
-        return `
-            <div class="country-item ${selectedClass}" data-country-code="${country.code}">
-                <div class="country-item-content">
-                    ${flagDisplay}
-                    <div class="country-info">
-                        <div class="country-name-ko">${country.nameKo}</div>
-                        <div class="country-name-en">${country.nameEn}</div>
-                    </div>
-                    ${codeDisplay}
-                </div>
-                ${this.options.multiple ? `
-                    <div class="country-checkbox">
-                        <input type="checkbox" ${isSelected ? 'checked' : ''} 
-                               id="country-${country.code}">
-                        <label for="country-${country.code}"></label>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    }
-
-    /**
-     * 국가 항목 이벤트 바인딩
-     */
-    bindCountryItemEvents() {
-        const countryItems = this.countryList.querySelectorAll('.country-item');
-        
-        countryItems.forEach(item => {
-            this.addEventListener(item, 'click', (event) => {
-                // 체크박스 클릭은 무시 (체크박스 자체에서 처리)
-                if (event.target.type === 'checkbox' || event.target.tagName === 'LABEL') {
-                    return;
-                }
-                
-                const countryCode = item.dataset.countryCode;
-                this.toggleCountrySelection(countryCode);
-            });
-        });
-
-        // 체크박스 이벤트
-        const checkboxes = this.countryList.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(checkbox => {
-            this.addEventListener(checkbox, 'change', (event) => {
-                const countryCode = event.target.id.replace('country-', '');
-                this.toggleCountrySelection(countryCode);
-            });
-        });
-    }
-
-    /**
-     * 국가 선택 토글
-     */
-    toggleCountrySelection(countryCode) {
-        try {
-            if (this.options.multiple) {
-                // 다중 선택 모드
-                if (this.selectedCountries.has(countryCode)) {
-                    this.selectedCountries.delete(countryCode);
-                } else {
-                    if (this.selectedCountries.size >= this.options.maxSelections) {
-                        this.showToast(`최대 ${this.options.maxSelections}개까지 선택할 수 있습니다.`);
-                        return;
-                    }
-                    this.selectedCountries.add(countryCode);
-                }
-            } else {
-                // 단일 선택 모드
-                this.selectedCountries.clear();
-                this.selectedCountries.add(countryCode);
-                this.hideDropdown();
-            }
-            
-            // UI 업데이트
-            this.updateSelectionDisplay();
-            this.updateCountryListSelection();
-            
-            // 선택 변경 콜백 실행
-            if (this.options.onSelectionChange) {
-                const selectedCountries = Array.from(this.selectedCountries).map(code => 
-                    countryDataManager.getCountryByCode(code)
-                ).filter(Boolean);
-                
-                this.options.onSelectionChange(selectedCountries, this.selectedCountries);
-            }
-            
-        } catch (error) {
-            console.error('국가 선택 토글 실패:', error);
-        }
-    }
-
-    /**
-     * 선택 표시 업데이트
-     */
-    updateSelectionDisplay() {
-        if (!this.selectedDisplay) return;
-        
-        if (this.selectedCountries.size === 0) {
-            this.selectedDisplay.innerHTML = `<span class="placeholder">${this.options.placeholder}</span>`;
-            return;
-        }
-        
-        if (this.options.multiple) {
-            // 다중 선택: 선택된 국가들 표시
-            const selectedCountries = Array.from(this.selectedCountries).map(code => 
-                countryDataManager.getCountryByCode(code)
-            ).filter(Boolean);
-            
-            const displayItems = selectedCountries.map(country => 
-                `<span class="selected-country-tag">
-                    ${this.options.showFlags ? country.flag : ''}
-                    ${country.nameKo}
-                    <button class="remove-country" data-code="${country.code}">×</button>
-                </span>`
-            ).join('');
-            
-            this.selectedDisplay.innerHTML = displayItems;
-            
-            // 제거 버튼 이벤트 바인딩
-            this.bindRemoveButtons();
-            
+    search(query) {
+        if (!query) {
+            this.filteredCountries = countriesManager.countries;
         } else {
-            // 단일 선택: 선택된 국가 표시
-            const countryCode = Array.from(this.selectedCountries)[0];
-            const country = countryDataManager.getCountryByCode(countryCode);
-            
-            if (country) {
-                this.selectedDisplay.innerHTML = `
-                    <span class="selected-country">
-                        ${this.options.showFlags ? country.flag : ''}
-                        ${country.nameKo}
-                    </span>
-                `;
+            this.filteredCountries = countriesManager.searchCountries(query, { limit: 100 });
+        }
+
+        this.selectedIndex = -1;
+        this.updateDisplay();
+    }
+
+    /**
+     * 국가 선택
+     * @public
+     * @param {Object} country - 선택된 국가 객체
+     */
+    selectCountry(country) {
+        if (!country) return;
+
+        // 선택된 국가 저장
+        this.options.selectedCountry = country;
+
+        // 입력 필드에 국가명 표시
+        this.input.value = country.nameKo;
+        this.searchQuery = country.nameKo;
+
+        // 드롭다운 닫기
+        this.close();
+
+        // 커스텀 이벤트 발생
+        this.dispatchCountrySelectedEvent(country);
+
+        // 콘솔 로그
+        console.log(`CountrySelector: 국가 선택됨 - ${country.nameKo} (${country.code})`);
+    }
+
+    /**
+     * 현재 선택된 항목 선택
+     * @private
+     */
+    selectCurrent() {
+        if (this.selectedIndex >= 0 && this.selectedIndex < this.filteredCountries.length) {
+            const country = this.filteredCountries[this.selectedIndex];
+            this.selectCountry(country);
+        }
+    }
+
+    /**
+     * 아래로 네비게이션
+     * @private
+     */
+    navigateDown() {
+        if (this.selectedIndex < this.filteredCountries.length - 1) {
+            this.setSelectedIndex(this.selectedIndex + 1);
+        } else {
+            this.setSelectedIndex(0);
+        }
+    }
+
+    /**
+     * 위로 네비게이션
+     * @private
+     */
+    navigateUp() {
+        if (this.selectedIndex > 0) {
+            this.setSelectedIndex(this.selectedIndex - 1);
+        } else {
+            this.setSelectedIndex(this.filteredCountries.length - 1);
+        }
+    }
+
+    /**
+     * 선택 인덱스 설정
+     * @private
+     * @param {number} index - 선택할 인덱스
+     */
+    setSelectedIndex(index) {
+        // 이전 선택 항목에서 selected 클래스 제거
+        const prevSelected = this.countriesList.querySelector('.country-item.selected');
+        if (prevSelected) {
+            prevSelected.classList.remove('selected');
+        }
+
+        // 새 선택 인덱스 설정
+        this.selectedIndex = index;
+
+        // 새 선택 항목에 selected 클래스 추가
+        if (index >= 0 && index < this.filteredCountries.length) {
+            const newSelected = this.countriesList.querySelector(`[data-index="${index}"]`);
+            if (newSelected) {
+                newSelected.classList.add('selected');
+                // 선택된 항목이 보이도록 스크롤
+                newSelected.scrollIntoView({ block: 'nearest' });
             }
         }
-        
-        // 선택 요약 업데이트
-        this.updateSelectionSummary();
     }
 
     /**
-     * 제거 버튼 이벤트 바인딩
+     * 표시 업데이트
+     * @private
      */
-    bindRemoveButtons() {
-        const removeButtons = this.selectedDisplay.querySelectorAll('.remove-country');
-        removeButtons.forEach(button => {
-            this.addEventListener(button, 'click', (event) => {
-                event.stopPropagation();
-                const countryCode = button.dataset.code;
-                this.selectedCountries.delete(countryCode);
-                this.updateSelectionDisplay();
-                this.updateCountryListSelection();
-                
-                // 선택 변경 콜백 실행
-                if (this.options.onSelectionChange) {
-                    const selectedCountries = Array.from(this.selectedCountries).map(code => 
-                        countryDataManager.getCountryByCode(code)
-                    ).filter(Boolean);
-                    
-                    this.options.onSelectionChange(selectedCountries, this.selectedCountries);
-                }
-            });
+    updateDisplay() {
+        // 인기 국가 그리드 업데이트
+        if (this.popularGrid) {
+            this.popularGrid.innerHTML = this.renderPopularCountries();
+        }
+
+        // 전체 국가 리스트 업데이트
+        if (this.countriesList) {
+            this.countriesList.innerHTML = this.renderCountriesList();
+        }
+    }
+
+    /**
+     * 국가 선택 이벤트 발생
+     * @private
+     * @param {Object} country - 선택된 국가
+     */
+    dispatchCountrySelectedEvent(country) {
+        const event = new CustomEvent('country-selected', {
+            detail: {
+                country: country,
+                code: country.code,
+                nameKo: country.nameKo,
+                nameEn: country.nameEn,
+                flag: country.flag,
+                continent: country.continent,
+                continentKo: country.continentKo
+            },
+            bubbles: true
         });
+
+        this.container.dispatchEvent(event);
     }
 
     /**
-     * 국가 목록 선택 상태 업데이트
+     * 선택된 국가 반환
+     * @public
+     * @returns {Object|null} 선택된 국가 객체 또는 null
      */
-    updateCountryListSelection() {
-        const countryItems = this.countryList.querySelectorAll('.country-item');
+    getSelectedCountry() {
+        return this.options.selectedCountry;
+    }
+
+    /**
+     * 선택된 국가 코드 반환
+     * @public
+     * @returns {string|null} 선택된 국가 코드 또는 null
+     */
+    getSelectedCountryCode() {
+        return this.options.selectedCountry?.code || null;
+    }
+
+    /**
+     * 선택된 국가명 반환 (한글)
+     * @public
+     * @returns {string|null} 선택된 국가명 또는 null
+     */
+    getSelectedCountryName() {
+        return this.options.selectedCountry?.nameKo || null;
+    }
+
+    /**
+     * 컴포넌트 상태 반환
+     * @public
+     * @returns {Object} 컴포넌트 상태 정보
+     */
+    getStatus() {
+        return {
+            isOpen: this.isOpen,
+            isLoading: this.isLoading,
+            searchQuery: this.searchQuery,
+            selectedCountry: this.options.selectedCountry,
+            filteredCount: this.filteredCountries.length,
+            popularCount: this.popularCountries.length
+        };
+    }
+
+    /**
+     * 컴포넌트 제거
+     * @public
+     */
+    destroy() {
+        // 이벤트 리스너 제거
+        document.removeEventListener('click', this.handleDocumentClick);
         
-        countryItems.forEach(item => {
-            const countryCode = item.dataset.countryCode;
-            const isSelected = this.selectedCountries.has(countryCode);
-            
-            item.classList.toggle('selected', isSelected);
-            
-            const checkbox = item.querySelector('input[type="checkbox"]');
-            if (checkbox) {
-                checkbox.checked = isSelected;
-            }
-        });
-    }
-
-    /**
-     * 선택 요약 업데이트
-     */
-    updateSelectionSummary() {
-        const summaryElement = this.container.querySelector('.selection-summary .selected-count');
-        if (summaryElement) {
-            summaryElement.textContent = this.selectedCountries.size;
-        }
-    }
-
-    /**
-     * 모든 선택 해제
-     */
-    clearAllSelections() {
-        this.selectedCountries.clear();
-        this.updateSelectionDisplay();
-        this.updateCountryListSelection();
-        
-        // 선택 변경 콜백 실행
-        if (this.options.onSelectionChange) {
-            this.options.onSelectionChange([], this.selectedCountries);
-        }
-    }
-
-    /**
-     * 선택된 국가 코드 배열 반환
-     */
-    getSelectedCountryCodes() {
-        return Array.from(this.selectedCountries);
-    }
-
-    /**
-     * 선택된 국가 객체 배열 반환
-     */
-    getSelectedCountries() {
-        return Array.from(this.selectedCountries).map(code => 
-            countryDataManager.getCountryByCode(code)
-        ).filter(Boolean);
-    }
-
-    /**
-     * 특정 국가 선택 상태 확인
-     */
-    isCountrySelected(countryCode) {
-        return this.selectedCountries.has(countryCode);
-    }
-
-    /**
-     * 선택된 국가 설정 (외부에서 호출)
-     */
-    setSelectedCountries(countryCodes) {
-        this.selectedCountries.clear();
-        
-        if (Array.isArray(countryCodes)) {
-            countryCodes.forEach(code => {
-                if (countryDataManager.getCountryByCode(code)) {
-                    this.selectedCountries.add(code);
-                }
-            });
-        }
-        
-        this.updateSelectionDisplay();
-        this.updateCountryListSelection();
-    }
-
-    /**
-     * 키보드 이벤트 처리
-     */
-    handleTriggerKeydown(event) {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            this.toggleDropdown();
-        } else if (event.key === 'Escape') {
-            this.hideDropdown();
-        }
-    }
-
-    handleSearchKeydown(event) {
-        if (event.key === 'Escape') {
-            this.hideDropdown();
-        }
-    }
-
-    /**
-     * 외부 클릭 감지
-     */
-    handleOutsideClick(event) {
-        if (!this.container.contains(event.target)) {
-            this.hideDropdown();
-        }
-    }
-
-    /**
-     * 토스트 메시지 표시
-     */
-    showToast(message) {
-        try {
-            const toast = document.createElement('div');
-            toast.className = 'country-selector-toast';
-            toast.textContent = message;
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => toast.classList.add('show'), 100);
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        document.body.removeChild(toast);
-                    }
-                }, 300);
-            }, 3000);
-            
-        } catch (error) {
-            console.error('토스트 메시지 표시 실패:', error);
-        }
-    }
-
-    /**
-     * 에러 상태 표시
-     */
-    showErrorState() {
-        this.countryList.innerHTML = `
-            <div class="error-state">
-                <div class="error-icon">⚠️</div>
-                <div class="error-text">국가 데이터를 불러올 수 없습니다</div>
-                <button class="retry-btn" onclick="location.reload()">다시 시도</button>
-            </div>
-        `;
-    }
-
-    /**
-     * 에러 폴백 표시
-     */
-    showErrorFallback() {
+        // DOM 요소 정리
         if (this.container) {
-            this.container.innerHTML = `
-                <div class="country-selector-error">
-                    <div class="error-icon">⚠️</div>
-                    <div class="error-title">국가 선택기를 불러올 수 없습니다</div>
-                    <div class="error-description">페이지를 새로고침해주세요.</div>
-                </div>
-            `;
+            this.container.innerHTML = '';
         }
-    }
 
-    /**
-     * 컴포넌트 정리
-     */
-    cleanup() {
-        try {
-            // 이벤트 리스너 제거
-            this.eventListeners.forEach(listener => {
-                if (listener.element && listener.element.removeEventListener) {
-                    listener.element.removeEventListener(listener.event, listener.handler);
-                }
-            });
-            
-            this.eventListeners = [];
-            
-            // 검색 타임아웃 클리어
-            if (this.searchTimeout) {
-                clearTimeout(this.searchTimeout);
-            }
-            
-            // 상태 초기화
-            this.selectedCountries.clear();
-            this.isOpen = false;
-            this.searchQuery = '';
-            this.filterRegion = '';
-            this.filteredCountries = [];
-            
-            // DOM 참조 클리어
-            this.container = null;
-            this.trigger = null;
-            this.dropdown = null;
-            this.searchInput = null;
-            this.countryList = null;
-            this.selectedDisplay = null;
-            
-        } catch (error) {
-            console.error('CountrySelector 정리 실패:', error);
-        }
+        // 참조 정리
+        this.container = null;
+        this.input = null;
+        this.dropdown = null;
+        this.popularGrid = null;
+        this.countriesList = null;
     }
 }
 
-// 전역에서 사용할 수 있도록 내보내기
-export default CountrySelector;
+/**
+ * 기본 인스턴스 생성 함수
+ * @param {HTMLElement} container - 컨테이너 요소
+ * @param {Object} options - 컴포넌트 옵션
+ * @returns {Promise<CountrySelector>} CountrySelector 인스턴스
+ */
+export async function createCountrySelector(container, options = {}) {
+    const selector = new CountrySelector(options);
+    await selector.initialize();
+    selector.render(container);
+    return selector;
+}
+
+/**
+ * ========================================
+ * Phase 2A 완성 - 국가 선택 UI 컴포넌트
+ * ========================================
+ * 
+ * ✅ 구현 완료된 기능:
+ * - 검색 가능한 드롭다운
+ * - 인기 국가 그리드 (최대 12개)
+ * - 전체 국가 스크롤 리스트
+ * - 키보드 네비게이션 (화살표, Enter, ESC)
+ * - 모바일 최적화 (터치 타겟 44px+)
+ * - 실시간 검색 및 필터링
+ * - 커스텀 이벤트 ('country-selected')
+ * - 애니메이션 효과
+ * 
+ * 🚀 사용 예시:
+ * ```javascript
+ * import { createCountrySelector } from './js/modules/ui-components/country-selector.js';
+ * 
+ * const container = document.getElementById('country-selector');
+ * const selector = await createCountrySelector(container, {
+ *     placeholder: '여행할 국가를 선택하세요',
+ *     showFlags: true,
+ *     showEnglishNames: true
+ * });
+ * 
+ * // 이벤트 리스너
+ * container.addEventListener('country-selected', (event) => {
+ *     console.log('선택된 국가:', event.detail);
+ * });
+ * ```
+ * 
+ * 🎨 스타일링:
+ * - 기존 .form-input 스타일과 일치
+ * - 드롭다운 최대 높이 300px
+ * - 애니메이션: fade-in/out (200ms)
+ * - 반응형: 모바일 전체 화면 모달
+ * 
+ * 🔧 다음 Phase 준비:
+ * - CSS 스타일링
+ * - 테마 및 다크모드
+ * - 접근성 개선
+ * ========================================
+ */

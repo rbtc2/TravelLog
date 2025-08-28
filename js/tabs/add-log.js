@@ -1,4 +1,5 @@
 import { FORM_CONFIG, VALIDATION_RULES } from '../config/form-config.js';
+import { createCountrySelector } from '../modules/ui-components/country-selector.js';
 
 /**
  * 일지 추가 탭 모듈
@@ -34,6 +35,9 @@ class AddLogTab {
         
         /** @type {Object} 검증 에러 상태 객체 */
         this.validationErrors = {};
+        
+        /** @type {Object|null} 국가 선택기 컴포넌트 */
+        this.countrySelector = null;
     }
     
     /**
@@ -52,6 +56,73 @@ class AddLogTab {
         this.isInitialized = true;
     }
     
+    /**
+     * CountrySelector 컴포넌트를 초기화합니다
+     * @private
+     */
+    async initializeCountrySelector() {
+        try {
+            const container = document.getElementById('country-selector-container');
+            if (!container) {
+                console.error('AddLogTab: 국가 선택기 컨테이너를 찾을 수 없습니다.');
+                return;
+            }
+
+            // CountrySelector 생성 및 초기화
+            this.countrySelector = await createCountrySelector(container, {
+                placeholder: FORM_CONFIG.country.placeholder,
+                showFlags: true,
+                showEnglishNames: true,
+                maxPopularCountries: 12
+            });
+
+            // 국가 선택 이벤트 리스너
+            container.addEventListener('country-selected', (event) => {
+                const selectedCountry = event.detail;
+                this.handleCountrySelection(selectedCountry);
+            });
+
+            console.log('AddLogTab: CountrySelector 초기화 완료');
+
+        } catch (error) {
+            console.error('AddLogTab: CountrySelector 초기화 실패:', error);
+        }
+    }
+
+    /**
+     * 국가 선택 이벤트를 처리합니다
+     * @private
+     * @param {Object} selectedCountry - 선택된 국가 정보
+     */
+    handleCountrySelection(selectedCountry) {
+        if (!selectedCountry) return;
+
+        // 폼 데이터 업데이트
+        this.formData.country = selectedCountry.code;
+        
+        // hidden input 업데이트
+        const countryInput = document.getElementById('country');
+        if (countryInput) {
+            countryInput.value = selectedCountry.code;
+            
+            // change 이벤트 발생
+            countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        // 도시 입력 필드 활성화
+        const cityInput = document.getElementById('city');
+        if (cityInput) {
+            cityInput.disabled = false;
+            cityInput.placeholder = `${selectedCountry.nameKo}의 도시를 입력하세요`;
+        }
+
+        // 검증 에러 제거
+        this.showFieldError('country', '');
+        
+        // 콘솔 로그
+        console.log(`AddLogTab: 국가 선택됨 - ${selectedCountry.nameKo} (${selectedCountry.code})`);
+    }
+
     /**
      * DOM이 완전히 파싱될 때까지 대기합니다
      * @param {Function} callback - DOM 준비 완료 시 실행할 콜백
@@ -114,13 +185,13 @@ class AddLogTab {
                     <!-- 국가 입력 -->
                     <div class="form-group">
                         <label for="country" class="form-label required">국가</label>
+                        <div id="country-selector-container">
+                            <!-- CountrySelector 컴포넌트가 여기에 렌더링됩니다 -->
+                        </div>
                         <input 
-                            type="text" 
+                            type="hidden" 
                             id="country" 
                             name="country" 
-                            class="form-input" 
-                            placeholder="${FORM_CONFIG.country.placeholder}"
-                            maxlength="${FORM_CONFIG.country.maxLength}"
                             required
                         >
                         <div class="form-hint">${FORM_CONFIG.country.hint}</div>
@@ -135,7 +206,7 @@ class AddLogTab {
                             id="city" 
                             name="city" 
                             class="form-input" 
-                            placeholder="${FORM_CONFIG.city.placeholder}"
+                            placeholder="국가를 먼저 선택해주세요"
                             maxlength="${FORM_CONFIG.city.maxLength}"
                             disabled
                             required
@@ -265,22 +336,25 @@ class AddLogTab {
         
         // 필수 DOM 요소가 없으면 이벤트 바인딩 건너뛰기
         if (!form || !countryInput || !cityInput || !startDateInput || !endDateInput || !memoTextarea || !submitBtn || !resetBtn) {
-            console.warn('AddLogTab: 필수 DOM 요소를 찾을 수 없어 이벤트 바인딩을 건너뜁니다.');
+            console.warn('AddLogTab: 필수 DOM 요소를 찾을 수 없어 이벤트 바인딩을 건너뛰니다.');
             return;
         }
+
+        // CountrySelector 초기화
+        this.initializeCountrySelector();
         
-        // 국가 입력 시 도시 활성화
-        this.addEventListener(countryInput, 'input', (e) => {
-            const country = e.target.value.trim();
-            cityInput.disabled = !country;
-            
-            if (!country) {
-                cityInput.value = '';
-                cityInput.disabled = true;
-            }
-            
-            this.validateField('country', country);
-        });
+        // 국가 입력 시 도시 활성화 (CountrySelector 이벤트로 대체됨)
+        // this.addEventListener(countryInput, 'input', (e) => {
+        //     const country = e.target.value.trim();
+        //     cityInput.disabled = !country;
+        //     
+        //     if (!country) {
+        //         cityInput.value = '';
+        //         cityInput.disabled = true;
+        //     }
+        //     
+        //     this.validateField('country', country);
+        // });
         
         // 도시 입력 검증
         this.addEventListener(cityInput, 'input', (e) => {
@@ -690,9 +764,20 @@ class AddLogTab {
         const form = document.getElementById('add-log-form');
         form.reset();
         
+        // CountrySelector 초기화
+        if (this.countrySelector) {
+            this.countrySelector.close();
+            // CountrySelector의 입력 필드 초기화
+            const selectorInput = this.countrySelector.input;
+            if (selectorInput) {
+                selectorInput.value = '';
+            }
+        }
+        
         // 도시 입력 필드 비활성화
         const cityInput = document.getElementById('city');
         cityInput.disabled = true;
+        cityInput.placeholder = '국가를 먼저 선택해주세요';
         
         // 종료일 입력 필드 비활성화 및 제한 해제
         const endDateInput = document.getElementById('endDate');
@@ -735,6 +820,16 @@ class AddLogTab {
      * @description 등록된 이벤트 리스너를 제거하고 상태를 초기화합니다
      */
     async cleanup() {
+        // CountrySelector 정리
+        if (this.countrySelector) {
+            try {
+                this.countrySelector.destroy();
+                this.countrySelector = null;
+            } catch (error) {
+                console.warn('AddLogTab: CountrySelector 정리 중 오류 발생:', error);
+            }
+        }
+        
         // 이벤트 리스너 정리
         this.eventListeners.forEach(listener => {
             try {
