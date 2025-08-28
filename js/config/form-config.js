@@ -1,6 +1,8 @@
 /**
  * 폼 관련 공통 설정 및 상수
  * 모든 폼 컴포넌트에서 재사용 가능한 설정값들을 중앙화
+ * @version 2.0.0
+ * @since 2024-01-01
  */
 
 export const FORM_CONFIG = {
@@ -8,8 +10,14 @@ export const FORM_CONFIG = {
     country: {
         maxLength: 56,
         minLength: 2,
-        placeholder: "예: Japan / 일본",
-        hint: "나중에 선택형으로 전환 예정"
+        placeholder: "국가를 검색하세요",
+        hint: "195개국 중에서 선택하거나 검색하세요",
+        searchable: true,
+        showPopular: true,
+        popularCount: 12,
+        showFlag: true,
+        showEnglishName: true,
+        mobileFullscreen: true
     },
     
     // 도시 입력 필드 설정
@@ -104,6 +112,75 @@ export const FORM_CONFIG = {
             desktop: 32,
             mobile: 28
         }
+    },
+    
+    // CountrySelector 성능 설정
+    countrySelector: {
+        // 성능 목표
+        performance: {
+            initTimeout: 50,           // 초기화 타임아웃 (ms)
+            searchTimeout: 30,         // 검색 응답 타임아웃 (ms)
+            animationDuration: 200,    // 애니메이션 지속 시간 (ms)
+            debounceDelay: 150         // 검색 디바운스 지연 (ms)
+        },
+        // 접근성 설정
+        accessibility: {
+            keyboardNavigation: true,  // 키보드 네비게이션 활성화
+            screenReaderSupport: true, // 스크린 리더 지원
+            focusManagement: true,     // 포커스 관리
+            ariaLabels: true           // ARIA 라벨 사용
+        },
+        // 모바일 최적화
+        mobile: {
+            fullscreen: true,          // 전체화면 모드
+            touchTargetSize: 44,       // 최소 터치 타겟 크기 (px)
+            swipeSupport: true,        // 스와이프 제스처 지원
+            viewportOptimization: true // 뷰포트 최적화
+        }
+    }
+};
+
+/**
+ * 성능 테스트 유틸리티
+ */
+export const PERFORMANCE_UTILS = {
+    /**
+     * 성능 측정 시작
+     * @param {string} label - 측정 라벨
+     * @returns {Function} 측정 종료 함수
+     */
+    startMeasure: (label) => {
+        const startTime = performance.now();
+        return () => {
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            console.log(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
+            
+            // 성능 기준 확인
+            if (label.includes('초기화') && duration > FORM_CONFIG.countrySelector.performance.initTimeout) {
+                console.warn(`⚠️ ${label}이 목표 시간(${FORM_CONFIG.countrySelector.performance.initTimeout}ms)을 초과했습니다.`);
+            }
+            if (label.includes('검색') && duration > FORM_CONFIG.countrySelector.performance.searchTimeout) {
+                console.warn(`⚠️ ${label}이 목표 시간(${FORM_CONFIG.countrySelector.performance.searchTimeout}ms)을 초과했습니다.`);
+            }
+            
+            return duration;
+        };
+    },
+    
+    /**
+     * 메모리 사용량 확인
+     * @returns {Object} 메모리 정보
+     */
+    getMemoryInfo: () => {
+        if (performance.memory) {
+            return {
+                used: Math.round(performance.memory.usedJSHeapSize / 1048576 * 100) / 100,
+                total: Math.round(performance.memory.totalJSHeapSize / 1048576 * 100) / 100,
+                limit: Math.round(performance.memory.jsHeapSizeLimit / 1048576 * 100) / 100
+            };
+        }
+        return { used: 'N/A', total: 'N/A', limit: 'N/A' };
     }
 };
 

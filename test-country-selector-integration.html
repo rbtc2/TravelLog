@@ -161,6 +161,18 @@
                 </ul>
             </div>
             
+            <div class="test-info">
+                <h3>성능 및 품질 기준</h3>
+                <ul>
+                    <li>🎯 컴포넌트 초기화: 50ms 이하</li>
+                    <li>⚡ 검색 응답: 30ms 이하</li>
+                    <li>🎬 드롭다운 애니메이션: 부드러움</li>
+                    <li>💾 메모리 누수 없음</li>
+                    <li>⌨️ 키보드 네비게이션 완벽 지원</li>
+                    <li>📱 모바일 터치 최적화</li>
+                </ul>
+            </div>
+            
             <form class="add-log-form" id="add-log-form">
                 <!-- 국가 입력 -->
                 <div class="form-group">
@@ -240,6 +252,24 @@
                 </div>
             </div>
         </div>
+        
+        <div class="status-display">
+            <h4>성능 모니터링</h4>
+            <div id="performance-content">
+                <div class="status-item">
+                    <span class="status-label">초기화 시간:</span>
+                    <span class="status-value" id="init-time">측정 중...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">검색 응답:</span>
+                    <span class="status-value" id="search-time">대기 중...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">메모리 사용량:</span>
+                    <span class="status-value" id="memory-usage">확인 중...</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -272,13 +302,34 @@
                     return;
                 }
 
+                // 성능 측정 시작
+                const startTime = performance.now();
+                
                 // CountrySelector 생성 및 초기화
                 const selector = await createCountrySelector(container, {
-                    placeholder: '여행할 국가를 선택하세요',
+                    placeholder: '국가를 검색하세요',
                     showFlags: true,
                     showEnglishNames: true,
                     maxPopularCountries: 12
                 });
+
+                // 성능 측정 종료
+                const endTime = performance.now();
+                const initDuration = endTime - startTime;
+                console.log(`⏱️ CountrySelector 초기화: ${initDuration.toFixed(2)}ms`);
+                
+                // 성능 기준 확인
+                if (initDuration > 50) {
+                    console.warn(`⚠️ 초기화가 목표 시간(50ms)을 초과했습니다.`);
+                }
+                
+                // 성능 모니터링 결과 업데이트
+                document.getElementById('init-time').textContent = `${initDuration.toFixed(2)}ms`;
+                if (initDuration > 50) {
+                    document.getElementById('init-time').style.color = '#e74c3c';
+                } else {
+                    document.getElementById('init-time').style.color = '#27ae60';
+                }
 
                 // 국가 선택 이벤트 리스너
                 container.addEventListener('country-selected', (event) => {
@@ -304,6 +355,17 @@
 
                 // 상태 업데이트
                 updateStatus(selector);
+                
+                // 메모리 사용량 확인 및 표시
+                if (performance.memory) {
+                    const memoryInfo = {
+                        used: Math.round(performance.memory.usedJSHeapSize / 1048576 * 100) / 100,
+                        total: Math.round(performance.memory.totalJSHeapSize / 1048576 * 100) / 100
+                    };
+                    document.getElementById('memory-usage').textContent = `${memoryInfo.used}MB / ${memoryInfo.total}MB`;
+                } else {
+                    document.getElementById('memory-usage').textContent = 'N/A';
+                }
 
                 console.log('CountrySelector 초기화 완료');
 
