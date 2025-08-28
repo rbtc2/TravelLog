@@ -508,6 +508,240 @@ export class CountriesManager {
     getCountriesByContinent(continent) {
         return this.countries.filter(country => country.continent === continent);
     }
+
+    /**
+     * 통합 검색 - 한글/영문 동시 검색, 부분 문자열 매칭
+     * @public
+     * @param {string} query - 검색 쿼리
+     * @param {Object} options - 검색 옵션
+     * @param {number} options.limit - 최대 결과 수 (기본값: 50)
+     * @param {boolean} options.caseSensitive - 대소문자 구분 여부 (기본값: false)
+     * @param {boolean} options.exactMatch - 정확한 매칭 여부 (기본값: false)
+     * @returns {Country[]} 검색 결과 배열
+     */
+    searchCountries(query, options = {}) {
+        const startTime = performance.now();
+        
+        if (!query || typeof query !== 'string' || query.trim().length === 0) {
+            return [];
+        }
+
+        const {
+            limit = 50,
+            caseSensitive = false,
+            exactMatch = false
+        } = options;
+
+        const searchQuery = caseSensitive ? query.trim() : query.trim().toLowerCase();
+        const results = [];
+
+        // 성능 최적화: 조기 종료를 위한 카운터
+        let count = 0;
+        const maxResults = Math.min(limit, 100); // 최대 100개로 제한
+
+        for (const country of this.countries) {
+            if (count >= maxResults) break;
+
+            let isMatch = false;
+
+            if (exactMatch) {
+                // 정확한 매칭
+                isMatch = (
+                    (caseSensitive ? country.code : country.code.toLowerCase()) === searchQuery ||
+                    (caseSensitive ? country.nameEn : country.nameEn.toLowerCase()) === searchQuery ||
+                    (caseSensitive ? country.nameKo : country.nameKo.toLowerCase()) === searchQuery ||
+                    (caseSensitive ? country.continent : country.continent.toLowerCase()) === searchQuery ||
+                    (caseSensitive ? country.continentKo : country.continentKo.toLowerCase()) === searchQuery
+                );
+            } else {
+                // 부분 문자열 매칭 (더 빠른 검색)
+                const code = caseSensitive ? country.code : country.code.toLowerCase();
+                const nameEn = caseSensitive ? country.nameEn : country.nameEn.toLowerCase();
+                const nameKo = caseSensitive ? country.nameKo : country.nameKo.toLowerCase();
+                const continent = caseSensitive ? country.continent : country.continent.toLowerCase();
+                const continentKo = caseSensitive ? country.continentKo : country.continentKo.toLowerCase();
+
+                isMatch = (
+                    code.includes(searchQuery) ||
+                    nameEn.includes(searchQuery) ||
+                    nameKo.includes(searchQuery) ||
+                    continent.includes(searchQuery) ||
+                    continentKo.includes(searchQuery)
+                );
+            }
+
+            if (isMatch) {
+                results.push(country);
+                count++;
+            }
+        }
+
+        const endTime = performance.now();
+        const searchTime = endTime - startTime;
+        
+        if (searchTime > 10) {
+            console.warn(`CountriesManager: 검색 시간이 10ms를 초과했습니다: ${searchTime.toFixed(2)}ms`);
+        }
+
+        return results;
+    }
+
+    /**
+     * 국가 코드로 국가 조회
+     * @public
+     * @param {string} code - 국가 코드 (ISO 3166-1 alpha-2)
+     * @returns {Country|null} 국가 객체 또는 null
+     */
+    getCountryByCode(code) {
+        if (!code || typeof code !== 'string') {
+            return null;
+        }
+
+        const searchCode = code.toUpperCase();
+        
+        // 성능 최적화: 조기 종료
+        for (const country of this.countries) {
+            if (country.code === searchCode) {
+                return country;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * 국가명으로 국가 조회 (한글/영문)
+     * @public
+     * @param {string} name - 국가명
+     * @param {Object} options - 검색 옵션
+     * @param {boolean} options.caseSensitive - 대소문자 구분 여부 (기본값: false)
+     * @param {boolean} options.exactMatch - 정확한 매칭 여부 (기본값: false)
+     * @returns {Country|null} 국가 객체 또는 null
+     */
+    getCountryByName(name, options = {}) {
+        if (!name || typeof name !== 'string') {
+            return null;
+        }
+
+        const {
+            caseSensitive = false,
+            exactMatch = false
+        } = options;
+
+        const searchName = caseSensitive ? name.trim() : name.trim().toLowerCase();
+
+        for (const country of this.countries) {
+            let isMatch = false;
+
+            if (exactMatch) {
+                isMatch = (
+                    (caseSensitive ? country.nameEn : country.nameEn.toLowerCase()) === searchName ||
+                    (caseSensitive ? country.nameKo : country.nameKo.toLowerCase()) === searchName
+                );
+            } else {
+                isMatch = (
+                    (caseSensitive ? country.nameEn : country.nameEn.toLowerCase()) === searchName ||
+                    (caseSensitive ? country.nameKo : country.nameKo.toLowerCase()) === searchName
+                );
+            }
+
+            if (isMatch) {
+                return country;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 대륙 목록 반환
+     * @public
+     * @returns {Object} 대륙별 정보 객체
+     */
+    getContinents() {
+        const continents = {};
+        
+        this.countries.forEach(country => {
+            if (!continents[country.continent]) {
+                continents[country.continent] = {
+                    nameEn: country.continent,
+                    nameKo: country.continentKo,
+                    count: 0,
+                    popularCount: 0
+                };
+            }
+            continents[country.continent].count++;
+            if (country.popular) {
+                continents[country.continent].popularCount++;
+            }
+        });
+
+        return continents;
+    }
+
+    /**
+     * 고급 검색 - 복합 조건 검색
+     * @public
+     * @param {Object} filters - 검색 필터
+     * @param {string} filters.query - 검색 쿼리
+     * @param {string} filters.continent - 대륙 필터
+     * @param {boolean} filters.popular - 인기 국가 여부
+     * @param {number} filters.limit - 최대 결과 수
+     * @returns {Country[]} 검색 결과 배열
+     */
+    advancedSearch(filters = {}) {
+        const startTime = performance.now();
+        
+        let results = [...this.countries];
+
+        // 대륙 필터
+        if (filters.continent) {
+            results = results.filter(country => 
+                country.continent === filters.continent || 
+                country.continentKo === filters.continent
+            );
+        }
+
+        // 인기 국가 필터
+        if (filters.popular !== undefined) {
+            results = results.filter(country => country.popular === filters.popular);
+        }
+
+        // 검색 쿼리 필터
+        if (filters.query) {
+            const queryResults = this.searchCountries(filters.query, { limit: 1000 });
+            const queryCodes = new Set(queryResults.map(c => c.code));
+            results = results.filter(country => queryCodes.has(country.code));
+        }
+
+        // 결과 수 제한
+        if (filters.limit && filters.limit > 0) {
+            results = results.slice(0, filters.limit);
+        }
+
+        const endTime = performance.now();
+        const searchTime = endTime - startTime;
+        
+        if (searchTime > 10) {
+            console.warn(`CountriesManager: 고급 검색 시간이 10ms를 초과했습니다: ${searchTime.toFixed(2)}ms`);
+        }
+
+        return results;
+    }
+
+    /**
+     * 검색 성능 통계 반환
+     * @public
+     * @returns {Object} 성능 통계 객체
+     */
+    getSearchStats() {
+        return {
+            totalCountries: this.countries.length,
+            popularCountries: this.getPopularCountries().length,
+            continentCounts: this.getContinentCounts(),
+            continents: this.getContinents()
+        };
+    }
 }
 
 // 기본 인스턴스 export (싱글톤 패턴)
