@@ -95,7 +95,7 @@ export class ViewManager {
                 <!-- 보관함 섹션 -->
                 <div class="hub-section archive-section">
                     <div class="section-header">
-                        <h2 class="section-title">🗂️ 보관함</h2>
+                        <h2 class="section-title">📁 보관함</h2>
                     </div>
                     <div class="archive-content">
                         <div class="archive-item" id="my-schedules-btn">

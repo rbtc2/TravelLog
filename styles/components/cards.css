@@ -12,12 +12,32 @@
 
 .section-header {
     margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
 }
 
 .section-title {
     font-size: var(--font-xl);
     font-weight: var(--font-semibold);
     color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* 보관함 섹션 특별 스타일 */
+.archive-section .section-title {
+    color: var(--text-primary);
+    font-weight: var(--font-bold);
+}
+
+.archive-section .section-header {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--gray-200);
 }
 
 /* ===== 요약 아이템 카드 ===== */
