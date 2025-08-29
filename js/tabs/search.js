@@ -8,6 +8,12 @@ class SearchTab {
         this.isInitialized = false;
         this.eventListeners = [];
         this.searchInput = null;
+        
+        // 검색 상태 관리
+        this.searchState = 'initial'; // 'initial' | 'searching' | 'hasResults' | 'noResults'
+        this.searchQuery = '';
+        this.searchResults = [];
+        
         this.filters = {
             continent: [],
             purpose: '',
@@ -64,6 +70,19 @@ class SearchTab {
         }
     }
     
+    /**
+     * 검색 상태를 업데이트하고 UI를 새로고침합니다
+     */
+    updateSearchState(newState, data = {}) {
+        this.searchState = newState;
+        
+        if (data.query !== undefined) this.searchQuery = data.query;
+        if (data.results !== undefined) this.searchResults = data.results;
+        
+        this.renderContent();
+        this.bindEvents();
+    }
+    
     renderContent() {
         try {
         this.container.innerHTML = `
@@ -82,6 +101,7 @@ class SearchTab {
                                 class="search-input" 
                                 placeholder="국가, 도시, 일정지, 메모 등을 검색하세요..."
                                 id="search-input"
+                                value="${this.searchQuery}"
                             >
                             <button class="search-btn" id="search-btn">검색</button>
                         </div>
@@ -302,7 +322,86 @@ class SearchTab {
                         </div>
                     </div>
 
-                    <!-- 검색 결과 섹션 -->
+                    <!-- 상태별 콘텐츠 섹션 -->
+                    ${this.renderStateContent()}
+
+                    <!-- 정렬 옵션 (검색 결과가 있을 때만 표시) -->
+                    ${this.searchState === 'hasResults' ? this.renderSortSection() : ''}
+                </div>
+            `;
+        } catch (error) {
+            console.error('검색 탭 콘텐츠 렌더링 오류:', error);
+            this.showErrorFallback(this.container);
+        }
+    }
+    
+    /**
+     * 검색 상태에 따른 콘텐츠를 렌더링합니다
+     */
+    renderStateContent() {
+        switch (this.searchState) {
+            case 'initial':
+                return `
+                    <!-- 초기 상태: 검색 안내 -->
+                    <div class="search-guide-section">
+                        <div class="guide-content">
+                            <div class="guide-icon">🔍</div>
+                            <div class="guide-title">일정 검색을 시작해보세요</div>
+                            <div class="guide-description">
+                                검색어를 입력하거나 상세 필터를 설정하여<br>
+                                원하는 일정 기록을 빠르게 찾을 수 있습니다.
+                            </div>
+                            <div class="guide-tips">
+                                <div class="tip-item">
+                                    <span class="tip-icon">💡</span>
+                                    <span class="tip-text">국가명, 도시명으로 검색해보세요</span>
+                                </div>
+                                <div class="tip-item">
+                                    <span class="tip-icon">💡</span>
+                                    <span class="tip-text">여행 목적이나 동행 유형으로 필터링해보세요</span>
+                                </div>
+                                <div class="tip-item">
+                                    <span class="tip-icon">💡</span>
+                                    <span class="tip-text">기간과 별점으로 더 정확한 검색이 가능합니다</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            case 'searching':
+                return `
+                    <!-- 검색 중 상태 -->
+                    <div class="search-loading-section">
+                        <div class="loading-content">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">검색 중입니다...</div>
+                        </div>
+                    </div>
+                `;
+                
+            case 'hasResults':
+                return `
+                    <!-- 검색 결과 있음 -->
+                    <div class="search-results-section">
+                        <div class="results-header">
+                            <h3 class="results-title">📊 검색 결과</h3>
+                            <div class="results-count">
+                                <span class="count-number">${this.searchResults.length}</span>개의 일정 기록
+                            </div>
+                        </div>
+                        
+                        <div class="results-content">
+                            <div class="results-list">
+                                ${this.renderSearchResults()}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            case 'noResults':
+                return `
+                    <!-- 검색 결과 없음 -->
                     <div class="search-results-section">
                         <div class="results-header">
                             <h3 class="results-title">📊 검색 결과</h3>
@@ -319,40 +418,68 @@ class SearchTab {
                                     검색어나 필터를 변경해보세요.<br>
                                     또는 새로운 일정 기록을 추가해보세요.
                                 </div>
+                                <button class="retry-search-btn" id="retry-search">다른 조건으로 검색</button>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 정렬 옵션 -->
-                    <div class="sort-section">
-                        <div class="sort-header">
-                            <h3 class="sort-title">📋 정렬</h3>
-                        </div>
-                        <div class="sort-options">
-                            <label class="sort-option">
-                                <input type="radio" name="sort" value="date-desc" id="sort-date-desc" checked>
-                                <span class="sort-text">최신순</span>
-                            </label>
-                            <label class="sort-option">
-                                <input type="radio" name="sort" value="date-asc" id="sort-date-asc">
-                                <span class="sort-text">오래된순</span>
-                            </label>
-                            <label class="sort-option">
-                                <input type="radio" name="sort" value="rating-desc" id="sort-rating-desc">
-                                <span class="sort-text">별점순</span>
-                            </label>
-                            <label class="sort-option">
-                                <input type="radio" name="sort" value="title-asc" id="sort-title-asc">
-                                <span class="sort-text">제목순</span>
-                            </label>
+                `;
+                
+            default:
+                return '';
+        }
+    }
+    
+    /**
+     * 검색 결과 목록을 렌더링합니다
+     */
+    renderSearchResults() {
+        if (!this.searchResults || this.searchResults.length === 0) {
+            return '<div class="no-results">검색 결과가 없습니다.</div>';
+        }
+        
+        return this.searchResults.map(result => `
+            <div class="search-result-item">
+                <div class="result-header">
+                    <h4 class="result-title">${result.title || '제목 없음'}</h4>
+                    <div class="result-meta">
+                        <span class="result-date">${result.date || ''}</span>
+                        <span class="result-location">${result.location || ''}</span>
+                    </div>
                 </div>
+                <div class="result-description">${result.description || ''}</div>
+            </div>
+        `).join('');
+    }
+    
+    /**
+     * 정렬 옵션 섹션을 렌더링합니다
+     */
+    renderSortSection() {
+        return `
+            <div class="sort-section">
+                <div class="sort-header">
+                    <h3 class="sort-title">📋 정렬</h3>
+                </div>
+                <div class="sort-options">
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="date-desc" id="sort-date-desc" checked>
+                        <span class="sort-text">최신순</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="date-asc" id="sort-date-asc">
+                        <span class="sort-text">오래된순</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="rating-desc" id="sort-rating-desc">
+                        <span class="sort-text">별점순</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="title-asc" id="sort-title-asc">
+                        <span class="sort-text">제목순</span>
+                    </label>
                 </div>
             </div>
         `;
-        } catch (error) {
-            console.error('검색 탭 콘텐츠 렌더링 오류:', error);
-            this.showErrorFallback(this.container);
-        }
     }
     
     bindEvents() {
@@ -361,6 +488,7 @@ class SearchTab {
             this.searchInput = document.getElementById('search-input');
             if (this.searchInput) {
                 this.addEventListener(this.searchInput, 'input', this.handleSearchInput.bind(this));
+                this.addEventListener(this.searchInput, 'keypress', this.handleSearchKeypress.bind(this));
             }
 
             // 검색 버튼 이벤트
@@ -396,11 +524,21 @@ class SearchTab {
                 this.addEventListener(filterReset, 'click', this.resetFilters.bind(this));
             }
 
-            // 정렬 옵션 이벤트
-            const sortOptions = document.querySelectorAll('input[name="sort"]');
-            sortOptions.forEach(option => {
-                this.addEventListener(option, 'change', this.handleSortChange.bind(this));
-            });
+            // 정렬 옵션 이벤트 (검색 결과가 있을 때만)
+            if (this.searchState === 'hasResults') {
+                const sortOptions = document.querySelectorAll('input[name="sort"]');
+                sortOptions.forEach(option => {
+                    this.addEventListener(option, 'change', this.handleSortChange.bind(this));
+                });
+            }
+
+            // 재검색 버튼 이벤트 (결과 없음 상태일 때)
+            if (this.searchState === 'noResults') {
+                const retryBtn = document.getElementById('retry-search');
+                if (retryBtn) {
+                    this.addEventListener(retryBtn, 'click', this.handleRetrySearch.bind(this));
+                }
+            }
         } catch (error) {
             console.error('검색 탭 이벤트 바인딩 오류:', error);
         }
@@ -417,21 +555,105 @@ class SearchTab {
 
     handleSearchInput(event) {
         try {
-            // 검색어 입력 처리 (준비 중)
-            this.showToast('검색 기능 준비 중입니다.');
+            this.searchQuery = event.target.value;
+            
+            // 검색어가 비어있으면 초기 상태로 복귀
+            if (!this.searchQuery.trim()) {
+                this.updateSearchState('initial');
+                return;
+            }
         } catch (error) {
             console.error('검색 입력 처리 오류:', error);
             this.showToast('검색 처리 중 오류가 발생했습니다.');
         }
     }
 
+    handleSearchKeypress(event) {
+        if (event.key === 'Enter') {
+            this.handleSearch();
+        }
+    }
+
     handleSearch() {
         try {
-            // 검색 실행 (준비 중)
-            this.showToast('검색 기능 준비 중입니다.');
+            const query = this.searchQuery.trim();
+            
+            if (!query) {
+                this.showToast('검색어를 입력해주세요.');
+                return;
+            }
+
+            // 검색 중 상태로 변경
+            this.updateSearchState('searching');
+            
+            // 실제 검색 로직 시뮬레이션 (향후 API 연동 시 교체)
+            setTimeout(() => {
+                this.simulateSearch(query);
+            }, 1000);
+            
         } catch (error) {
             console.error('검색 실행 오류:', error);
             this.showToast('검색 실행 중 오류가 발생했습니다.');
+            this.updateSearchState('initial');
+        }
+    }
+
+    /**
+     * 검색 시뮬레이션 (향후 실제 API로 교체)
+     */
+    simulateSearch(query) {
+        try {
+            // 더미 검색 결과 생성
+            const mockResults = [
+                {
+                    title: '일본 도쿄 여행',
+                    date: '2024-03-15',
+                    location: '일본, 도쿄',
+                    description: '도쿄 타워와 시부야를 둘러본 즐거운 여행이었습니다.'
+                },
+                {
+                    title: '프랑스 파리 출장',
+                    date: '2024-02-20',
+                    location: '프랑스, 파리',
+                    description: '비즈니스 미팅을 위해 파리를 방문했습니다.'
+                }
+            ];
+
+            // 검색어가 포함된 결과만 필터링
+            const filteredResults = mockResults.filter(result => 
+                result.title.toLowerCase().includes(query.toLowerCase()) ||
+                result.location.toLowerCase().includes(query.toLowerCase()) ||
+                result.description.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (filteredResults.length > 0) {
+                this.updateSearchState('hasResults', { results: filteredResults });
+            } else {
+                this.updateSearchState('noResults', { results: [] });
+            }
+            
+        } catch (error) {
+            console.error('검색 시뮬레이션 오류:', error);
+            this.updateSearchState('noResults');
+        }
+    }
+
+    /**
+     * 재검색 처리
+     */
+    handleRetrySearch() {
+        try {
+            // 검색어 초기화하고 초기 상태로 복귀
+            this.searchQuery = '';
+            this.updateSearchState('initial');
+            
+            // 검색 입력 필드 포커스
+            if (this.searchInput) {
+                this.searchInput.focus();
+            }
+            
+        } catch (error) {
+            console.error('재검색 처리 오류:', error);
         }
     }
 
@@ -493,6 +715,8 @@ class SearchTab {
     bindSearchStarRating() {
         try {
             const starRating = document.getElementById('search-star-rating');
+            if (!starRating) return;
+            
             const stars = starRating.querySelectorAll('.star');
             
             /** @type {number} 현재 선택된 별점 */
