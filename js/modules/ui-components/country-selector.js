@@ -70,6 +70,9 @@ export class CountrySelector {
      */
     async initialize() {
         try {
+            this.isLoading = true;
+            this.updateLoadingState();
+            
             // CountriesManager 초기화 대기
             if (!countriesManager.isInitialized) {
                 console.log('CountrySelector: CountriesManager 초기화 대기 중...');
@@ -85,9 +88,14 @@ export class CountrySelector {
             // 초기 상태 설정
             this.updateDisplay();
             
+            this.isLoading = false;
+            this.updateLoadingState();
+            
             console.log('CountrySelector 초기화 완료');
             
         } catch (error) {
+            this.isLoading = false;
+            this.updateLoadingState();
             console.error('CountrySelector 초기화 실패:', error);
         }
     }
@@ -159,8 +167,8 @@ export class CountrySelector {
             <div class="country-item list-item ${index === this.selectedIndex ? 'selected' : ''}" 
                  data-code="${country.code}" data-index="${index}">
                 <span class="country-flag">${country.flag}</span>
-                <span class="country-name">${country.nameKo}</span>
-                ${this.options.showEnglishNames ? `<span class="country-name-en">${country.nameEn}</span>` : ''}
+                <span class="country-name">${this.highlightSearchMatch(country.nameKo)}</span>
+                ${this.options.showEnglishNames ? `<span class="country-name-en">${this.highlightSearchMatch(country.nameEn)}</span>` : ''}
                 <span class="country-continent">${country.continentKo}</span>
             </div>
         `).join('');
@@ -297,9 +305,14 @@ export class CountrySelector {
         this.isOpen = true;
         this.dropdown.style.display = 'block';
         
-        // 애니메이션 효과
+        // z-index를 최상위로 설정하여 다른 요소들 위에 표시
+        this.dropdown.style.zIndex = '10001';
+        this.container.style.zIndex = '10000';
+        
+        // 부드러운 애니메이션 효과
         requestAnimationFrame(() => {
             this.dropdown.classList.add('open');
+            this.container.classList.add('open');
         });
 
         // 입력 필드에 포커스
@@ -318,6 +331,11 @@ export class CountrySelector {
 
         this.isOpen = false;
         this.dropdown.classList.remove('open');
+        this.container.classList.remove('open');
+        
+        // z-index 복원
+        this.dropdown.style.zIndex = '';
+        this.container.style.zIndex = '';
         
         setTimeout(() => {
             this.dropdown.style.display = 'none';
@@ -345,14 +363,23 @@ export class CountrySelector {
      * @param {string} query - 검색 쿼리
      */
     search(query) {
-        if (!query) {
-            this.filteredCountries = countriesManager.countries;
-        } else {
-            this.filteredCountries = countriesManager.searchCountries(query, { limit: 100 });
-        }
+        this.isLoading = true;
+        this.updateLoadingState();
+        
+        // 검색 지연을 위한 setTimeout (로딩 애니메이션 표시)
+        setTimeout(() => {
+            if (!query) {
+                this.filteredCountries = countriesManager.countries;
+            } else {
+                this.filteredCountries = countriesManager.searchCountries(query, { limit: 100 });
+            }
 
-        this.selectedIndex = -1;
-        this.updateDisplay();
+            this.selectedIndex = -1;
+            this.updateDisplay();
+            
+            this.isLoading = false;
+            this.updateLoadingState();
+        }, 150); // 150ms 지연으로 부드러운 로딩 효과
     }
 
     /**
@@ -437,6 +464,45 @@ export class CountrySelector {
                 newSelected.classList.add('selected');
                 // 선택된 항목이 보이도록 스크롤
                 newSelected.scrollIntoView({ block: 'nearest' });
+            }
+        }
+    }
+
+    /**
+     * 검색 결과 하이라이팅
+     * @private
+     * @param {string} text - 하이라이팅할 텍스트
+     * @returns {string} 하이라이팅된 HTML
+     */
+    highlightSearchMatch(text) {
+        if (!this.searchQuery || !text) {
+            return text;
+        }
+        
+        const regex = new RegExp(`(${this.escapeRegExp(this.searchQuery)})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+    
+    /**
+     * 정규식 특수문자 이스케이프
+     * @private
+     * @param {string} string - 이스케이프할 문자열
+     * @returns {string} 이스케이프된 문자열
+     */
+    escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    
+    /**
+     * 로딩 상태 업데이트
+     * @private
+     */
+    updateLoadingState() {
+        if (this.container) {
+            if (this.isLoading) {
+                this.container.classList.add('loading');
+            } else {
+                this.container.classList.remove('loading');
             }
         }
     }
@@ -551,7 +617,7 @@ export async function createCountrySelector(container, options = {}) {
 
 /**
  * ========================================
- * Phase 2A 완성 - 국가 선택 UI 컴포넌트 (인기 국가 제거)
+ * Phase 2A 완성 - 국가 선택 UI 컴포넌트 (UI/UX 개선)
  * ========================================
  * 
  * ✅ 구현 완료된 기능:
@@ -561,7 +627,11 @@ export async function createCountrySelector(container, options = {}) {
  * - 모바일 최적화 (터치 타겟 44px+)
  * - 실시간 검색 및 필터링
  * - 커스텀 이벤트 ('country-selected')
- * - 애니메이션 효과
+ * - 현대적인 UI/UX 디자인
+ * - 검색 결과 하이라이팅
+ * - 부드러운 애니메이션 효과
+ * - 로딩 상태 표시
+ * - 그라데이션 및 카드 디자인
  * 
  * 🚀 사용 예시:
  * ```javascript
