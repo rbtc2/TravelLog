@@ -7,7 +7,7 @@
     width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     /* stacking context 생성으로 z-index 문제 해결 */
-    z-index: 1;
+    z-index: 99998;
 }
 
 /* 입력 필드 스타일링 */
@@ -21,7 +21,7 @@
     box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     /* 입력 필드가 다른 요소들 위에 표시되도록 보장 */
-    z-index: 2;
+    z-index: 99997;
 }
 
 .selector-input:focus-within {
@@ -67,7 +67,7 @@
     justify-content: center;
     box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
     /* 화살표 버튼이 다른 요소들 위에 표시되도록 보장 */
-    z-index: 3;
+    z-index: 99996;
 }
 
 .dropdown-arrow:hover {
@@ -105,7 +105,7 @@
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 9999;
+    z-index: 99999;
     max-height: 400px;
     /* 드롭다운이 다른 요소들 위에 표시되도록 보장 */
     isolation: isolate;
@@ -170,7 +170,7 @@
     position: relative;
     overflow: hidden;
     /* 카드가 다른 요소들 위에 표시되도록 보장 */
-    z-index: 1;
+    z-index: 99995;
 }
 
 .country-item::before {
@@ -343,16 +343,55 @@
 /* 국가 선택기 컨테이너가 폼 요소들 위에 표시되도록 보장 */
 #country-selector-container {
     position: relative;
-    z-index: 10;
+    z-index: 99997;
 }
 
 /* 드롭다운이 열렸을 때 최상위에 표시 */
 .country-selector.open {
-    z-index: 10000;
+    z-index: 99999;
 }
 
 .country-selector.open .selector-dropdown {
-    z-index: 10001;
+    z-index: 100000;
+}
+
+/* 다른 폼 요소들이 국가 선택기를 가리지 않도록 */
+.form-group:not(:has(.country-selector)) {
+    z-index: 1;
+}
+
+/* 국가 선택기 관련 요소들만 높은 z-index */
+.country-selector,
+.country-selector * {
+    position: relative;
+}
+
+/* 드롭다운이 열렸을 때 모든 요소 위에 표시 */
+.selector-dropdown[style*="display: block"] {
+    z-index: 100000 !important;
+}
+
+/* 국가 선택기 드롭다운이 열렸을 때 최우선 표시 */
+.country-selector.open .selector-dropdown {
+    z-index: 100000 !important;
+    position: absolute !important;
+}
+
+/* 다른 모든 폼 요소들의 z-index를 낮게 설정 */
+.form-group,
+.form-input,
+.form-label,
+button,
+input,
+select,
+textarea {
+    z-index: 1 !important;
+}
+
+/* 국가 선택기만 예외적으로 높은 z-index */
+.country-selector,
+.country-selector * {
+    z-index: inherit;
 }
 
 /* 다크모드 지원 */
