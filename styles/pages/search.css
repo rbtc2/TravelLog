@@ -420,6 +420,15 @@
     border: 1px solid #a7f3d0;
 }
 
+.result-style {
+    color: #7c3aed;
+    font-weight: 500;
+    background: #f3e8ff;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid #c4b5fd;
+}
+
 .result-score {
     display: flex;
     align-items: center;

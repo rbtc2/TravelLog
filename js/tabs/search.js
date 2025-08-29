@@ -555,9 +555,15 @@ class SearchTab {
                             ${log.city ? ` - ${this.highlightText(log.city, this.searchQuery)}` : ''}
                         </h4>
                         <div class="result-meta">
-                            <span class="result-date">${log.startDate || log.date || ''}</span>
+                            <span class="result-date">
+                                ${log.startDate || log.date || ''}
+                                ${log.endDate ? ` - ${log.endDate}` : ''}
+                            </span>
                             <span class="result-purpose">
                                 ${this.getPurposeDisplayName(log.purpose || '')}
+                            </span>
+                            <span class="result-style">
+                                ${this.getTravelStyleDisplayName(log.travelStyle || '')}
                             </span>
                         </div>
                         <div class="result-score">
@@ -613,6 +619,22 @@ class SearchTab {
             'training': '🎯 연수/교육'
         };
         return purposeNames[purposeCode] || purposeCode;
+    }
+
+    /**
+     * 여행 스타일 코드를 사용자 친화적인 이름으로 변환합니다
+     */
+    getTravelStyleDisplayName(styleCode) {
+        const styleNames = {
+            'solo': '👤 혼자',
+            'family': '👨‍👩‍👧‍👦 가족과',
+            'couple': '💑 연인과',
+            'friends': '👥 친구와',
+            'group': '👥 단체',
+            'alone': '👤 혼자', // 기존 데이터 호환성
+            'colleagues': '👔 동료와' // 기존 데이터 호환성
+        };
+        return styleNames[styleCode] || styleCode;
     }
     
     /**

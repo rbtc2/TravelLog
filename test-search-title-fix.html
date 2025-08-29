@@ -116,7 +116,7 @@
 
         <div class="test-section">
             <h3>✅ 수정된 검색 결과 표시</h3>
-            <p>이제 "제목 없음" 대신 국가-도시 정보가 제목으로 표시되고, 목적이 메타 정보에 표시됩니다:</p>
+            <p>이제 "제목 없음" 대신 국가-도시 정보가 제목으로 표시되고, 시작일-종료일, 목적, 여행 스타일이 메타 정보에 표시됩니다:</p>
             
             <div class="search-results">
                 <!-- 일본 도쿄 예시 -->
@@ -124,10 +124,11 @@
                     <h4 class="result-title">
                         <span class="search-highlight">일본</span> - <span class="search-highlight">도쿄</span>
                     </h4>
-                    <div class="result-meta">
-                        <span class="result-date">2024-03-15</span>
-                        <span class="result-purpose">🏖️ 관광/여행</span>
-                    </div>
+                                         <div class="result-meta">
+                         <span class="result-date">2024-03-15 - 2024-03-20</span>
+                         <span class="result-purpose">🏖️ 관광/여행</span>
+                         <span class="result-style">👤 혼자</span>
+                     </div>
                     <div class="result-description">
                         도쿄의 봄을 만끽한 환상적인 여행이었습니다. 벚꽃 축제와 맛집 탐방이 특히 인상적이었어요.
                     </div>
@@ -139,8 +140,9 @@
                         <span class="search-highlight">프랑스</span> - <span class="search-highlight">파리</span>
                     </h4>
                     <div class="result-meta">
-                        <span class="result-date">2024-02-10</span>
+                        <span class="result-date">2024-02-10 - 2024-02-15</span>
                         <span class="result-purpose">🏖️ 관광/여행</span>
+                        <span class="result-style">👤 혼자</span>
                     </div>
                     <div class="result-description">
                         루브르 박물관과 에펠탑을 방문했습니다. 예술의 도시 파리의 매력에 흠뻑 빠졌어요.
@@ -153,8 +155,9 @@
                         <span class="search-highlight">태국</span> - <span class="search-highlight">방콕</span>
                     </h4>
                     <div class="result-meta">
-                        <span class="result-date">2024-01-05</span>
+                        <span class="result-date">2024-01-05 - 2024-01-10</span>
                         <span class="result-purpose">🏖️ 관광/여행</span>
+                        <span class="result-style">👨‍👩‍👧‍👦 가족과</span>
                     </div>
                     <div class="result-description">
                         가족과 함께한 태국 여행. 따뜻한 날씨와 맛있는 태국 음식이 기억에 남습니다.
@@ -167,9 +170,10 @@
             <h3>🔄 주요 변경사항</h3>
             <ul>
                 <li><strong>제목 표시:</strong> "제목 없음" → "국가 - 도시" 형태로 변경</li>
-                <li><strong>메타 정보:</strong> 위치 정보 → 여행 목적으로 변경</li>
+                <li><strong>날짜 표시:</strong> 시작일만 → "시작일 - 종료일" 형태로 변경</li>
+                <li><strong>메타 정보:</strong> 여행 목적과 여행 스타일 정보 추가</li>
                 <li><strong>정렬 옵션:</strong> "제목순" → "목적순"으로 변경</li>
-                <li><strong>스타일링:</strong> 목적 표시를 위한 새로운 CSS 클래스 추가</li>
+                <li><strong>스타일링:</strong> 목적과 스타일 표시를 위한 새로운 CSS 클래스 추가</li>
             </ul>
         </div>
 
@@ -177,7 +181,8 @@
             <h3>💡 개선 효과</h3>
             <ul>
                 <li>사용자가 실제로 입력한 데이터를 기반으로 한 의미있는 제목 표시</li>
-                <li>여행 목적을 한눈에 파악할 수 있는 직관적인 UI</li>
+                <li>여행 기간을 시작일-종료일로 명확하게 표시</li>
+                <li>여행 목적과 동행 유형을 한눈에 파악할 수 있는 직관적인 UI</li>
                 <li>제목이 없는 데이터 구조에 맞는 적절한 대안 제공</li>
                 <li>검색 결과의 가독성과 정보 전달력 향상</li>
             </ul>

@@ -58,7 +58,19 @@
 </h4>
 ```
 
-#### 2. 메타 정보 표시 변경
+#### 2. 날짜 표시 개선
+```javascript
+// 기존 코드
+<span class="result-date">${log.startDate || log.date || ''}</span>
+
+// 수정된 코드
+<span class="result-date">
+    ${log.startDate || log.date || ''}
+    ${log.endDate ? ` - ${log.endDate}` : ''}
+</span>
+```
+
+#### 3. 메타 정보 표시 변경
 ```javascript
 // 기존 코드
 <span class="result-location">
@@ -70,9 +82,25 @@
 <span class="result-purpose">
     ${this.getPurposeDisplayName(log.purpose || '')}
 </span>
+<span class="result-style">
+    ${this.getTravelStyleDisplayName(log.travelStyle || '')}
+</span>
 ```
 
-#### 3. 새로운 메서드 추가
+#### 4. 여행 스타일 표시 개선
+```javascript
+// 기존: 일관성 없는 스타일 표시
+'alone': '👤 혼자'
+
+// 개선: 일정 추가와 동일한 이름과 이모티콘
+'solo': '👤 혼자',        // solo -> 👤 혼자
+'family': '👨‍👩‍👧‍👦 가족과', // family -> 👨‍👩‍👧‍👦 가족과
+'couple': '💑 연인과',    // couple -> 💑 연인과
+'friends': '👥 친구와',   // friends -> 👥 친구와
+'group': '👥 단체'        // group -> 👥 단체
+```
+
+#### 5. 새로운 메서드 추가
 ```javascript
 /**
  * 목적 코드를 사용자 친화적인 이름으로 변환합니다
@@ -88,9 +116,25 @@ getPurposeDisplayName(purposeCode) {
     };
     return purposeNames[purposeCode] || purposeCode;
 }
+
+/**
+ * 여행 스타일 코드를 사용자 친화적인 이름으로 변환합니다
+ */
+getTravelStyleDisplayName(styleCode) {
+    const styleNames = {
+        'solo': '👤 혼자',
+        'family': '👨‍👩‍👧‍👦 가족과',
+        'couple': '💑 연인과',
+        'friends': '👥 친구와',
+        'group': '👥 단체',
+        'alone': '👤 혼자', // 기존 데이터 호환성
+        'colleagues': '👔 동료와' // 기존 데이터 호환성
+    };
+    return styleNames[styleCode] || styleCode;
+}
 ```
 
-#### 4. 정렬 옵션 수정
+#### 6. 정렬 옵션 수정
 ```javascript
 // 기존: 제목순
 case 'title-asc':
@@ -111,7 +155,7 @@ case 'purpose-asc':
     break;
 ```
 
-#### 5. 정렬 이름 변경
+#### 7. 정렬 이름 변경
 ```javascript
 // 기존
 'title-asc': '제목순'
@@ -122,7 +166,7 @@ case 'purpose-asc':
 
 ### `styles/pages/search.css`
 
-#### 1. CSS 클래스 변경
+#### 1. CSS 클래스 변경 및 추가
 ```css
 /* 기존 */
 .result-location {
@@ -138,18 +182,31 @@ case 'purpose-asc':
     border-radius: 6px;
     border: 1px solid #a7f3d0;
 }
+
+/* 추가 */
+.result-style {
+    color: #7c3aed;
+    font-weight: 500;
+    background: #f3e8ff;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid #c4b5fd;
+}
 ```
 
 ## 💡 개선 효과
 
 ### 1. 사용자 경험 향상
 - **의미있는 제목**: "일본 - 도쿄" 형태로 실제 여행 정보를 제목으로 표시
-- **직관적인 정보**: 여행 목적을 한눈에 파악할 수 있는 UI
+- **명확한 기간**: "2024-03-15 - 2024-03-20" 형태로 여행 기간을 명확하게 표시
+- **직관적인 정보**: 여행 목적과 동행 유형을 한눈에 파악할 수 있는 UI
 - **일관성**: 실제 데이터 구조와 UI 표시 방식의 일치
 
 ### 2. 정보 전달력 증대
 - **국가-도시 중심**: 여행의 핵심 정보를 제목에 집중
+- **기간 정보**: 여행 시작일과 종료일을 명확하게 표시
 - **목적 표시**: 여행의 성격을 메타 정보로 명확하게 전달
+- **동행 정보**: 여행 스타일을 일정 추가와 동일한 이름과 이모티콘으로 표시
 - **검색 최적화**: 검색어와 매칭되는 정보를 더 prominent하게 표시
 
 ### 3. 코드 품질 향상
@@ -184,9 +241,9 @@ python -m http.server 8000
 ## 🔮 향후 개선 방향
 
 ### 1. 추가 필드 표시
-- **동행 유형**: `travelStyle` 정보를 메타에 추가 표시
+- **동행 유형**: `travelStyle` 정보를 메타에 추가 표시 ✅
 - **평점**: 별점 정보를 시각적으로 표시
-- **기간**: 여행 기간을 요약하여 표시
+- **기간**: 여행 기간을 요약하여 표시 ✅
 
 ### 2. 검색 결과 개선
 - **카테고리별 그룹화**: 목적, 동행 유형별로 결과 그룹화
@@ -205,6 +262,8 @@ python -m http.server 8000
 주요 성과:
 - ✅ 존재하지 않는 필드 참조 문제 해결
 - ✅ 의미있는 제목 표시 방식 구현
-- ✅ 여행 목적 정보의 효과적인 표시
+- ✅ 여행 기간을 시작일-종료일로 명확하게 표시
+- ✅ 여행 목적과 동행 유형 정보의 효과적인 표시
+- ✅ 여행 스타일을 일정 추가와 동일한 이름과 이모티콘으로 표시
 - ✅ 정렬 옵션의 데이터 구조 일치성 확보
 - ✅ 코드 품질 및 유지보수성 향상
