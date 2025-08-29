@@ -13,8 +13,6 @@ export const FORM_CONFIG = {
         placeholder: "국가를 검색하세요",
         hint: "195개국 중에서 선택하거나 검색하세요",
         searchable: true,
-        showPopular: true,
-        popularCount: 12,
         showFlag: true,
         showEnglishName: true,
         mobileFullscreen: true

@@ -23,7 +23,6 @@ export class CountrySelector {
      * @param {string} options.selectedCountry - 초기 선택된 국가
      * @param {boolean} options.showFlags - 국기 표시 여부
      * @param {boolean} options.showEnglishNames - 영문명 표시 여부
-     * @param {number} options.maxPopularCountries - 최대 인기 국가 수
      * @param {number} options.maxHeight - 드롭다운 최대 높이
      */
     constructor(container, options = {}) {
@@ -32,7 +31,6 @@ export class CountrySelector {
             selectedCountry: null,
             showFlags: true,
             showEnglishNames: true,
-            maxPopularCountries: 12,
             maxHeight: 300,
             ...options
         };
@@ -43,7 +41,6 @@ export class CountrySelector {
         this.searchQuery = '';
         this.filteredCountries = [];
         this.selectedIndex = -1;
-        this.popularCountries = [];
 
         // DOM 요소 참조
         this.container = container;
@@ -80,7 +77,6 @@ export class CountrySelector {
             }
             
             // 초기 데이터 로드
-            this.popularCountries = countriesManager.getPopularCountries();
             this.filteredCountries = countriesManager.getAllCountries();
             
             // UI 렌더링
@@ -131,15 +127,8 @@ export class CountrySelector {
                 </div>
                 
                 <div class="selector-dropdown" style="display: none;">
-                    <div class="popular-section">
-                        <h3 class="section-title">인기 국가</h3>
-                        <div class="popular-grid">
-                            ${this.renderPopularCountries()}
-                        </div>
-                    </div>
-                    
-                    <div class="all-countries-section">
-                        <h3 class="section-title">모든 국가</h3>
+                    <div class="countries-section">
+                        <h3 class="section-title">국가 검색</h3>
                         <div class="countries-list">
                             ${this.renderCountriesList()}
                         </div>
@@ -151,28 +140,10 @@ export class CountrySelector {
         // DOM 요소 참조 저장
         this.input = this.container.querySelector('.selector-input input');
         this.dropdown = this.container.querySelector('.selector-dropdown');
-        this.popularGrid = this.container.querySelector('.popular-grid');
         this.countriesList = this.container.querySelector('.countries-list');
     }
 
-    /**
-     * 인기 국가 그리드 렌더링
-     * @private
-     * @returns {string} HTML 문자열
-     */
-    renderPopularCountries() {
-        if (!this.popularCountries || this.popularCountries.length === 0) {
-            return '<div class="no-countries">인기 국가가 없습니다.</div>';
-        }
 
-        return this.popularCountries.map(country => `
-            <div class="country-item popular-item" data-code="${country.code}">
-                <span class="country-flag">${country.flag}</span>
-                <span class="country-name">${country.nameKo}</span>
-                ${this.options.showEnglishNames ? `<span class="country-name-en">${country.nameEn}</span>` : ''}
-            </div>
-        `).join('');
-    }
 
     /**
      * 전체 국가 리스트 렌더링
@@ -475,12 +446,7 @@ export class CountrySelector {
      * @private
      */
     updateDisplay() {
-        // 인기 국가 그리드 업데이트
-        if (this.popularGrid) {
-            this.popularGrid.innerHTML = this.renderPopularCountries();
-        }
-
-        // 전체 국가 리스트 업데이트
+        // 국가 리스트 업데이트
         if (this.countriesList) {
             this.countriesList.innerHTML = this.renderCountriesList();
         }
@@ -546,8 +512,7 @@ export class CountrySelector {
             isLoading: this.isLoading,
             searchQuery: this.searchQuery,
             selectedCountry: this.options.selectedCountry,
-            filteredCount: this.filteredCountries.length,
-            popularCount: this.popularCountries.length
+            filteredCount: this.filteredCountries.length
         };
     }
 
@@ -568,7 +533,6 @@ export class CountrySelector {
         this.container = null;
         this.input = null;
         this.dropdown = null;
-        this.popularGrid = null;
         this.countriesList = null;
     }
 }
@@ -587,13 +551,12 @@ export async function createCountrySelector(container, options = {}) {
 
 /**
  * ========================================
- * Phase 2A 완성 - 국가 선택 UI 컴포넌트
+ * Phase 2A 완성 - 국가 선택 UI 컴포넌트 (인기 국가 제거)
  * ========================================
  * 
  * ✅ 구현 완료된 기능:
  * - 검색 가능한 드롭다운
- * - 인기 국가 그리드 (최대 12개)
- * - 전체 국가 스크롤 리스트
+ * - 통합 국가 스크롤 리스트
  * - 키보드 네비게이션 (화살표, Enter, ESC)
  * - 모바일 최적화 (터치 타겟 44px+)
  * - 실시간 검색 및 필터링

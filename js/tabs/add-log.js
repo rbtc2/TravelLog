@@ -72,8 +72,7 @@ class AddLogTab {
             this.countrySelector = await createCountrySelector(container, {
                 placeholder: FORM_CONFIG.country.placeholder,
                 showFlags: FORM_CONFIG.country.showFlag,
-                showEnglishNames: FORM_CONFIG.country.showEnglishName,
-                maxPopularCountries: FORM_CONFIG.country.popularCount
+                showEnglishNames: FORM_CONFIG.country.showEnglishName
             });
 
             // 국가 선택 이벤트 리스너
