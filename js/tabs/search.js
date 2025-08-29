@@ -551,13 +551,13 @@ class SearchTab {
                 <div class="search-result-item" data-index="${index}">
                     <div class="result-header">
                         <h4 class="result-title">
-                            ${this.highlightText(log.title || '제목 없음', this.searchQuery)}
+                            ${this.highlightText(log.country || '', this.searchQuery)}
+                            ${log.city ? ` - ${this.highlightText(log.city, this.searchQuery)}` : ''}
                         </h4>
                         <div class="result-meta">
                             <span class="result-date">${log.startDate || log.date || ''}</span>
-                            <span class="result-location">
-                                ${this.highlightText(log.country || '', this.searchQuery)}
-                                ${log.city ? `, ${this.highlightText(log.city, this.searchQuery)}` : ''}
+                            <span class="result-purpose">
+                                ${this.getPurposeDisplayName(log.purpose || '')}
                             </span>
                         </div>
                         <div class="result-score">
@@ -599,6 +599,21 @@ class SearchTab {
         };
         return fieldNames[fieldName] || fieldName;
     }
+
+    /**
+     * 목적 코드를 사용자 친화적인 이름으로 변환합니다
+     */
+    getPurposeDisplayName(purposeCode) {
+        const purposeNames = {
+            'tourism': '🏖️ 관광/여행',
+            'business': '💼 업무/출장',
+            'family': '👨‍👩‍👧‍👦 가족/지인 방문',
+            'study': '📚 학업',
+            'work': '💻 취업/근로',
+            'training': '🎯 연수/교육'
+        };
+        return purposeNames[purposeCode] || purposeCode;
+    }
     
     /**
      * 정렬 옵션 섹션을 렌더링합니다
@@ -627,8 +642,8 @@ class SearchTab {
                         <span class="sort-text">별점순</span>
                     </label>
                     <label class="sort-option">
-                        <input type="radio" name="sort" value="title-asc" id="sort-title-asc">
-                        <span class="sort-text">제목순</span>
+                        <input type="radio" name="sort" value="purpose-asc" id="sort-purpose-asc">
+                        <span class="sort-text">목적순</span>
                     </label>
                 </div>
             </div>
@@ -1032,11 +1047,11 @@ class SearchTab {
                 case 'rating-desc':
                     sortedResults.sort((a, b) => (b.log.rating || 0) - (a.log.rating || 0));
                     break;
-                case 'title-asc':
+                case 'purpose-asc':
                     sortedResults.sort((a, b) => {
-                        const titleA = (a.log.title || '').toLowerCase();
-                        const titleB = (b.log.title || '').toLowerCase();
-                        return titleA.localeCompare(titleB);
+                        const purposeA = (a.log.purpose || '').toLowerCase();
+                        const purposeB = (b.log.purpose || '').toLowerCase();
+                        return purposeA.localeCompare(purposeB);
                     });
                     break;
             }
@@ -1062,7 +1077,7 @@ class SearchTab {
             'date-desc': '최신순',
             'date-asc': '오래된순',
             'rating-desc': '별점순',
-            'title-asc': '제목순'
+            'purpose-asc': '목적순'
         };
         return sortNames[sortType] || sortType;
     }

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 제목 문제 해결 테스트</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/pages/search.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f7fafc;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-title {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+        .demo-data {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+        .search-results {
+            margin-top: 20px;
+        }
+        .search-result-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .result-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+        .result-date {
+            color: #667eea;
+            font-weight: 500;
+        }
+        .result-purpose {
+            color: #059669;
+            font-weight: 500;
+            background: #ecfdf5;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #a7f3d0;
+        }
+        .result-description {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.5;
+        }
+        .search-highlight {
+            background: #fef3c7;
+            padding: 1px 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🔍 검색 제목 문제 해결 테스트</h1>
+        
+        <div class="test-section">
+            <h3>📊 현재 TravelLog 데이터 구조</h3>
+            <p>TravelLog에서 여행 일지는 제목이 없고, 다음 필드들로 구성됩니다:</p>
+            <div class="demo-data">
+{
+    "id": "demo1",
+    "country": "일본",
+    "city": "도쿄",
+    "startDate": "2024-03-15",
+    "endDate": "2024-03-20",
+    "purpose": "tourism",
+    "rating": "5",
+    "travelStyle": "couple",
+    "memo": "도쿄의 봄을 만끽한 환상적인 여행이었습니다..."
+}
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>✅ 수정된 검색 결과 표시</h3>
+            <p>이제 "제목 없음" 대신 국가-도시 정보가 제목으로 표시되고, 목적이 메타 정보에 표시됩니다:</p>
+            
+            <div class="search-results">
+                <!-- 일본 도쿄 예시 -->
+                <div class="search-result-item">
+                    <h4 class="result-title">
+                        <span class="search-highlight">일본</span> - <span class="search-highlight">도쿄</span>
+                    </h4>
+                    <div class="result-meta">
+                        <span class="result-date">2024-03-15</span>
+                        <span class="result-purpose">🏖️ 관광/여행</span>
+                    </div>
+                    <div class="result-description">
+                        도쿄의 봄을 만끽한 환상적인 여행이었습니다. 벚꽃 축제와 맛집 탐방이 특히 인상적이었어요.
+                    </div>
+                </div>
+
+                <!-- 프랑스 파리 예시 -->
+                <div class="search-result-item">
+                    <h4 class="result-title">
+                        <span class="search-highlight">프랑스</span> - <span class="search-highlight">파리</span>
+                    </h4>
+                    <div class="result-meta">
+                        <span class="result-date">2024-02-10</span>
+                        <span class="result-purpose">🏖️ 관광/여행</span>
+                    </div>
+                    <div class="result-description">
+                        루브르 박물관과 에펠탑을 방문했습니다. 예술의 도시 파리의 매력에 흠뻑 빠졌어요.
+                    </div>
+                </div>
+
+                <!-- 태국 방콕 예시 -->
+                <div class="search-result-item">
+                    <h4 class="result-title">
+                        <span class="search-highlight">태국</span> - <span class="search-highlight">방콕</span>
+                    </h4>
+                    <div class="result-meta">
+                        <span class="result-date">2024-01-05</span>
+                        <span class="result-purpose">🏖️ 관광/여행</span>
+                    </div>
+                    <div class="result-description">
+                        가족과 함께한 태국 여행. 따뜻한 날씨와 맛있는 태국 음식이 기억에 남습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔄 주요 변경사항</h3>
+            <ul>
+                <li><strong>제목 표시:</strong> "제목 없음" → "국가 - 도시" 형태로 변경</li>
+                <li><strong>메타 정보:</strong> 위치 정보 → 여행 목적으로 변경</li>
+                <li><strong>정렬 옵션:</strong> "제목순" → "목적순"으로 변경</li>
+                <li><strong>스타일링:</strong> 목적 표시를 위한 새로운 CSS 클래스 추가</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h3>💡 개선 효과</h3>
+            <ul>
+                <li>사용자가 실제로 입력한 데이터를 기반으로 한 의미있는 제목 표시</li>
+                <li>여행 목적을 한눈에 파악할 수 있는 직관적인 UI</li>
+                <li>제목이 없는 데이터 구조에 맞는 적절한 대안 제공</li>
+                <li>검색 결과의 가독성과 정보 전달력 향상</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
