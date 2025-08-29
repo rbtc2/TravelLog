@@ -3,10 +3,13 @@
  * 기존 일정 데이터를 유지하면서 수정할 수 있는 기능을 제공합니다.
  */
 
+import { createCountrySelector } from './ui-components/country-selector.js';
+
 class LogEditModule {
     constructor() {
         this.currentLog = null;
         this.modal = null;
+        this.countrySelector = null;
     }
     
     /**
@@ -76,11 +79,12 @@ class LogEditModule {
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="edit-country">국가 *</label>
-                                <input type="text" id="edit-country" name="country" value="${log.country}" required>
+                                <div id="edit-country-selector-container" class="country-selector-wrapper"></div>
+                                <input type="hidden" id="edit-country" name="country" value="${log.country}" required>
                             </div>
                             <div class="form-group">
                                 <label for="edit-city">도시 *</label>
-                                <input type="text" id="edit-city" name="city" value="${log.city}" required>
+                                <input type="text" id="edit-city" name="city" value="${log.city}" required ${!log.country ? 'disabled' : ''} placeholder="${!log.country ? '국가를 먼저 선택해주세요' : '도시를 입력하세요'}">
                             </div>
                         </div>
                         
@@ -251,6 +255,9 @@ class LogEditModule {
             memoTextarea.addEventListener('input', updateCharCount);
             memoTextarea.addEventListener('keyup', updateCharCount);
         }
+        
+        // CountrySelector 초기화 및 이벤트 바인딩
+        this.initializeCountrySelector(this.currentLog.country);
     }
     
     /**
@@ -268,6 +275,15 @@ class LogEditModule {
                 field.classList.remove('error');
             }
         });
+        
+        // 국가 선택 확인 (CountrySelector 사용)
+        const countryInput = form.querySelector('#edit-country');
+        if (countryInput && !countryInput.value.trim()) {
+            countryInput.classList.add('error');
+            isValid = false;
+        } else if (countryInput) {
+            countryInput.classList.remove('error');
+        }
         
         // 날짜 유효성 검사
         const startDate = new Date(form.startDate.value);
@@ -318,9 +334,83 @@ class LogEditModule {
     }
     
     /**
+     * CountrySelector를 초기화합니다
+     * @param {string} currentCountry - 현재 선택된 국가명
+     */
+    async initializeCountrySelector(currentCountry) {
+        try {
+            const container = this.modal.querySelector('#edit-country-selector-container');
+            if (!container) {
+                console.error('LogEditModule: 국가 선택기 컨테이너를 찾을 수 없습니다.');
+                return;
+            }
+            
+            // CountrySelector 생성
+            this.countrySelector = await createCountrySelector(container, {
+                placeholder: '국가를 검색하세요',
+                selectedCountry: currentCountry ? { nameKo: currentCountry } : null,
+                showFlags: true,
+                showEnglishNames: true
+            });
+            
+            // 국가 선택 이벤트 리스너
+            container.addEventListener('country-selected', (event) => {
+                const selectedCountry = event.detail;
+                console.log('LogEditModule: 국가 선택됨', selectedCountry);
+                
+                // 숨겨진 입력 필드에 국가명 업데이트
+                const hiddenInput = this.modal.querySelector('#edit-country');
+                if (hiddenInput) {
+                    hiddenInput.value = selectedCountry.nameKo;
+                }
+                
+                // 도시 입력 필드 활성화
+                const cityInput = this.modal.querySelector('#edit-city');
+                if (cityInput) {
+                    cityInput.disabled = false;
+                    cityInput.placeholder = '도시를 입력하세요';
+                }
+                
+                // 에러 상태 제거
+                this.clearFieldError('country');
+            });
+            
+            // 현재 국가가 있으면 CountrySelector에 설정
+            if (currentCountry && this.countrySelector) {
+                // CountriesManager에서 국가 정보 조회
+                const { countriesManager } = await import('../data/countries-manager.js');
+                const country = countriesManager.getCountryByName(currentCountry);
+                if (country) {
+                    this.countrySelector.selectCountry(country);
+                }
+            }
+            
+        } catch (error) {
+            console.error('LogEditModule: CountrySelector 초기화 실패:', error);
+        }
+    }
+    
+    /**
+     * 필드 에러를 제거합니다
+     * @param {string} fieldName - 에러를 제거할 필드명
+     */
+    clearFieldError(fieldName) {
+        const field = this.modal.querySelector(`#edit-${fieldName}`);
+        if (field) {
+            field.classList.remove('error');
+        }
+    }
+    
+    /**
      * 모듈을 정리합니다
      */
     cleanup() {
+        // CountrySelector 정리
+        if (this.countrySelector) {
+            this.countrySelector.destroy();
+            this.countrySelector = null;
+        }
+        
         this.closeModal();
         this.currentLog = null;
         // 배경 스크롤 복원
