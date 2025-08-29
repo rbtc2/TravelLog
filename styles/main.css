@@ -42,6 +42,23 @@
 @import url('./pages/travel-report.css');
 @import url('./pages/error.css');
 
+/* ===== 공통 검색 하이라이트 스타일 ===== */
+.search-highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.search-highlight:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
 /* 검색바 */
 .search-bar-container {
     margin-bottom: 30px;

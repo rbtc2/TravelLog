@@ -3,6 +3,9 @@
  * 독립적으로 동작하며, 다른 탭에 영향을 주지 않음
  */
 
+import SearchUtility from '../modules/utils/search-utility.js';
+import { StorageManager } from '../modules/utils/storage-manager.js';
+
 class SearchTab {
     constructor() {
         this.isInitialized = false;
@@ -13,6 +16,15 @@ class SearchTab {
         this.searchState = 'initial'; // 'initial' | 'searching' | 'hasResults' | 'noResults'
         this.searchQuery = '';
         this.searchResults = [];
+        this.allLogs = []; // 모든 로그 데이터
+        
+        // 검색 관련 상태
+        this.searchTimeout = null;
+        this.isSearching = false;
+        this.lastSearchQuery = '';
+        
+        // StorageManager 인스턴스
+        this.storageManager = new StorageManager();
         
         this.filters = {
             continent: [],
@@ -30,6 +42,7 @@ class SearchTab {
     render(container) {
         try {
         this.container = container;
+        this.loadAllLogs(); // 로그 데이터 로드
         this.renderContent();
         this.bindEvents();
         this.isInitialized = true;
@@ -40,11 +53,26 @@ class SearchTab {
     }
     
     /**
+     * 모든 로그 데이터를 로드합니다
+     */
+    loadAllLogs() {
+        try {
+            this.allLogs = this.storageManager.loadLogs();
+            console.log(`검색 탭: ${this.allLogs.length}개의 로그 데이터 로드됨`);
+        } catch (error) {
+            console.error('로그 데이터 로드 실패:', error);
+            this.allLogs = [];
+            this.showToast('로그 데이터를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+    
+    /**
      * 탭이 활성화될 때 데이터를 새로고침합니다
      */
     refresh() {
         if (this.isInitialized) {
             try {
+                this.loadAllLogs(); // 로그 데이터 새로고침
                 this.renderContent();
                 this.bindEvents();
             } catch (error) {
@@ -81,6 +109,65 @@ class SearchTab {
         
         this.renderContent();
         this.bindEvents();
+    }
+    
+    /**
+     * 실제 검색을 수행합니다
+     */
+    async performSearch(query) {
+        try {
+            // 검색 중 상태로 변경
+            this.updateSearchState('searching');
+            this.isSearching = true;
+            
+            // 검색어 유효성 검사
+            const validation = SearchUtility.validateQuery(query);
+            if (!validation.isValid) {
+                this.showToast(validation.error);
+                this.updateSearchState('initial');
+                return;
+            }
+
+            // 동일한 검색어로 재검색 방지
+            if (this.lastSearchQuery === query && this.searchResults.length > 0) {
+                this.updateSearchState('hasResults');
+                return;
+            }
+
+            // 검색 수행
+            const searchResults = SearchUtility.performSearch(this.allLogs, query);
+            
+            // 검색 결과 처리
+            if (searchResults.length > 0) {
+                this.searchResults = searchResults;
+                this.lastSearchQuery = query;
+                this.updateSearchState('hasResults', { results: searchResults });
+                
+                // 검색 통계 로깅
+                const stats = SearchUtility.calculateSearchStats(searchResults, query);
+                console.log('검색 완료:', stats);
+                
+            } else {
+                this.searchResults = [];
+                this.lastSearchQuery = query;
+                this.updateSearchState('noResults', { results: [] });
+            }
+            
+        } catch (error) {
+            console.error('검색 수행 오류:', error);
+            this.showToast('검색 중 오류가 발생했습니다.');
+            this.updateSearchState('initial');
+        } finally {
+            this.isSearching = false;
+        }
+    }
+    
+    /**
+     * 텍스트를 하이라이팅합니다
+     */
+    highlightText(text, query) {
+        if (!text || !query) return text;
+        return SearchUtility.highlightText(text, query);
     }
     
     renderContent() {
@@ -365,6 +452,14 @@ class SearchTab {
                                     <span class="tip-text">기간과 별점으로 더 정확한 검색이 가능합니다</span>
                                 </div>
                             </div>
+                            ${this.allLogs.length > 0 ? 
+                                `<div class="guide-stats">
+                                    <span class="stats-text">📊 총 ${this.allLogs.length}개의 일정 기록이 저장되어 있습니다</span>
+                                </div>` : 
+                                `<div class="guide-stats">
+                                    <span class="stats-text">📝 아직 저장된 일정이 없습니다. 새로운 일정을 추가해보세요!</span>
+                                </div>`
+                            }
                         </div>
                     </div>
                 `;
@@ -376,6 +471,7 @@ class SearchTab {
                         <div class="loading-content">
                             <div class="loading-spinner"></div>
                             <div class="loading-text">검색 중입니다...</div>
+                            <div class="loading-subtext">"${this.searchQuery}"에 대한 결과를 찾고 있습니다</div>
                         </div>
                     </div>
                 `;
@@ -388,6 +484,7 @@ class SearchTab {
                             <h3 class="results-title">📊 검색 결과</h3>
                             <div class="results-count">
                                 <span class="count-number">${this.searchResults.length}</span>개의 일정 기록
+                                ${this.searchQuery ? `("${this.searchQuery}" 검색)` : ''}
                             </div>
                         </div>
                         
@@ -407,6 +504,7 @@ class SearchTab {
                             <h3 class="results-title">📊 검색 결과</h3>
                             <div class="results-count">
                                 <span class="count-number">0</span>개의 일정 기록
+                                ${this.searchQuery ? `("${this.searchQuery}" 검색)` : ''}
                             </div>
                         </div>
                         
@@ -415,8 +513,16 @@ class SearchTab {
                                 <div class="no-results-icon">🔍</div>
                                 <div class="no-results-title">검색 결과가 없습니다</div>
                                 <div class="no-results-description">
-                                    검색어나 필터를 변경해보세요.<br>
-                                    또는 새로운 일정 기록을 추가해보세요.
+                                    <strong>"${this.searchQuery}"</strong>에 대한 검색 결과를 찾을 수 없습니다.<br>
+                                    다른 검색어를 시도하거나 필터를 조정해보세요.
+                                </div>
+                                <div class="no-results-suggestions">
+                                    <div class="suggestion-title">💡 검색 팁:</div>
+                                    <ul class="suggestion-list">
+                                        <li>국가명이나 도시명을 정확하게 입력해보세요</li>
+                                        <li>더 짧은 키워드로 검색해보세요</li>
+                                        <li>영어나 한글로 검색해보세요</li>
+                                    </ul>
                                 </div>
                                 <button class="retry-search-btn" id="retry-search">다른 조건으로 검색</button>
                             </div>
@@ -437,18 +543,61 @@ class SearchTab {
             return '<div class="no-results">검색 결과가 없습니다.</div>';
         }
         
-        return this.searchResults.map(result => `
-            <div class="search-result-item">
-                <div class="result-header">
-                    <h4 class="result-title">${result.title || '제목 없음'}</h4>
-                    <div class="result-meta">
-                        <span class="result-date">${result.date || ''}</span>
-                        <span class="result-location">${result.location || ''}</span>
+        return this.searchResults.map((result, index) => {
+            const log = result.log;
+            const matchedFields = result.matchedFields;
+            
+            return `
+                <div class="search-result-item" data-index="${index}">
+                    <div class="result-header">
+                        <h4 class="result-title">
+                            ${this.highlightText(log.title || '제목 없음', this.searchQuery)}
+                        </h4>
+                        <div class="result-meta">
+                            <span class="result-date">${log.startDate || log.date || ''}</span>
+                            <span class="result-location">
+                                ${this.highlightText(log.country || '', this.searchQuery)}
+                                ${log.city ? `, ${this.highlightText(log.city, this.searchQuery)}` : ''}
+                            </span>
+                        </div>
+                        <div class="result-score">
+                            <span class="score-label">관련성:</span>
+                            <span class="score-value">${Math.round(result.score * 10) / 10}</span>
+                        </div>
                     </div>
+                    <div class="result-description">
+                        ${log.memo ? this.highlightText(log.memo, this.searchQuery) : '메모가 없습니다.'}
+                    </div>
+                    ${matchedFields.length > 0 ? `
+                        <div class="result-matched-fields">
+                            <div class="matched-label">매칭된 필드:</div>
+                            <div class="matched-tags">
+                                ${matchedFields.map(field => `
+                                    <span class="matched-tag" data-field="${field.field}">
+                                        ${this.getFieldDisplayName(field.field)}: 
+                                        ${this.highlightText(field.value, this.searchQuery)}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
-                <div class="result-description">${result.description || ''}</div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+    }
+    
+    /**
+     * 필드명을 사용자 친화적인 이름으로 변환합니다
+     */
+    getFieldDisplayName(fieldName) {
+        const fieldNames = {
+            country: '국가',
+            city: '도시',
+            memo: '메모',
+            purpose: '목적',
+            travelStyle: '동행유형'
+        };
+        return fieldNames[fieldName] || fieldName;
     }
     
     /**
@@ -462,7 +611,11 @@ class SearchTab {
                 </div>
                 <div class="sort-options">
                     <label class="sort-option">
-                        <input type="radio" name="sort" value="date-desc" id="sort-date-desc" checked>
+                        <input type="radio" name="sort" value="relevance" id="sort-relevance" checked>
+                        <span class="sort-text">관련성순</span>
+                    </label>
+                    <label class="sort-option">
+                        <input type="radio" name="sort" value="date-desc" id="sort-date-desc">
                         <span class="sort-text">최신순</span>
                     </label>
                     <label class="sort-option">
@@ -562,6 +715,16 @@ class SearchTab {
                 this.updateSearchState('initial');
                 return;
             }
+
+            // 디바운싱 적용 (300ms)
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+            }
+
+            this.searchTimeout = setTimeout(() => {
+                this.performSearch(this.searchQuery);
+            }, 300);
+            
         } catch (error) {
             console.error('검색 입력 처리 오류:', error);
             this.showToast('검색 처리 중 오류가 발생했습니다.');
@@ -583,13 +746,8 @@ class SearchTab {
                 return;
             }
 
-            // 검색 중 상태로 변경
-            this.updateSearchState('searching');
-            
-            // 실제 검색 로직 시뮬레이션 (향후 API 연동 시 교체)
-            setTimeout(() => {
-                this.simulateSearch(query);
-            }, 1000);
+            // 검색 실행
+            this.performSearch(query);
             
         } catch (error) {
             console.error('검색 실행 오류:', error);
@@ -599,43 +757,62 @@ class SearchTab {
     }
 
     /**
-     * 검색 시뮬레이션 (향후 실제 API로 교체)
+     * 실제 검색을 수행합니다
      */
-    simulateSearch(query) {
+    async performSearch(query) {
         try {
-            // 더미 검색 결과 생성
-            const mockResults = [
-                {
-                    title: '일본 도쿄 여행',
-                    date: '2024-03-15',
-                    location: '일본, 도쿄',
-                    description: '도쿄 타워와 시부야를 둘러본 즐거운 여행이었습니다.'
-                },
-                {
-                    title: '프랑스 파리 출장',
-                    date: '2024-02-20',
-                    location: '프랑스, 파리',
-                    description: '비즈니스 미팅을 위해 파리를 방문했습니다.'
-                }
-            ];
+            // 검색 중 상태로 변경
+            this.updateSearchState('searching');
+            this.isSearching = true;
+            
+            // 검색어 유효성 검사
+            const validation = SearchUtility.validateQuery(query);
+            if (!validation.isValid) {
+                this.showToast(validation.error);
+                this.updateSearchState('initial');
+                return;
+            }
 
-            // 검색어가 포함된 결과만 필터링
-            const filteredResults = mockResults.filter(result => 
-                result.title.toLowerCase().includes(query.toLowerCase()) ||
-                result.location.toLowerCase().includes(query.toLowerCase()) ||
-                result.description.toLowerCase().includes(query.toLowerCase())
-            );
+            // 동일한 검색어로 재검색 방지
+            if (this.lastSearchQuery === query && this.searchResults.length > 0) {
+                this.updateSearchState('hasResults');
+                return;
+            }
 
-            if (filteredResults.length > 0) {
-                this.updateSearchState('hasResults', { results: filteredResults });
+            // 검색 수행
+            const searchResults = SearchUtility.performSearch(this.allLogs, query);
+            
+            // 검색 결과 처리
+            if (searchResults.length > 0) {
+                this.searchResults = searchResults;
+                this.lastSearchQuery = query;
+                this.updateSearchState('hasResults', { results: searchResults });
+                
+                // 검색 통계 로깅
+                const stats = SearchUtility.calculateSearchStats(searchResults, query);
+                console.log('검색 완료:', stats);
+                
             } else {
+                this.searchResults = [];
+                this.lastSearchQuery = query;
                 this.updateSearchState('noResults', { results: [] });
             }
             
         } catch (error) {
-            console.error('검색 시뮬레이션 오류:', error);
-            this.updateSearchState('noResults');
+            console.error('검색 수행 오류:', error);
+            this.showToast('검색 중 오류가 발생했습니다.');
+            this.updateSearchState('initial');
+        } finally {
+            this.isSearching = false;
         }
+    }
+
+    /**
+     * 텍스트를 하이라이팅합니다
+     */
+    highlightText(text, query) {
+        if (!text || !query) return text;
+        return SearchUtility.highlightText(text, query);
     }
 
     /**
@@ -828,12 +1005,66 @@ class SearchTab {
 
     handleSortChange() {
         try {
-            // 정렬 변경 (준비 중)
-            this.showToast('정렬 기능 준비 중입니다.');
+            const selectedSort = document.querySelector('input[name="sort"]:checked');
+            if (!selectedSort || !this.searchResults.length) return;
+
+            const sortType = selectedSort.value;
+            let sortedResults = [...this.searchResults];
+
+            switch (sortType) {
+                case 'relevance':
+                    // 관련성순 (기본값, 이미 정렬됨)
+                    break;
+                case 'date-desc':
+                    sortedResults.sort((a, b) => {
+                        const dateA = new Date(a.log.startDate || a.log.date || 0);
+                        const dateB = new Date(b.log.startDate || b.log.date || 0);
+                        return dateB - dateA;
+                    });
+                    break;
+                case 'date-asc':
+                    sortedResults.sort((a, b) => {
+                        const dateA = new Date(a.log.startDate || a.log.date || 0);
+                        const dateB = new Date(b.log.startDate || b.log.date || 0);
+                        return dateA - dateB;
+                    });
+                    break;
+                case 'rating-desc':
+                    sortedResults.sort((a, b) => (b.log.rating || 0) - (a.log.rating || 0));
+                    break;
+                case 'title-asc':
+                    sortedResults.sort((a, b) => {
+                        const titleA = (a.log.title || '').toLowerCase();
+                        const titleB = (b.log.title || '').toLowerCase();
+                        return titleA.localeCompare(titleB);
+                    });
+                    break;
+            }
+
+            this.searchResults = sortedResults;
+            this.renderContent();
+            this.bindEvents();
+            
+            this.showToast(`${this.getSortDisplayName(sortType)}으로 정렬되었습니다.`);
+            
         } catch (error) {
             console.error('정렬 변경 오류:', error);
             this.showToast('정렬 변경 중 오류가 발생했습니다.');
         }
+    }
+
+    /**
+     * 정렬 타입을 사용자 친화적인 이름으로 변환합니다
+     */
+    getSortDisplayName(sortType) {
+        const sortNames = {
+            'relevance': '관련성',
+            'date-desc': '최신순',
+            'date-asc': '오래된순',
+            'rating-desc': '별점순',
+            'title-asc': '제목순'
+        };
+        return sortNames[sortType] || sortType;
     }
 
     showToast(message) {
@@ -876,6 +1107,12 @@ class SearchTab {
         this.eventListeners = [];
         this.isInitialized = false;
         this.searchInput = null;
+        
+        // 검색 관련 정리
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = null;
+        }
         
         // 메모리 정리
         this.container = null;

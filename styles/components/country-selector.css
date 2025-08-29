@@ -256,19 +256,7 @@
 }
 
 /* 검색 결과 하이라이팅 */
-.search-highlight {
-    background: linear-gradient(120deg, #ffd89b 0%, #19547b 100%);
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-weight: 700;
-    color: #2d3748;
-    animation: highlightPulse 2s ease-in-out infinite;
-}
-
-@keyframes highlightPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
-}
+/* 공통 스타일은 main.css에서 정의됨 */
 
 /* 로딩 상태 */
 .country-selector.loading .selector-input {
