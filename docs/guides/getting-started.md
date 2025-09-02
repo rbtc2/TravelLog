@@ -75,11 +75,10 @@ http://localhost:8000
 
 ## 🧪 테스트
 
-프로젝트 루트의 `test-*.html` 파일들을 통해 각 기능을 테스트할 수 있습니다:
+프로젝트의 [`tests/`](../../tests/) 폴더에서 각 기능을 테스트할 수 있습니다:
 
-- **`test-log-detail.html`**: 일정 상세 화면 테스트
-- **`test-search-functionality.html`**: 검색 기능 테스트
-- **`test-navigation.html`**: 네비게이션 테스트
+- **`tests/test-final-integration.html`**: 전체 시스템 통합 테스트
+- **`tests/test-search-functionality.html`**: 검색 기능 종합 테스트
 
 ## 🔧 개발 및 확장
 

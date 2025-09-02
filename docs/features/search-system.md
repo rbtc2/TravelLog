@@ -260,9 +260,8 @@ renderStateContent() {
 ## 🧪 테스트 가이드
 
 ### **테스트 파일**
-- **`test-search-functionality.html`**: 실제 검색 기능 종합 테스트
-- **`test-search-improvements.html`**: UI/UX 개선사항 테스트
-- **`test-search-title-fix.html`**: 검색 제목 문제 해결 테스트
+- **`tests/test-search-functionality.html`**: 실제 검색 기능 종합 테스트
+- **`tests/test-final-integration.html`**: 전체 시스템 통합 테스트 (검색 기능 포함)
 
 ### **테스트 시나리오**
 
@@ -312,7 +311,7 @@ js/
 styles/pages/
 └── search.css                 # 검색 페이지 스타일
 
-test-*.html                    # 테스트 파일들
+tests/                         # 테스트 파일들
 ```
 
 ### **확장 포인트**
