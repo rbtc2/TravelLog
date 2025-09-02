@@ -113,20 +113,28 @@ class SearchTab {
     
     /**
      * 실제 검색을 수행합니다
+     * @param {string} query - 검색어
+     * @param {Object} options - 검색 옵션
+     * @param {boolean} options.showValidationError - 유효성 검사 에러 메시지 표시 여부 (기본값: true)
      */
-    async performSearch(query) {
+    async performSearch(query, options = {}) {
         try {
-            // 검색 중 상태로 변경
-            this.updateSearchState('searching');
-            this.isSearching = true;
+            const { showValidationError = true } = options;
             
             // 검색어 유효성 검사
             const validation = SearchUtility.validateQuery(query);
             if (!validation.isValid) {
-                this.showToast(validation.error);
+                // 유효성 검사 실패 시 에러 메시지 표시
+                if (showValidationError) {
+                    this.showToast(validation.error);
+                }
                 this.updateSearchState('initial');
                 return;
             }
+
+            // 검색 중 상태로 변경
+            this.updateSearchState('searching');
+            this.isSearching = true;
 
             // 동일한 검색어로 재검색 방지
             if (this.lastSearchQuery === query && this.searchResults.length > 0) {
@@ -464,6 +472,7 @@ class SearchTab {
                     </div>
                 `;
                 
+
             case 'searching':
                 return `
                     <!-- 검색 중 상태 -->
@@ -753,14 +762,8 @@ class SearchTab {
                 return;
             }
 
-            // 디바운싱 적용 (300ms)
-            if (this.searchTimeout) {
-                clearTimeout(this.searchTimeout);
-            }
-
-            this.searchTimeout = setTimeout(() => {
-                this.performSearch(this.searchQuery);
-            }, 300);
+            // 타이핑 중에는 화면을 변경하지 않고 그대로 유지
+            // 검색어만 저장하고 UI는 건드리지 않음
             
         } catch (error) {
             console.error('검색 입력 처리 오류:', error);
@@ -783,64 +786,13 @@ class SearchTab {
                 return;
             }
 
-            // 검색 실행
-            this.performSearch(query);
+            // 검색 실행 (검색 버튼 클릭 시에는 에러 메시지 표시)
+            this.performSearch(query, { showValidationError: true });
             
         } catch (error) {
             console.error('검색 실행 오류:', error);
             this.showToast('검색 실행 중 오류가 발생했습니다.');
             this.updateSearchState('initial');
-        }
-    }
-
-    /**
-     * 실제 검색을 수행합니다
-     */
-    async performSearch(query) {
-        try {
-            // 검색 중 상태로 변경
-            this.updateSearchState('searching');
-            this.isSearching = true;
-            
-            // 검색어 유효성 검사
-            const validation = SearchUtility.validateQuery(query);
-            if (!validation.isValid) {
-                this.showToast(validation.error);
-                this.updateSearchState('initial');
-                return;
-            }
-
-            // 동일한 검색어로 재검색 방지
-            if (this.lastSearchQuery === query && this.searchResults.length > 0) {
-                this.updateSearchState('hasResults');
-                return;
-            }
-
-            // 검색 수행
-            const searchResults = SearchUtility.performSearch(this.allLogs, query);
-            
-            // 검색 결과 처리
-            if (searchResults.length > 0) {
-                this.searchResults = searchResults;
-                this.lastSearchQuery = query;
-                this.updateSearchState('hasResults', { results: searchResults });
-                
-                // 검색 통계 로깅
-                const stats = SearchUtility.calculateSearchStats(searchResults, query);
-                console.log('검색 완료:', stats);
-                
-            } else {
-                this.searchResults = [];
-                this.lastSearchQuery = query;
-                this.updateSearchState('noResults', { results: [] });
-            }
-            
-        } catch (error) {
-            console.error('검색 수행 오류:', error);
-            this.showToast('검색 중 오류가 발생했습니다.');
-            this.updateSearchState('initial');
-        } finally {
-            this.isSearching = false;
         }
     }
 
