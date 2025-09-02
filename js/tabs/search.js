@@ -418,11 +418,11 @@ class SearchTab {
                         </div>
                     </div>
 
-                    <!-- 상태별 콘텐츠 섹션 -->
-                    ${this.renderStateContent()}
-
                     <!-- 정렬 옵션 (검색 결과가 있을 때만 표시) -->
                     ${this.searchState === 'hasResults' ? this.renderSortSection() : ''}
+
+                    <!-- 상태별 콘텐츠 섹션 -->
+                    ${this.renderStateContent()}
                 </div>
             `;
         } catch (error) {
