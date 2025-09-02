@@ -5,6 +5,7 @@
 
 import SearchUtility from '../modules/utils/search-utility.js';
 import { StorageManager } from '../modules/utils/storage-manager.js';
+import LogDetailModule from '../modules/log-detail.js';
 
 class SearchTab {
     constructor() {
@@ -13,10 +14,14 @@ class SearchTab {
         this.searchInput = null;
         
         // 검색 상태 관리
-        this.searchState = 'initial'; // 'initial' | 'searching' | 'hasResults' | 'noResults'
+        this.searchState = 'initial'; // 'initial' | 'searching' | 'hasResults' | 'noResults' | 'detail'
         this.searchQuery = '';
         this.searchResults = [];
         this.allLogs = []; // 모든 로그 데이터
+        
+        // 상세 화면 상태 관리
+        this.currentDetailLogId = null;
+        this.previousSearchState = null; // 상세 화면 진입 전 상태 저장
         
         // 검색 관련 상태
         this.searchTimeout = null;
@@ -540,6 +545,14 @@ class SearchTab {
                     </div>
                 `;
                 
+            case 'detail':
+                return `
+                    <!-- 상세 화면 -->
+                    <div class="log-detail-container" id="log-detail-container">
+                        <!-- LogDetailModule이 여기에 렌더링됩니다 -->
+                    </div>
+                `;
+                
             default:
                 return '';
         }
@@ -558,7 +571,7 @@ class SearchTab {
             const matchedFields = result.matchedFields;
             
             return `
-                <div class="search-result-item" data-index="${index}">
+                <div class="search-result-item clickable" data-index="${index}" data-log-id="${log.id}">
                     <div class="result-header">
                         <h4 class="result-title">
                             ${this.highlightText(log.country || '', this.searchQuery)}
@@ -739,6 +752,14 @@ class SearchTab {
                     this.addEventListener(retryBtn, 'click', this.handleRetrySearch.bind(this));
                 }
             }
+
+            // 검색 결과 카드 클릭 이벤트 (결과 있음 상태일 때)
+            if (this.searchState === 'hasResults') {
+                const resultItems = document.querySelectorAll('.search-result-item.clickable');
+                resultItems.forEach(item => {
+                    this.addEventListener(item, 'click', this.handleResultItemClick.bind(this));
+                });
+            }
         } catch (error) {
             console.error('검색 탭 이벤트 바인딩 오류:', error);
         }
@@ -821,6 +842,135 @@ class SearchTab {
             
         } catch (error) {
             console.error('재검색 처리 오류:', error);
+        }
+    }
+
+    /**
+     * 검색 결과 카드 클릭 처리
+     */
+    handleResultItemClick(event) {
+        try {
+            const logId = event.currentTarget.dataset.logId;
+            if (!logId) {
+                console.error('로그 ID가 없습니다.');
+                this.showToast('일정 정보를 불러올 수 없습니다.');
+                return;
+            }
+
+            this.showLogDetail(logId);
+            
+        } catch (error) {
+            console.error('검색 결과 클릭 처리 오류:', error);
+            this.showToast('일정 상세 정보를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+
+    /**
+     * 로그 상세 화면 표시
+     */
+    async showLogDetail(logId) {
+        try {
+            // 현재 상태 저장 (뒤로가기용)
+            this.previousSearchState = this.searchState;
+            this.currentDetailLogId = logId;
+
+            // 상세 화면 상태로 변경
+            this.updateSearchState('detail');
+
+            // LogDetailModule 렌더링
+            const detailContainer = document.getElementById('log-detail-container');
+            if (!detailContainer) {
+                throw new Error('상세 화면 컨테이너를 찾을 수 없습니다.');
+            }
+
+            // logId로 로그 데이터 찾기
+            const logData = this.allLogs.find(log => log.id === logId);
+            if (!logData) {
+                throw new Error('해당 일정을 찾을 수 없습니다.');
+            }
+
+            // LogDetailModule 인스턴스 생성 및 렌더링
+            const logDetailModule = new LogDetailModule();
+            logDetailModule.render(detailContainer, logData);
+
+            // 뒤로가기 버튼 이벤트 바인딩
+            const backBtn = document.getElementById('back-to-logs');
+            if (backBtn) {
+                backBtn.addEventListener('click', this.handleBackToSearch.bind(this));
+            }
+
+            // 편집 버튼 이벤트 바인딩
+            const editBtn = document.getElementById('edit-log-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => this.handleLogEdit(logId));
+            }
+
+            // 삭제 버튼 이벤트 바인딩
+            const deleteBtn = document.getElementById('delete-log-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', () => this.handleLogDelete(logId));
+            }
+
+        } catch (error) {
+            console.error('로그 상세 화면 표시 오류:', error);
+            this.showToast('일정 상세 정보를 불러오는 중 오류가 발생했습니다.');
+            // 오류 발생 시 이전 상태로 복귀
+            this.updateSearchState(this.previousSearchState || 'hasResults');
+        }
+    }
+
+    /**
+     * 검색 화면으로 돌아가기
+     */
+    handleBackToSearch() {
+        try {
+            // 이전 검색 상태로 복귀
+            this.updateSearchState(this.previousSearchState || 'hasResults');
+            this.currentDetailLogId = null;
+            this.previousSearchState = null;
+
+        } catch (error) {
+            console.error('검색 화면 복귀 오류:', error);
+            this.showToast('검색 화면으로 돌아가는 중 오류가 발생했습니다.');
+        }
+    }
+
+    /**
+     * 로그 편집 처리
+     */
+    handleLogEdit(logId) {
+        try {
+            // LogDetailModule의 편집 기능 사용
+            // 편집 완료 후 검색 결과 새로고침
+            this.refresh();
+            
+        } catch (error) {
+            console.error('로그 편집 처리 오류:', error);
+            this.showToast('일정 편집 중 오류가 발생했습니다.');
+        }
+    }
+
+    /**
+     * 로그 삭제 처리
+     */
+    handleLogDelete(logId) {
+        try {
+            // 삭제 후 검색 결과에서도 제거
+            this.searchResults = this.searchResults.filter(result => result.log.id !== logId);
+            this.allLogs = this.allLogs.filter(log => log.id !== logId);
+            
+            // 검색 결과가 없으면 noResults 상태로 변경
+            if (this.searchResults.length === 0) {
+                this.updateSearchState('noResults');
+            } else {
+                this.updateSearchState('hasResults');
+            }
+            
+            this.showToast('일정이 삭제되었습니다.');
+            
+        } catch (error) {
+            console.error('로그 삭제 처리 오류:', error);
+            this.showToast('일정 삭제 중 오류가 발생했습니다.');
         }
     }
 
@@ -1107,6 +1257,12 @@ class SearchTab {
             clearTimeout(this.searchTimeout);
             this.searchTimeout = null;
         }
+        
+        // 상세 화면 관련 정리
+        this.currentDetailLogId = null;
+        this.previousSearchState = null;
+        
+        // LogDetailModule 정리는 인스턴스별로 처리됨
         
         // 메모리 정리
         this.container = null;
