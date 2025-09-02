@@ -22,6 +22,7 @@ class SearchTab {
         this.searchTimeout = null;
         this.isSearching = false;
         this.lastSearchQuery = '';
+        this.currentSortType = 'relevance'; // 현재 선택된 정렬 타입
         
         // StorageManager 인스턴스
         this.storageManager = new StorageManager();
@@ -657,23 +658,23 @@ class SearchTab {
                 </div>
                 <div class="sort-options">
                     <label class="sort-option">
-                        <input type="radio" name="sort" value="relevance" id="sort-relevance" checked>
+                        <input type="radio" name="sort" value="relevance" id="sort-relevance" ${this.currentSortType === 'relevance' ? 'checked' : ''}>
                         <span class="sort-text">관련성순</span>
                     </label>
                     <label class="sort-option">
-                        <input type="radio" name="sort" value="date-desc" id="sort-date-desc">
+                        <input type="radio" name="sort" value="date-desc" id="sort-date-desc" ${this.currentSortType === 'date-desc' ? 'checked' : ''}>
                         <span class="sort-text">최신순</span>
                     </label>
                     <label class="sort-option">
-                        <input type="radio" name="sort" value="date-asc" id="sort-date-asc">
+                        <input type="radio" name="sort" value="date-asc" id="sort-date-asc" ${this.currentSortType === 'date-asc' ? 'checked' : ''}>
                         <span class="sort-text">오래된순</span>
                     </label>
                     <label class="sort-option">
-                        <input type="radio" name="sort" value="rating-desc" id="sort-rating-desc">
+                        <input type="radio" name="sort" value="rating-desc" id="sort-rating-desc" ${this.currentSortType === 'rating-desc' ? 'checked' : ''}>
                         <span class="sort-text">별점순</span>
                     </label>
                     <label class="sort-option">
-                        <input type="radio" name="sort" value="purpose-asc" id="sort-purpose-asc">
+                        <input type="radio" name="sort" value="purpose-asc" id="sort-purpose-asc" ${this.currentSortType === 'purpose-asc' ? 'checked' : ''}>
                         <span class="sort-text">목적순</span>
                     </label>
                 </div>
@@ -998,6 +999,10 @@ class SearchTab {
             if (!selectedSort || !this.searchResults.length) return;
 
             const sortType = selectedSort.value;
+            
+            // 현재 선택된 정렬 타입 업데이트
+            this.currentSortType = sortType;
+            
             let sortedResults = [...this.searchResults];
 
             switch (sortType) {
