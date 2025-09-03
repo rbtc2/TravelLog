@@ -47,11 +47,26 @@ class SearchTab {
     
     render(container) {
         try {
+        console.log('🎨 검색 탭 render 시작');
+        
         this.container = container;
         this.loadAllLogs(); // 로그 데이터 로드
+        
+        // 안전성 검사: detail 상태인데 필요한 데이터가 없으면 initial로 변경
+        if (this.searchState === 'detail') {
+            if (!this.currentDetailLogId || !this.allLogs || this.allLogs.length === 0) {
+                console.log('⚠️ detail 상태이지만 필요한 데이터가 없음 - initial 상태로 변경');
+                this.searchState = 'initial';
+                this.currentDetailLogId = null;
+                this.previousSearchState = null;
+            }
+        }
+        
         this.renderContent();
         this.bindEvents();
         this.isInitialized = true;
+        
+        console.log(`✅ 검색 탭 render 완료 - 상태: ${this.searchState}`);
         } catch (error) {
             console.error('검색 탭 렌더링 오류:', error);
             this.showErrorFallback(container);
@@ -79,8 +94,22 @@ class SearchTab {
         if (this.isInitialized) {
             try {
                 this.loadAllLogs(); // 로그 데이터 새로고침
-                this.renderContent();
-                this.bindEvents();
+                
+                // 검색 상태에 따른 처리
+                if (this.searchState === 'detail' && this.currentDetailLogId) {
+                    // 상세 화면 상태라면 상세 화면을 다시 표시
+                    this.showLogDetail(this.currentDetailLogId);
+                } else if (this.searchState === 'hasResults' && this.searchQuery && this.searchResults.length > 0) {
+                    // 검색 결과가 있는 상태라면 검색을 다시 수행하여 최신 데이터로 업데이트
+                    this.performSearch(this.searchQuery, { showValidationError: false });
+                } else if (this.searchState === 'noResults' && this.searchQuery) {
+                    // 검색 결과가 없는 상태라면 다시 검색 수행
+                    this.performSearch(this.searchQuery, { showValidationError: false });
+                } else {
+                    // 초기 상태이거나 검색어가 없는 경우 현재 상태 유지
+                    this.renderContent();
+                    this.bindEvents();
+                }
             } catch (error) {
                 console.error('검색 탭 새로고침 오류:', error);
                 this.showErrorFallback(this.container);
@@ -108,13 +137,31 @@ class SearchTab {
      * 검색 상태를 업데이트하고 UI를 새로고침합니다
      */
     updateSearchState(newState, data = {}) {
-        this.searchState = newState;
-        
-        if (data.query !== undefined) this.searchQuery = data.query;
-        if (data.results !== undefined) this.searchResults = data.results;
-        
-        this.renderContent();
-        this.bindEvents();
+        try {
+            const previousState = this.searchState;
+            console.log(`🔄 검색 상태 변경: ${previousState} → ${newState}`);
+            
+            this.searchState = newState;
+            
+            if (data.query !== undefined) this.searchQuery = data.query;
+            if (data.results !== undefined) this.searchResults = data.results;
+            
+            this.renderContent();
+            this.bindEvents();
+            
+            console.log(`✅ 검색 상태 변경 완료: ${newState}`);
+        } catch (error) {
+            console.error('검색 상태 업데이트 오류:', error);
+            // 에러 발생 시 안전하게 initial 상태로 복귀
+            this.searchState = 'initial';
+            this.searchQuery = '';
+            this.searchResults = [];
+            this.currentDetailLogId = null;
+            this.previousSearchState = null;
+            this.renderContent();
+            this.bindEvents();
+            this.showToast('상태 업데이트 중 오류가 발생했습니다. 초기 화면으로 돌아갑니다.');
+        }
     }
     
     /**
@@ -207,14 +254,18 @@ class SearchTab {
                         <!-- 검색바 -->
                         <div class="search-bar-container">
                             <div class="search-input-wrapper">
+                                <label for="search-input" class="sr-only">검색어 입력</label>
                                 <input 
                                     type="text" 
                                     class="search-input" 
                                     placeholder="국가, 도시, 일정지, 메모 등을 검색하세요..."
                                     id="search-input"
+                                    name="search-query"
+                                    autocomplete="off"
                                     value="${this.searchQuery}"
+                                    aria-label="검색어 입력"
                                 >
-                                <button class="search-btn" id="search-btn">검색</button>
+                                <button class="search-btn" id="search-btn" type="button" aria-label="검색 실행">검색</button>
                             </div>
                         </div>
 
@@ -254,33 +305,33 @@ class SearchTab {
                                     <div class="filter-group">
                                         <label class="filter-label">🌍 대륙</label>
                                         <div class="filter-checkboxes">
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="asia" id="continent-asia">
+                                            <label class="checkbox-item" for="continent-asia">
+                                                <input type="checkbox" value="asia" id="continent-asia" name="continent" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 아시아
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="europe" id="continent-europe">
+                                            <label class="checkbox-item" for="continent-europe">
+                                                <input type="checkbox" value="europe" id="continent-europe" name="continent" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 유럽
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="north-america" id="continent-north-america">
+                                            <label class="checkbox-item" for="continent-north-america">
+                                                <input type="checkbox" value="north-america" id="continent-north-america" name="continent" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 북아메리카
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="south-america" id="continent-south-america">
+                                            <label class="checkbox-item" for="continent-south-america">
+                                                <input type="checkbox" value="south-america" id="continent-south-america" name="continent" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 남아메리카
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="africa" id="continent-africa">
+                                            <label class="checkbox-item" for="continent-africa">
+                                                <input type="checkbox" value="africa" id="continent-africa" name="continent" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 아프리카
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="oceania" id="continent-oceania">
+                                            <label class="checkbox-item" for="continent-oceania">
+                                                <input type="checkbox" value="oceania" id="continent-oceania" name="continent" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 오세아니아
                                             </label>
@@ -293,68 +344,68 @@ class SearchTab {
                                     <div class="filter-group">
                                         <label class="filter-label">🎯 체류 목적</label>
                                         <div class="filter-checkboxes">
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="tourism" id="purpose-tourism">
+                                            <label class="checkbox-item" for="purpose-tourism">
+                                                <input type="checkbox" value="tourism" id="purpose-tourism" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 🏖️ 관광/여행
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="business" id="purpose-business">
+                                            <label class="checkbox-item" for="purpose-business">
+                                                <input type="checkbox" value="business" id="purpose-business" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 💼 업무/출장
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="family" id="purpose-family">
+                                            <label class="checkbox-item" for="purpose-family">
+                                                <input type="checkbox" value="family" id="purpose-family" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 👨‍👩‍👧‍👦 가족/지인 방문
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="study" id="purpose-study">
+                                            <label class="checkbox-item" for="purpose-study">
+                                                <input type="checkbox" value="study" id="purpose-study" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 📚 학업
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="work" id="purpose-work">
+                                            <label class="checkbox-item" for="purpose-work">
+                                                <input type="checkbox" value="work" id="purpose-work" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 💻 취업/근로
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="training" id="purpose-training">
+                                            <label class="checkbox-item" for="purpose-training">
+                                                <input type="checkbox" value="training" id="purpose-training" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 🎯 파견/연수
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="event" id="purpose-event">
+                                            <label class="checkbox-item" for="purpose-event">
+                                                <input type="checkbox" value="event" id="purpose-event" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 🎪 행사/컨퍼런스
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="volunteer" id="purpose-volunteer">
+                                            <label class="checkbox-item" for="purpose-volunteer">
+                                                <input type="checkbox" value="volunteer" id="purpose-volunteer" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 🤝 봉사활동
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="medical" id="purpose-medical">
+                                            <label class="checkbox-item" for="purpose-medical">
+                                                <input type="checkbox" value="medical" id="purpose-medical" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 🏥 의료
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="transit" id="purpose-transit">
+                                            <label class="checkbox-item" for="purpose-transit">
+                                                <input type="checkbox" value="transit" id="purpose-transit" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 ✈️ 경유/환승
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="research" id="purpose-research">
+                                            <label class="checkbox-item" for="purpose-research">
+                                                <input type="checkbox" value="research" id="purpose-research" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 🔬 연구/학술
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="immigration" id="purpose-immigration">
+                                            <label class="checkbox-item" for="purpose-immigration">
+                                                <input type="checkbox" value="immigration" id="purpose-immigration" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 🏠 이주/정착
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="other" id="purpose-other">
+                                            <label class="checkbox-item" for="purpose-other">
+                                                <input type="checkbox" value="other" id="purpose-other" name="purpose" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 ❓ 기타
                                             </label>
@@ -364,28 +415,28 @@ class SearchTab {
                                     <div class="filter-group">
                                         <label class="filter-label">👥 동행 유형</label>
                                         <div class="filter-checkboxes">
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="alone" id="style-alone">
+                                            <label class="checkbox-item" for="style-alone">
+                                                <input type="checkbox" value="alone" id="style-alone" name="travel-style" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 👤 혼자
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="family" id="style-family">
+                                            <label class="checkbox-item" for="style-family">
+                                                <input type="checkbox" value="family" id="style-family" name="travel-style" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 👨‍👩‍👧‍👦 가족과
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="couple" id="style-couple">
+                                            <label class="checkbox-item" for="style-couple">
+                                                <input type="checkbox" value="couple" id="style-couple" name="travel-style" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 💑 연인과
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="friends" id="style-friends">
+                                            <label class="checkbox-item" for="style-friends">
+                                                <input type="checkbox" value="friends" id="style-friends" name="travel-style" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 👥 친구와
                                             </label>
-                                            <label class="checkbox-item">
-                                                <input type="checkbox" value="colleagues" id="style-colleagues">
+                                            <label class="checkbox-item" for="style-colleagues">
+                                                <input type="checkbox" value="colleagues" id="style-colleagues" name="travel-style" autocomplete="off">
                                                 <span class="checkmark"></span>
                                                 👔 동료와
                                             </label>
@@ -397,17 +448,17 @@ class SearchTab {
                                 <div class="filter-panel" data-panel="period">
                                     <div class="filter-group">
                                         <label class="filter-label">📅 일정 기간</label>
-                                        <div class="date-range-filter">
-                                            <div class="date-input-group">
-                                                <label class="date-label">시작일</label>
-                                                <input type="date" class="date-input" id="start-date">
-                                            </div>
-                                            <div class="date-separator">~</div>
-                                            <div class="date-input-group">
-                                                <label class="date-label">종료일</label>
-                                                <input type="date" class="date-input" id="end-date">
-                                            </div>
+                                                                            <div class="date-range-filter">
+                                        <div class="date-input-group">
+                                            <label class="date-label" for="start-date">시작일</label>
+                                            <input type="date" class="date-input" id="start-date" name="start-date" autocomplete="off">
                                         </div>
+                                        <div class="date-separator">~</div>
+                                        <div class="date-input-group">
+                                            <label class="date-label" for="end-date">종료일</label>
+                                            <input type="date" class="date-input" id="end-date" name="end-date" autocomplete="off">
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
 
@@ -667,24 +718,24 @@ class SearchTab {
                     <h3 class="sort-title">📋 정렬</h3>
                 </div>
                 <div class="sort-options">
-                    <label class="sort-option">
-                        <input type="radio" name="sort" value="relevance" id="sort-relevance" ${this.currentSortType === 'relevance' ? 'checked' : ''}>
+                    <label class="sort-option" for="sort-relevance">
+                        <input type="radio" name="sort" value="relevance" id="sort-relevance" ${this.currentSortType === 'relevance' ? 'checked' : ''} autocomplete="off">
                         <span class="sort-text">관련성순</span>
                     </label>
-                    <label class="sort-option">
-                        <input type="radio" name="sort" value="date-desc" id="sort-date-desc" ${this.currentSortType === 'date-desc' ? 'checked' : ''}>
+                    <label class="sort-option" for="sort-date-desc">
+                        <input type="radio" name="sort" value="date-desc" id="sort-date-desc" ${this.currentSortType === 'date-desc' ? 'checked' : ''} autocomplete="off">
                         <span class="sort-text">최신순</span>
                     </label>
-                    <label class="sort-option">
-                        <input type="radio" name="sort" value="date-asc" id="sort-date-asc" ${this.currentSortType === 'date-asc' ? 'checked' : ''}>
+                    <label class="sort-option" for="sort-date-asc">
+                        <input type="radio" name="sort" value="date-asc" id="sort-date-asc" ${this.currentSortType === 'date-asc' ? 'checked' : ''} autocomplete="off">
                         <span class="sort-text">오래된순</span>
                     </label>
-                    <label class="sort-option">
-                        <input type="radio" name="sort" value="rating-desc" id="sort-rating-desc" ${this.currentSortType === 'rating-desc' ? 'checked' : ''}>
+                    <label class="sort-option" for="sort-rating-desc">
+                        <input type="radio" name="sort" value="rating-desc" id="sort-rating-desc" ${this.currentSortType === 'rating-desc' ? 'checked' : ''} autocomplete="off">
                         <span class="sort-text">별점순</span>
                     </label>
-                    <label class="sort-option">
-                        <input type="radio" name="sort" value="purpose-asc" id="sort-purpose-asc" ${this.currentSortType === 'purpose-asc' ? 'checked' : ''}>
+                    <label class="sort-option" for="sort-purpose-asc">
+                        <input type="radio" name="sort" value="purpose-asc" id="sort-purpose-asc" ${this.currentSortType === 'purpose-asc' ? 'checked' : ''} autocomplete="off">
                         <span class="sort-text">목적순</span>
                     </label>
                 </div>
@@ -867,6 +918,25 @@ class SearchTab {
      */
     async showLogDetail(logId) {
         try {
+            console.log(`📋 상세 화면 표시 시작 - logId: ${logId}`);
+            
+            // 데이터 유효성 검사
+            if (!logId) {
+                throw new Error('로그 ID가 제공되지 않았습니다.');
+            }
+            
+            if (!this.allLogs || this.allLogs.length === 0) {
+                throw new Error('로그 데이터가 로드되지 않았습니다.');
+            }
+
+            // logId로 로그 데이터 찾기
+            const logData = this.allLogs.find(log => log.id === logId);
+            if (!logData) {
+                throw new Error(`ID가 ${logId}인 일정을 찾을 수 없습니다.`);
+            }
+
+            console.log(`✅ 로그 데이터 확인 완료 - ${logData.country} - ${logData.city}`);
+
             // 현재 상태 저장 (뒤로가기용)
             this.previousSearchState = this.searchState;
             this.currentDetailLogId = logId;
@@ -880,12 +950,6 @@ class SearchTab {
                 throw new Error('상세 화면 컨테이너를 찾을 수 없습니다.');
             }
 
-            // logId로 로그 데이터 찾기
-            const logData = this.allLogs.find(log => log.id === logId);
-            if (!logData) {
-                throw new Error('해당 일정을 찾을 수 없습니다.');
-            }
-
             // LogDetailModule 인스턴스 생성 및 렌더링
             const logDetailModule = new LogDetailModule();
             logDetailModule.render(detailContainer, logData);
@@ -893,7 +957,7 @@ class SearchTab {
             // 뒤로가기 버튼 이벤트 바인딩
             const backBtn = document.getElementById('back-to-logs');
             if (backBtn) {
-                backBtn.addEventListener('click', this.handleBackToSearch.bind(this));
+                backBtn.addEventListener('click', this.handleBackFromDetail.bind(this));
             }
 
             // 편집 버튼 이벤트 바인딩
@@ -908,11 +972,17 @@ class SearchTab {
                 deleteBtn.addEventListener('click', () => this.handleLogDelete(logId));
             }
 
+            console.log('✅ 상세 화면 표시 완료');
+
         } catch (error) {
             console.error('로그 상세 화면 표시 오류:', error);
             this.showToast('일정 상세 정보를 불러오는 중 오류가 발생했습니다.');
-            // 오류 발생 시 이전 상태로 복귀
-            this.updateSearchState(this.previousSearchState || 'hasResults');
+            // 오류 발생 시 안전하게 initial 상태로 복귀
+            this.searchState = 'initial';
+            this.currentDetailLogId = null;
+            this.previousSearchState = null;
+            this.renderContent();
+            this.bindEvents();
         }
     }
 
@@ -929,6 +999,49 @@ class SearchTab {
         } catch (error) {
             console.error('검색 화면 복귀 오류:', error);
             this.showToast('검색 화면으로 돌아가는 중 오류가 발생했습니다.');
+        }
+    }
+
+    /**
+     * 상세 화면에서 검색 결과로 올바른 복귀 처리
+     */
+    handleBackFromDetail() {
+        try {
+            console.log('🔙 상세 화면에서 검색 화면으로 복귀');
+            
+            // 이전 검색 상태가 있는지 확인
+            if (this.previousSearchState && this.previousSearchState !== 'detail') {
+                console.log(`이전 상태로 복귀: ${this.previousSearchState}`);
+                this.updateSearchState(this.previousSearchState);
+            } else {
+                // 이전 상태가 없거나 유효하지 않으면 검색 결과가 있는지 확인
+                if (this.searchResults && this.searchResults.length > 0) {
+                    console.log('검색 결과가 있음 - hasResults 상태로 복귀');
+                    this.updateSearchState('hasResults');
+                } else if (this.searchQuery) {
+                    console.log('검색어가 있음 - 검색 재실행');
+                    this.performSearch(this.searchQuery, { showValidationError: false });
+                } else {
+                    console.log('초기 상태로 복귀');
+                    this.updateSearchState('initial');
+                }
+            }
+            
+            // 상세 화면 관련 상태 정리
+            this.currentDetailLogId = null;
+            this.previousSearchState = null;
+            
+            console.log('✅ 상세 화면 복귀 완료');
+
+        } catch (error) {
+            console.error('상세 화면 복귀 오류:', error);
+            this.showToast('검색 화면으로 돌아가는 중 오류가 발생했습니다.');
+            // 에러 발생 시 안전하게 initial 상태로 복귀
+            this.searchState = 'initial';
+            this.currentDetailLogId = null;
+            this.previousSearchState = null;
+            this.renderContent();
+            this.bindEvents();
         }
     }
 
@@ -1238,6 +1351,8 @@ class SearchTab {
     
     async cleanup() {
         try {
+        console.log('🔧 검색 탭 cleanup 시작');
+        
         // 이벤트 리스너 정리
         this.eventListeners.forEach(listener => {
             if (listener.element && listener.event && listener.handler) {
@@ -1255,6 +1370,14 @@ class SearchTab {
             this.searchTimeout = null;
         }
         
+        // 모든 검색 관련 상태 초기화
+        this.searchState = 'initial';
+        this.searchQuery = '';
+        this.searchResults = [];
+        this.currentSortType = 'relevance';
+        this.isSearching = false;
+        this.lastSearchQuery = '';
+        
         // 상세 화면 관련 정리
         this.currentDetailLogId = null;
         this.previousSearchState = null;
@@ -1263,6 +1386,8 @@ class SearchTab {
         
         // 메모리 정리
         this.container = null;
+        
+        console.log('✅ 검색 탭 cleanup 완료 - 모든 상태 초기화됨');
         } catch (error) {
             console.error('검색 탭 정리 오류:', error);
         }
