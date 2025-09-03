@@ -463,20 +463,6 @@ class SearchTab {
                                 검색어를 입력하거나 상세 필터를 설정하여<br>
                                 원하는 일정 기록을 빠르게 찾을 수 있습니다.
                             </div>
-                            <div class="guide-tips">
-                                <div class="tip-item">
-                                    <span class="tip-icon">💡</span>
-                                    <span class="tip-text">국가명, 도시명으로 검색해보세요</span>
-                                </div>
-                                <div class="tip-item">
-                                    <span class="tip-icon">💡</span>
-                                    <span class="tip-text">여행 목적이나 동행 유형으로 필터링해보세요</span>
-                                </div>
-                                <div class="tip-item">
-                                    <span class="tip-icon">💡</span>
-                                    <span class="tip-text">기간과 별점으로 더 정확한 검색이 가능합니다</span>
-                                </div>
-                            </div>
                             ${this.allLogs.length > 0 ? 
                                 `<div class="guide-stats">
                                     <span class="stats-text">📊 총 ${this.allLogs.length}개의 일정 기록이 저장되어 있습니다</span>
