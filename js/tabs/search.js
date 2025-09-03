@@ -750,6 +750,8 @@ class SearchTab {
             if (this.searchInput) {
                 this.addEventListener(this.searchInput, 'input', this.handleSearchInput.bind(this));
                 this.addEventListener(this.searchInput, 'keypress', this.handleSearchKeypress.bind(this));
+                this.addEventListener(this.searchInput, 'focus', this.handleSearchFocus.bind(this));
+                this.addEventListener(this.searchInput, 'blur', this.handleSearchBlur.bind(this));
             }
 
             // 검색 버튼 이벤트
@@ -844,6 +846,45 @@ class SearchTab {
     handleSearchKeypress(event) {
         if (event.key === 'Enter') {
             this.handleSearch();
+        }
+    }
+
+    /**
+     * 검색 입력 필드 포커스 처리
+     */
+    handleSearchFocus(event) {
+        try {
+            const input = event.target;
+            // 포커스 시 placeholder 제거
+            input.setAttribute('data-original-placeholder', input.placeholder);
+            input.placeholder = '';
+            
+            // 모바일에서 키보드가 올라올 때를 대비한 스크롤 처리
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        } catch (error) {
+            console.error('검색 입력 포커스 처리 오류:', error);
+        }
+    }
+
+    /**
+     * 검색 입력 필드 블러 처리
+     */
+    handleSearchBlur(event) {
+        try {
+            const input = event.target;
+            // 입력값이 없을 때만 placeholder 복원
+            if (!input.value.trim()) {
+                const originalPlaceholder = input.getAttribute('data-original-placeholder');
+                if (originalPlaceholder) {
+                    input.placeholder = originalPlaceholder;
+                }
+            }
+        } catch (error) {
+            console.error('검색 입력 블러 처리 오류:', error);
         }
     }
 
