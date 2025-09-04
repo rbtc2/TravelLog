@@ -14,10 +14,58 @@ export class SearchUtility {
             travelStyle: { weight: 1, type: 'exact' }         // 동행유형 (중복허용)
         };
 
+        // CountriesManager에서 국가 데이터 로드
+        this.countriesManager = null;
+        this.countryMapping = new Map();
+
         // 검색 결과 캐시
         this.searchCache = new Map();
         this.maxCacheSize = 100;
         this.maxResults = 50;
+    }
+
+    /**
+     * CountriesManager를 초기화하고 국가 매핑을 설정합니다
+     * @async
+     */
+    async initializeCountries() {
+        try {
+            // CountriesManager 동적 import
+            const { countriesManager } = await import('../../data/countries-manager.js');
+            this.countriesManager = countriesManager;
+            
+            // CountriesManager 초기화
+            await this.countriesManager.initialize();
+            
+            // 국가 매핑 생성
+            this.buildCountryMapping();
+            
+            console.log(`SearchUtility: ${this.countryMapping.size}개국 매핑 완료`);
+        } catch (error) {
+            console.error('SearchUtility: CountriesManager 초기화 실패:', error);
+        }
+    }
+
+    /**
+     * 국가 매핑을 구축합니다
+     * @private
+     */
+    buildCountryMapping() {
+        if (!this.countriesManager) return;
+        
+        const countries = this.countriesManager.countries;
+        this.countryMapping.clear();
+        
+        countries.forEach(country => {
+            // 국가 코드 -> 한국어명
+            this.countryMapping.set(country.code, country.nameKo);
+            // 한국어명 -> 국가 코드
+            this.countryMapping.set(country.nameKo, country.code);
+            // 영어명 -> 국가 코드
+            this.countryMapping.set(country.nameEn, country.code);
+            // 국가 코드 -> 영어명
+            this.countryMapping.set(country.code, country.nameEn);
+        });
     }
 
     /**
@@ -28,11 +76,18 @@ export class SearchUtility {
     preprocessQuery(query) {
         if (!query || typeof query !== 'string') return '';
         
-        return query
+        const processed = query
             .trim()
             .toLowerCase()
             .replace(/\s+/g, ' ') // 연속된 공백을 단일 공백으로
             .replace(/[^\w\s가-힣]/g, ''); // 특수문자 제거 (한글, 영문, 숫자, 공백만 허용)
+        
+        // console.log('🔍 쿼리 전처리:', {
+        //     original: query,
+        //     processed: processed
+        // });
+        
+        return processed;
     }
 
     /**
@@ -81,6 +136,18 @@ export class SearchUtility {
             score += Math.min(query.length * 0.1, 2);
         }
 
+        // console.log(`🔍 점수 계산:`, {
+        //     text: text,
+        //     normalizedText: normalizedText,
+        //     query: query,
+        //     normalizedQuery: normalizedQuery,
+        //     type: type,
+        //     weight: weight,
+        //     score: score,
+        //     exactMatch: normalizedText === normalizedQuery,
+        //     includes: normalizedText.includes(normalizedQuery)
+        // });
+
         return score;
     }
 
@@ -104,12 +171,48 @@ export class SearchUtility {
             const fieldValue = log[fieldName];
             
             if (fieldValue) {
-                const score = this.calculateRelevanceScore(
+                let score = this.calculateRelevanceScore(
                     fieldValue, 
                     processedQuery, 
                     fieldConfig.weight, 
                     fieldConfig.type
                 );
+
+                // 국가 필드의 경우 국가 코드와 국가명 모두 검색
+                if (fieldName === 'country' && score === 0 && this.countryMapping.size > 0) {
+                    // 국가 코드로 검색 시도
+                    const countryCode = fieldValue.toUpperCase();
+                    const countryName = this.countryMapping.get(countryCode);
+                    
+                    if (countryName) {
+                        score = this.calculateRelevanceScore(
+                            countryName, 
+                            processedQuery, 
+                            fieldConfig.weight, 
+                            fieldConfig.type
+                        );
+                    }
+                    
+                    // 반대로 국가명으로 검색 시도
+                    if (score === 0) {
+                        const mappedCode = this.countryMapping.get(fieldValue);
+                        if (mappedCode) {
+                            score = this.calculateRelevanceScore(
+                                mappedCode, 
+                                processedQuery, 
+                                fieldConfig.weight, 
+                                fieldConfig.type
+                            );
+                        }
+                    }
+                }
+
+                // console.log(`🔍 필드 검색: ${fieldName}`, {
+                //     fieldValue: fieldValue,
+                //     processedQuery: processedQuery,
+                //     score: score,
+                //     type: fieldConfig.type
+                // });
 
                 if (score > 0) {
                     totalScore += score;
