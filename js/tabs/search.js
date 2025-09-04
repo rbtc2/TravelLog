@@ -616,18 +616,22 @@ class SearchTab {
         
         return this.searchResults.map((result, index) => {
             const log = result.log;
-            const matchedFields = result.matchedFields;
             
             return `
                 <div class="search-result-item clickable" data-index="${index}" data-log-id="${log.id}">
                     <div class="result-header">
-                        <h4 class="result-title">
-                            ${this.highlightText(log.country || '', this.searchQuery)}
-                            ${log.city ? ` - ${this.highlightText(log.city, this.searchQuery)}` : ''}
-                        </h4>
+                        <div class="result-title-section">
+                            <h4 class="result-title">
+                                ${this.highlightText(log.country || '', this.searchQuery)}
+                                ${log.city ? ` - ${this.highlightText(log.city, this.searchQuery)}` : ''}
+                            </h4>
+                            <div class="result-rating">
+                                ${this.renderStarRating(log.rating || 0)}
+                            </div>
+                        </div>
                         <div class="result-meta">
                             <span class="result-date">
-                                ${log.startDate || log.date || ''}
+                                📅 ${log.startDate || log.date || ''}
                                 ${log.endDate ? ` - ${log.endDate}` : ''}
                             </span>
                             <span class="result-purpose">
@@ -637,32 +641,49 @@ class SearchTab {
                                 ${this.getTravelStyleDisplayName(log.travelStyle || '')}
                             </span>
                         </div>
-                        <div class="result-score">
-                            <span class="score-label">관련성:</span>
-                            <span class="score-value">${Math.round(result.score * 10) / 10}</span>
-                        </div>
                     </div>
                     <div class="result-description">
                         ${log.memo ? this.highlightText(log.memo, this.searchQuery) : '메모가 없습니다.'}
                     </div>
-                    ${matchedFields.length > 0 ? `
-                        <div class="result-matched-fields">
-                            <div class="matched-label">매칭된 필드:</div>
-                            <div class="matched-tags">
-                                ${matchedFields.map(field => `
-                                    <span class="matched-tag" data-field="${field.field}">
-                                        ${this.getFieldDisplayName(field.field)}: 
-                                        ${this.highlightText(field.value, this.searchQuery)}
-                                    </span>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
                 </div>
             `;
         }).join('');
     }
     
+    /**
+     * 별점을 시각적으로 렌더링합니다
+     */
+    renderStarRating(rating) {
+        const numRating = parseFloat(rating) || 0;
+        const fullStars = Math.floor(numRating);
+        const hasHalfStar = numRating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        
+        let stars = '';
+        
+        // 채워진 별
+        for (let i = 0; i < fullStars; i++) {
+            stars += '<span class="star filled">★</span>';
+        }
+        
+        // 반별 (있는 경우)
+        if (hasHalfStar) {
+            stars += '<span class="star half">★</span>';
+        }
+        
+        // 빈 별
+        for (let i = 0; i < emptyStars; i++) {
+            stars += '<span class="star empty">☆</span>';
+        }
+        
+        return `
+            <div class="star-rating-display">
+                <div class="stars">${stars}</div>
+                <span class="rating-text">${numRating.toFixed(1)}/5.0</span>
+            </div>
+        `;
+    }
+
     /**
      * 필드명을 사용자 친화적인 이름으로 변환합니다
      */
