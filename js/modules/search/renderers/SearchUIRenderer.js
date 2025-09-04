@@ -18,6 +18,7 @@ import {
 export class SearchUIRenderer {
     constructor() {
         this.container = null;
+        this.countriesManager = null;
     }
 
     /**
@@ -26,6 +27,45 @@ export class SearchUIRenderer {
      */
     setContainer(container) {
         this.container = container;
+    }
+
+    /**
+     * CountriesManager를 초기화합니다
+     * @async
+     */
+    async initializeCountries() {
+        try {
+            if (!this.countriesManager) {
+                const { countriesManager } = await import('../../../data/countries-manager.js');
+                this.countriesManager = countriesManager;
+                await this.countriesManager.initialize();
+            }
+        } catch (error) {
+            console.error('SearchUIRenderer: CountriesManager 초기화 실패:', error);
+        }
+    }
+
+    /**
+     * 국가 코드를 한국어 국가명으로 변환합니다
+     * @param {string} countryCode - 국가 코드
+     * @returns {string} 한국어 국가명
+     */
+    getCountryDisplayName(countryCode) {
+        if (!countryCode) return '';
+        
+        // 이미 한국어명인 경우 그대로 반환
+        if (countryCode.length > 2) {
+            return countryCode;
+        }
+        
+        // CountriesManager가 초기화되지 않은 경우 원본 반환
+        if (!this.countriesManager) {
+            return countryCode;
+        }
+        
+        // 국가 코드를 한국어명으로 변환
+        const country = this.countriesManager.getCountryByCode(countryCode);
+        return country ? country.nameKo : countryCode;
     }
 
     /**
@@ -488,13 +528,14 @@ export class SearchUIRenderer {
         
         return searchResults.map((result, index) => {
             const log = result.log;
+            const countryDisplayName = this.getCountryDisplayName(log.country);
             
             return `
                 <div class="search-result-item clickable" data-index="${index}" data-log-id="${log.id}">
                     <div class="result-header">
                         <div class="result-title-section">
                             <h4 class="result-title">
-                                ${this.highlightText(log.country || '', searchQuery)}
+                                ${this.highlightText(countryDisplayName, searchQuery)}
                                 ${log.city ? ` - ${this.highlightText(log.city, searchQuery)}` : ''}
                             </h4>
                             <div class="result-rating">

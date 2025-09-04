@@ -84,10 +84,15 @@ export class SearchTab {
             // 검색 모드 리셋
             this.isSearchMode = false;
             
+            // 먼저 로그 데이터 로드
+            this.loadAllLogs();
+            
             // SearchEngine 초기화
             await this.searchEngine.initialize();
             
-            this.loadAllLogs();
+            // SearchUIRenderer 초기화
+            await this.uiRenderer.initializeCountries();
+            
             this.validateState();
             this.renderUI();
             this.bindEvents();
@@ -158,7 +163,9 @@ export class SearchTab {
      */
     loadAllLogs() {
         try {
+            console.log('🔍 검색 탭: 로그 데이터 로드 시작');
             const allLogs = this.storageManager.loadLogs();
+            console.log('🔍 StorageManager에서 로드된 데이터:', allLogs);
             this.stateManager.setAllLogs(allLogs);
             console.log(`검색 탭: ${allLogs.length}개의 로그 데이터 로드됨`);
         } catch (error) {

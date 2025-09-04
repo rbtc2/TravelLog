@@ -30,12 +30,17 @@ export class SearchUtility {
      */
     async initializeCountries() {
         try {
+            console.log('SearchUtility: CountriesManager 초기화 시작');
+            
             // CountriesManager 동적 import
             const { countriesManager } = await import('../../data/countries-manager.js');
             this.countriesManager = countriesManager;
+            console.log('SearchUtility: CountriesManager import 완료');
             
             // CountriesManager 초기화
             await this.countriesManager.initialize();
+            console.log('SearchUtility: CountriesManager 초기화 완료');
+            console.log('SearchUtility: CountriesManager 상태:', this.countriesManager.getStatus());
             
             // 국가 매핑 생성
             this.buildCountryMapping();
@@ -57,14 +62,22 @@ export class SearchUtility {
         this.countryMapping.clear();
         
         countries.forEach(country => {
-            // 국가 코드 -> 한국어명
+            // 국가 코드 -> 한국어명 (검색용)
             this.countryMapping.set(country.code, country.nameKo);
-            // 한국어명 -> 국가 코드
+            // 한국어명 -> 국가 코드 (검색용)
             this.countryMapping.set(country.nameKo, country.code);
-            // 영어명 -> 국가 코드
+            // 영어명 -> 국가 코드 (검색용)
             this.countryMapping.set(country.nameEn, country.code);
-            // 국가 코드 -> 영어명
-            this.countryMapping.set(country.code, country.nameEn);
+            // 영어명 -> 한국어명 (검색용)
+            this.countryMapping.set(country.nameEn, country.nameKo);
+        });
+        
+        console.log(`SearchUtility: ${this.countryMapping.size}개국 매핑 완료`);
+        console.log('SearchUtility: 매핑 샘플:', {
+            'FR': this.countryMapping.get('FR'),
+            '프랑스': this.countryMapping.get('프랑스'),
+            'CN': this.countryMapping.get('CN'),
+            '중국': this.countryMapping.get('중국')
         });
     }
 
@@ -180,11 +193,12 @@ export class SearchUtility {
 
                 // 국가 필드의 경우 국가 코드와 국가명 모두 검색
                 if (fieldName === 'country' && score === 0 && this.countryMapping.size > 0) {
-                    // 국가 코드로 검색 시도
+                    // fieldValue는 국가 코드 (예: "FR")
                     const countryCode = fieldValue.toUpperCase();
                     const countryName = this.countryMapping.get(countryCode);
                     
                     if (countryName) {
+                        // 국가명으로 검색 시도 (예: "프랑스"로 검색)
                         score = this.calculateRelevanceScore(
                             countryName, 
                             processedQuery, 
@@ -193,17 +207,14 @@ export class SearchUtility {
                         );
                     }
                     
-                    // 반대로 국가명으로 검색 시도
+                    // 국가 코드로도 검색 시도 (예: "FR"로 검색)
                     if (score === 0) {
-                        const mappedCode = this.countryMapping.get(fieldValue);
-                        if (mappedCode) {
-                            score = this.calculateRelevanceScore(
-                                mappedCode, 
-                                processedQuery, 
-                                fieldConfig.weight, 
-                                fieldConfig.type
-                            );
-                        }
+                        score = this.calculateRelevanceScore(
+                            countryCode, 
+                            processedQuery, 
+                            fieldConfig.weight, 
+                            fieldConfig.type
+                        );
                     }
                 }
 

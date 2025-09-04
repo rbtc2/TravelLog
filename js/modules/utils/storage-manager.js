@@ -29,8 +29,12 @@ export class StorageManager {
      */
     loadLogs() {
         try {
+            console.log('🔍 StorageManager: 로그 데이터 로드 시작, 키:', this.storageKey);
             const storedLogs = localStorage.getItem(this.storageKey);
-            return storedLogs ? JSON.parse(storedLogs) : [];
+            console.log('🔍 StorageManager: 로컬 스토리지에서 가져온 데이터:', storedLogs);
+            const parsedLogs = storedLogs ? JSON.parse(storedLogs) : [];
+            console.log('🔍 StorageManager: 파싱된 로그 데이터:', parsedLogs);
+            return parsedLogs;
         } catch (error) {
             console.error('일지 데이터 로드 실패:', error);
             return [];
