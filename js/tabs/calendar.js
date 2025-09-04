@@ -12,26 +12,142 @@ class CalendarTab {
         this.currentView = 'month'; // 'month' | 'week'
         this.selectedDate = null;
         
-        // 향후 확장을 위한 데이터 구조
+        // 데이터 구조
         this.travelLogs = new Map(); // 날짜별 여행 로그 데이터
         this.countries = new Map(); // 국가별 정보 캐시
+        this.countriesManager = null; // CountriesManager 인스턴스
         
         // 성능 최적화를 위한 캐시
         this.calendarCache = new Map();
         this.lastRenderDate = null;
+        
+        // 툴팁 관련
+        this.tooltipTimeout = null;
+        this.currentTooltip = null;
+        
+        // 렌더링 최적화
+        this.renderQueue = [];
+        this.isRendering = false;
     }
     
     /**
      * 탭 렌더링 메인 메서드
      * @param {HTMLElement} container - 탭 콘텐츠 컨테이너
      */
-    render(container) {
+    async render(container) {
         this.container = container;
-        this.renderContent();
-        this.bindEvents();
-        this.isInitialized = true;
         
-        console.log('캘린더 탭 초기화 완료');
+        try {
+            // CountriesManager 초기화
+            await this.initializeCountriesManager();
+            
+            // 기존 여행 로그 데이터 로드
+            await this.loadTravelLogs();
+            
+            this.renderContent();
+            this.bindEvents();
+            this.isInitialized = true;
+            
+            console.log('캘린더 탭 초기화 완료');
+        } catch (error) {
+            console.error('캘린더 탭 초기화 실패:', error);
+            // 에러가 발생해도 기본 UI는 렌더링
+            this.renderContent();
+            this.bindEvents();
+            this.isInitialized = true;
+        }
+    }
+    
+    /**
+     * CountriesManager 초기화
+     */
+    async initializeCountriesManager() {
+        try {
+            // CountriesManager 동적 import
+            const { countriesManager } = await import('../data/countries-manager.js');
+            this.countriesManager = countriesManager;
+            
+            // 초기화
+            if (!this.countriesManager.isInitialized) {
+                await this.countriesManager.initialize();
+            }
+            
+            console.log('CountriesManager 초기화 완료');
+        } catch (error) {
+            console.warn('CountriesManager 초기화 실패, 폴백 모드로 동작:', error);
+        }
+    }
+    
+    /**
+     * 여행 로그 데이터 로드
+     */
+    async loadTravelLogs() {
+        try {
+            // StorageManager와 LogService 동적 import
+            const { StorageManager } = await import('../modules/utils/storage-manager.js');
+            const { LogService } = await import('../modules/services/log-service.js');
+            
+            const storageManager = new StorageManager();
+            const logService = new LogService();
+            
+            // 저장된 로그 데이터 로드
+            const savedLogs = storageManager.loadLogs();
+            logService.setLogs(savedLogs);
+            
+            // 캘린더용 데이터 구조로 변환
+            this.processTravelLogsForCalendar(logService.getAllLogs());
+            
+            console.log(`여행 로그 데이터 로드 완료: ${savedLogs.length}개`);
+        } catch (error) {
+            console.warn('여행 로그 데이터 로드 실패:', error);
+        }
+    }
+    
+    /**
+     * 여행 로그를 캘린더용 데이터 구조로 변환
+     * @param {Array} logs - 여행 로그 배열
+     */
+    processTravelLogsForCalendar(logs) {
+        this.travelLogs.clear();
+        
+        logs.forEach(log => {
+            // 날짜 문자열을 로컬 시간대로 정확히 파싱
+            const startDate = this.parseLocalDate(log.startDate);
+            const endDate = this.parseLocalDate(log.endDate);
+            
+            // 시작일부터 종료일까지 모든 날짜에 로그 추가
+            for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+                const dateString = this.formatDateString(date);
+                
+                if (!this.travelLogs.has(dateString)) {
+                    this.travelLogs.set(dateString, []);
+                }
+                
+                this.travelLogs.get(dateString).push(log);
+            }
+        });
+    }
+    
+    /**
+     * 날짜 문자열을 로컬 시간대로 정확히 파싱
+     * @param {string} dateString - YYYY-MM-DD 형식의 날짜 문자열
+     * @returns {Date} 로컬 시간대의 Date 객체
+     */
+    parseLocalDate(dateString) {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return new Date(year, month - 1, day); // month는 0부터 시작하므로 -1
+    }
+    
+    /**
+     * Date 객체를 YYYY-MM-DD 형식의 문자열로 변환
+     * @param {Date} date - Date 객체
+     * @returns {string} YYYY-MM-DD 형식의 날짜 문자열
+     */
+    formatDateString(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
     
     /**
@@ -168,7 +284,7 @@ class CalendarTab {
                                         ${isToday ? 'today' : ''} 
                                         ${isSelected ? 'selected' : ''}
                                         ${hasTravelLog ? 'has-travel-log' : ''}"
-                         data-date="${currentDate.toISOString().split('T')[0]}"
+                         data-date="${this.formatDateString(currentDate)}"
                          data-day="${currentDate.getDate()}">
                         
                         <div class="day-number">${currentDate.getDate()}</div>
@@ -194,7 +310,7 @@ class CalendarTab {
     }
     
     /**
-     * 여행 로그 표시기 렌더링 (향후 확장)
+     * 여행 로그 표시기 렌더링 (국기 도트 + 멀티 레이어 시스템)
      * @param {Array} travelLogs - 해당 날짜의 여행 로그 배열
      */
     renderTravelLogIndicators(travelLogs) {
@@ -205,21 +321,46 @@ class CalendarTab {
         const displayLogs = travelLogs.slice(0, maxDisplay);
         const remainingCount = travelLogs.length - maxDisplay;
         
-        let indicatorsHTML = '<div class="travel-log-indicators">';
+        let indicatorsHTML = '<div class="travel-log-indicators" role="group" aria-label="여행 기록">';
         
-        displayLogs.forEach(log => {
+        displayLogs.forEach((log, index) => {
+            const countryInfo = this.getCountryInfo(log.country);
+            const flag = this.getCountryFlag(log.country);
+            const countryName = countryInfo ? countryInfo.nameKo : log.country;
+            
+            // 여행 기간 상태에 따른 클래스
+            let statusClass = '';
+            if (log.isStartDay) statusClass = 'start-day';
+            else if (log.isEndDay) statusClass = 'end-day';
+            else if (log.isMiddleDay) statusClass = 'middle-day';
+            
+            // 툴팁 텍스트 생성
+            const tooltipText = this.generateTooltipText(log, countryName);
+            
             indicatorsHTML += `
-                <div class="travel-log-indicator" 
+                <div class="travel-log-indicator ${statusClass}" 
                      data-country="${log.country || 'unknown'}"
-                     title="${log.title || '여행 기록'}">
-                    ${this.getCountryFlag(log.country) || '✈️'}
+                     data-log-id="${log.id || ''}"
+                     data-day-of-trip="${log.dayOfTrip || 1}"
+                     data-total-days="${log.totalDays || 1}"
+                     title="${tooltipText}"
+                     role="button"
+                     tabindex="0"
+                     aria-label="${tooltipText}">
+                    <span class="flag-emoji" aria-hidden="true">${flag}</span>
+                    ${log.isStartDay ? '<span class="start-indicator" aria-hidden="true">●</span>' : ''}
+                    ${log.isEndDay ? '<span class="end-indicator" aria-hidden="true">●</span>' : ''}
                 </div>
             `;
         });
         
         if (remainingCount > 0) {
             indicatorsHTML += `
-                <div class="travel-log-more" title="${remainingCount}개 더 보기">
+                <div class="travel-log-more" 
+                     title="${remainingCount}개 더 보기"
+                     role="button"
+                     tabindex="0"
+                     aria-label="${remainingCount}개 더 보기">
                     +${remainingCount}
                 </div>
             `;
@@ -227,6 +368,21 @@ class CalendarTab {
         
         indicatorsHTML += '</div>';
         return indicatorsHTML;
+    }
+    
+    /**
+     * 툴팁 텍스트 생성
+     * @param {Object} log - 여행 로그 객체
+     * @param {string} countryName - 국가명
+     * @returns {string} 툴팁 텍스트
+     */
+    generateTooltipText(log, countryName) {
+        const flag = this.getCountryFlag(log.country);
+        const dayInfo = log.isStartDay ? '출발' : 
+                       log.isEndDay ? '귀국' : 
+                       `${log.dayOfTrip}일차`;
+        
+        return `${flag} ${countryName} ${dayInfo}`;
     }
     
     /**
@@ -258,7 +414,9 @@ class CalendarTab {
             if (!dayElement) return;
             
             const dateString = dayElement.dataset.date;
-            this.selectDate(new Date(dateString));
+            // 날짜 문자열을 로컬 시간대로 정확히 파싱
+            const [year, month, day] = dateString.split('-').map(Number);
+            this.selectDate(new Date(year, month - 1, day));
         };
         
         // 날짜 피커 트리거 이벤트
@@ -291,6 +449,9 @@ class CalendarTab {
         
         // 스와이프 제스처 이벤트
         this.bindSwipeGestures();
+        
+        // 툴팁 이벤트
+        this.bindTooltipEvents();
     }
     
     /**
@@ -358,9 +519,10 @@ class CalendarTab {
         
         // UI 업데이트
         const dayElements = this.container.querySelectorAll('.calendar-day');
+        const dateString = this.formatDateString(date);
         dayElements.forEach(day => {
             day.classList.toggle('selected', 
-                day.dataset.date === date.toISOString().split('T')[0]);
+                day.dataset.date === dateString);
         });
         
         // 상세 정보 업데이트
@@ -414,20 +576,75 @@ class CalendarTab {
      * 성능 최적화를 위해 필요한 부분만 업데이트
      */
     refreshCalendar() {
-        // 캐시 무효화
-        this.calendarCache.clear();
-        
-        // 현재 월/년도 표시 업데이트
-        const monthDisplay = this.container.querySelector('.current-month');
-        const yearDisplay = this.container.querySelector('.current-year');
-        
-        if (monthDisplay) monthDisplay.textContent = this.getCurrentMonthText();
-        if (yearDisplay) yearDisplay.textContent = this.currentDate.getFullYear();
-        
-        // 캘린더 그리드 재렌더링
-        const gridContainer = this.container.querySelector('.calendar-grid-container');
-        if (gridContainer) {
-            gridContainer.innerHTML = this.renderCalendarGrid();
+        try {
+            // 성능 측정 시작
+            const startTime = performance.now();
+            
+            // 캐시 무효화
+            this.calendarCache.clear();
+            
+            // 현재 월/년도 표시 업데이트
+            const monthDisplay = this.container.querySelector('.current-month');
+            const yearDisplay = this.container.querySelector('.current-year');
+            
+            if (monthDisplay) monthDisplay.textContent = this.getCurrentMonthText();
+            if (yearDisplay) yearDisplay.textContent = this.currentDate.getFullYear();
+            
+            // 캘린더 그리드 재렌더링 (배치 처리)
+            const gridContainer = this.container.querySelector('.calendar-grid-container');
+            if (gridContainer) {
+                // DocumentFragment를 사용한 배치 렌더링
+                const fragment = document.createDocumentFragment();
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = this.renderCalendarGrid();
+                
+                while (tempDiv.firstChild) {
+                    fragment.appendChild(tempDiv.firstChild);
+                }
+                
+                gridContainer.innerHTML = '';
+                gridContainer.appendChild(fragment);
+            }
+            
+            // 오래된 캐시 정리 (주기적으로)
+            if (Math.random() < 0.1) { // 10% 확률로 실행
+                this.cleanupOldCache();
+            }
+            
+            // 성능 측정 완료
+            const endTime = performance.now();
+            const renderTime = endTime - startTime;
+            
+            if (renderTime > 100) {
+                console.warn(`캘린더 렌더링 시간이 100ms를 초과했습니다: ${renderTime.toFixed(2)}ms`);
+            } else {
+                console.log(`캘린더 렌더링 완료: ${renderTime.toFixed(2)}ms`);
+            }
+            
+        } catch (error) {
+            console.error('캘린더 새로고침 중 오류 발생:', error);
+            // 에러 발생 시 기본 렌더링으로 폴백
+            this.fallbackRender();
+        }
+    }
+    
+    /**
+     * 폴백 렌더링 (에러 발생 시)
+     */
+    fallbackRender() {
+        try {
+            const gridContainer = this.container.querySelector('.calendar-grid-container');
+            if (gridContainer) {
+                gridContainer.innerHTML = `
+                    <div class="calendar-error">
+                        <div class="error-icon">⚠️</div>
+                        <div class="error-message">캘린더를 불러오는 중 오류가 발생했습니다.</div>
+                        <button class="retry-btn" onclick="location.reload()">다시 시도</button>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('폴백 렌더링도 실패:', error);
         }
     }
     
@@ -445,6 +662,20 @@ class CalendarTab {
             return;
         }
         
+        // 툴팁이 표시된 상태에서 ESC 키 처리
+        if (e.key === 'Escape' && this.currentTooltip) {
+            e.preventDefault();
+            this.hideTooltip();
+            return;
+        }
+        
+        // 여행 로그 표시기에서 키보드 네비게이션
+        const activeIndicator = document.activeElement.closest('.travel-log-indicator, .travel-log-more');
+        if (activeIndicator) {
+            this.handleIndicatorKeyboardNavigation(e, activeIndicator);
+            return;
+        }
+        
         switch (e.key) {
             case 'ArrowLeft':
                 e.preventDefault();
@@ -454,12 +685,21 @@ class CalendarTab {
                 e.preventDefault();
                 this.handleNavigation('next');
                 break;
+            case 'ArrowUp':
+                e.preventDefault();
+                this.handleNavigation('prev');
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                this.handleNavigation('next');
+                break;
             case 'Home':
                 e.preventDefault();
                 this.handleNavigation('today');
                 break;
             case 'Escape':
                 this.selectedDate = null;
+                this.hideTooltip();
                 this.refreshCalendar();
                 break;
             case 'Enter':
@@ -470,6 +710,45 @@ class CalendarTab {
                     this.showDatePicker();
                 }
                 break;
+        }
+    }
+    
+    /**
+     * 여행 로그 표시기 키보드 네비게이션
+     * @param {KeyboardEvent} e - 키보드 이벤트
+     * @param {HTMLElement} indicator - 현재 포커스된 표시기
+     */
+    handleIndicatorKeyboardNavigation(e, indicator) {
+        switch (e.key) {
+            case 'Enter':
+            case ' ':
+                e.preventDefault();
+                this.handleIndicatorClick(indicator);
+                break;
+            case 'Escape':
+                e.preventDefault();
+                indicator.blur();
+                this.hideTooltip();
+                break;
+            case 'Tab':
+                // 기본 탭 동작 허용
+                break;
+        }
+    }
+    
+    /**
+     * 여행 로그 표시기 클릭 처리
+     * @param {HTMLElement} indicator - 클릭된 표시기
+     */
+    handleIndicatorClick(indicator) {
+        if (indicator.classList.contains('travel-log-more')) {
+            // 더 보기 클릭 시 상세 모달 표시 (향후 구현)
+            console.log('더 보기 클릭');
+        } else {
+            // 개별 여행 로그 클릭 시 상세 정보 표시
+            const logId = indicator.dataset.logId;
+            const country = indicator.dataset.country;
+            console.log('여행 로그 클릭:', { logId, country });
         }
     }
     
@@ -568,37 +847,112 @@ class CalendarTab {
         return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
     }
     
+    /**
+     * 특정 날짜에 여행 로그가 있는지 확인
+     * @param {Date} date - 확인할 날짜
+     * @returns {boolean} 여행 로그 존재 여부
+     */
     hasTravelLogForDate(date) {
-        // 향후 실제 데이터 연동 시 구현
-        const dateString = date.toISOString().split('T')[0];
-        return this.travelLogs.has(dateString);
+        const dateString = this.formatDateString(date);
+        return this.travelLogs.has(dateString) && this.travelLogs.get(dateString).length > 0;
     }
     
+    /**
+     * 특정 날짜의 여행 로그를 가져옵니다
+     * @param {Date} date - 조회할 날짜
+     * @returns {Array} 해당 날짜의 여행 로그 배열
+     */
     getTravelLogsForDate(date) {
-        // 향후 실제 데이터 연동 시 구현
-        const dateString = date.toISOString().split('T')[0];
-        return this.travelLogs.get(dateString) || [];
+        const dateString = this.formatDateString(date);
+        const logs = this.travelLogs.get(dateString) || [];
+        
+        // 여행 기간 계산 및 정렬
+        return logs.map(log => {
+            const startDate = this.parseLocalDate(log.startDate);
+            const endDate = this.parseLocalDate(log.endDate);
+            const currentDate = new Date(date);
+            
+            // 여행 기간 내에서의 일차 계산 (로컬 시간 기준)
+            const dayOfTrip = Math.ceil((currentDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            
+            return {
+                ...log,
+                dayOfTrip: Math.max(1, dayOfTrip),
+                totalDays: Math.max(1, totalDays),
+                isStartDay: this.formatDateString(currentDate) === this.formatDateString(startDate),
+                isEndDay: this.formatDateString(currentDate) === this.formatDateString(endDate),
+                isMiddleDay: currentDate > startDate && currentDate < endDate
+            };
+        }).sort((a, b) => {
+            // 우선순위: 시작일 > 중간일 > 종료일
+            if (a.isStartDay && !b.isStartDay) return -1;
+            if (!a.isStartDay && b.isStartDay) return 1;
+            if (a.isEndDay && !b.isEndDay) return 1;
+            if (!a.isEndDay && b.isEndDay) return -1;
+            return 0;
+        });
     }
     
+    /**
+     * 국가명으로 국기 이모지를 가져옵니다
+     * @param {string} country - 국가명 (한글 또는 영문)
+     * @returns {string} 국기 이모지
+     */
     getCountryFlag(country) {
-        // 향후 국가별 국기 이모지 매핑 구현
-        const flagMap = {
-            '한국': '🇰🇷',
-            '일본': '🇯🇵',
-            '중국': '🇨🇳',
-            '미국': '🇺🇸',
-            '영국': '🇬🇧',
-            '프랑스': '🇫🇷',
-            '독일': '🇩🇪',
-            '이탈리아': '🇮🇹',
-            '스페인': '🇪🇸',
-            '태국': '🇹🇭',
-            '베트남': '🇻🇳',
-            '싱가포르': '🇸🇬',
-            '호주': '🇦🇺',
-            '캐나다': '🇨🇦'
+        if (!country) return '🌍';
+        
+        // CountriesManager가 초기화되었는지 확인
+        if (this.countriesManager && this.countriesManager.isInitialized) {
+            const countryData = this.countriesManager.getCountryByName(country);
+            if (countryData) {
+                return countryData.flag;
+            }
+        }
+        
+        // 폴백: 기본 매핑
+        const fallbackMap = {
+            '한국': '🇰🇷', '대한민국': '🇰🇷', 'Korea': '🇰🇷', 'South Korea': '🇰🇷',
+            '일본': '🇯🇵', 'Japan': '🇯🇵',
+            '중국': '🇨🇳', 'China': '🇨🇳',
+            '미국': '🇺🇸', 'United States': '🇺🇸', 'USA': '🇺🇸',
+            '영국': '🇬🇧', 'United Kingdom': '🇬🇧', 'UK': '🇬🇧',
+            '프랑스': '🇫🇷', 'France': '🇫🇷',
+            '독일': '🇩🇪', 'Germany': '🇩🇪',
+            '이탈리아': '🇮🇹', 'Italy': '🇮🇹',
+            '스페인': '🇪🇸', 'Spain': '🇪🇸',
+            '태국': '🇹🇭', 'Thailand': '🇹🇭',
+            '베트남': '🇻🇳', 'Vietnam': '🇻🇳',
+            '싱가포르': '🇸🇬', 'Singapore': '🇸🇬',
+            '호주': '🇦🇺', 'Australia': '🇦🇺',
+            '캐나다': '🇨🇦', 'Canada': '🇨🇦'
         };
-        return flagMap[country] || '🌍';
+        
+        return fallbackMap[country] || '🌍';
+    }
+    
+    /**
+     * 국가 정보를 가져옵니다 (국기, 한글명, 영문명 포함)
+     * @param {string} country - 국가명
+     * @returns {Object|null} 국가 정보 객체 또는 null
+     */
+    getCountryInfo(country) {
+        if (!country) return null;
+        
+        if (this.countriesManager && this.countriesManager.isInitialized) {
+            const countryData = this.countriesManager.getCountryByName(country);
+            if (countryData) {
+                return {
+                    code: countryData.code,
+                    nameKo: countryData.nameKo,
+                    nameEn: countryData.nameEn,
+                    flag: countryData.flag,
+                    continent: countryData.continentKo
+                };
+            }
+        }
+        
+        return null;
     }
     
     /**
@@ -613,26 +967,43 @@ class CalendarTab {
      * 탭 정리 메서드 (메모리 관리)
      */
     async cleanup() {
-        // 이벤트 리스너 정리
-        this.eventListeners.forEach(listener => {
-            if (listener.element && listener.event && listener.handler) {
-                listener.element.removeEventListener(listener.event, listener.handler, listener.options);
+        try {
+            // 툴팁 정리
+            this.hideTooltip();
+            if (this.tooltipTimeout) {
+                clearTimeout(this.tooltipTimeout);
+                this.tooltipTimeout = null;
             }
-        });
-        
-        this.eventListeners = [];
-        this.isInitialized = false;
-        
-        // 캐시 정리
-        this.calendarCache.clear();
-        
-        // 메모리 정리
-        this.container = null;
-        this.selectedDate = null;
-        this.travelLogs.clear();
-        this.countries.clear();
-        
-        console.log('캘린더 탭 정리 완료');
+            
+            // 이벤트 리스너 정리
+            this.eventListeners.forEach(listener => {
+                if (listener.element && listener.event && listener.handler) {
+                    listener.element.removeEventListener(listener.event, listener.handler, listener.options);
+                }
+            });
+            
+            this.eventListeners = [];
+            this.isInitialized = false;
+            
+            // 캐시 정리
+            this.calendarCache.clear();
+            this.travelLogs.clear();
+            this.countries.clear();
+            
+            // 렌더링 큐 정리
+            this.renderQueue = [];
+            this.isRendering = false;
+            
+            // 메모리 정리
+            this.container = null;
+            this.selectedDate = null;
+            this.countriesManager = null;
+            this.currentTooltip = null;
+            
+            console.log('캘린더 탭 정리 완료');
+        } catch (error) {
+            console.error('캘린더 탭 정리 중 오류 발생:', error);
+        }
     }
     
     /**
@@ -890,6 +1261,264 @@ class CalendarTab {
                 this.handleNavigation('next');
             }
         }
+    }
+    
+    /**
+     * 툴팁 이벤트 바인딩
+     */
+    bindTooltipEvents() {
+        let currentIndicator = null;
+        let hideTimeout = null;
+        
+        // 마우스 오버 이벤트 (디바운싱 적용)
+        const mouseOverHandler = (e) => {
+            const indicator = e.target.closest('.travel-log-indicator, .travel-log-more');
+            if (!indicator) return;
+            
+            // 같은 요소에 마우스가 들어온 경우 무시
+            if (currentIndicator === indicator) return;
+            
+            // 기존 타이머들 모두 취소
+            if (this.tooltipTimeout) {
+                clearTimeout(this.tooltipTimeout);
+                this.tooltipTimeout = null;
+            }
+            if (hideTimeout) {
+                clearTimeout(hideTimeout);
+                hideTimeout = null;
+            }
+            
+            currentIndicator = indicator;
+            
+            // 디바운싱 적용 (150ms 지연)
+            this.tooltipTimeout = setTimeout(() => {
+                if (currentIndicator === indicator) {
+                    this.showTooltip(indicator, e);
+                }
+            }, 150);
+        };
+        
+        // 마우스 아웃 이벤트
+        const mouseOutHandler = (e) => {
+            const indicator = e.target.closest('.travel-log-indicator, .travel-log-more');
+            if (!indicator) return;
+            
+            // 툴팁 자체로 마우스가 이동한 경우 무시
+            if (e.relatedTarget && e.relatedTarget.closest('.calendar-tooltip')) {
+                return;
+            }
+            
+            // 다른 표시기로 이동한 경우 무시
+            if (e.relatedTarget && e.relatedTarget.closest('.travel-log-indicator, .travel-log-more')) {
+                return;
+            }
+            
+            // 디바운싱 취소
+            if (this.tooltipTimeout) {
+                clearTimeout(this.tooltipTimeout);
+                this.tooltipTimeout = null;
+            }
+            
+            currentIndicator = null;
+            
+            // 툴팁 숨기기 (즉시)
+            this.hideTooltip();
+        };
+        
+        // 포커스 이벤트 (키보드 접근성)
+        const focusHandler = (e) => {
+            const indicator = e.target.closest('.travel-log-indicator, .travel-log-more');
+            if (!indicator) return;
+            
+            // 기존 타이머들 모두 취소
+            if (this.tooltipTimeout) {
+                clearTimeout(this.tooltipTimeout);
+                this.tooltipTimeout = null;
+            }
+            if (hideTimeout) {
+                clearTimeout(hideTimeout);
+                hideTimeout = null;
+            }
+            
+            currentIndicator = indicator;
+            
+            this.tooltipTimeout = setTimeout(() => {
+                if (currentIndicator === indicator) {
+                    this.showTooltip(indicator, e);
+                }
+            }, 200);
+        };
+        
+        // 블러 이벤트
+        const blurHandler = (e) => {
+            // 포커스가 다른 표시기로 이동한 경우 무시
+            if (e.relatedTarget && e.relatedTarget.closest('.travel-log-indicator, .travel-log-more')) {
+                return;
+            }
+            
+            currentIndicator = null;
+            this.hideTooltip();
+        };
+        
+        // 이벤트 리스너 등록
+        this.addEventListener(this.container, 'mouseover', mouseOverHandler);
+        this.addEventListener(this.container, 'mouseout', mouseOutHandler);
+        this.addEventListener(this.container, 'focusin', focusHandler);
+        this.addEventListener(this.container, 'focusout', blurHandler);
+    }
+    
+    /**
+     * 툴팁 표시
+     * @param {HTMLElement} indicator - 툴팁을 표시할 요소
+     * @param {Event} event - 이벤트 객체
+     */
+    showTooltip(indicator, event) {
+        // 기존 툴팁 제거
+        this.hideTooltip();
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'calendar-tooltip';
+        tooltip.setAttribute('role', 'tooltip');
+        tooltip.setAttribute('aria-live', 'polite');
+        
+        // 툴팁 내용 생성
+        const tooltipContent = this.createTooltipContent(indicator);
+        tooltip.innerHTML = tooltipContent;
+        
+        // 툴팁 위치 계산
+        const rect = indicator.getBoundingClientRect();
+        const containerRect = this.container.getBoundingClientRect();
+        
+        // 툴팁 위치 설정
+        tooltip.style.position = 'absolute';
+        tooltip.style.left = `${rect.left - containerRect.left + (rect.width / 2)}px`;
+        tooltip.style.top = `${rect.top - containerRect.top - 10}px`;
+        tooltip.style.transform = 'translateX(-50%)';
+        tooltip.style.zIndex = '1000';
+        
+        // 컨테이너에 추가
+        this.container.appendChild(tooltip);
+        this.currentTooltip = tooltip;
+        
+        // 애니메이션 적용
+        requestAnimationFrame(() => {
+            tooltip.classList.add('show');
+        });
+    }
+    
+    /**
+     * 툴팁 내용 생성
+     * @param {HTMLElement} indicator - 툴팁을 표시할 요소
+     * @returns {string} 툴팁 HTML 내용
+     */
+    createTooltipContent(indicator) {
+        const country = indicator.dataset.country;
+        const logId = indicator.dataset.logId;
+        const dayOfTrip = indicator.dataset.dayOfTrip;
+        const totalDays = indicator.dataset.totalDays;
+        
+        if (indicator.classList.contains('travel-log-more')) {
+            const count = indicator.textContent.replace('+', '');
+            return `
+                <div class="tooltip-content">
+                    <div class="tooltip-title">${count}개 더 보기</div>
+                    <div class="tooltip-description">클릭하여 전체 목록 보기</div>
+                </div>
+            `;
+        }
+        
+        const countryInfo = this.getCountryInfo(country);
+        const countryName = countryInfo ? countryInfo.nameKo : country;
+        const flag = this.getCountryFlag(country);
+        
+        return `
+            <div class="tooltip-content">
+                <div class="tooltip-header">
+                    <span class="tooltip-flag">${flag}</span>
+                    <span class="tooltip-country">${countryName}</span>
+                </div>
+                <div class="tooltip-details">
+                    <div class="tooltip-day">${dayOfTrip}/${totalDays}일차</div>
+                    <div class="tooltip-action">클릭하여 상세 보기</div>
+                </div>
+            </div>
+        `;
+    }
+    
+    /**
+     * 툴팁 숨기기
+     */
+    hideTooltip() {
+        if (this.currentTooltip) {
+            // 애니메이션 없이 즉시 제거
+            if (this.currentTooltip.parentNode) {
+                this.currentTooltip.parentNode.removeChild(this.currentTooltip);
+            }
+            this.currentTooltip = null;
+        }
+    }
+    
+    /**
+     * 성능 최적화: 배치 렌더링
+     * @param {Array} items - 렌더링할 아이템 배열
+     * @param {Function} renderFunction - 렌더링 함수
+     */
+    batchRender(items, renderFunction) {
+        if (this.isRendering) {
+            this.renderQueue.push({ items, renderFunction });
+            return;
+        }
+        
+        this.isRendering = true;
+        const fragment = document.createDocumentFragment();
+        
+        // 배치 처리
+        items.forEach(item => {
+            const element = renderFunction(item);
+            if (element) {
+                fragment.appendChild(element);
+            }
+        });
+        
+        // DOM에 한 번에 추가
+        requestAnimationFrame(() => {
+            this.container.appendChild(fragment);
+            this.isRendering = false;
+            
+            // 대기 중인 렌더링 작업 처리
+            if (this.renderQueue.length > 0) {
+                const next = this.renderQueue.shift();
+                this.batchRender(next.items, next.renderFunction);
+            }
+        });
+    }
+    
+    /**
+     * 메모리 정리 (3개월 이상된 캐시 삭제)
+     */
+    cleanupOldCache() {
+        const threeMonthsAgo = new Date();
+        threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+        
+        // 캘린더 캐시 정리
+        for (const [key, value] of this.calendarCache.entries()) {
+            const [year, month] = key.split('-').map(Number);
+            const cacheDate = new Date(year, month, 1);
+            
+            if (cacheDate < threeMonthsAgo) {
+                this.calendarCache.delete(key);
+            }
+        }
+        
+        // 여행 로그 캐시 정리
+        for (const [dateString, logs] of this.travelLogs.entries()) {
+            const logDate = new Date(dateString);
+            if (logDate < threeMonthsAgo) {
+                this.travelLogs.delete(dateString);
+            }
+        }
+        
+        console.log('오래된 캐시 정리 완료');
     }
     
     /**
