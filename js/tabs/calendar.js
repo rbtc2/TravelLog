@@ -895,8 +895,8 @@ class CalendarTab {
     }
     
     /**
-     * 국가명으로 국기 이모지를 가져옵니다
-     * @param {string} country - 국가명 (한글 또는 영문)
+     * 국가 코드로 국기 이모지를 가져옵니다
+     * @param {string} country - 국가 코드 (예: 'CN', 'FR') 또는 국가명
      * @returns {string} 국기 이모지
      */
     getCountryFlag(country) {
@@ -904,28 +904,34 @@ class CalendarTab {
         
         // CountriesManager가 초기화되었는지 확인
         if (this.countriesManager && this.countriesManager.isInitialized) {
-            const countryData = this.countriesManager.getCountryByName(country);
+            // 먼저 국가 코드로 검색 시도
+            let countryData = this.countriesManager.getCountryByCode(country);
+            
+            // 국가 코드로 찾지 못했으면 국가명으로 검색
+            if (!countryData) {
+                countryData = this.countriesManager.getCountryByName(country);
+            }
+            
             if (countryData) {
                 return countryData.flag;
             }
         }
         
-        // 폴백: 기본 매핑
+        // 폴백: 기본 매핑 (국가 코드와 국가명 모두 포함)
         const fallbackMap = {
-            '한국': '🇰🇷', '대한민국': '🇰🇷', 'Korea': '🇰🇷', 'South Korea': '🇰🇷',
-            '일본': '🇯🇵', 'Japan': '🇯🇵',
-            '중국': '🇨🇳', 'China': '🇨🇳',
-            '미국': '🇺🇸', 'United States': '🇺🇸', 'USA': '🇺🇸',
-            '영국': '🇬🇧', 'United Kingdom': '🇬🇧', 'UK': '🇬🇧',
-            '프랑스': '🇫🇷', 'France': '🇫🇷',
-            '독일': '🇩🇪', 'Germany': '🇩🇪',
-            '이탈리아': '🇮🇹', 'Italy': '🇮🇹',
-            '스페인': '🇪🇸', 'Spain': '🇪🇸',
-            '태국': '🇹🇭', 'Thailand': '🇹🇭',
-            '베트남': '🇻🇳', 'Vietnam': '🇻🇳',
-            '싱가포르': '🇸🇬', 'Singapore': '🇸🇬',
-            '호주': '🇦🇺', 'Australia': '🇦🇺',
-            '캐나다': '🇨🇦', 'Canada': '🇨🇦'
+            // 국가 코드
+            'KR': '🇰🇷', 'JP': '🇯🇵', 'CN': '🇨🇳', 'US': '🇺🇸', 'GB': '🇬🇧',
+            'FR': '🇫🇷', 'DE': '🇩🇪', 'IT': '🇮🇹', 'ES': '🇪🇸', 'TH': '🇹🇭',
+            'VN': '🇻🇳', 'SG': '🇸🇬', 'AU': '🇦🇺', 'CA': '🇨🇦',
+            // 국가명 (한글)
+            '한국': '🇰🇷', '대한민국': '🇰🇷', '일본': '🇯🇵', '중국': '🇨🇳', '미국': '🇺🇸',
+            '영국': '🇬🇧', '프랑스': '🇫🇷', '독일': '🇩🇪', '이탈리아': '🇮🇹', '스페인': '🇪🇸',
+            '태국': '🇹🇭', '베트남': '🇻🇳', '싱가포르': '🇸🇬', '호주': '🇦🇺', '캐나다': '🇨🇦',
+            // 국가명 (영문)
+            'Korea': '🇰🇷', 'South Korea': '🇰🇷', 'Japan': '🇯🇵', 'China': '🇨🇳',
+            'United States': '🇺🇸', 'USA': '🇺🇸', 'United Kingdom': '🇬🇧', 'UK': '🇬🇧',
+            'France': '🇫🇷', 'Germany': '🇩🇪', 'Italy': '🇮🇹', 'Spain': '🇪🇸',
+            'Thailand': '🇹🇭', 'Vietnam': '🇻🇳', 'Singapore': '🇸🇬', 'Australia': '🇦🇺', 'Canada': '🇨🇦'
         };
         
         return fallbackMap[country] || '🌍';
@@ -933,14 +939,21 @@ class CalendarTab {
     
     /**
      * 국가 정보를 가져옵니다 (국기, 한글명, 영문명 포함)
-     * @param {string} country - 국가명
+     * @param {string} country - 국가 코드 또는 국가명
      * @returns {Object|null} 국가 정보 객체 또는 null
      */
     getCountryInfo(country) {
         if (!country) return null;
         
         if (this.countriesManager && this.countriesManager.isInitialized) {
-            const countryData = this.countriesManager.getCountryByName(country);
+            // 먼저 국가 코드로 검색 시도
+            let countryData = this.countriesManager.getCountryByCode(country);
+            
+            // 국가 코드로 찾지 못했으면 국가명으로 검색
+            if (!countryData) {
+                countryData = this.countriesManager.getCountryByName(country);
+            }
+            
             if (countryData) {
                 return {
                     code: countryData.code,
