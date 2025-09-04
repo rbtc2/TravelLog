@@ -12,7 +12,7 @@ export class DemoData {
         return [
             {
                 id: 'demo1',
-                country: '일본',
+                country: 'JP',
                 city: '도쿄',
                 startDate: '2024-03-15',
                 endDate: '2024-03-20',
@@ -24,7 +24,7 @@ export class DemoData {
             },
             {
                 id: 'demo2',
-                country: '프랑스',
+                country: 'FR',
                 city: '파리',
                 startDate: '2024-02-10',
                 endDate: '2024-02-15',
@@ -36,7 +36,7 @@ export class DemoData {
             },
             {
                 id: 'demo3',
-                country: '태국',
+                country: 'TH',
                 city: '방콕',
                 startDate: '2024-01-05',
                 endDate: '2024-01-10',
@@ -45,6 +45,31 @@ export class DemoData {
                 travelStyle: 'family',
                 memo: '가족과 함께한 태국 여행. 따뜻한 날씨와 맛있는 태국 음식이 기억에 남습니다.',
                 createdAt: '2024-01-11T09:15:00.000Z'
+            },
+            {
+                id: 'demo4',
+                country: 'CN',
+                city: '북경',
+                startDate: '2025-09-17',
+                endDate: '2025-09-19',
+                purpose: 'business',
+                rating: '1',
+                travelStyle: 'solo',
+                memo: '',
+                createdAt: '2025-09-04T10:00:00.000Z'
+            },
+            {
+                id: 'demo5',
+                country: 'CN',
+                city: '북경',
+                startDate: '2025-09-05',
+                endDate: '2025-09-06',
+                purpose: 'relocation',
+                rating: '3',
+                travelStyle: 'couple',
+                memo: '북경 오리를 먹었습니다.',
+                createdAt: '2025-09-04T10:00:00.000Z',
+                updatedAt: '2025-09-04T10:00:00.000Z'
             }
         ];
     }
@@ -57,8 +82,8 @@ export class DemoData {
         return [
             ...this.getDefaultLogs(),
             {
-                id: 'demo4',
-                country: '이탈리아',
+                id: 'demo6',
+                country: 'IT',
                 city: '로마',
                 startDate: '2023-12-20',
                 endDate: '2023-12-25',
@@ -69,8 +94,8 @@ export class DemoData {
                 createdAt: '2023-12-26T08:00:00.000Z'
             },
             {
-                id: 'demo5',
-                country: '스페인',
+                id: 'demo7',
+                country: 'ES',
                 city: '바르셀로나',
                 startDate: '2023-11-10',
                 endDate: '2023-11-15',
@@ -85,7 +110,7 @@ export class DemoData {
     
     /**
      * 특정 국가의 데모 데이터를 반환합니다
-     * @param {string} country - 국가명
+     * @param {string} country - 국가 코드 또는 국가명
      * @returns {Array} 해당 국가의 데모 로그 배열
      */
     static getLogsByCountry(country) {

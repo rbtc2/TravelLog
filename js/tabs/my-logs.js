@@ -36,6 +36,7 @@ import { PaginationManager } from '../modules/ui-components/pagination-manager.j
 import { StorageManager } from '../modules/utils/storage-manager.js';
 import { LogService } from '../modules/services/log-service.js';
 import { DemoData } from '../modules/utils/demo-data.js';
+import { countriesManager } from '../data/countries-manager.js';
 
 // 전역에서 접근할 수 있도록 window 객체에 등록 (디버깅용)
 if (typeof window !== 'undefined') {
@@ -69,9 +70,9 @@ class MyLogsTab {
         }
     }
     
-    render(container) {
+    async render(container) {
         this.container = container;
-        this.loadLogs();
+        await this.loadLogs();
         this.renderContent();
         this.bindEvents();
         this.isInitialized = true;
@@ -80,9 +81,9 @@ class MyLogsTab {
     /**
      * 탭이 활성화될 때 데이터를 새로고침합니다
      */
-    refresh() {
+    async refresh() {
         if (this.isInitialized) {
-            this.loadLogs();
+            await this.loadLogs();
             this.renderContent();
             this.bindEvents();
         }
@@ -91,8 +92,13 @@ class MyLogsTab {
     /**
      * 로컬 스토리지에서 일지 데이터를 로드합니다
      */
-    loadLogs() {
+    async loadLogs() {
         try {
+            // CountriesManager 초기화 (국가 표시를 위해 필요)
+            if (!countriesManager.isInitialized) {
+                await countriesManager.initialize();
+            }
+            
             // StorageManager를 사용하여 데이터 로드
             const storedLogs = this.storageManager.loadLogs();
             
@@ -713,6 +719,24 @@ class MyLogsTab {
     }
     
     /**
+     * 국가 코드로 국가 정보를 조회합니다
+     * @param {string} countryCode - 국가 코드 (예: 'CN', 'FR')
+     * @returns {Object|null} 국가 정보 객체 또는 null
+     */
+    getCountryByCode(countryCode) {
+        try {
+            if (!countriesManager.isInitialized) {
+                console.warn('CountriesManager가 초기화되지 않았습니다.');
+                return null;
+            }
+            return countriesManager.getCountryByCode(countryCode);
+        } catch (error) {
+            console.error('국가 정보 조회 중 오류:', error);
+            return null;
+        }
+    }
+
+    /**
      * 개별 일지 아이템을 렌더링합니다
      */
     renderLogItem(log) {
@@ -739,13 +763,32 @@ class MyLogsTab {
         
         const ratingStars = '★'.repeat(parseInt(log.rating)) + '☆'.repeat(5 - parseInt(log.rating));
         
+        // 국가 표시 로직 수정: 국가 코드를 한국어 국가명으로 변환
+        let countryDisplayName = log.country;
+        let countryFlag = '🇰🇷'; // 기본값
+        
+        // 국가 코드인 경우 한국어 국가명으로 변환
+        if (log.country && log.country.length === 2) {
+            try {
+                // CountriesManager를 사용하여 국가 정보 조회
+                const countryInfo = this.getCountryByCode(log.country);
+                if (countryInfo) {
+                    countryDisplayName = countryInfo.nameKo;
+                    countryFlag = countryInfo.flag;
+                }
+            } catch (error) {
+                console.warn('국가 정보 조회 실패:', error);
+                // 폴백: 원본 값 사용
+            }
+        }
+        
         return `
             <div class="log-item clickable" data-log-id="${log.id}">
                 <!-- 1행: 헤더 (국가명 + 기간/목적 칩 + 편집/삭제 아이콘) -->
                 <div class="log-header">
                     <div class="log-header-left">
-                        <div class="log-country">${log.country}</div>
-                        <div class="log-country-badge" title="국가 코드">🇰🇷</div>
+                        <div class="log-country">${countryDisplayName}</div>
+                        <div class="log-country-badge" title="국가 코드">${countryFlag}</div>
                     </div>
                     
                     <div class="log-header-center">
