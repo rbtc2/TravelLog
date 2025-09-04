@@ -68,6 +68,16 @@ class CalendarTab {
                         <span class="nav-label">이전</span>
                     </button>
                     
+                    <button class="nav-btn today-btn" data-action="today">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-label">오늘</span>
+                    </button>
+                    
+                    <button class="nav-btn next-btn" data-action="next">
+                        <span class="nav-label">다음</span>
+                        <span class="nav-icon">▶</span>
+                    </button>
+                    
                     <div class="current-date-display">
                         <button class="date-picker-trigger" id="date-picker-trigger" aria-label="날짜 선택">
                             <h3 class="current-month">${this.getCurrentMonthText()}</h3>
@@ -75,16 +85,6 @@ class CalendarTab {
                             <span class="date-picker-icon">📅</span>
                         </button>
                     </div>
-                    
-                    <button class="nav-btn next-btn" data-action="next">
-                        <span class="nav-label">다음</span>
-                        <span class="nav-icon">▶</span>
-                    </button>
-                    
-                    <button class="nav-btn today-btn" data-action="today">
-                        <span class="nav-icon">🏠</span>
-                        <span class="nav-label">오늘</span>
-                    </button>
                 </div>
                 
                 <!-- 캘린더 그리드 -->
