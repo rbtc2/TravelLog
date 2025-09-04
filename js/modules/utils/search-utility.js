@@ -30,17 +30,12 @@ export class SearchUtility {
      */
     async initializeCountries() {
         try {
-            console.log('SearchUtility: CountriesManager 초기화 시작');
-            
             // CountriesManager 동적 import
             const { countriesManager } = await import('../../data/countries-manager.js');
             this.countriesManager = countriesManager;
-            console.log('SearchUtility: CountriesManager import 완료');
             
             // CountriesManager 초기화
             await this.countriesManager.initialize();
-            console.log('SearchUtility: CountriesManager 초기화 완료');
-            console.log('SearchUtility: CountriesManager 상태:', this.countriesManager.getStatus());
             
             // 국가 매핑 생성
             this.buildCountryMapping();
@@ -73,12 +68,6 @@ export class SearchUtility {
         });
         
         console.log(`SearchUtility: ${this.countryMapping.size}개국 매핑 완료`);
-        console.log('SearchUtility: 매핑 샘플:', {
-            'FR': this.countryMapping.get('FR'),
-            '프랑스': this.countryMapping.get('프랑스'),
-            'CN': this.countryMapping.get('CN'),
-            '중국': this.countryMapping.get('중국')
-        });
     }
 
     /**

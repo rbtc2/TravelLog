@@ -204,8 +204,8 @@ class AppManager {
             // 탭 콘텐츠 렌더링
             this.renderTabContent(module);
             
-            // "내 일지" 탭인 경우 데이터 새로고침
-            if (tabName === 'my-logs' && module.default && typeof module.default.refresh === 'function') {
+            // 모든 탭에 대해 데이터 새로고침 (데모 데이터 생성 포함)
+            if (module.default && typeof module.default.refresh === 'function') {
                 module.default.refresh();
             }
             

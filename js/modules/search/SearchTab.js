@@ -10,6 +10,7 @@ import { SearchResultManager } from './managers/SearchResultManager.js';
 import { SearchUIRenderer } from './renderers/SearchUIRenderer.js';
 import { SearchEventHandler } from './handlers/SearchEventHandler.js';
 import { StorageManager } from '../utils/storage-manager.js';
+import { DemoData } from '../utils/demo-data.js';
 import LogDetailModule from '../log-detail.js';
 
 export class SearchTab {
@@ -76,8 +77,6 @@ export class SearchTab {
      */
     async render(container) {
         try {
-            console.log('🎨 검색 탭 render 시작');
-            
             this.container = container;
             this.uiRenderer.setContainer(container);
             
@@ -98,7 +97,7 @@ export class SearchTab {
             this.bindEvents();
             
             this.isInitialized = true;
-            console.log(`✅ 검색 탭 render 완료 - 상태: ${this.stateManager.getState()}`);
+            console.log(`검색 탭 초기화 완료 - 상태: ${this.stateManager.getState()}`);
             
         } catch (error) {
             console.error('검색 탭 렌더링 오류:', error);
@@ -113,6 +112,13 @@ export class SearchTab {
         if (this.isInitialized) {
             try {
                 this.loadAllLogs();
+                
+                // 데모 데이터가 없으면 생성
+                const allLogs = this.stateManager.getAllLogs();
+                if (allLogs.length === 0) {
+                    this.addDemoData();
+                }
+                
                 this.handleRefresh();
             } catch (error) {
                 console.error('검색 탭 새로고침 오류:', error);
@@ -159,13 +165,32 @@ export class SearchTab {
     }
 
     /**
+     * 데모 데이터를 추가합니다
+     */
+    addDemoData() {
+        try {
+            console.log('🔍 검색 탭: 데모 데이터 생성 시작');
+            // DemoData 모듈을 사용하여 데모 데이터 가져오기
+            const demoLogs = DemoData.getDefaultLogs();
+            
+            // StorageManager를 사용하여 저장
+            this.storageManager.saveLogs(demoLogs);
+            
+            // StateManager에 데이터 설정
+            this.stateManager.setAllLogs(demoLogs);
+            
+            console.log(`🔍 검색 탭: ${demoLogs.length}개의 데모 데이터 생성 완료`);
+        } catch (error) {
+            console.error('검색 탭 데모 데이터 생성 실패:', error);
+        }
+    }
+
+    /**
      * 모든 로그 데이터를 로드합니다
      */
     loadAllLogs() {
         try {
-            console.log('🔍 검색 탭: 로그 데이터 로드 시작');
             const allLogs = this.storageManager.loadLogs();
-            console.log('🔍 StorageManager에서 로드된 데이터:', allLogs);
             this.stateManager.setAllLogs(allLogs);
             console.log(`검색 탭: ${allLogs.length}개의 로그 데이터 로드됨`);
         } catch (error) {

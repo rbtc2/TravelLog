@@ -294,7 +294,6 @@ export class CountriesManager {
                 this.countries = cachedData;
                 this.isInitialized = true;
                 this.lastUpdated = new Date();
-                console.log('CountriesManager: 캐시에서 데이터 로드 완료');
                 return true;
             }
 
@@ -312,7 +311,7 @@ export class CountriesManager {
             // 캐시에 저장
             this.saveToCache(this.countries);
             
-            console.log(`CountriesManager: 초기화 완료 (${this.countries.length}개국 데이터 로드)`);
+            console.log(`CountriesManager: ${this.countries.length}개국 데이터 로드 완료`);
             return true;
 
         } catch (error) {
