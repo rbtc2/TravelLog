@@ -69,8 +69,11 @@ class CalendarTab {
                     </button>
                     
                     <div class="current-date-display">
-                        <h3 class="current-month">${this.getCurrentMonthText()}</h3>
-                        <p class="current-year">${this.currentDate.getFullYear()}</p>
+                        <button class="date-picker-trigger" id="date-picker-trigger" aria-label="날짜 선택">
+                            <h3 class="current-month">${this.getCurrentMonthText()}</h3>
+                            <p class="current-year">${this.currentDate.getFullYear()}</p>
+                            <span class="date-picker-icon">📅</span>
+                        </button>
                     </div>
                     
                     <button class="nav-btn next-btn" data-action="next">
@@ -258,10 +261,19 @@ class CalendarTab {
             this.selectDate(new Date(dateString));
         };
         
+        // 날짜 피커 트리거 이벤트
+        const datePickerHandler = (e) => {
+            const trigger = e.target.closest('.date-picker-trigger');
+            if (!trigger) return;
+            
+            this.showDatePicker();
+        };
+        
         // 이벤트 리스너 등록
         this.addEventListener(this.container, 'click', viewToggleHandler);
         this.addEventListener(this.container, 'click', navigationHandler);
         this.addEventListener(this.container, 'click', dayClickHandler);
+        this.addEventListener(this.container, 'click', datePickerHandler);
         
         // 키보드 네비게이션 (접근성 향상)
         const keyboardHandler = (e) => {
@@ -276,6 +288,9 @@ class CalendarTab {
         };
         
         this.addEventListener(window, 'resize', resizeHandler);
+        
+        // 스와이프 제스처 이벤트
+        this.bindSwipeGestures();
     }
     
     /**
@@ -423,6 +438,13 @@ class CalendarTab {
     handleKeyboardNavigation(e) {
         if (!this.isInitialized) return;
         
+        // 모달이 열려있으면 모달 내부 키보드 네비게이션 처리
+        const datePickerModal = document.querySelector('.date-picker-modal');
+        if (datePickerModal && datePickerModal.classList.contains('show')) {
+            this.handleModalKeyboardNavigation(e);
+            return;
+        }
+        
         switch (e.key) {
             case 'ArrowLeft':
                 e.preventDefault();
@@ -439,6 +461,76 @@ class CalendarTab {
             case 'Escape':
                 this.selectedDate = null;
                 this.refreshCalendar();
+                break;
+            case 'Enter':
+            case ' ':
+                // 날짜 피커 트리거에 포커스가 있을 때
+                if (document.activeElement && document.activeElement.classList.contains('date-picker-trigger')) {
+                    e.preventDefault();
+                    this.showDatePicker();
+                }
+                break;
+        }
+    }
+    
+    /**
+     * 모달 내부 키보드 네비게이션 처리
+     * @param {KeyboardEvent} e - 키보드 이벤트
+     */
+    handleModalKeyboardNavigation(e) {
+        const modal = document.querySelector('.date-picker-modal');
+        if (!modal) return;
+        
+        const focusableElements = modal.querySelectorAll(
+            'button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        
+        switch (e.key) {
+            case 'Tab':
+                if (e.shiftKey) {
+                    // Shift + Tab: 역방향 탭
+                    if (document.activeElement === firstElement) {
+                        e.preventDefault();
+                        lastElement.focus();
+                    }
+                } else {
+                    // Tab: 순방향 탭
+                    if (document.activeElement === lastElement) {
+                        e.preventDefault();
+                        firstElement.focus();
+                    }
+                }
+                break;
+                
+            case 'Escape':
+                e.preventDefault();
+                const closeBtn = modal.querySelector('#date-picker-close');
+                if (closeBtn) closeBtn.click();
+                break;
+                
+            case 'Enter':
+            case ' ':
+                // 현재 포커스된 요소가 버튼이면 클릭
+                if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
+                    e.preventDefault();
+                    document.activeElement.click();
+                }
+                break;
+                
+            case 'ArrowLeft':
+                // 연도 이전 버튼
+                e.preventDefault();
+                const yearPrevBtn = modal.querySelector('#year-prev');
+                if (yearPrevBtn) yearPrevBtn.click();
+                break;
+                
+            case 'ArrowRight':
+                // 연도 다음 버튼
+                e.preventDefault();
+                const yearNextBtn = modal.querySelector('#year-next');
+                if (yearNextBtn) yearNextBtn.click();
                 break;
         }
     }
@@ -512,9 +604,9 @@ class CalendarTab {
     /**
      * 이벤트 리스너 관리 (메모리 누수 방지)
      */
-    addEventListener(element, event, handler) {
-        element.addEventListener(event, handler);
-        this.eventListeners.push({ element, event, handler });
+    addEventListener(element, event, handler, options = {}) {
+        element.addEventListener(event, handler, options);
+        this.eventListeners.push({ element, event, handler, options });
     }
     
     /**
@@ -524,7 +616,7 @@ class CalendarTab {
         // 이벤트 리스너 정리
         this.eventListeners.forEach(listener => {
             if (listener.element && listener.event && listener.handler) {
-                listener.element.removeEventListener(listener.event, listener.handler);
+                listener.element.removeEventListener(listener.event, listener.handler, listener.options);
             }
         });
         
@@ -541,6 +633,263 @@ class CalendarTab {
         this.countries.clear();
         
         console.log('캘린더 탭 정리 완료');
+    }
+    
+    /**
+     * 날짜 피커 모달 표시
+     */
+    showDatePicker() {
+        // 기존 모달이 있으면 제거
+        const existingModal = document.querySelector('.date-picker-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // 현재 포커스된 요소 저장 (접근성)
+        this.previousFocusedElement = document.activeElement;
+        
+        const modal = document.createElement('div');
+        modal.className = 'date-picker-modal';
+        modal.innerHTML = this.renderDatePickerModal();
+        
+        document.body.appendChild(modal);
+        
+        // 모달 이벤트 바인딩
+        this.bindDatePickerEvents(modal);
+        
+        // 애니메이션을 위한 지연
+        setTimeout(() => {
+            modal.classList.add('show');
+            // 첫 번째 포커스 가능한 요소에 포커스
+            const firstFocusable = modal.querySelector('button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+            if (firstFocusable) {
+                firstFocusable.focus();
+            }
+        }, 10);
+        
+        console.log('날짜 피커 모달 표시');
+    }
+    
+    /**
+     * 날짜 피커 모달 HTML 렌더링
+     */
+    renderDatePickerModal() {
+        const currentYear = this.currentDate.getFullYear();
+        const currentMonth = this.currentDate.getMonth();
+        
+        return `
+            <div class="modal-overlay" id="date-picker-overlay" aria-hidden="true"></div>
+            <div class="modal-content date-picker-content" 
+                 role="dialog" 
+                 aria-modal="true" 
+                 aria-labelledby="date-picker-title"
+                 aria-describedby="date-picker-description">
+                <div class="modal-header">
+                    <h3 id="date-picker-title">📅 날짜 선택</h3>
+                    <button class="modal-close-btn" id="date-picker-close" aria-label="날짜 선택 모달 닫기">×</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="date-picker-description" class="sr-only">
+                        연도와 월을 선택하여 캘린더를 이동할 수 있습니다. 
+                        화살표 키로 연도를 변경하고, 월 버튼을 클릭하여 월을 선택하세요.
+                    </div>
+                    
+                    <!-- 연도 선택 -->
+                    <div class="year-selector" role="group" aria-label="연도 선택">
+                        <button class="year-nav-btn" id="year-prev" aria-label="이전 연도로 이동">◀</button>
+                        <h4 class="current-year-display" id="current-year-display" aria-live="polite">${currentYear}</h4>
+                        <button class="year-nav-btn" id="year-next" aria-label="다음 연도로 이동">▶</button>
+                    </div>
+                    
+                    <!-- 월 선택 그리드 -->
+                    <div class="month-grid" id="month-grid" role="grid" aria-label="월 선택">
+                        ${this.renderMonthGrid(currentYear, currentMonth)}
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="modal-btn cancel-btn" id="date-picker-cancel">취소</button>
+                    <button class="modal-btn confirm-btn" id="date-picker-confirm">확인</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    /**
+     * 월 선택 그리드 렌더링
+     */
+    renderMonthGrid(year, selectedMonth) {
+        const months = [
+            '1월', '2월', '3월', '4월', '5월', '6월',
+            '7월', '8월', '9월', '10월', '11월', '12월'
+        ];
+        
+        let gridHTML = '';
+        for (let i = 0; i < 12; i++) {
+            const isSelected = i === selectedMonth;
+            gridHTML += `
+                <button class="month-btn ${isSelected ? 'selected' : ''}" 
+                        data-month="${i}" 
+                        data-year="${year}"
+                        role="gridcell"
+                        aria-selected="${isSelected}"
+                        aria-label="${months[i]} ${isSelected ? '선택됨' : '선택'}"
+                        tabindex="${isSelected ? '0' : '-1'}">
+                    ${months[i]}
+                </button>
+            `;
+        }
+        
+        return gridHTML;
+    }
+    
+    /**
+     * 날짜 피커 모달 이벤트 바인딩
+     */
+    bindDatePickerEvents(modal) {
+        const overlay = modal.querySelector('#date-picker-overlay');
+        const closeBtn = modal.querySelector('#date-picker-close');
+        const cancelBtn = modal.querySelector('#date-picker-cancel');
+        const confirmBtn = modal.querySelector('#date-picker-confirm');
+        const yearPrevBtn = modal.querySelector('#year-prev');
+        const yearNextBtn = modal.querySelector('#year-next');
+        const yearDisplay = modal.querySelector('#current-year-display');
+        const monthGrid = modal.querySelector('#month-grid');
+        
+        let selectedYear = this.currentDate.getFullYear();
+        let selectedMonth = this.currentDate.getMonth();
+        
+        const closeModal = () => {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.remove();
+                // 원래 포커스된 요소로 돌아가기 (접근성)
+                if (this.previousFocusedElement) {
+                    this.previousFocusedElement.focus();
+                }
+            }, 300);
+        };
+        
+        const updateYearDisplay = () => {
+            yearDisplay.textContent = selectedYear;
+            // 월 그리드 업데이트
+            monthGrid.innerHTML = this.renderMonthGrid(selectedYear, selectedMonth);
+            this.bindMonthSelection(modal, selectedYear);
+        };
+        
+        const bindMonthSelection = (modal, year) => {
+            const monthBtns = modal.querySelectorAll('.month-btn');
+            monthBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 기존 선택 해제
+                    monthBtns.forEach(b => {
+                        b.classList.remove('selected');
+                        b.setAttribute('aria-selected', 'false');
+                        b.setAttribute('tabindex', '-1');
+                        b.setAttribute('aria-label', b.textContent + ' 선택');
+                    });
+                    // 새 선택 적용
+                    btn.classList.add('selected');
+                    btn.setAttribute('aria-selected', 'true');
+                    btn.setAttribute('tabindex', '0');
+                    btn.setAttribute('aria-label', btn.textContent + ' 선택됨');
+                    selectedMonth = parseInt(btn.dataset.month);
+                });
+            });
+        };
+        
+        // 이벤트 리스너 등록
+        overlay.addEventListener('click', closeModal);
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        
+        confirmBtn.addEventListener('click', () => {
+            this.navigateToDate(selectedYear, selectedMonth);
+            closeModal();
+        });
+        
+        yearPrevBtn.addEventListener('click', () => {
+            selectedYear = Math.max(2020, selectedYear - 1);
+            updateYearDisplay();
+        });
+        
+        yearNextBtn.addEventListener('click', () => {
+            selectedYear = Math.min(2030, selectedYear + 1);
+            updateYearDisplay();
+        });
+        
+        // ESC 키로 모달 닫기
+        const handleEscKey = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        };
+        document.addEventListener('keydown', handleEscKey);
+        
+        // 모달이 닫힐 때 이벤트 리스너 정리
+        modal.addEventListener('close', () => {
+            document.removeEventListener('keydown', handleEscKey);
+        });
+        
+        // 초기 월 선택 바인딩
+        this.bindMonthSelection = bindMonthSelection;
+        bindMonthSelection(modal, selectedYear);
+    }
+    
+    /**
+     * 특정 연도/월로 이동
+     */
+    navigateToDate(year, month) {
+        this.currentDate = new Date(year, month, 1);
+        this.refreshCalendar();
+        console.log(`날짜 이동: ${year}년 ${month + 1}월`);
+    }
+    
+    /**
+     * 스와이프 제스처 바인딩
+     */
+    bindSwipeGestures() {
+        let startX = 0;
+        let startY = 0;
+        let endX = 0;
+        let endY = 0;
+        
+        const handleTouchStart = (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        };
+        
+        const handleTouchEnd = (e) => {
+            endX = e.changedTouches[0].clientX;
+            endY = e.changedTouches[0].clientY;
+            
+            this.handleSwipeGesture(startX, startY, endX, endY);
+        };
+        
+        // 터치 이벤트 리스너 (passive로 성능 최적화)
+        this.addEventListener(this.container, 'touchstart', handleTouchStart, { passive: true });
+        this.addEventListener(this.container, 'touchend', handleTouchEnd, { passive: true });
+    }
+    
+    /**
+     * 스와이프 제스처 처리
+     */
+    handleSwipeGesture(startX, startY, endX, endY) {
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+        const minSwipeDistance = 50;
+        
+        // 수평 스와이프가 수직 스와이프보다 클 때만 처리
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+            if (deltaX > 0) {
+                // 오른쪽 스와이프 - 이전 달
+                this.handleNavigation('prev');
+            } else {
+                // 왼쪽 스와이프 - 다음 달
+                this.handleNavigation('next');
+            }
+        }
     }
     
     /**
