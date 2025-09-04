@@ -582,8 +582,8 @@
         font-size: 13px;
     }
     
-    .nav-label {
-        display: none; /* 모바일에서는 아이콘만 표시 */
+    .calendar-navigation .nav-label {
+        display: inline !important; /* 모바일에서도 텍스트 표시 */
     }
     
     /* 모바일에서 버튼 순서 재배치 */
@@ -665,6 +665,10 @@
     .view-btn {
         padding: 8px 12px;
         font-size: 12px;
+    }
+    
+    .calendar-navigation .nav-label {
+        display: none !important; /* 매우 작은 화면에서만 아이콘만 표시 */
     }
     
     .view-icon {
