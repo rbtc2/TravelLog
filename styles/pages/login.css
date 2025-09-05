@@ -41,6 +41,37 @@
     font-size: var(--font-base);
 }
 
+/* 앱 정보 스타일 */
+.app-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--gray-200);
+}
+
+.app-version {
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    color: var(--primary-color);
+}
+
+.app-build {
+    font-size: var(--font-xs);
+    color: var(--text-muted);
+    font-family: 'Courier New', monospace;
+}
+
+.app-developer {
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    font-weight: var(--font-medium);
+}
+
 .login-form {
     text-align: left;
 }

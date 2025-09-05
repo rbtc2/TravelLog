@@ -185,15 +185,15 @@ class SettingsView {
                     <div class="info-content">
                         <div class="info-item">
                             <span class="info-label">앱 버전:</span>
-                            <span class="info-value">1.0.0</span>
+                            <span class="info-value">DEMO</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">빌드 번호:</span>
-                            <span class="info-value">20241201</span>
+                            <span class="info-value">20250901</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">개발사:</span>
-                            <span class="info-value">TravelLog Team</span>
+                            <span class="info-value">REDIPX</span>
                         </div>
                     </div>
                 </div>

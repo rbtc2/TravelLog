@@ -3,6 +3,8 @@
  * 로그인 화면과 탭 관리 및 동적 모듈 로딩을 담당
  */
 
+import { AppInfo } from './config/app-config.js';
+
 // 모바일 환경 최적화
 (function() {
     'use strict';
@@ -135,7 +137,42 @@ class AppManager {
     
     init() {
         this.bindEvents();
+        this.updateAppInfo();
         this.showLoginScreen();
+    }
+    
+    /**
+     * 앱 정보를 업데이트합니다
+     */
+    updateAppInfo() {
+        try {
+            const versionInfo = AppInfo.getVersionInfo();
+            const appInfo = AppInfo.getAppInfo();
+            
+            // 페이지 제목 업데이트
+            document.title = appInfo.title;
+            
+            // 앱 정보 요소들 업데이트
+            const versionElement = document.querySelector('.app-version');
+            const buildElement = document.querySelector('.app-build');
+            const developerElement = document.querySelector('.app-developer');
+            
+            if (versionElement) {
+                versionElement.textContent = `v${versionInfo.version}`;
+            }
+            
+            if (buildElement) {
+                buildElement.textContent = `Build ${versionInfo.buildNumber}`;
+            }
+            
+            if (developerElement) {
+                developerElement.textContent = `by ${versionInfo.developer}`;
+            }
+            
+            console.log('앱 정보가 업데이트되었습니다:', AppInfo.getAppInfoString());
+        } catch (error) {
+            console.error('앱 정보 업데이트 실패:', error);
+        }
     }
     
     bindEvents() {
