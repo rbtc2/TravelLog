@@ -219,6 +219,93 @@ class MyLogsController {
     }
 
     /**
+     * 기본 통계를 계산합니다
+     * @returns {Object} 기본 통계 정보
+     */
+    getBasicStats() {
+        try {
+            const logs = this.getAllLogs();
+            
+            if (!logs || logs.length === 0) {
+                return {
+                    visitedCountries: 0,
+                    visitedCities: 0,
+                    totalTravelDays: 0,
+                    averageRating: 0,
+                    hasData: false
+                };
+            }
+
+            // 방문 국가 수 계산
+            const uniqueCountries = new Set();
+            const uniqueCities = new Set();
+            let totalTravelDays = 0;
+            let totalRating = 0;
+            let validRatingCount = 0;
+
+            logs.forEach(log => {
+                // 국가와 도시 수집
+                if (log.country) {
+                    uniqueCountries.add(log.country.trim());
+                }
+                if (log.city) {
+                    uniqueCities.add(log.city.trim());
+                }
+
+                // 여행 일수 계산
+                if (log.startDate && log.endDate) {
+                    try {
+                        const startDate = new Date(log.startDate);
+                        const endDate = new Date(log.endDate);
+                        
+                        // 유효한 날짜인지 확인
+                        if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+                            const timeDiff = endDate.getTime() - startDate.getTime();
+                            const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+                            
+                            // 음수가 아닌 유효한 일수만 추가
+                            if (daysDiff > 0) {
+                                totalTravelDays += daysDiff;
+                            }
+                        }
+                    } catch (dateError) {
+                        console.warn('날짜 계산 오류:', dateError, log);
+                    }
+                }
+
+                // 평점 계산
+                if (log.rating && !isNaN(parseFloat(log.rating))) {
+                    const rating = parseFloat(log.rating);
+                    if (rating >= 0 && rating <= 5) {
+                        totalRating += rating;
+                        validRatingCount++;
+                    }
+                }
+            });
+
+            const averageRating = validRatingCount > 0 ? totalRating / validRatingCount : 0;
+
+            return {
+                visitedCountries: uniqueCountries.size,
+                visitedCities: uniqueCities.size,
+                totalTravelDays: totalTravelDays,
+                averageRating: Math.round(averageRating * 10) / 10,
+                hasData: true
+            };
+
+        } catch (error) {
+            console.error('기본 통계 계산 중 오류:', error);
+            return {
+                visitedCountries: 0,
+                visitedCities: 0,
+                totalTravelDays: 0,
+                averageRating: 0,
+                hasData: false
+            };
+        }
+    }
+
+    /**
      * 컨트롤러 정리
      */
     cleanup() {

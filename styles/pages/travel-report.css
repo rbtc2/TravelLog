@@ -1,5 +1,113 @@
 /* ===== 트래블 레포트 페이지 스타일 ===== */
 
+/* 기본 통계 섹션 스타일 */
+.my-logs-container .hub-section.basic-stats-section {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    margin: var(--spacing-md) 0;
+    box-shadow: 0 4px 20px rgba(240, 147, 251, 0.3);
+}
+
+.my-logs-container .hub-section.basic-stats-section .section-header {
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.my-logs-container .hub-section.basic-stats-section .section-title {
+    color: white !important;
+    font-size: var(--font-xl);
+    font-weight: var(--font-bold);
+    margin-bottom: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* 통계 그리드 스타일 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+/* 통계 카드 스타일 */
+.stats-card {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-normal);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stats-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 1);
+}
+
+.stats-card.error {
+    background: rgba(255, 99, 99, 0.95);
+    color: white;
+    border-color: rgba(255, 99, 99, 0.3);
+}
+
+.stats-card.error:hover {
+    background: rgba(255, 99, 99, 1);
+}
+
+/* 통계 아이콘 스타일 */
+.stats-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+    display: block;
+    line-height: 1;
+}
+
+/* 통계 내용 스타일 */
+.stats-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.stats-value {
+    font-size: var(--font-xl);
+    font-weight: var(--font-bold);
+    color: #333;
+    line-height: 1.2;
+}
+
+.stats-card.error .stats-value {
+    color: white;
+}
+
+.stats-label {
+    font-size: var(--font-sm);
+    color: #666;
+    font-weight: var(--font-medium);
+    line-height: 1.2;
+}
+
+.stats-card.error .stats-label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* ===== 트래블 레포트 페이지 반응형 스타일 ===== */
+
 /* 트래블 레포트 섹션 스타일 */
 .my-logs-container .hub-section.travel-report-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -83,6 +191,35 @@
 
 /* ===== 트래블 레포트 페이지 반응형 스타일 ===== */
 @media (max-width: 768px) {
+    /* 기본 통계 섹션 모바일 스타일 */
+    .my-logs-container .hub-section.basic-stats-section {
+        padding: var(--spacing-md);
+        margin: var(--spacing-sm) 0;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .stats-card {
+        padding: var(--spacing-md);
+        min-height: 80px;
+    }
+    
+    .stats-icon {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .stats-value {
+        font-size: var(--font-lg);
+    }
+    
+    .stats-label {
+        font-size: var(--font-xs);
+    }
+    
     .my-logs-container .hub-section.travel-report-section {
         padding: var(--spacing-md) var(--spacing-md) var(--spacing-lg) var(--spacing-md);
         margin: var(--spacing-sm) 0;
@@ -114,6 +251,35 @@
 }
 
 @media (min-width: 1024px) {
+    /* 기본 통계 섹션 데스크톱 스타일 */
+    .my-logs-container .hub-section.basic-stats-section {
+        padding: var(--spacing-xl);
+        margin: var(--spacing-lg) 0;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-lg);
+    }
+    
+    .stats-card {
+        padding: var(--spacing-xl);
+        min-height: 120px;
+    }
+    
+    .stats-icon {
+        font-size: 2.5rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .stats-value {
+        font-size: var(--font-2xl);
+    }
+    
+    .stats-label {
+        font-size: var(--font-base);
+    }
+    
     .my-logs-container .hub-section.travel-report-section {
         padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-2xl) var(--spacing-lg);
         max-height: 240px; /* 데스크톱에서 여유 있는 높이 */

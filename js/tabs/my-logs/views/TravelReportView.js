@@ -26,6 +26,8 @@ class TravelReportView {
         this.container = container;
         this.container.innerHTML = this.getTravelReportHTML();
         console.log('TravelReportView: HTML 렌더링 완료');
+        this.renderBasicStats();
+        console.log('TravelReportView: 기본 통계 렌더링 완료');
         this.bindEvents();
         console.log('TravelReportView: 이벤트 바인딩 완료');
     }
@@ -44,6 +46,16 @@ class TravelReportView {
                             <h1 class="my-logs-title">📊 트래블 레포트</h1>
                             <p class="my-logs-subtitle">여행 데이터 분석 및 인사이트</p>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- 기본 통계 카드 -->
+                <div class="hub-section basic-stats-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📊 기본 통계</h2>
+                    </div>
+                    <div class="stats-grid" id="basic-stats-grid">
+                        <!-- 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
                     </div>
                 </div>
                 
@@ -207,6 +219,116 @@ class TravelReportView {
                             <div class="insight-text">가을철 여행 빈도가 점점 증가하고 있어요</div>
                         </div>
                     </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 기본 통계 카드를 렌더링합니다
+     */
+    renderBasicStats() {
+        try {
+            const statsGrid = document.getElementById('basic-stats-grid');
+            if (!statsGrid) {
+                console.warn('기본 통계 그리드를 찾을 수 없습니다.');
+                return;
+            }
+
+            const stats = this.controller.getBasicStats();
+            statsGrid.innerHTML = this.getBasicStatsHTML(stats);
+            
+        } catch (error) {
+            console.error('기본 통계 렌더링 중 오류:', error);
+            const statsGrid = document.getElementById('basic-stats-grid');
+            if (statsGrid) {
+                statsGrid.innerHTML = this.getBasicStatsErrorHTML();
+            }
+        }
+    }
+
+    /**
+     * 기본 통계 HTML을 생성합니다
+     * @param {Object} stats - 통계 데이터
+     * @returns {string} HTML 문자열
+     */
+    getBasicStatsHTML(stats) {
+        if (!stats.hasData) {
+            return `
+                <div class="stats-card">
+                    <div class="stats-icon">🌍</div>
+                    <div class="stats-content">
+                        <div class="stats-value">0개국</div>
+                        <div class="stats-label">방문 국가</div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">🏙️</div>
+                    <div class="stats-content">
+                        <div class="stats-value">0개 도시</div>
+                        <div class="stats-label">방문 도시</div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">📅</div>
+                    <div class="stats-content">
+                        <div class="stats-value">0일</div>
+                        <div class="stats-label">총 여행일</div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">⭐</div>
+                    <div class="stats-content">
+                        <div class="stats-value">-/5.0</div>
+                        <div class="stats-label">평균 만족도</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="stats-card">
+                <div class="stats-icon">🌍</div>
+                <div class="stats-content">
+                    <div class="stats-value">${stats.visitedCountries}개국</div>
+                    <div class="stats-label">방문 국가</div>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon">🏙️</div>
+                <div class="stats-content">
+                    <div class="stats-value">${stats.visitedCities}개 도시</div>
+                    <div class="stats-label">방문 도시</div>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon">📅</div>
+                <div class="stats-content">
+                    <div class="stats-value">${stats.totalTravelDays}일</div>
+                    <div class="stats-label">총 여행일</div>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-icon">⭐</div>
+                <div class="stats-content">
+                    <div class="stats-value">${stats.averageRating}/5.0</div>
+                    <div class="stats-label">평균 만족도</div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 기본 통계 오류 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getBasicStatsErrorHTML() {
+        return `
+            <div class="stats-card error">
+                <div class="stats-icon">⚠️</div>
+                <div class="stats-content">
+                    <div class="stats-value">오류</div>
+                    <div class="stats-label">데이터를 불러올 수 없습니다</div>
                 </div>
             </div>
         `;
