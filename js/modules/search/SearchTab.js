@@ -574,6 +574,8 @@ export class SearchTab {
     switchFilterTab(targetTab) {
         if (!targetTab || typeof targetTab !== 'string') {
             console.error('switchFilterTab: 유효하지 않은 targetTab:', targetTab);
+            console.error('targetTab 타입:', typeof targetTab);
+            console.error('targetTab 값:', targetTab);
             return;
         }
         
@@ -737,12 +739,22 @@ export class SearchTab {
             activeFilters.push(`목적: ${filters.purpose}`);
         }
         
-        if (filters.travelStyle && filters.travelStyle !== '') {
-            activeFilters.push(`동행: ${filters.travelStyle}`);
+        if (filters.travelStyle && filters.travelStyle.length > 0) {
+            const styleNames = filters.travelStyle.map(style => {
+                const styleMap = {
+                    'alone': '혼자',
+                    'family': '가족과',
+                    'couple': '연인과',
+                    'friends': '친구와',
+                    'colleagues': '동료와'
+                };
+                return styleMap[style] || style;
+            });
+            activeFilters.push(`동행: ${styleNames.join(', ')}`);
         }
         
         if (filters.rating && filters.rating > 0) {
-            activeFilters.push(`별점: ${filters.rating}점 이상`);
+            activeFilters.push(`별점: ${filters.rating}점`);
         }
         
         if (filters.startDate && filters.endDate) {

@@ -98,7 +98,7 @@ export const DEFAULT_FILTERS = {
     continent: [],
     purpose: '',
     memo: '',
-    travelStyle: '',
+    travelStyle: [],
     rating: '',
     dateRange: {
         start: '',

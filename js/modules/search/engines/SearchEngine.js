@@ -399,7 +399,13 @@ export class SearchEngine {
         if (!filters) return results;
 
         return results.filter(result => {
-            const log = result.log;
+            const log = result?.log || result; // 필터 검색 결과는 직접 log 객체일 수 있음
+            
+            // 로그 객체 유효성 검사
+            if (!log || typeof log !== 'object') {
+                console.warn('잘못된 로그 객체:', result);
+                return false;
+            }
 
             // 대륙 필터
             if (filters.continent && filters.continent.length > 0) {
@@ -409,26 +415,28 @@ export class SearchEngine {
 
             // 목적 필터
             if (filters.purpose && filters.purpose !== '') {
-                if (log.purpose !== filters.purpose) return false;
+                if (!log?.purpose || log.purpose !== filters.purpose) return false;
             }
 
-            // 여행 스타일 필터
-            if (filters.travelStyle && filters.travelStyle !== '') {
-                if (log.travelStyle !== filters.travelStyle) return false;
+            // 여행 스타일 필터 (여러 개 선택 가능 - OR 조건)
+            if (filters.travelStyle && filters.travelStyle.length > 0) {
+                if (!log?.travelStyle || !filters.travelStyle.includes(log.travelStyle)) return false;
             }
 
-            // 별점 필터
+            // 별점 필터 (정확한 별점만 필터링)
             if (filters.rating && filters.rating !== '') {
-                const rating = parseFloat(log.rating) || 0;
-                const minRating = parseFloat(filters.rating);
-                if (rating < minRating) return false;
+                const rating = parseFloat(log?.rating) || 0;
+                const targetRating = parseFloat(filters.rating);
+                if (rating !== targetRating) return false;
             }
 
             // 날짜 범위 필터
             if (filters.dateRange) {
                 const { start, end } = filters.dateRange;
                 if (start || end) {
-                    const logDate = new Date(log.startDate || log.date);
+                    const logDate = new Date(log?.startDate || log?.date);
+                    if (isNaN(logDate.getTime())) return false; // 유효하지 않은 날짜
+                    
                     if (start) {
                         const startDate = new Date(start);
                         if (logDate < startDate) return false;

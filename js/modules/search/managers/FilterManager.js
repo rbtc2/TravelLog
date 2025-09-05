@@ -49,10 +49,14 @@ export class FilterManager {
 
     /**
      * 여행 스타일 필터를 설정합니다
-     * @param {string} travelStyle - 선택된 여행 스타일
+     * @param {Array|string} travelStyles - 선택된 여행 스타일들 (배열 또는 문자열)
      */
-    setTravelStyleFilter(travelStyle) {
-        this.filters.travelStyle = travelStyle || '';
+    setTravelStyleFilter(travelStyles) {
+        if (Array.isArray(travelStyles)) {
+            this.filters.travelStyle = travelStyles;
+        } else {
+            this.filters.travelStyle = travelStyles ? [travelStyles] : [];
+        }
     }
 
     /**
@@ -89,7 +93,7 @@ export class FilterManager {
         return (
             this.filters.continent.length > 0 ||
             this.filters.purpose !== '' ||
-            this.filters.travelStyle !== '' ||
+            this.filters.travelStyle.length > 0 ||
             this.filters.rating !== '' ||
             this.filters.dateRange.start !== '' ||
             this.filters.dateRange.end !== ''
@@ -126,9 +130,10 @@ export class FilterManager {
             const purposeCheckbox = container.querySelector('input[name="purpose"]:checked');
             this.setPurposeFilter(purposeCheckbox ? purposeCheckbox.value : '');
 
-            // 여행 스타일 필터
-            const styleCheckbox = container.querySelector('input[name="travel-style"]:checked');
-            this.setTravelStyleFilter(styleCheckbox ? styleCheckbox.value : '');
+            // 여행 스타일 필터 (체크박스 - 여러 개 선택 가능)
+            const styleCheckboxes = container.querySelectorAll('input[name="travel-style"]:checked');
+            const selectedStyles = Array.from(styleCheckboxes).map(cb => cb.value);
+            this.setTravelStyleFilter(selectedStyles);
 
             // 별점 필터
             const ratingStars = container.querySelectorAll('#search-star-rating .star.filled');
@@ -163,10 +168,10 @@ export class FilterManager {
                 cb.checked = cb.value === this.filters.purpose;
             });
 
-            // 여행 스타일 필터 적용
+            // 여행 스타일 필터 적용 (체크박스 - 여러 개 선택 가능)
             const styleCheckboxes = container.querySelectorAll('input[name="travel-style"]');
             styleCheckboxes.forEach(cb => {
-                cb.checked = cb.value === this.filters.travelStyle;
+                cb.checked = this.filters.travelStyle.includes(cb.value);
             });
 
             // 별점 필터 적용

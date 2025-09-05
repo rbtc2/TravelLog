@@ -434,7 +434,14 @@ export class SearchEventHandler {
             // 필터 탭 전환 이벤트
             const filterTabs = document.querySelectorAll('.filter-tab');
             filterTabs.forEach(tab => {
-                this.addEventListener(tab, 'click', callbacks.switchFilterTab.bind(callbacks));
+                this.addEventListener(tab, 'click', (event) => {
+                    const targetTab = event.currentTarget.dataset.tab;
+                    if (targetTab) {
+                        callbacks.switchFilterTab(targetTab);
+                    } else {
+                        console.error('필터 탭에 data-tab 속성이 없습니다:', event.currentTarget);
+                    }
+                });
             });
             
             console.log('🔗 필터 탭 이벤트 바인딩 완료');
