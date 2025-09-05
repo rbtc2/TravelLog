@@ -1,0 +1,436 @@
+---
+globs: *.css,*.html
+description: TravelLog CSS architecture and styling guidelines
+---
+
+# 🎨 TravelLog Styling Rules
+
+## 📋 CSS Architecture Overview
+TravelLog uses a modular CSS architecture with clear separation of concerns, design token system, and mobile-first responsive design.
+
+## 🏗️ CSS File Structure
+
+### **Import Order** (in [main.css](mdc:styles/main.css))
+```css
+/* 1. Base styles */
+@import url('./base/variables.css');
+@import url('./base/reset.css');
+@import url('./base/typography.css');
+@import url('./base/forms.css');
+@import url('./base/buttons.css');
+@import url('./base/messages.css');
+@import url('./base/layout.css');
+
+/* 2. Utility styles */
+@import url('./utilities/animations.css');
+@import url('./utilities/accessibility.css');
+@import url('./utilities/dark-mode.css');
+@import url('./utilities/responsive.css');
+@import url('./utilities/navigation-utils.css');
+@import url('./utilities/scroll-optimization.css');
+
+/* 3. Component styles */
+@import url('./components/buttons.css');
+@import url('./components/forms.css');
+@import url('./components/modals.css');
+@import url('./components/cards.css');
+@import url('./components/navigation.css');
+@import url('./components/country-selector.css');
+
+/* 4. Layout styles */
+@import url('./layouts/main-layout.css');
+@import url('./layouts/tab-navigation.css');
+@import url('./layouts/tab-content.css');
+
+/* 5. Page styles */
+@import url('./pages/login.css');
+@import url('./pages/home.css');
+@import url('./pages/search.css');
+@import url('./pages/add-log.css');
+@import url('./pages/calendar.css');
+@import url('./pages/my-logs.css');
+@import url('./pages/log-detail.css');
+@import url('./pages/settings.css');
+@import url('./pages/travel-report.css');
+@import url('./pages/error.css');
+```
+
+## 🎨 Design Token System
+
+### **CSS Variables** (in [variables.css](mdc:styles/base/variables.css))
+Always use CSS variables for consistent design:
+
+```css
+:root {
+  /* Color Palette */
+  --primary-color: #667eea;
+  --primary-dark: #5a67d8;
+  --primary-light: #4dabf7;
+  --secondary-color: #764ba2;
+  --secondary-dark: #6b46c1;
+  
+  /* Status Colors */
+  --success-color: #48bb78;
+  --success-dark: #38a169;
+  --error-color: #e53e3e;
+  --error-dark: #c53030;
+  --warning-color: #fbbf24;
+  --warning-dark: #f59e0b;
+  
+  /* Neutral Colors */
+  --white: #ffffff;
+  --gray-50: #f8f9fa;
+  --gray-100: #f7fafc;
+  --gray-200: #edf2f7;
+  --gray-300: #e2e8f0;
+  --gray-400: #cbd5e0;
+  --gray-500: #a0aec0;
+  --gray-600: #718096;
+  --gray-700: #4a5568;
+  --gray-800: #2d3748;
+  --gray-900: #1a202c;
+  
+  /* Typography */
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-base: 16px;
+  --font-lg: 18px;
+  --font-xl: 20px;
+  --font-2xl: 24px;
+  --font-3xl: 28px;
+  --font-4xl: 32px;
+  
+  /* Spacing System */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 40px;
+  --spacing-3xl: 48px;
+  
+  /* Border Radius */
+  --border-radius-sm: 8px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-2xl: 20px;
+  --border-radius-full: 50%;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+```
+
+## 📱 Responsive Design Rules
+
+### **Mobile-First Approach**
+Always start with mobile styles and use media queries for larger screens:
+
+```css
+/* Base: Mobile (320px+) */
+.component {
+  padding: var(--spacing-md);
+  font-size: var(--font-base);
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .component {
+    padding: var(--spacing-lg);
+    font-size: var(--font-lg);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .component {
+    padding: var(--spacing-xl);
+    font-size: var(--font-xl);
+  }
+}
+```
+
+### **Breakpoints**
+- **Mobile**: 320px - 767px
+- **Tablet**: 768px - 1023px
+- **Desktop**: 1024px - 1279px
+- **Large Desktop**: 1280px+
+
+## 🎭 Component Styling Guidelines
+
+### **Button Components** (in [buttons.css](mdc:styles/components/buttons.css))
+```css
+/* Primary Action Button */
+.action-btn {
+  background: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-base);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-btn:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+```
+
+### **Form Components** (in [forms.css](mdc:styles/components/forms.css))
+```css
+/* Form Input */
+.form-input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--gray-300);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-base);
+  background: var(--white);
+  transition: all var(--transition-normal);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input::placeholder {
+  color: var(--gray-500);
+}
+```
+
+### **Card Components** (in [cards.css](mdc:styles/components/cards.css))
+```css
+/* Travel Log Card */
+.travel-card {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  border: 1px solid var(--gray-200);
+}
+
+.travel-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
+}
+```
+
+## 🌙 Dark Mode Support
+
+### **Dark Mode Variables** (in [dark-mode.css](mdc:styles/utilities/dark-mode.css))
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --border-color: #4a5568;
+  }
+}
+
+/* Dark mode class */
+.dark {
+  --bg-primary: #1a202c;
+  --bg-secondary: #2d3748;
+  --text-primary: #f7fafc;
+  --text-secondary: #e2e8f0;
+  --border-color: #4a5568;
+}
+```
+
+## ♿ Accessibility Guidelines
+
+### **Accessibility Utilities** (in [accessibility.css](mdc:styles/utilities/accessibility.css))
+```css
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus indicators */
+.focus\:ring:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-color: #0000ff;
+    --text-primary: #000000;
+    --bg-primary: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+## 🎬 Animation Guidelines
+
+### **Animation Utilities** (in [animations.css](mdc:styles/utilities/animations.css))
+```css
+/* Fade animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Slide animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation utility classes */
+.animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+.animate-slide-up { animation: slideInUp 0.4s ease-out; }
+.animate-bounce { animation: bounce 2s infinite; }
+.animate-spin { animation: spin 1s linear infinite; }
+```
+
+## 📊 Performance Optimization
+
+### **CSS Optimization Rules**
+1. **Use CSS Variables**: For consistent design tokens
+2. **Modular Approach**: Load only necessary styles
+3. **Remove Duplicates**: Extract common styles to utilities
+4. **Minification**: Compress CSS in production
+5. **Caching**: Implement static asset caching
+
+### **File Size Targets**
+- **Base styles**: ~15KB (basic styles)
+- **Components**: ~25KB (component styles)
+- **Pages**: ~30KB (page-specific styles)
+- **Utilities**: ~10KB (utility styles)
+- **Total size**: ~80KB (compressed to ~20KB)
+
+## 🔧 CSS Naming Conventions
+
+### **BEM Methodology**
+```css
+/* Block */
+.travel-card { }
+
+/* Element */
+.travel-card__header { }
+.travel-card__content { }
+.travel-card__footer { }
+
+/* Modifier */
+.travel-card--featured { }
+.travel-card--compact { }
+.travel-card__header--large { }
+```
+
+### **Utility Classes**
+```css
+/* Display utilities */
+.hidden { display: none; }
+.block { display: block; }
+.flex { display: flex; }
+.grid { display: grid; }
+
+/* Spacing utilities */
+.p-0 { padding: 0; }
+.p-1 { padding: var(--spacing-xs); }
+.p-2 { padding: var(--spacing-sm); }
+.p-3 { padding: var(--spacing-md); }
+.p-4 { padding: var(--spacing-lg); }
+
+/* Text utilities */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+```
+
+## 🚀 Best Practices
+
+### **DO's**
+✅ Always use CSS variables for colors, spacing, and typography
+✅ Follow mobile-first responsive design
+✅ Use semantic HTML with proper ARIA attributes
+✅ Implement proper focus indicators
+✅ Support reduced motion preferences
+✅ Use consistent naming conventions (BEM)
+✅ Optimize for performance
+
+### **DON'Ts**
+❌ Don't use hardcoded values (use CSS variables)
+❌ Don't skip responsive design considerations
+❌ Don't ignore accessibility requirements
+❌ Don't create overly specific selectors
+❌ Don't duplicate styles across files
+❌ Don't use !important unless absolutely necessary
+❌ Don't ignore browser compatibility
+
+## 🔮 Future Improvements
+
+### **Phase 1: Design System Enhancement**
+- [ ] Expand design token system
+- [ ] Build component library
+- [ ] Automate style guide generation
+
+### **Phase 2: Performance Optimization**
+- [ ] Optimize CSS bundling
+- [ ] Separate critical CSS
+- [ ] Implement lazy loading
+
+### **Phase 3: Developer Experience**
+- [ ] Consider CSS-in-JS adoption
+- [ ] Introduce style linting tools
+- [ ] Build automated testing

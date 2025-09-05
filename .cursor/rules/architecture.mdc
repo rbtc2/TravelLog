@@ -1,0 +1,218 @@
+---
+alwaysApply: true
+description: TravelLog project architecture and module structure guidelines
+---
+
+# 🏗️ TravelLog Architecture Rules
+
+## 📋 Project Overview
+TravelLog is a modular SPA (Single Page Application) with a 5-tab structure. Each tab operates independently with dynamic module loading for optimal performance.
+
+## 🏛️ Core Architecture Principles
+
+### 1. **Modularity** 
+- Each feature is separated into independent modules
+- Clear interfaces and separation of concerns
+- Reusable component design
+
+### 2. **Independence**
+- Minimal dependencies between tabs
+- Each module manages its own lifecycle
+- Isolated state management
+
+### 3. **Scalability**
+- Plugin-style tab addition
+- Independent version management per module
+- Progressive feature expansion
+
+### 4. **Performance**
+- Lazy Loading (Lazy Loading)
+- Memory-efficient resource management
+- Optimized rendering pipeline
+
+## 📁 File Structure Guidelines
+
+### **JavaScript Module Structure**
+```
+js/
+├── app.js                     # Main application entry point
+├── config/                    # Configuration files
+│   └── app-config.js         # App configuration and metadata
+├── data/                      # Data management
+│   └── countries-manager.js   # Country data management
+├── modules/                   # Common modules
+│   ├── search/               # Search system (refactored)
+│   ├── calendar/             # Calendar module
+│   ├── services/             # Service layer
+│   ├── ui-components/        # UI components
+│   └── utils/                # Utility functions
+└── tabs/                     # Tab modules
+    ├── home.js              # Home tab
+    ├── search.js            # Search tab
+    ├── add-log.js           # Add log tab
+    ├── calendar.js          # Calendar tab
+    └── my-logs.js           # My logs tab
+```
+
+### **CSS Structure**
+```
+styles/
+├── main.css                  # Main stylesheet (imports all)
+├── base/                     # Base styles
+│   ├── variables.css         # CSS variables
+│   ├── reset.css            # CSS reset
+│   ├── typography.css       # Typography
+│   ├── layout.css           # Basic layout
+│   ├── buttons.css          # Basic buttons
+│   ├── forms.css            # Basic forms
+│   └── messages.css         # Message styles
+├── components/               # Component styles
+├── layouts/                  # Layout styles
+├── pages/                    # Page-specific styles
+└── utilities/                # Utility styles
+```
+
+## 🔄 Data Flow Patterns
+
+### 1. **Application Initialization**
+```
+index.html → app.js → TabManager → Load default tab
+```
+
+### 2. **Tab Switching Process**
+```
+User tab click → TabManager.switchTab() → 
+Current tab cleanup() → Load new tab module → 
+New tab render() → New tab bindEvents()
+```
+
+### 3. **Data Management Flow**
+```
+UI Event → Event Handler → Service Layer → 
+Data Repository → Local Storage → UI Update
+```
+
+## 🎯 Design Patterns
+
+### 1. **MVC Pattern**
+- **Model**: Data and business logic
+- **View**: UI rendering and user interface
+- **Controller**: User input handling and state management
+
+### 2. **Observer Pattern**
+- Event-based communication
+- Loose coupling
+- Real-time UI updates
+
+### 3. **Factory Pattern**
+- Dynamic tab module creation
+- Configuration-based component creation
+- Flexible extensibility
+
+### 4. **Strategy Pattern**
+- Search algorithm strategies
+- Sorting method strategies
+- Rendering strategies
+
+## 🚀 Performance Optimization
+
+### 1. **Code Splitting**
+- Tab-by-tab module separation
+- Load only when needed
+- Bundle size optimization
+
+### 2. **Memory Management**
+- Resource cleanup on tab switch
+- Event listener cleanup
+- DOM element cleanup
+
+### 3. **Rendering Optimization**
+- Virtual scrolling
+- Lazy loading
+- Image optimization
+
+## 🔧 Module Development Guidelines
+
+### **Tab Module Interface**
+Every tab module must implement:
+```javascript
+class BaseTab {
+    constructor() {
+        this.isInitialized = false;
+        this.container = null;
+    }
+    
+    // Required methods
+    render(container) { /* Implementation required */ }
+    cleanup() { /* Implementation required */ }
+    bindEvents() { /* Implementation required */ }
+}
+```
+
+### **Module Lifecycle**
+1. **Initialization**: Module instantiation and setup
+2. **Rendering**: UI creation and DOM manipulation
+3. **Event Binding**: User interaction handling
+4. **Cleanup**: Resource cleanup and memory management
+
+## 📊 Module Dependencies
+
+### **Core Dependencies**
+- [app.js](mdc:js/app.js) - Main application controller
+- [app-config.js](mdc:js/config/app-config.js) - Configuration management
+
+### **Common Modules**
+- [storage-manager.js](mdc:js/modules/utils/storage-manager.js) - Data persistence
+- [event-manager.js](mdc:js/modules/utils/event-manager.js) - Event handling
+- [toast-manager.js](mdc:js/modules/ui-components/toast-manager.js) - Notifications
+
+### **Tab-Specific Modules**
+- Search: [SearchTab.js](mdc:js/modules/search/SearchTab.js)
+- Calendar: [CalendarRenderer.js](mdc:js/modules/calendar/CalendarRenderer.js)
+- My Logs: [MyLogsController.js](mdc:js/tabs/my-logs/controllers/MyLogsController.js)
+
+## 🔒 Security Considerations
+
+### 1. **Input Validation**
+- User input sanitization
+- XSS attack prevention
+- CSRF token management
+
+### 2. **Data Protection**
+- Sensitive information encryption
+- Local storage security
+- API key security
+
+## 🧪 Testing Strategy
+
+### 1. **Unit Testing**
+- Module-by-module functionality testing
+- Utility function testing
+- Component testing
+
+### 2. **Integration Testing**
+- Inter-tab interaction testing
+- Data flow testing
+- API integration testing
+
+### 3. **E2E Testing**
+- User scenario testing
+- Cross-browser testing
+- Performance testing
+
+## 🔮 Future Architecture Improvements
+
+### 1. **Micro Frontend**
+- Independent tab deployment
+- Improved version management
+- Team-independent development
+
+### 2. **State Management Improvement**
+- Global state management introduction
+- Improved state synchronization
+- Enhanced debugging tools
+
+### 3. **Performance Monitoring**
+- Real-time performance metrics
+- User behavior analysis
+- Automatic optimization

@@ -1,0 +1,769 @@
+---
+globs: *.js,*.css,*.html
+description: TravelLog performance optimization guidelines and best practices
+---
+
+# ⚡ TravelLog Performance Rules
+
+## 📋 Overview
+This document outlines performance optimization guidelines and best practices for the TravelLog project, based on the analyzed codebase structure and mobile-first approach.
+
+## 🚀 Core Performance Principles
+
+### 1. **Mobile-First Optimization**
+- Optimize for mobile devices first
+- Minimize bundle size and loading time
+- Use efficient touch interactions
+- Implement proper viewport handling
+
+### 2. **Memory Management**
+- Clean up resources when not needed
+- Avoid memory leaks in event listeners
+- Use efficient data structures
+- Implement proper garbage collection
+
+### 3. **Rendering Performance**
+- Minimize DOM manipulation
+- Use efficient CSS selectors
+- Implement virtual scrolling for large lists
+- Optimize animations and transitions
+
+### 4. **Network Optimization**
+- Minimize HTTP requests
+- Use efficient caching strategies
+- Implement lazy loading
+- Optimize asset delivery
+
+## 📱 Mobile Performance Guidelines
+
+### **Touch Event Optimization**
+```javascript
+/**
+ * Optimized touch event handling
+ * Based on app.js touch optimization
+ */
+(function() {
+    'use strict';
+    
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let isScrolling = false;
+    let scrollTimeout;
+    
+    // Touch start event
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        isScrolling = false;
+        
+        clearTimeout(scrollTimeout);
+    }, { passive: true });
+    
+    // Touch move event (prevent horizontal scroll, allow vertical)
+    document.addEventListener('touchmove', function(e) {
+        const touchY = e.touches[0].clientY;
+        const touchX = e.touches[0].clientX;
+        const deltaY = Math.abs(touchY - touchStartY);
+        const deltaX = Math.abs(touchX - touchStartX);
+        
+        // Detect vertical scrolling
+        if (deltaY > 10) {
+            isScrolling = true;
+            document.body.classList.add('is-scrolling');
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+                isScrolling = false;
+            }, 150);
+        }
+        
+        // Prevent horizontal scroll only
+        if (deltaX > deltaY && deltaX > 10 && e.cancelable && !isScrolling) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // Prevent double-tap zoom
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300 && e.cancelable && !isScrolling) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+})();
+```
+
+### **Viewport and Layout Optimization**
+```css
+/* Mobile viewport optimization */
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Input fields allow text selection */
+input, textarea {
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Touch action optimization */
+button, .tab-btn, .login-btn, .demo-btn {
+    touch-action: manipulation;
+}
+
+/* Prevent zoom on input focus */
+.form-input {
+    touch-action: manipulation;
+    font-size: 16px; /* iOS zoom prevention */
+}
+
+/* Minimum touch target size */
+@media (max-width: 768px) {
+    button, .tab-btn, .login-btn, .demo-btn {
+        min-height: 44px; /* iOS recommended minimum */
+        min-width: 44px;
+    }
+    
+    .form-input {
+        min-height: 44px;
+    }
+}
+```
+
+## 🎨 CSS Performance Optimization
+
+### **Efficient CSS Selectors**
+```css
+/* ✅ Good - Simple selectors */
+.travel-card { }
+.travel-card__header { }
+.travel-card--featured { }
+
+/* ❌ Avoid - Complex selectors */
+div.travel-card .header .title span { }
+.travel-card .header .title:first-child span:last-child { }
+
+/* ✅ Good - Class-based targeting */
+.navigation .tab-btn.active { }
+
+/* ❌ Avoid - Descendant selectors */
+.navigation .tab-btn .tab-icon .tab-label { }
+```
+
+### **CSS Animation Performance**
+```css
+/* ✅ Good - Use transform and opacity */
+.animate {
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+}
+
+.animate:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* ❌ Avoid - Expensive properties */
+.animate:hover {
+    top: -2px; /* Triggers layout */
+    left: 0;   /* Triggers layout */
+    width: 100px; /* Triggers layout */
+    height: 50px; /* Triggers layout */
+}
+
+/* ✅ Good - GPU acceleration */
+.gpu-accelerated {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+```
+
+### **CSS Optimization Techniques**
+```css
+/* Use CSS variables for consistency */
+:root {
+    --primary-color: #667eea;
+    --spacing-md: 16px;
+    --border-radius-md: 10px;
+}
+
+/* Avoid repeated calculations */
+.component {
+    padding: var(--spacing-md);
+    margin: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+}
+
+/* Use efficient box model */
+.component {
+    box-sizing: border-box;
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--gray-300);
+}
+
+/* Optimize for mobile */
+@media (max-width: 768px) {
+    .component {
+        padding: var(--spacing-sm);
+        font-size: var(--font-sm);
+    }
+}
+```
+
+## 🧩 JavaScript Performance Optimization
+
+### **DOM Manipulation Optimization**
+```javascript
+/**
+ * Efficient DOM manipulation
+ */
+class DOMOptimizer {
+    constructor() {
+        this.fragment = document.createDocumentFragment();
+        this.cache = new Map();
+    }
+    
+    /**
+     * Batch DOM updates using DocumentFragment
+     */
+    batchUpdate(container, elements) {
+        // Clear fragment
+        while (this.fragment.firstChild) {
+            this.fragment.removeChild(this.fragment.firstChild);
+        }
+        
+        // Add elements to fragment
+        elements.forEach(element => {
+            this.fragment.appendChild(element);
+        });
+        
+        // Single DOM update
+        container.appendChild(this.fragment);
+    }
+    
+    /**
+     * Cache DOM queries
+     */
+    querySelector(selector) {
+        if (!this.cache.has(selector)) {
+            this.cache.set(selector, document.querySelector(selector));
+        }
+        return this.cache.get(selector);
+    }
+    
+    /**
+     * Use requestAnimationFrame for smooth animations
+     */
+    animate(element, callback) {
+        requestAnimationFrame(() => {
+            callback(element);
+        });
+    }
+}
+```
+
+### **Event Handling Optimization**
+```javascript
+/**
+ * Optimized event handling
+ */
+class EventOptimizer {
+    constructor() {
+        this.debounceTimers = new Map();
+        this.throttleTimers = new Map();
+    }
+    
+    /**
+     * Debounce function calls
+     */
+    debounce(func, wait, key = 'default') {
+        return (...args) => {
+            clearTimeout(this.debounceTimers.get(key));
+            this.debounceTimers.set(key, setTimeout(() => {
+                func.apply(this, args);
+            }, wait));
+        };
+    }
+    
+    /**
+     * Throttle function calls
+     */
+    throttle(func, limit, key = 'default') {
+        return (...args) => {
+            if (!this.throttleTimers.has(key)) {
+                func.apply(this, args);
+                this.throttleTimers.set(key, true);
+                setTimeout(() => {
+                    this.throttleTimers.delete(key);
+                }, limit);
+            }
+        };
+    }
+    
+    /**
+     * Event delegation for dynamic content
+     */
+    delegate(container, selector, event, handler) {
+        container.addEventListener(event, (e) => {
+            if (e.target.matches(selector)) {
+                handler(e);
+            }
+        });
+    }
+}
+```
+
+### **Memory Management**
+```javascript
+/**
+ * Memory management utilities
+ */
+class MemoryManager {
+    constructor() {
+        this.cleanupTasks = [];
+        this.weakRefs = new WeakMap();
+    }
+    
+    /**
+     * Register cleanup task
+     */
+    registerCleanup(task) {
+        this.cleanupTasks.push(task);
+    }
+    
+    /**
+     * Execute all cleanup tasks
+     */
+    cleanup() {
+        this.cleanupTasks.forEach(task => {
+            try {
+                task();
+            } catch (error) {
+                console.error('Cleanup task failed:', error);
+            }
+        });
+        this.cleanupTasks = [];
+    }
+    
+    /**
+     * Create weak reference
+     */
+    createWeakRef(object) {
+        return new WeakRef(object);
+    }
+    
+    /**
+     * Check if weak reference is still valid
+     */
+    isWeakRefValid(weakRef) {
+        return weakRef.deref() !== undefined;
+    }
+}
+```
+
+## 📊 Data Management Performance
+
+### **Efficient Data Structures**
+```javascript
+/**
+ * Optimized data management
+ */
+class DataManager {
+    constructor() {
+        this.cache = new Map();
+        this.indexes = new Map();
+        this.maxCacheSize = 100;
+    }
+    
+    /**
+     * Efficient data retrieval with indexing
+     */
+    getData(key, indexKey = null) {
+        if (this.cache.has(key)) {
+            return this.cache.get(key);
+        }
+        
+        // Load from storage
+        const data = this.loadFromStorage(key);
+        
+        // Cache with size limit
+        if (this.cache.size >= this.maxCacheSize) {
+            const firstKey = this.cache.keys().next().value;
+            this.cache.delete(firstKey);
+        }
+        
+        this.cache.set(key, data);
+        
+        // Create index if specified
+        if (indexKey) {
+            this.createIndex(data, indexKey);
+        }
+        
+        return data;
+    }
+    
+    /**
+     * Create search index
+     */
+    createIndex(data, key) {
+        const index = new Map();
+        data.forEach((item, i) => {
+            const value = item[key];
+            if (!index.has(value)) {
+                index.set(value, []);
+            }
+            index.get(value).push(i);
+        });
+        this.indexes.set(key, index);
+    }
+    
+    /**
+     * Fast search using index
+     */
+    search(key, searchKey, value) {
+        const index = this.indexes.get(searchKey);
+        if (index && index.has(value)) {
+            const indices = index.get(value);
+            const data = this.cache.get(key);
+            return indices.map(i => data[i]);
+        }
+        return [];
+    }
+}
+```
+
+### **Lazy Loading Implementation**
+```javascript
+/**
+ * Lazy loading for modules and data
+ */
+class LazyLoader {
+    constructor() {
+        this.loadedModules = new Map();
+        this.loadingPromises = new Map();
+    }
+    
+    /**
+     * Lazy load module
+     */
+    async loadModule(modulePath) {
+        if (this.loadedModules.has(modulePath)) {
+            return this.loadedModules.get(modulePath);
+        }
+        
+        if (this.loadingPromises.has(modulePath)) {
+            return this.loadingPromises.get(modulePath);
+        }
+        
+        const promise = this._loadModule(modulePath);
+        this.loadingPromises.set(modulePath, promise);
+        
+        try {
+            const module = await promise;
+            this.loadedModules.set(modulePath, module);
+            this.loadingPromises.delete(modulePath);
+            return module;
+        } catch (error) {
+            this.loadingPromises.delete(modulePath);
+            throw error;
+        }
+    }
+    
+    async _loadModule(modulePath) {
+        const module = await import(modulePath);
+        return module.default || module;
+    }
+}
+```
+
+## 🎯 Rendering Performance
+
+### **Virtual Scrolling**
+```javascript
+/**
+ * Virtual scrolling for large lists
+ */
+class VirtualScroller {
+    constructor(container, itemHeight, renderItem) {
+        this.container = container;
+        this.itemHeight = itemHeight;
+        this.renderItem = renderItem;
+        this.visibleItems = [];
+        this.scrollTop = 0;
+        this.containerHeight = 0;
+    }
+    
+    render(data) {
+        this.data = data;
+        this.containerHeight = this.container.clientHeight;
+        this.visibleCount = Math.ceil(this.containerHeight / this.itemHeight) + 2;
+        
+        this.updateVisibleItems();
+        this.bindScrollEvent();
+    }
+    
+    updateVisibleItems() {
+        const startIndex = Math.floor(this.scrollTop / this.itemHeight);
+        const endIndex = Math.min(startIndex + this.visibleCount, this.data.length);
+        
+        // Remove invisible items
+        this.visibleItems.forEach(item => {
+            if (item.index < startIndex || item.index >= endIndex) {
+                item.element.remove();
+            }
+        });
+        
+        // Add visible items
+        for (let i = startIndex; i < endIndex; i++) {
+            if (!this.visibleItems.find(item => item.index === i)) {
+                const element = this.renderItem(this.data[i], i);
+                element.style.position = 'absolute';
+                element.style.top = `${i * this.itemHeight}px`;
+                element.style.height = `${this.itemHeight}px`;
+                
+                this.container.appendChild(element);
+                this.visibleItems.push({ index: i, element });
+            }
+        }
+    }
+    
+    bindScrollEvent() {
+        this.container.addEventListener('scroll', () => {
+            this.scrollTop = this.container.scrollTop;
+            this.updateVisibleItems();
+        });
+    }
+}
+```
+
+### **Canvas Optimization**
+```javascript
+/**
+ * Canvas rendering optimization
+ */
+class CanvasOptimizer {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.animationId = null;
+        this.lastFrameTime = 0;
+    }
+    
+    /**
+     * Optimized animation loop
+     */
+    animate(callback) {
+        const animate = (currentTime) => {
+            const deltaTime = currentTime - this.lastFrameTime;
+            
+            if (deltaTime >= 16) { // ~60fps
+                callback(deltaTime);
+                this.lastFrameTime = currentTime;
+            }
+            
+            this.animationId = requestAnimationFrame(animate);
+        };
+        
+        this.animationId = requestAnimationFrame(animate);
+    }
+    
+    /**
+     * Stop animation
+     */
+    stop() {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+    }
+    
+    /**
+     * Efficient drawing operations
+     */
+    drawOptimized() {
+        // Use transform instead of individual draw calls
+        this.ctx.save();
+        this.ctx.translate(x, y);
+        this.ctx.rotate(angle);
+        // Draw operations
+        this.ctx.restore();
+    }
+}
+```
+
+## 🔧 Network Performance
+
+### **Resource Optimization**
+```javascript
+/**
+ * Resource loading optimization
+ */
+class ResourceOptimizer {
+    constructor() {
+        this.loadedResources = new Set();
+        this.loadingPromises = new Map();
+    }
+    
+    /**
+     * Preload critical resources
+     */
+    async preloadCritical() {
+        const criticalResources = [
+            'styles/main.css',
+            'js/app.js',
+            'js/config/app-config.js'
+        ];
+        
+        const promises = criticalResources.map(resource => 
+            this.loadResource(resource)
+        );
+        
+        await Promise.all(promises);
+    }
+    
+    /**
+     * Load resource with caching
+     */
+    async loadResource(url) {
+        if (this.loadedResources.has(url)) {
+            return;
+        }
+        
+        if (this.loadingPromises.has(url)) {
+            return this.loadingPromises.get(url);
+        }
+        
+        const promise = this._loadResource(url);
+        this.loadingPromises.set(url, promise);
+        
+        try {
+            await promise;
+            this.loadedResources.add(url);
+            this.loadingPromises.delete(url);
+        } catch (error) {
+            this.loadingPromises.delete(url);
+            throw error;
+        }
+    }
+    
+    async _loadResource(url) {
+        if (url.endsWith('.css')) {
+            return this.loadCSS(url);
+        } else if (url.endsWith('.js')) {
+            return this.loadJS(url);
+        } else {
+            return this.loadImage(url);
+        }
+    }
+}
+```
+
+## 📊 Performance Monitoring
+
+### **Performance Metrics**
+```javascript
+/**
+ * Performance monitoring utilities
+ */
+class PerformanceMonitor {
+    constructor() {
+        this.metrics = new Map();
+        this.observers = [];
+    }
+    
+    /**
+     * Measure function execution time
+     */
+    measure(name, fn) {
+        const start = performance.now();
+        const result = fn();
+        const end = performance.now();
+        
+        this.metrics.set(name, {
+            duration: end - start,
+            timestamp: Date.now()
+        });
+        
+        return result;
+    }
+    
+    /**
+     * Monitor memory usage
+     */
+    getMemoryUsage() {
+        if (performance.memory) {
+            return {
+                used: performance.memory.usedJSHeapSize,
+                total: performance.memory.totalJSHeapSize,
+                limit: performance.memory.jsHeapSizeLimit
+            };
+        }
+        return null;
+    }
+    
+    /**
+     * Monitor frame rate
+     */
+    monitorFrameRate(callback) {
+        let frames = 0;
+        let lastTime = performance.now();
+        
+        const countFrames = () => {
+            frames++;
+            const currentTime = performance.now();
+            
+            if (currentTime - lastTime >= 1000) {
+                const fps = Math.round((frames * 1000) / (currentTime - lastTime));
+                callback(fps);
+                frames = 0;
+                lastTime = currentTime;
+            }
+            
+            requestAnimationFrame(countFrames);
+        };
+        
+        requestAnimationFrame(countFrames);
+    }
+}
+```
+
+## 🚀 Best Practices Summary
+
+### **Performance Checklist**
+✅ Optimize for mobile devices first
+✅ Use efficient CSS selectors
+✅ Minimize DOM manipulation
+✅ Implement proper caching
+✅ Use lazy loading for non-critical resources
+✅ Optimize animations with transform/opacity
+✅ Implement virtual scrolling for large lists
+✅ Use event delegation for dynamic content
+✅ Clean up resources properly
+✅ Monitor performance metrics
+
+### **Common Performance Pitfalls**
+❌ Don't use expensive CSS properties in animations
+❌ Don't manipulate DOM in tight loops
+❌ Don't ignore memory leaks
+❌ Don't load all resources at once
+❌ Don't use complex CSS selectors
+❌ Don't ignore mobile performance
+❌ Don't skip resource cleanup
+❌ Don't use synchronous operations
+❌ Don't ignore bundle size
+❌ Don't skip performance testing

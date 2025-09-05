@@ -1,0 +1,613 @@
+---
+globs: *.js
+description: TravelLog module patterns and development guidelines
+---
+
+# 🧩 TravelLog Module Patterns
+
+## 📋 Overview
+This document outlines the specific module patterns and development guidelines used in the TravelLog project, based on the analyzed codebase structure.
+
+## 🏗️ Module Architecture Patterns
+
+### **Tab Module Pattern**
+Every tab module follows this consistent pattern:
+
+```javascript
+/**
+ * Tab Module Template
+ * @class TabName
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+class TabName {
+    constructor() {
+        this.isInitialized = false;
+        this.container = null;
+        this.eventListeners = [];
+    }
+    
+    /**
+     * Renders the tab content
+     * @param {HTMLElement} container - Container element
+     */
+    async render(container) {
+        this.container = container;
+        await this.initialize();
+        this.renderContent();
+        this.bindEvents();
+        this.isInitialized = true;
+    }
+    
+    /**
+     * Refreshes tab data when activated
+     */
+    async refresh() {
+        if (this.isInitialized) {
+            await this.loadData();
+            this.renderContent();
+        }
+    }
+    
+    /**
+     * Renders the main content
+     */
+    renderContent() {
+        this.container.innerHTML = `
+            <!-- Tab content HTML -->
+        `;
+    }
+    
+    /**
+     * Binds event listeners
+     */
+    bindEvents() {
+        // Event binding logic
+    }
+    
+    /**
+     * Cleans up resources
+     */
+    async cleanup() {
+        // Cleanup event listeners
+        this.eventListeners.forEach(({ element, event, handler }) => {
+            element.removeEventListener(event, handler);
+        });
+        this.eventListeners = [];
+        
+        this.isInitialized = false;
+        this.container = null;
+    }
+}
+
+export default new TabName();
+```
+
+### **Search System Pattern** (Based on [SearchTab.js](mdc:js/modules/search/SearchTab.js))
+The search system uses a modular architecture with separate concerns:
+
+```javascript
+/**
+ * Search System Architecture
+ * - SearchEngine: Core search logic
+ * - SearchStateManager: State management
+ * - FilterManager: Filter handling
+ * - SearchResultManager: Result management
+ * - SearchUIRenderer: UI rendering
+ * - SearchEventHandler: Event handling
+ */
+class SearchTab {
+    constructor() {
+        this.searchEngine = new SearchEngine();
+        this.stateManager = new SearchStateManager();
+        this.filterManager = new FilterManager();
+        this.resultManager = new SearchResultManager();
+        this.uiRenderer = new SearchUIRenderer();
+        this.eventHandler = new SearchEventHandler();
+    }
+    
+    async render(container) {
+        this.container = container;
+        await this.initialize();
+        this.renderUI();
+        this.bindEvents();
+    }
+}
+```
+
+### **Calendar Module Pattern** (Based on [CalendarRenderer.js](mdc:js/modules/calendar/CalendarRenderer.js))
+The calendar system separates rendering from data management:
+
+```javascript
+/**
+ * Calendar Module Architecture
+ * - CalendarDataManager: Data management
+ * - CalendarRenderer: UI rendering
+ * - CalendarUtils: Utility functions
+ * - Event Handlers: User interaction handling
+ */
+class CalendarRenderer {
+    constructor(container, dataManager) {
+        this.container = container;
+        this.dataManager = dataManager;
+        this.calendarCache = new Map();
+    }
+    
+    renderContent(currentDate, currentView) {
+        // Rendering logic with caching
+    }
+    
+    renderCalendarGrid(currentDate, selectedDate) {
+        // Grid rendering with performance optimization
+    }
+}
+```
+
+## 🔄 State Management Patterns
+
+### **State Manager Pattern**
+```javascript
+/**
+ * State Manager for complex modules
+ */
+class StateManager {
+    constructor() {
+        this.state = {
+            currentView: 'initial',
+            data: null,
+            loading: false,
+            error: null
+        };
+        this.listeners = [];
+    }
+    
+    getState() {
+        return { ...this.state };
+    }
+    
+    setState(newState) {
+        const prevState = { ...this.state };
+        this.state = { ...this.state, ...newState };
+        this.notifyListeners(prevState, this.state);
+    }
+    
+    subscribe(listener) {
+        this.listeners.push(listener);
+        return () => {
+            this.listeners = this.listeners.filter(l => l !== listener);
+        };
+    }
+    
+    notifyListeners(prevState, currentState) {
+        this.listeners.forEach(listener => {
+            listener(prevState, currentState);
+        });
+    }
+}
+```
+
+### **Event Manager Pattern**
+```javascript
+/**
+ * Centralized event management
+ */
+class EventManager {
+    constructor() {
+        this.listeners = new Map();
+    }
+    
+    addEventListener(element, event, handler) {
+        if (!this.listeners.has(element)) {
+            this.listeners.set(element, []);
+        }
+        
+        this.listeners.get(element).push({ event, handler });
+        element.addEventListener(event, handler);
+    }
+    
+    removeEventListener(element, event, handler) {
+        if (this.listeners.has(element)) {
+            const elementListeners = this.listeners.get(element);
+            const index = elementListeners.findIndex(
+                l => l.event === event && l.handler === handler
+            );
+            if (index > -1) {
+                elementListeners.splice(index, 1);
+                element.removeEventListener(event, handler);
+            }
+        }
+    }
+    
+    cleanup() {
+        this.listeners.forEach((listeners, element) => {
+            listeners.forEach(({ event, handler }) => {
+                element.removeEventListener(event, handler);
+            });
+        });
+        this.listeners.clear();
+    }
+}
+```
+
+## 🎨 UI Component Patterns
+
+### **Modal Manager Pattern**
+```javascript
+/**
+ * Modal management system
+ */
+class ModalManager {
+    constructor() {
+        this.activeModals = new Map();
+    }
+    
+    showModal(modalId, content, options = {}) {
+        const modal = this.createModal(modalId, content, options);
+        document.body.appendChild(modal);
+        this.activeModals.set(modalId, modal);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
+        });
+    }
+    
+    hideModal(modalId) {
+        const modal = this.activeModals.get(modalId);
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.remove();
+                this.activeModals.delete(modalId);
+            }, 300);
+        }
+    }
+    
+    createModal(modalId, content, options) {
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.id = modalId;
+        modal.innerHTML = `
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                ${content}
+            </div>
+        `;
+        return modal;
+    }
+}
+```
+
+### **Toast Manager Pattern**
+```javascript
+/**
+ * Toast notification system
+ */
+class ToastManager {
+    static show(message, type = 'info', duration = 3000) {
+        const toast = document.createElement('div');
+        toast.className = `toast toast--${type}`;
+        toast.textContent = message;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+        
+        // Auto remove
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, duration);
+    }
+    
+    static success(message, duration) {
+        this.show(message, 'success', duration);
+    }
+    
+    static error(message, duration) {
+        this.show(message, 'error', duration);
+    }
+    
+    static info(message, duration) {
+        this.show(message, 'info', duration);
+    }
+}
+```
+
+## 📊 Data Management Patterns
+
+### **Storage Manager Pattern**
+```javascript
+/**
+ * Local storage management
+ */
+class StorageManager {
+    constructor(storageKey = 'travellog_data') {
+        this.storageKey = storageKey;
+    }
+    
+    save(key, data) {
+        try {
+            const serialized = JSON.stringify(data);
+            localStorage.setItem(`${this.storageKey}_${key}`, serialized);
+            return true;
+        } catch (error) {
+            console.error('Failed to save data:', error);
+            return false;
+        }
+    }
+    
+    load(key, defaultValue = null) {
+        try {
+            const serialized = localStorage.getItem(`${this.storageKey}_${key}`);
+            return serialized ? JSON.parse(serialized) : defaultValue;
+        } catch (error) {
+            console.error('Failed to load data:', error);
+            return defaultValue;
+        }
+    }
+    
+    remove(key) {
+        localStorage.removeItem(`${this.storageKey}_${key}`);
+    }
+    
+    clear() {
+        Object.keys(localStorage)
+            .filter(key => key.startsWith(this.storageKey))
+            .forEach(key => localStorage.removeItem(key));
+    }
+}
+```
+
+### **Data Service Pattern**
+```javascript
+/**
+ * Data service layer
+ */
+class DataService {
+    constructor(storageManager) {
+        this.storage = storageManager;
+        this.cache = new Map();
+    }
+    
+    async getTravelLogs() {
+        const cacheKey = 'travel_logs';
+        
+        if (this.cache.has(cacheKey)) {
+            return this.cache.get(cacheKey);
+        }
+        
+        const logs = this.storage.load('travel_logs', []);
+        this.cache.set(cacheKey, logs);
+        return logs;
+    }
+    
+    async saveTravelLog(logData) {
+        const logs = await this.getTravelLogs();
+        const newLog = {
+            id: this.generateId(),
+            ...logData,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        
+        logs.push(newLog);
+        this.storage.save('travel_logs', logs);
+        this.cache.delete('travel_logs');
+        
+        return newLog;
+    }
+    
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+}
+```
+
+## 🔧 Utility Patterns
+
+### **Debounce Pattern**
+```javascript
+/**
+ * Debounce utility for performance optimization
+ */
+function debounce(func, wait, immediate = false) {
+    let timeout;
+    
+    return function executedFunction(...args) {
+        const later = () => {
+            timeout = null;
+            if (!immediate) func(...args);
+        };
+        
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        
+        if (callNow) func(...args);
+    };
+}
+
+// Usage example
+const debouncedSearch = debounce(performSearch, 300);
+searchInput.addEventListener('input', debouncedSearch);
+```
+
+### **Throttle Pattern**
+```javascript
+/**
+ * Throttle utility for performance optimization
+ */
+function throttle(func, limit) {
+    let inThrottle;
+    
+    return function executedFunction(...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Usage example
+const throttledScroll = throttle(handleScroll, 100);
+window.addEventListener('scroll', throttledScroll);
+```
+
+## 🧪 Testing Patterns
+
+### **Module Testing Pattern**
+```javascript
+/**
+ * Test setup for modules
+ */
+describe('ModuleName', () => {
+    let module;
+    let container;
+    
+    beforeEach(() => {
+        container = document.createElement('div');
+        document.body.appendChild(container);
+        module = new ModuleName();
+    });
+    
+    afterEach(() => {
+        if (module && module.cleanup) {
+            module.cleanup();
+        }
+        if (container && container.parentNode) {
+            container.parentNode.removeChild(container);
+        }
+    });
+    
+    it('should render correctly', async () => {
+        await module.render(container);
+        expect(container.innerHTML).toContain('expected content');
+    });
+    
+    it('should handle events correctly', async () => {
+        await module.render(container);
+        const button = container.querySelector('.test-button');
+        button.click();
+        expect(module.someProperty).toBe('expected value');
+    });
+});
+```
+
+## 🚀 Performance Patterns
+
+### **Lazy Loading Pattern**
+```javascript
+/**
+ * Lazy loading for modules
+ */
+class LazyLoader {
+    constructor() {
+        this.loadedModules = new Map();
+    }
+    
+    async loadModule(modulePath) {
+        if (this.loadedModules.has(modulePath)) {
+            return this.loadedModules.get(modulePath);
+        }
+        
+        try {
+            const module = await import(modulePath);
+            this.loadedModules.set(modulePath, module);
+            return module;
+        } catch (error) {
+            console.error(`Failed to load module ${modulePath}:`, error);
+            throw error;
+        }
+    }
+}
+```
+
+### **Caching Pattern**
+```javascript
+/**
+ * Simple cache implementation
+ */
+class Cache {
+    constructor(maxSize = 100) {
+        this.cache = new Map();
+        this.maxSize = maxSize;
+    }
+    
+    get(key) {
+        if (this.cache.has(key)) {
+            const value = this.cache.get(key);
+            // Move to end (LRU)
+            this.cache.delete(key);
+            this.cache.set(key, value);
+            return value;
+        }
+        return null;
+    }
+    
+    set(key, value) {
+        if (this.cache.size >= this.maxSize) {
+            // Remove oldest entry
+            const firstKey = this.cache.keys().next().value;
+            this.cache.delete(firstKey);
+        }
+        this.cache.set(key, value);
+    }
+    
+    clear() {
+        this.cache.clear();
+    }
+}
+```
+
+## 📝 Documentation Patterns
+
+### **Module Documentation Template**
+```javascript
+/**
+ * Module Name
+ * 
+ * @description Brief description of the module's purpose
+ * @version 1.0.0
+ * @since 2024-12-29
+ * @author REDIPX
+ * 
+ * @example
+ * const module = new ModuleName();
+ * await module.initialize();
+ * module.render(container);
+ */
+class ModuleName {
+    /**
+     * Creates an instance of ModuleName
+     * @param {Object} options - Configuration options
+     * @param {string} options.option1 - Description of option1
+     * @param {number} options.option2 - Description of option2
+     */
+    constructor(options = {}) {
+        // Implementation
+    }
+}
+```
+
+## 🔮 Best Practices Summary
+
+### **Module Development Guidelines**
+1. **Single Responsibility**: Each module should have one clear purpose
+2. **Dependency Injection**: Pass dependencies through constructor
+3. **Error Handling**: Always handle errors gracefully
+4. **Resource Cleanup**: Implement proper cleanup methods
+5. **Event Management**: Use centralized event management
+6. **State Management**: Keep state management simple and predictable
+7. **Performance**: Optimize for mobile devices
+8. **Testing**: Write comprehensive tests for all modules
+9. **Documentation**: Document all public APIs
+10. **Consistency**: Follow established patterns throughout the project

@@ -1,0 +1,608 @@
+---
+globs: *.js,*.html,*.css
+description: TravelLog coding conventions and best practices
+---
+
+# 📝 TravelLog Coding Conventions
+
+## 📋 Overview
+This document outlines the coding conventions, best practices, and standards for the TravelLog project. Follow these guidelines to maintain code consistency and quality.
+
+## 🎯 Core Principles
+
+### 1. **Consistency**
+- Use consistent naming conventions across all files
+- Follow established patterns and structures
+- Maintain uniform code formatting
+
+### 2. **Readability**
+- Write self-documenting code
+- Use meaningful variable and function names
+- Add clear comments for complex logic
+
+### 3. **Maintainability**
+- Keep functions small and focused
+- Avoid deep nesting and complex logic
+- Use modular architecture patterns
+
+### 4. **Performance**
+- Optimize for mobile devices
+- Minimize DOM manipulation
+- Use efficient algorithms and data structures
+
+## 🚀 JavaScript Conventions
+
+### **File Structure**
+```javascript
+/**
+ * File description and purpose
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+
+// 1. Imports (ES6 modules)
+import { ModuleName } from './path/to/module.js';
+
+// 2. Constants
+const CONSTANT_NAME = 'value';
+
+// 3. Classes/Functions
+class ClassName {
+    constructor() {
+        // Constructor logic
+    }
+    
+    // Public methods
+    publicMethod() {
+        // Method implementation
+    }
+    
+    // Private methods (prefix with underscore)
+    _privateMethod() {
+        // Private implementation
+    }
+}
+
+// 4. Exports
+export default ClassName;
+```
+
+### **Naming Conventions**
+
+#### **Variables and Functions**
+```javascript
+// Use camelCase for variables and functions
+const userName = 'john_doe';
+const isLoggedIn = true;
+const travelLogs = [];
+
+function getUserData() { }
+function calculateTotalDays() { }
+function handleTabSwitch() { }
+```
+
+#### **Classes and Constructors**
+```javascript
+// Use PascalCase for classes and constructors
+class TravelLogManager { }
+class SearchEngine { }
+class CalendarRenderer { }
+
+// Constructor functions
+function TravelLogManager() { }
+```
+
+#### **Constants**
+```javascript
+// Use UPPER_SNAKE_CASE for constants
+const MAX_LOG_COUNT = 1000;
+const API_BASE_URL = 'https://api.travellog.com';
+const DEFAULT_PAGE_SIZE = 20;
+```
+
+#### **Private Members**
+```javascript
+// Use underscore prefix for private members
+class MyClass {
+    constructor() {
+        this._privateProperty = 'value';
+    }
+    
+    _privateMethod() {
+        // Private method implementation
+    }
+}
+```
+
+### **Function Declarations**
+
+#### **Arrow Functions vs Function Declarations**
+```javascript
+// Use function declarations for main functions
+function processTravelData(data) {
+    // Main logic
+}
+
+// Use arrow functions for callbacks and short functions
+const filteredLogs = logs.filter(log => log.country === 'Japan');
+const sortedLogs = logs.sort((a, b) => a.date - b.date);
+
+// Use arrow functions for event handlers
+button.addEventListener('click', (event) => {
+    handleButtonClick(event);
+});
+```
+
+#### **Async/Await Pattern**
+```javascript
+// Prefer async/await over Promises
+async function loadTravelLogs() {
+    try {
+        const response = await fetch('/api/logs');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Failed to load travel logs:', error);
+        throw error;
+    }
+}
+
+// Use Promise.all for parallel operations
+async function loadMultipleData() {
+    try {
+        const [logs, countries, settings] = await Promise.all([
+            loadTravelLogs(),
+            loadCountries(),
+            loadSettings()
+        ]);
+        return { logs, countries, settings };
+    } catch (error) {
+        console.error('Failed to load data:', error);
+    }
+}
+```
+
+### **Error Handling**
+
+#### **Try-Catch Blocks**
+```javascript
+// Always use try-catch for async operations
+async function saveTravelLog(logData) {
+    try {
+        const result = await storageManager.saveLog(logData);
+        console.log('Travel log saved successfully');
+        return result;
+    } catch (error) {
+        console.error('Failed to save travel log:', error);
+        showErrorMessage('저장 중 오류가 발생했습니다.');
+        throw error;
+    }
+}
+
+// Use try-catch for synchronous operations that might fail
+function parseTravelData(jsonString) {
+    try {
+        return JSON.parse(jsonString);
+    } catch (error) {
+        console.error('Failed to parse travel data:', error);
+        return null;
+    }
+}
+```
+
+#### **Error Messages**
+```javascript
+// Use Korean for user-facing error messages
+const ERROR_MESSAGES = {
+    NETWORK_ERROR: '네트워크 연결을 확인해주세요.',
+    INVALID_DATA: '유효하지 않은 데이터입니다.',
+    SAVE_FAILED: '저장에 실패했습니다.',
+    LOAD_FAILED: '데이터를 불러오는데 실패했습니다.'
+};
+
+// Use English for console logs and debugging
+console.error('Failed to initialize search engine:', error);
+console.warn('Performance warning: Search took longer than expected');
+console.log('Search completed successfully');
+```
+
+### **JSDoc Documentation**
+
+#### **Function Documentation**
+```javascript
+/**
+ * Performs a search across travel logs
+ * @param {string} query - Search query string
+ * @param {Object} options - Search options
+ * @param {string[]} options.filters - Array of filter types
+ * @param {string} options.sortBy - Sort criteria
+ * @param {number} options.limit - Maximum number of results
+ * @returns {Promise<Object>} Search results with metadata
+ * @throws {Error} When search query is invalid
+ * @example
+ * const results = await searchTravelLogs('Japan', {
+ *   filters: ['country', 'rating'],
+ *   sortBy: 'date',
+ *   limit: 20
+ * });
+ */
+async function searchTravelLogs(query, options = {}) {
+    // Implementation
+}
+```
+
+#### **Class Documentation**
+```javascript
+/**
+ * Manages travel log data and operations
+ * @class TravelLogManager
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+class TravelLogManager {
+    /**
+     * Creates an instance of TravelLogManager
+     * @param {Object} config - Configuration options
+     * @param {string} config.storageKey - Local storage key
+     * @param {number} config.maxLogs - Maximum number of logs
+     */
+    constructor(config = {}) {
+        // Constructor implementation
+    }
+}
+```
+
+## 🎨 CSS Conventions
+
+### **Class Naming (BEM Methodology)**
+```css
+/* Block */
+.travel-card { }
+
+/* Element */
+.travel-card__header { }
+.travel-card__content { }
+.travel-card__footer { }
+
+/* Modifier */
+.travel-card--featured { }
+.travel-card--compact { }
+.travel-card__header--large { }
+```
+
+### **CSS Variable Usage**
+```css
+/* Always use CSS variables for consistent values */
+.component {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-base);
+}
+
+/* Don't use hardcoded values */
+.component {
+    background-color: #667eea; /* ❌ Don't do this */
+    padding: 16px; /* ❌ Don't do this */
+}
+```
+
+### **CSS Organization**
+```css
+/* 1. Layout properties */
+.component {
+    display: flex;
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+/* 2. Box model properties */
+.component {
+    margin: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--gray-300);
+}
+
+/* 3. Typography */
+.component {
+    font-family: var(--font-family-base);
+    font-size: var(--font-base);
+    font-weight: var(--font-medium);
+    line-height: 1.5;
+}
+
+/* 4. Visual properties */
+.component {
+    background-color: var(--white);
+    color: var(--text-primary);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+/* 5. Animation and transitions */
+.component {
+    transition: all var(--transition-normal);
+    transform: translateY(0);
+}
+
+/* 6. Pseudo-elements and pseudo-classes */
+.component:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.component::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+```
+
+## 🌐 HTML Conventions
+
+### **Semantic HTML Structure**
+```html
+<!-- Use semantic HTML elements -->
+<main class="main-content">
+    <header class="page-header">
+        <h1 class="page-title">여행 일지</h1>
+        <p class="page-description">여행의 모든 순간을 기록하세요</p>
+    </header>
+    
+    <section class="content-section">
+        <article class="travel-log">
+            <h2 class="log-title">일본 여행</h2>
+            <time class="log-date" datetime="2024-12-29">2024년 12월 29일</time>
+            <p class="log-description">도쿄에서의 첫날</p>
+        </article>
+    </section>
+    
+    <aside class="sidebar">
+        <nav class="filter-nav">
+            <h3 class="filter-title">필터</h3>
+            <!-- Filter options -->
+        </nav>
+    </aside>
+</main>
+```
+
+### **Accessibility Attributes**
+```html
+<!-- Always include proper ARIA attributes -->
+<button 
+    class="action-btn" 
+    type="button"
+    aria-label="여행 일지 추가"
+    aria-expanded="false"
+    aria-controls="add-log-modal"
+>
+    <span class="btn-icon" aria-hidden="true">➕</span>
+    <span class="btn-text">일지 추가</span>
+</button>
+
+<!-- Use proper form labels -->
+<label for="country-select" class="form-label">
+    국가 선택
+    <span class="required-indicator" aria-label="필수 항목">*</span>
+</label>
+<select id="country-select" name="country" required>
+    <option value="">국가를 선택하세요</option>
+    <option value="japan">일본</option>
+    <option value="korea">한국</option>
+</select>
+```
+
+### **Data Attributes**
+```html
+<!-- Use data attributes for JavaScript targeting -->
+<div 
+    class="travel-card" 
+    data-log-id="log-123"
+    data-country="japan"
+    data-rating="5"
+    data-date="2024-12-29"
+>
+    <!-- Card content -->
+</div>
+
+<!-- Use data attributes for tab navigation -->
+<nav class="tab-navigation">
+    <button 
+        class="tab-btn active" 
+        data-tab="home"
+        aria-selected="true"
+        role="tab"
+    >
+        <span class="tab-icon" aria-hidden="true">🏠</span>
+        <span class="tab-label">홈</span>
+    </button>
+</nav>
+```
+
+## 📱 Mobile-First Development
+
+### **Responsive Design Approach**
+```css
+/* Start with mobile styles */
+.component {
+    padding: var(--spacing-sm);
+    font-size: var(--font-sm);
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+    .component {
+        padding: var(--spacing-md);
+        font-size: var(--font-base);
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+    .component {
+        padding: var(--spacing-lg);
+        font-size: var(--font-lg);
+    }
+}
+```
+
+### **Touch-Friendly Design**
+```css
+/* Ensure minimum touch target size */
+.touch-target {
+    min-width: 44px;
+    min-height: 44px;
+    padding: var(--spacing-sm);
+}
+
+/* Add touch feedback */
+.touch-feedback:active {
+    transform: scale(0.98);
+    opacity: 0.8;
+}
+```
+
+## 🔧 Performance Guidelines
+
+### **JavaScript Performance**
+```javascript
+// Use efficient DOM queries
+const elements = document.querySelectorAll('.travel-card');
+// Cache DOM elements
+const cachedElements = {
+    searchInput: document.getElementById('search-input'),
+    resultsContainer: document.getElementById('results-container')
+};
+
+// Use event delegation for dynamic content
+document.addEventListener('click', (event) => {
+    if (event.target.matches('.travel-card')) {
+        handleCardClick(event.target);
+    }
+});
+
+// Debounce expensive operations
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+const debouncedSearch = debounce(performSearch, 300);
+```
+
+### **CSS Performance**
+```css
+/* Use efficient selectors */
+.travel-card { } /* ✅ Good */
+div.travel-card { } /* ❌ Avoid */
+
+/* Use transform and opacity for animations */
+.animate {
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+}
+
+/* Avoid expensive properties in animations */
+.animate:hover {
+    transform: translateY(-2px); /* ✅ Good */
+    /* top: -2px; */ /* ❌ Avoid */
+}
+```
+
+## 🧪 Testing Conventions
+
+### **Unit Testing Structure**
+```javascript
+/**
+ * Test suite for TravelLogManager
+ * @describe TravelLogManager
+ */
+describe('TravelLogManager', () => {
+    let manager;
+    
+    beforeEach(() => {
+        manager = new TravelLogManager();
+    });
+    
+    afterEach(() => {
+        manager.cleanup();
+    });
+    
+    /**
+     * Test case: Should create travel log successfully
+     * @test createTravelLog
+     */
+    it('should create travel log successfully', async () => {
+        // Arrange
+        const logData = {
+            country: 'Japan',
+            city: 'Tokyo',
+            startDate: '2024-12-29',
+            endDate: '2024-12-31'
+        };
+        
+        // Act
+        const result = await manager.createTravelLog(logData);
+        
+        // Assert
+        expect(result).toBeDefined();
+        expect(result.id).toBeTruthy();
+        expect(result.country).toBe('Japan');
+    });
+});
+```
+
+## 📊 Code Quality Metrics
+
+### **Function Complexity**
+- Keep functions under 20 lines when possible
+- Maximum 3 levels of nesting
+- Use early returns to reduce complexity
+
+### **File Size Guidelines**
+- JavaScript files: Under 500 lines
+- CSS files: Under 300 lines
+- HTML files: Under 200 lines
+
+### **Comment Guidelines**
+- Comment complex business logic
+- Document public APIs with JSDoc
+- Use Korean for user-facing comments
+- Use English for technical comments
+
+## 🚀 Best Practices Summary
+
+### **DO's**
+✅ Use consistent naming conventions
+✅ Write self-documenting code
+✅ Handle errors gracefully
+✅ Use CSS variables for styling
+✅ Follow mobile-first approach
+✅ Add proper ARIA attributes
+✅ Use semantic HTML elements
+✅ Optimize for performance
+✅ Write comprehensive tests
+✅ Document public APIs
+
+### **DON'Ts**
+❌ Don't use hardcoded values
+❌ Don't ignore error handling
+❌ Don't skip accessibility
+❌ Don't use inline styles
+❌ Don't create overly complex functions
+❌ Don't ignore mobile optimization
+❌ Don't use non-semantic HTML
+❌ Don't skip performance considerations
+❌ Don't write untested code
+❌ Don't skip documentation
