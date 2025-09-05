@@ -420,7 +420,16 @@ export class SearchEngine {
 
             // 여행 스타일 필터 (여러 개 선택 가능 - OR 조건)
             if (filters.travelStyle && filters.travelStyle.length > 0) {
-                if (!log?.travelStyle || !filters.travelStyle.includes(log.travelStyle)) return false;
+                if (!log?.travelStyle) return false;
+                
+                // 기존 데이터 호환성을 위한 매핑
+                const styleMapping = {
+                    'solo': 'alone',
+                    'group': 'colleagues' // 단체 여행은 동료와로 매핑
+                };
+                
+                const normalizedLogStyle = styleMapping[log.travelStyle] || log.travelStyle;
+                if (!filters.travelStyle.includes(normalizedLogStyle)) return false;
             }
 
             // 별점 필터 (정확한 별점만 필터링)

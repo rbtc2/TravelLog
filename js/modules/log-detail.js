@@ -452,11 +452,14 @@ class LogDetailModule {
      */
     getTravelStyleText(style) {
         const styleTexts = {
-            'solo': '솔로 여행',
-            'couple': '커플 여행',
-            'group': '단체 여행',
-            'family': '가족 여행',
-            'friends': '친구와 함께'
+            'alone': '혼자',
+            'family': '가족과',
+            'couple': '연인과',
+            'friends': '친구와',
+            'colleagues': '동료와',
+            // 기존 데이터 호환성을 위한 매핑
+            'solo': '혼자',
+            'group': '단체 여행'
         };
         return styleTexts[style] || style;
     }

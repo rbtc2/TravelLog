@@ -135,11 +135,11 @@ class LogEditModule {
                                 <label for="edit-travel-style">여행 스타일</label>
                                 <select id="edit-travel-style" name="travelStyle">
                                     <option value="">선택 안함</option>
-                                    <option value="solo" ${log.travelStyle === 'solo' ? 'selected' : ''}>솔로 여행</option>
-                                    <option value="couple" ${log.travelStyle === 'couple' ? 'selected' : ''}>커플 여행</option>
-                                    <option value="group" ${log.travelStyle === 'group' ? 'selected' : ''}>단체 여행</option>
-                                    <option value="family" ${log.travelStyle === 'family' ? 'selected' : ''}>가족 여행</option>
-                                    <option value="friends" ${log.travelStyle === 'friends' ? 'selected' : ''}>친구와 함께</option>
+                                    <option value="alone" ${log.travelStyle === 'alone' ? 'selected' : ''}>혼자</option>
+                                    <option value="family" ${log.travelStyle === 'family' ? 'selected' : ''}>가족과</option>
+                                    <option value="couple" ${log.travelStyle === 'couple' ? 'selected' : ''}>연인과</option>
+                                    <option value="friends" ${log.travelStyle === 'friends' ? 'selected' : ''}>친구와</option>
+                                    <option value="colleagues" ${log.travelStyle === 'colleagues' ? 'selected' : ''}>동료와</option>
                                 </select>
                             </div>
                         </div>

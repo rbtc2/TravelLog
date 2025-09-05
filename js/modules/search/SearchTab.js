@@ -746,7 +746,10 @@ export class SearchTab {
                     'family': '가족과',
                     'couple': '연인과',
                     'friends': '친구와',
-                    'colleagues': '동료와'
+                    'colleagues': '동료와',
+                    // 기존 데이터 호환성
+                    'solo': '혼자',
+                    'group': '단체 여행'
                 };
                 return styleMap[style] || style;
             });
