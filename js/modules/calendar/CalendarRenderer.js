@@ -256,13 +256,7 @@ export class CalendarRenderer {
                         <span class="travel-count">${travelLogs.length}개 기록</span>
                     </div>
                     <div class="travel-logs-list">
-                        ${travelLogs.map(log => `
-                            <div class="travel-log-item">
-                                <div class="log-country">${getCountryFlag(log.country, this.dataManager.getCountriesManager())} ${log.country}</div>
-                                <div class="log-title">${log.title}</div>
-                                <div class="log-period">${log.startDate} ~ ${log.endDate}</div>
-                            </div>
-                        `).join('')}
+                        ${travelLogs.map(log => this.renderTravelLogItem(log)).join('')}
                     </div>
                 </div>
             `;
@@ -279,6 +273,58 @@ export class CalendarRenderer {
             `;
         }
     }
+
+    /**
+     * 여행 로그 아이템 렌더링 (미니멀 카드 디자인)
+     * @param {Object} log - 여행 로그 객체
+     * @returns {string} HTML 문자열
+     */
+    renderTravelLogItem(log) {
+        const countriesManager = this.dataManager.getCountriesManager();
+        const countryInfo = getCountryInfo(log.country, countriesManager);
+        const flag = getCountryFlag(log.country, countriesManager);
+        const countryName = countryInfo ? countryInfo.nameKo : log.country;
+        const city = log.city || '';
+        
+        // 여행 기간 정보
+        const startDate = new Date(log.startDate);
+        const endDate = new Date(log.endDate);
+        const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        
+        // 별점 표시 (간단한 텍스트 형태)
+        const rating = parseFloat(log.rating) || 0;
+        const ratingText = `⭐ ${rating}/5`;
+        
+        // 날짜 포맷팅 (MM.DD 형태)
+        const formatDate = (date) => {
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${month}.${day}`;
+        };
+        
+        const startDateFormatted = formatDate(startDate);
+        const endDateFormatted = formatDate(endDate);
+        
+        return `
+            <div class="minimal-travel-card" data-log-id="${log.id || ''}">
+                <div class="card-line-1">
+                    <div class="card-left">
+                        <span class="card-flag">${flag}</span>
+                        <span class="card-location">${countryName}${city ? ' · ' + city : ''}</span>
+                    </div>
+                    <div class="card-rating">${ratingText}</div>
+                </div>
+                <div class="card-line-2">
+                    <span class="card-period">${startDateFormatted} - ${endDateFormatted} (${totalDays}일)</span>
+                    <button class="card-more-btn" aria-label="더보기">
+                        <span>더보기</span>
+                        <span class="more-arrow">></span>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
 
     /**
      * 캘린더 새로고침

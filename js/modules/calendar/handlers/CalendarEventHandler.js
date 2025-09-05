@@ -18,6 +18,7 @@ export class CalendarEventHandler {
         this.bindViewToggleEvents();
         this.bindNavigationEvents();
         this.bindDateSelectionEvents();
+        this.bindMinimalCardEvents();
         this.bindDatePickerEvents();
         this.bindKeyboardEvents();
         this.bindResizeEvents();
@@ -70,6 +71,54 @@ export class CalendarEventHandler {
         };
 
         addEventListener(this.calendarTab.container, 'click', dayClickHandler, {}, this.eventListeners);
+    }
+
+    /**
+     * 미니멀 카드 클릭 이벤트 바인딩
+     */
+    bindMinimalCardEvents() {
+        const cardClickHandler = (e) => {
+            const moreBtn = e.target.closest('.card-more-btn');
+            const card = e.target.closest('.minimal-travel-card');
+            
+            if (moreBtn && card) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const logId = card.dataset.logId;
+                this.handleMoreButtonClick(logId);
+            } else if (card) {
+                // 카드 전체 클릭 시 상세 정보 표시
+                const logId = card.dataset.logId;
+                this.handleCardClick(logId);
+            }
+        };
+
+        addEventListener(this.calendarTab.container, 'click', cardClickHandler, {}, this.eventListeners);
+    }
+
+    /**
+     * 더보기 버튼 클릭 처리
+     * @param {string} logId - 여행 로그 ID
+     */
+    handleMoreButtonClick(logId) {
+        if (!logId) return;
+        
+        // 여행 로그 상세 정보 모달 표시 또는 상세 페이지로 이동
+        console.log('더보기 클릭:', logId);
+        // TODO: 상세 정보 모달 또는 페이지 이동 구현
+    }
+
+    /**
+     * 카드 클릭 처리
+     * @param {string} logId - 여행 로그 ID
+     */
+    handleCardClick(logId) {
+        if (!logId) return;
+        
+        // 카드 클릭 시 추가 정보 표시 또는 선택 상태 변경
+        console.log('카드 클릭:', logId);
+        // TODO: 카드 선택 상태 변경 또는 추가 정보 표시 구현
     }
 
     /**

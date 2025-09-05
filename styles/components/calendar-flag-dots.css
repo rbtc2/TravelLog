@@ -349,6 +349,101 @@
         font-size: 11px;
         padding: 6px 10px;
     }
+    
+    /* 캘린더 상세 정보 모바일 최적화 */
+    .calendar-details {
+        margin-top: 16px;
+        padding: 12px;
+    }
+    
+    .details-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .details-header h3 {
+        font-size: 16px;
+    }
+    
+    .travel-log-item {
+        padding: 12px;
+    }
+    
+    .log-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .log-flag-country {
+        gap: 6px;
+    }
+    
+    .log-flag {
+        font-size: 18px;
+    }
+    
+    .log-country-name {
+        font-size: 13px;
+    }
+    
+    .log-country-code {
+        font-size: 10px;
+    }
+    
+    .log-title {
+        font-size: 14px;
+    }
+    
+    .log-details > div {
+        font-size: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .period-label,
+    .purpose-label,
+    .rating-label {
+        min-width: 35px;
+    }
+    
+    /* 미니멀 카드 모바일 최적화 */
+    .minimal-travel-card {
+        padding: 10px 12px;
+        min-height: 50px;
+    }
+    
+    .card-line-1 {
+        font-size: 13px;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    
+    .card-flag {
+        font-size: 14px;
+    }
+    
+    .card-location {
+        font-size: 13px;
+    }
+    
+    .card-rating {
+        font-size: 12px;
+    }
+    
+    .card-line-2 {
+        font-size: 12px;
+    }
+    
+    .card-more-btn {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+    
+    /* 카드 별점 모바일 최적화 */
+    .card-rating {
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -433,6 +528,76 @@
     .travel-log-more {
         background: rgba(75, 85, 99, 0.9);
     }
+    
+    /* 캘린더 상세 정보 다크 모드 */
+    .calendar-details {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .details-header h3 {
+        color: #f9fafb;
+    }
+    
+    .travel-log-item {
+        background: #111827;
+        border-color: #374151;
+    }
+    
+    .travel-log-item:hover {
+        background: #1f2937;
+        border-color: #4b5563;
+    }
+    
+    .log-country-name {
+        color: #f9fafb;
+    }
+    
+    .log-title {
+        color: #f9fafb;
+    }
+    
+    .period-value,
+    .purpose-value {
+        color: #d1d5db;
+    }
+    
+    .placeholder-title {
+        color: #f9fafb;
+    }
+    
+    /* 미니멀 카드 다크 모드 */
+    .minimal-travel-card {
+        background: #111827;
+        border-color: #374151;
+    }
+    
+    .minimal-travel-card:hover {
+        background: #1f2937;
+        border-color: #4b5563;
+    }
+    
+    .card-location {
+        color: #f9fafb;
+    }
+    
+    .card-period {
+        color: #d1d5db;
+    }
+    
+    .card-more-btn {
+        color: #60a5fa;
+    }
+    
+    .card-more-btn:hover {
+        background: #1e3a8a;
+        color: #93c5fd;
+    }
+    
+    /* 카드 별점 다크 모드 */
+    .card-rating {
+        color: #fbbf24;
+    }
 }
 
 /* ========================================
@@ -450,6 +615,187 @@
     .travel-log-more:hover {
         transform: none;
     }
+}
+
+/* ========================================
+   캘린더 상세 정보 스타일 (미니멀 카드 디자인)
+   ======================================== */
+.calendar-details {
+    margin-top: 20px;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.details-content {
+    width: 100%;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.details-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.travel-count {
+    background: #3b82f6;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.travel-logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ========================================
+   미니멀 여행 카드 스타일
+   ======================================== */
+.minimal-travel-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    height: auto;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.minimal-travel-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-line-1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.card-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.card-flag {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.card-location {
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-rating {
+    flex-shrink: 0;
+    margin-left: 12px;
+    color: #f59e0b;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.card-line-2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.card-period {
+    color: #6b7280;
+    font-weight: 500;
+    flex: 1;
+}
+
+.card-more-btn {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.card-more-btn:hover {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.more-arrow {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+}
+
+.card-more-btn:hover .more-arrow {
+    transform: translateX(2px);
+}
+
+
+/* 플레이스홀더 스타일 */
+.details-placeholder {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+}
+
+.placeholder-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.placeholder-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.placeholder-description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #6b7280;
 }
 
 /* ========================================
