@@ -241,6 +241,13 @@ export class SearchTab {
         this.eventHandler.bindSearchEvents(this.callbacks);
         this.eventHandler.bindStateEvents(this.callbacks, this.stateManager.getState());
         
+        // 필터 탭 이벤트 바인딩 (필터가 이미 펼쳐져 있는 경우)
+        const filterContent = document.getElementById('filter-content');
+        if (filterContent && filterContent.classList.contains('expanded')) {
+            console.log('🔗 필터가 이미 펼쳐져 있음 - 탭 이벤트 바인딩 실행');
+            this.eventHandler.bindFilterTabEvents(this.callbacks);
+        }
+        
         if (this.stateManager.isDetailMode()) {
             this.eventHandler.bindDetailEvents(this.callbacks);
         }
@@ -557,10 +564,21 @@ export class SearchTab {
             filterContent.classList.add('expanded');
             toggleIcon.textContent = '▲';
             toggleText.textContent = '필터 접기';
+            
+            // 필터가 펼쳐질 때 필터 탭 이벤트 바인딩
+            console.log('🔗 필터 펼침 - 탭 이벤트 바인딩 실행');
+            this.eventHandler.bindFilterTabEvents(this.callbacks);
         }
     }
 
     switchFilterTab(targetTab) {
+        if (!targetTab || typeof targetTab !== 'string') {
+            console.error('switchFilterTab: 유효하지 않은 targetTab:', targetTab);
+            return;
+        }
+        
+        console.log(`필터 탭 전환: ${targetTab}`);
+        
         // 모든 탭 비활성화
         const allTabs = document.querySelectorAll('.filter-tab');
         allTabs.forEach(tab => tab.classList.remove('active'));
@@ -573,12 +591,18 @@ export class SearchTab {
         const clickedTab = document.querySelector(`[data-tab="${targetTab}"]`);
         if (clickedTab) {
             clickedTab.classList.add('active');
+            console.log(`탭 활성화 성공: ${targetTab}`);
+        } else {
+            console.error(`탭을 찾을 수 없음: [data-tab="${targetTab}"]`);
         }
         
         // 해당 패널 표시
         const targetPanel = document.querySelector(`[data-panel="${targetTab}"]`);
         if (targetPanel) {
             targetPanel.classList.add('active');
+            console.log(`패널 활성화 성공: ${targetTab}`);
+        } else {
+            console.error(`패널을 찾을 수 없음: [data-panel="${targetTab}"]`);
         }
     }
 

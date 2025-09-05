@@ -44,11 +44,7 @@ export class SearchEventHandler {
                 this.addEventListener(filterToggle, 'click', callbacks.toggleFilters.bind(callbacks));
             }
 
-            // 필터 탭 전환 이벤트
-            const filterTabs = document.querySelectorAll('.filter-tab');
-            filterTabs.forEach(tab => {
-                this.addEventListener(tab, 'click', callbacks.switchFilterTab.bind(callbacks));
-            });
+            // 필터 탭 전환 이벤트는 동적으로 바인딩 (bindFilterTabEvents 메서드 사용)
 
             // 별점 선택 이벤트
             this.bindSearchStarRating(callbacks);
@@ -132,6 +128,63 @@ export class SearchEventHandler {
 
         } catch (error) {
             console.error('상세 화면 이벤트 바인딩 오류:', error);
+        }
+    }
+
+    /**
+     * 필터 탭 이벤트를 동적으로 바인딩합니다
+     * @param {Object} callbacks - 콜백 함수들
+     */
+    bindFilterTabEvents(callbacks) {
+        try {
+            console.log('🔗 필터 탭 이벤트 바인딩 시작');
+            
+            // 기존 필터 탭 이벤트 리스너 제거
+            this.removeFilterTabEvents();
+            
+            // 필터 탭 전환 이벤트
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            console.log(`발견된 필터 탭 개수: ${filterTabs.length}`);
+            
+            filterTabs.forEach((tab, index) => {
+                const targetTab = tab.dataset.tab;
+                console.log(`탭 ${index + 1}: ${targetTab}`);
+                
+                this.addEventListener(tab, 'click', (event) => {
+                    event.preventDefault();
+                    const clickedTab = event.currentTarget;
+                    const targetTab = clickedTab.dataset.tab;
+                    console.log(`필터 탭 클릭: ${targetTab}`);
+                    
+                    if (targetTab) {
+                        callbacks.switchFilterTab(targetTab);
+                    } else {
+                        console.error('targetTab이 없습니다:', clickedTab);
+                    }
+                });
+            });
+            
+            console.log('✅ 필터 탭 이벤트 바인딩 완료');
+        } catch (error) {
+            console.error('필터 탭 이벤트 바인딩 오류:', error);
+        }
+    }
+
+    /**
+     * 기존 필터 탭 이벤트 리스너를 제거합니다
+     */
+    removeFilterTabEvents() {
+        try {
+            // 필터 탭 관련 이벤트 리스너만 제거
+            this.eventListeners = this.eventListeners.filter(listener => {
+                if (listener.element && listener.element.classList.contains('filter-tab')) {
+                    listener.element.removeEventListener(listener.event, listener.handler);
+                    return false; // 제거
+                }
+                return true; // 유지
+            });
+        } catch (error) {
+            console.error('필터 탭 이벤트 제거 오류:', error);
         }
     }
 
