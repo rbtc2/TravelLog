@@ -319,10 +319,9 @@ export class CalendarRenderer {
             const endTime = performance.now();
             const renderTime = endTime - startTime;
             
+            // 성능 경고만 유지 (100ms 초과 시에만)
             if (renderTime > 100) {
                 console.warn(`캘린더 렌더링 시간이 100ms를 초과했습니다: ${renderTime.toFixed(2)}ms`);
-            } else {
-                console.log(`캘린더 렌더링 완료: ${renderTime.toFixed(2)}ms`);
             }
             
         } catch (error) {
@@ -401,6 +400,6 @@ export class CalendarRenderer {
             }
         }
         
-        console.log('오래된 캐시 정리 완료');
+        // 캐시 정리 로그 제거 (성능 최적화)
     }
 }

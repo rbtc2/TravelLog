@@ -26,7 +26,7 @@ export class CalendarDataManager {
                 await this.countriesManager.initialize();
             }
             
-            console.log('CountriesManager 초기화 완료');
+            // CountriesManager 초기화 완료 로그 제거 (성능 최적화)
             return true;
         } catch (error) {
             console.warn('CountriesManager 초기화 실패, 폴백 모드로 동작:', error);
@@ -53,7 +53,7 @@ export class CalendarDataManager {
             // 캘린더용 데이터 구조로 변환
             this.processTravelLogsForCalendar(logService.getAllLogs());
             
-            console.log(`여행 로그 데이터 로드 완료: ${savedLogs.length}개`);
+            // 여행 로그 데이터 로드 완료 로그 제거 (성능 최적화)
             return true;
         } catch (error) {
             console.warn('여행 로그 데이터 로드 실패:', error);
