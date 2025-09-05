@@ -426,6 +426,24 @@ export class SearchEventHandler {
     }
 
     /**
+     * 필터 탭 이벤트를 바인딩합니다
+     * @param {Object} callbacks - 콜백 함수들
+     */
+    bindFilterTabEvents(callbacks) {
+        try {
+            // 필터 탭 전환 이벤트
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                this.addEventListener(tab, 'click', callbacks.switchFilterTab.bind(callbacks));
+            });
+            
+            console.log('🔗 필터 탭 이벤트 바인딩 완료');
+        } catch (error) {
+            console.error('필터 탭 이벤트 바인딩 오류:', error);
+        }
+    }
+
+    /**
      * 상세 화면에서 뒤로가기 처리
      * @param {Function} onBackFromDetail - 뒤로가기 콜백
      */

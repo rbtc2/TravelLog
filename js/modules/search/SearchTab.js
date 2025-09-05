@@ -615,19 +615,141 @@ export class SearchTab {
         }
     }
 
-    applyFilters() {
-        // 필터를 UI에서 읽어와서 적용
-        if (this.container) {
-            this.filterManager.loadFiltersFromUI(this.container);
+    async applyFilters() {
+        try {
+            console.log('🔍 필터 적용 시작');
+            
+            // 필터를 UI에서 읽어와서 적용
+            if (this.container) {
+                this.filterManager.loadFiltersFromUI(this.container);
+            }
+            
+            const filters = this.filterManager.getFilters();
+            console.log('🔍 적용할 필터:', filters);
+            
+            // 검색어가 있는 경우: 기존 검색 + 필터
+            const query = this.stateManager.getQuery();
+            if (query && query.trim()) {
+                console.log('🔍 검색어 + 필터 검색 실행');
+                await this.performSearch(query, { showValidationError: false });
+            } else {
+                // 검색어가 없는 경우: 필터 전용 검색
+                console.log('🔍 필터 전용 검색 실행');
+                await this.performFilterSearch(filters);
+            }
+            
+        } catch (error) {
+            console.error('필터 적용 오류:', error);
+            this.showToast('필터 적용 중 오류가 발생했습니다.');
+        }
+    }
+
+    /**
+     * 필터 전용 검색을 수행합니다
+     * @param {Object} filters - 필터 조건
+     */
+    async performFilterSearch(filters) {
+        try {
+            // 타이머 클리어 (즉시 검색 실행)
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = null;
+            }
+            
+            // 검색 중 상태로 변경
+            this.stateManager.updateState('searching', { query: '' });
+            this.stateManager.setSearching(true);
+            this.renderUI();
+            this.bindEvents();
+
+            // SearchEngine이 초기화되지 않았다면 초기화
+            if (!this.searchEngine.isInitialized) {
+                await this.searchEngine.initialize();
+            }
+
+            // 필터 검색 수행
+            const allLogs = this.stateManager.getAllLogs();
+            const searchResult = await this.searchEngine.performFilterSearch(allLogs, filters);
+
+            if (searchResult.error) {
+                this.showToast(searchResult.error);
+                this.stateManager.updateState('initial');
+                this.renderUI();
+                this.bindEvents();
+                return;
+            }
+
+            // 검색 결과 처리
+            if (searchResult.results && searchResult.results.length > 0) {
+                this.resultManager.setResults(searchResult.results);
+                this.stateManager.updateState('hasResults', { 
+                    query: '', 
+                    results: searchResult.results 
+                });
+                this.stateManager.setLastSearchQuery('');
+                
+                // 성능 정보 로깅
+                if (searchResult.performance) {
+                    const { searchTime, isOptimal } = searchResult.performance;
+                    console.log(`필터 검색 완료: ${searchResult.results.length}개 결과 (${searchTime.toFixed(2)}ms)`);
+                    
+                    if (!isOptimal) {
+                        console.warn(`⚠️ 필터 검색 성능 경고: ${searchTime.toFixed(2)}ms`);
+                    }
+                }
+                
+                // 필터 조건 요약 메시지 생성
+                const filterSummary = this.generateFilterSummary(filters);
+                this.showToast(`필터 검색 완료: ${searchResult.results.length}개 결과를 찾았습니다. ${filterSummary}`);
+            } else {
+                this.stateManager.updateState('noResults', { query: '' });
+                const filterSummary = this.generateFilterSummary(filters);
+                this.showToast(`필터 조건에 맞는 결과가 없습니다. ${filterSummary}`);
+            }
+            
+            this.renderUI();
+            this.bindEvents();
+            
+        } catch (error) {
+            console.error('필터 검색 수행 오류:', error);
+            this.showToast('필터 검색 중 오류가 발생했습니다.');
+            this.stateManager.updateState('initial');
+            this.renderUI();
+            this.bindEvents();
+        } finally {
+            this.stateManager.setSearching(false);
+        }
+    }
+
+    /**
+     * 필터 조건 요약 메시지를 생성합니다
+     * @param {Object} filters - 필터 조건
+     * @returns {string} 필터 요약 메시지
+     */
+    generateFilterSummary(filters) {
+        const activeFilters = [];
+        
+        if (filters.continent && filters.continent.length > 0) {
+            activeFilters.push(`대륙: ${filters.continent.join(', ')}`);
         }
         
-        // 필터링된 결과로 검색 재실행
-        const query = this.stateManager.getQuery();
-        if (query) {
-            this.performSearch(query, { showValidationError: false });
+        if (filters.purpose && filters.purpose !== '') {
+            activeFilters.push(`목적: ${filters.purpose}`);
         }
         
-        this.showToast('필터가 적용되었습니다.');
+        if (filters.travelStyle && filters.travelStyle !== '') {
+            activeFilters.push(`동행: ${filters.travelStyle}`);
+        }
+        
+        if (filters.rating && filters.rating > 0) {
+            activeFilters.push(`별점: ${filters.rating}점 이상`);
+        }
+        
+        if (filters.startDate && filters.endDate) {
+            activeFilters.push(`기간: ${filters.startDate} ~ ${filters.endDate}`);
+        }
+        
+        return activeFilters.length > 0 ? `(${activeFilters.join(', ')})` : '';
     }
 
     resetFilters() {

@@ -445,13 +445,16 @@ export class SearchUIRenderer {
      * @returns {string} HTML 문자열
      */
     renderHasResultsState(searchQuery, searchResults = []) {
+        const isFilterSearch = !searchQuery || searchQuery.trim() === '';
+        const searchType = isFilterSearch ? '필터 검색' : '검색';
+        
         return `
             <div class="search-results-section">
                 <div class="results-header">
-                    <h3 class="results-title">📊 검색 결과</h3>
+                    <h3 class="results-title">📊 ${searchType} 결과</h3>
                     <div class="results-count">
                         <span class="count-number">${searchResults.length}</span>개의 일정 기록
-                        ${searchQuery ? `("${searchQuery}" 검색)` : ''}
+                        ${searchQuery ? `("${searchQuery}" 검색)` : '(필터 조건으로 검색)'}
                     </div>
                 </div>
                 
@@ -470,13 +473,16 @@ export class SearchUIRenderer {
      * @returns {string} HTML 문자열
      */
     renderNoResultsState(searchQuery) {
+        const isFilterSearch = !searchQuery || searchQuery.trim() === '';
+        const searchType = isFilterSearch ? '필터 검색' : '검색';
+        
         return `
             <div class="search-results-section">
                 <div class="results-header">
-                    <h3 class="results-title">📊 검색 결과</h3>
+                    <h3 class="results-title">📊 ${searchType} 결과</h3>
                     <div class="results-count">
                         <span class="count-number">0</span>개의 일정 기록
-                        ${searchQuery ? `("${searchQuery}" 검색)` : ''}
+                        ${searchQuery ? `("${searchQuery}" 검색)` : '(필터 조건으로 검색)'}
                     </div>
                 </div>
                 
@@ -527,36 +533,43 @@ export class SearchUIRenderer {
         }
         
         return searchResults.map((result, index) => {
-            const log = result.log;
-            const countryDisplayName = this.getCountryDisplayName(log.country);
+            const log = result.log || result; // 필터 검색 결과는 직접 log 객체일 수 있음
+            
+            // 안전한 접근을 위한 방어 코드
+            if (!log || typeof log !== 'object') {
+                console.warn('잘못된 로그 객체:', result);
+                return '<div class="search-result-item error">잘못된 데이터입니다.</div>';
+            }
+            
+            const countryDisplayName = this.getCountryDisplayName(log?.country);
             
             return `
-                <div class="search-result-item clickable" data-index="${index}" data-log-id="${log.id}">
+                <div class="search-result-item clickable" data-index="${index}" data-log-id="${log?.id || ''}">
                     <div class="result-header">
                         <div class="result-title-section">
                             <h4 class="result-title">
                                 ${this.highlightText(countryDisplayName, searchQuery)}
-                                ${log.city ? ` - ${this.highlightText(log.city, searchQuery)}` : ''}
+                                ${log?.city ? ` - ${this.highlightText(log.city, searchQuery)}` : ''}
                             </h4>
                             <div class="result-rating">
-                                ${this.renderStarRating(log.rating || 0)}
+                                ${this.renderStarRating(log?.rating || 0)}
                             </div>
                         </div>
                         <div class="result-meta">
                             <span class="result-date">
-                                📅 ${log.startDate || log.date || ''}
-                                ${log.endDate ? ` - ${log.endDate}` : ''}
+                                📅 ${log?.startDate || log?.date || ''}
+                                ${log?.endDate ? ` - ${log.endDate}` : ''}
                             </span>
                             <span class="result-purpose">
-                                ${this.getPurposeDisplayName(log.purpose || '')}
+                                ${this.getPurposeDisplayName(log?.purpose || '')}
                             </span>
                             <span class="result-style">
-                                ${this.getTravelStyleDisplayName(log.travelStyle || '')}
+                                ${this.getTravelStyleDisplayName(log?.travelStyle || '')}
                             </span>
                         </div>
                     </div>
                     <div class="result-description">
-                        ${log.memo ? this.highlightText(log.memo, searchQuery) : '메모가 없습니다.'}
+                        ${log?.memo ? this.highlightText(log.memo, searchQuery) : '메모가 없습니다.'}
                     </div>
                 </div>
             `;

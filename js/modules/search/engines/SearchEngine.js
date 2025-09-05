@@ -70,6 +70,263 @@ export class SearchEngine {
     }
 
     /**
+     * 필터 조건만으로 검색을 수행합니다
+     * @param {Array} allLogs - 모든 로그 데이터
+     * @param {Object} filters - 필터 조건
+     * @param {Object} options - 검색 옵션
+     * @returns {Object} 검색 결과와 통계
+     */
+    async performFilterSearch(allLogs, filters, options = {}) {
+        const startTime = performance.now();
+        
+        try {
+            console.log('🔍 필터 전용 검색 시작:', filters);
+            
+            // 필터 조건 유효성 검사
+            const validation = this.validateFilters(filters);
+            if (!validation.isValid) {
+                return { 
+                    results: [], 
+                    stats: null, 
+                    error: validation.error,
+                    isValid: false
+                };
+            }
+
+            // 필터 검색 수행
+            const filterResults = this.applyFilters(allLogs, filters);
+            
+            // 검색 통계 계산
+            const stats = this.calculateFilterStats(filterResults, filters);
+            
+            const endTime = performance.now();
+            const searchTime = endTime - startTime;
+            
+            console.log(`🔍 필터 검색 완료: ${filterResults.length}개 결과 (${searchTime.toFixed(2)}ms)`);
+            
+            // 성능 검증 (300ms 이내)
+            if (searchTime > 300) {
+                console.warn(`⚠️ 필터 검색 성능 경고: ${searchTime.toFixed(2)}ms (권장: 300ms 이내)`);
+            }
+            
+            return {
+                results: filterResults,
+                stats: stats,
+                error: null,
+                isValid: true,
+                performance: {
+                    searchTime: searchTime,
+                    isOptimal: searchTime <= 300
+                }
+            };
+            
+        } catch (error) {
+            console.error('필터 검색 수행 오류:', error);
+            return {
+                results: [],
+                stats: null,
+                error: error.message,
+                isValid: false
+            };
+        }
+    }
+
+    /**
+     * 필터 조건을 검증합니다
+     * @param {Object} filters - 필터 조건
+     * @returns {Object} 검증 결과
+     */
+    validateFilters(filters) {
+        if (!filters || typeof filters !== 'object') {
+            return { isValid: false, error: '필터 조건이 올바르지 않습니다.' };
+        }
+
+        // 최소 하나의 필터 조건이 있어야 함
+        const hasActiveFilters = Object.values(filters).some(value => {
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            }
+            return value !== '' && value !== null && value !== undefined;
+        });
+
+        if (!hasActiveFilters) {
+            return { isValid: false, error: '최소 하나의 필터 조건을 선택해주세요.' };
+        }
+
+        return { isValid: true, error: null };
+    }
+
+    /**
+     * 필터 조건을 적용하여 로그를 필터링합니다
+     * @param {Array} allLogs - 모든 로그 데이터
+     * @param {Object} filters - 필터 조건
+     * @returns {Array} 필터링된 결과
+     */
+    applyFilters(allLogs, filters) {
+        if (!Array.isArray(allLogs) || allLogs.length === 0) {
+            return [];
+        }
+
+        const filteredLogs = allLogs.filter(log => {
+            // 대륙 필터
+            if (filters.continent && filters.continent.length > 0) {
+                const logContinent = this.getLogContinent(log);
+                if (!logContinent || !filters.continent.includes(logContinent)) {
+                    return false;
+                }
+            }
+
+            // 목적 필터
+            if (filters.purpose && filters.purpose !== '') {
+                if (!log.purpose || log.purpose !== filters.purpose) {
+                    return false;
+                }
+            }
+
+            // 동행유형 필터
+            if (filters.travelStyle && filters.travelStyle !== '') {
+                if (!log.travelStyle || log.travelStyle !== filters.travelStyle) {
+                    return false;
+                }
+            }
+
+            // 별점 필터
+            if (filters.rating && filters.rating > 0) {
+                if (!log.rating || log.rating < filters.rating) {
+                    return false;
+                }
+            }
+
+            // 날짜 범위 필터
+            if (filters.startDate && filters.endDate) {
+                const logDate = new Date(log.date);
+                const startDate = new Date(filters.startDate);
+                const endDate = new Date(filters.endDate);
+                
+                if (logDate < startDate || logDate > endDate) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        // 필터링된 결과를 기존 검색 결과 형식으로 변환
+        return filteredLogs.map(log => ({
+            log: log,
+            score: 10, // 필터 검색에서는 모든 결과에 동일한 점수 부여
+            matchedFields: [{
+                field: 'filter',
+                value: 'filtered',
+                score: 10,
+                weight: 1
+            }]
+        }));
+    }
+
+    /**
+     * 로그의 대륙을 가져옵니다
+     * @param {Object} log - 로그 객체
+     * @returns {string|null} 대륙명
+     */
+    getLogContinent(log) {
+        if (!log.country) return null;
+        
+        // 국가 코드로 대륙 찾기
+        const countryCode = log.country.toUpperCase();
+        const countryMapping = this.searchUtility.countryMapping;
+        
+        // 국가 코드로 직접 매핑 찾기
+        for (const [key, value] of countryMapping.entries()) {
+            if (key === countryCode && typeof value === 'string' && value !== countryCode) {
+                // 대륙 정보는 별도로 관리해야 함
+                // 임시로 국가명을 반환 (실제로는 대륙 매핑이 필요)
+                return this.getContinentFromCountry(value);
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * 국가명으로부터 대륙을 추정합니다 (임시 구현)
+     * @param {string} countryName - 국가명
+     * @returns {string} 대륙명
+     */
+    getContinentFromCountry(countryName) {
+        // 간단한 대륙 매핑 (실제로는 더 정확한 매핑이 필요)
+        const continentMap = {
+            '대한민국': '아시아',
+            '일본': '아시아',
+            '중국': '아시아',
+            '태국': '아시아',
+            '베트남': '아시아',
+            '싱가포르': '아시아',
+            '인도네시아': '아시아',
+            '말레이시아': '아시아',
+            '필리핀': '아시아',
+            '미국': '북아메리카',
+            '캐나다': '북아메리카',
+            '멕시코': '북아메리카',
+            '프랑스': '유럽',
+            '독일': '유럽',
+            '영국': '유럽',
+            '이탈리아': '유럽',
+            '스페인': '유럽',
+            '네덜란드': '유럽',
+            '스위스': '유럽',
+            '오스트리아': '유럽',
+            '브라질': '남아메리카',
+            '아르헨티나': '남아메리카',
+            '칠레': '남아메리카',
+            '호주': '오세아니아',
+            '뉴질랜드': '오세아니아',
+            '이집트': '아프리카',
+            '남아프리카': '아프리카',
+            '모로코': '아프리카'
+        };
+        
+        return continentMap[countryName] || '기타';
+    }
+
+    /**
+     * 필터 검색 통계를 계산합니다
+     * @param {Array} results - 필터링된 결과
+     * @param {Object} filters - 적용된 필터
+     * @returns {Object} 검색 통계
+     */
+    calculateFilterStats(results, filters) {
+        const totalResults = results.length;
+        let totalScore = 0;
+        const fieldStats = {};
+
+        results.forEach(result => {
+            // 필터 검색에서는 모든 결과에 동일한 점수 부여
+            const score = 10;
+            totalScore += score;
+            
+            // 필드별 통계
+            Object.keys(filters).forEach(filterKey => {
+                if (filters[filterKey] && filters[filterKey] !== '') {
+                    if (!fieldStats[filterKey]) {
+                        fieldStats[filterKey] = { count: 0, totalScore: 0 };
+                    }
+                    fieldStats[filterKey].count++;
+                    fieldStats[filterKey].totalScore += score;
+                }
+            });
+        });
+
+        return {
+            totalResults,
+            averageScore: totalResults > 0 ? totalScore / totalResults : 0,
+            fieldStats,
+            filters: filters,
+            searchType: 'filter'
+        };
+    }
+
+    /**
      * 텍스트를 하이라이팅합니다
      * @param {string} text - 하이라이팅할 텍스트
      * @param {string} query - 검색어
