@@ -56,6 +56,7 @@ class MyLogsTab {
         this.currentView = 'hub';
         this.currentLogId = null;
         this.container = null;
+        this.viewEventListeners = [];
         
         // View 모듈들 초기화
         this.views = {
@@ -87,8 +88,8 @@ class MyLogsTab {
     async render(container) {
         this.container = container;
         await this.controller.initialize();
+        this.bindViewEvents(); // View 렌더링 전에 이벤트 바인딩
         this.renderCurrentView();
-        this.bindViewEvents();
         this.isInitialized = true;
     }
     
@@ -106,12 +107,19 @@ class MyLogsTab {
      * 현재 뷰를 렌더링합니다
      */
     renderCurrentView() {
+        console.log('MyLogsTab: renderCurrentView 호출됨', { currentView: this.currentView });
+        
         if (this.currentView === 'detail') {
+            console.log('MyLogsTab: 로그 상세 화면 렌더링');
             this.renderLogDetail();
         } else {
             const view = this.views[this.currentView];
             if (view) {
+                console.log('MyLogsTab: 뷰 렌더링 시작', { viewName: this.currentView, viewType: view.constructor.name });
                 view.render(this.container);
+                console.log('MyLogsTab: 뷰 렌더링 완료');
+            } else {
+                console.error('MyLogsTab: 뷰를 찾을 수 없습니다', { currentView: this.currentView, availableViews: Object.keys(this.views) });
             }
         }
         
@@ -140,68 +148,95 @@ class MyLogsTab {
         this.logDetailModule.render(this.container, log);
     }
     
-    /**
+        /**
      * View 이벤트들을 바인딩합니다
      */
     bindViewEvents() {
+        // 기존 이벤트 리스너 제거 (중복 방지)
+        if (this.viewEventListeners) {
+            this.viewEventListeners.forEach(({ element, event, handler }) => {
+                element.removeEventListener(event, handler);
+            });
+        }
+        
+        this.viewEventListeners = [];
+        
         // 허브 뷰 이벤트
-        this.container?.addEventListener('hubView:navigate', (e) => {
+        this.addViewEventListener('hubView:navigate', (e) => {
+            console.log('MyLogsTab: hubView:navigate 이벤트 수신', e.detail);
             this.navigateToView(e.detail.view);
         });
         
-        this.container?.addEventListener('hubView:showMessage', (e) => {
+        this.addViewEventListener('hubView:showMessage', (e) => {
             this.showMessage(e.detail.type, e.detail.message);
         });
         
         // 설정 뷰 이벤트
-        this.container?.addEventListener('settingsView:navigate', (e) => {
+        this.addViewEventListener('settingsView:navigate', (e) => {
             this.navigateToView(e.detail.view);
         });
         
         // 트래블 레포트 뷰 이벤트
-        this.container?.addEventListener('travelReportView:navigate', (e) => {
+        this.addViewEventListener('travelReportView:navigate', (e) => {
+            console.log('MyLogsTab: travelReportView:navigate 이벤트 수신', e.detail);
             this.navigateToView(e.detail.view);
         });
         
-        this.container?.addEventListener('travelReportView:showMessage', (e) => {
+        this.addViewEventListener('travelReportView:showMessage', (e) => {
             this.showMessage(e.detail.type, e.detail.message);
         });
         
         // 로그 목록 뷰 이벤트
-        this.container?.addEventListener('logsListView:navigate', (e) => {
+        this.addViewEventListener('logsListView:navigate', (e) => {
             this.navigateToView(e.detail.view);
         });
         
-        this.container?.addEventListener('logsListView:editLog', (e) => {
+        this.addViewEventListener('logsListView:editLog', (e) => {
             this.editLog(e.detail.logId);
         });
         
-        this.container?.addEventListener('logsListView:deleteLog', (e) => {
+        this.addViewEventListener('logsListView:deleteLog', (e) => {
             this.deleteLog(e.detail.logId);
         });
         
-        this.container?.addEventListener('logsListView:showLogDetail', (e) => {
+        this.addViewEventListener('logsListView:showLogDetail', (e) => {
             this.showLogDetail(e.detail.logId);
         });
         
         // 로그 상세 모듈 이벤트 (기존)
-        this.container?.addEventListener('logDetailBack', (e) => {
+        this.addViewEventListener('logDetailBack', (e) => {
             this.currentView = 'logs';
             this.currentLogId = null;
             this.renderCurrentView();
         });
         
-        this.container?.addEventListener('logDetailDelete', (e) => {
+        this.addViewEventListener('logDetailDelete', (e) => {
             this.deleteLog(e.detail.logId);
             this.currentView = 'logs';
             this.currentLogId = null;
             this.renderCurrentView();
         });
         
-        this.container?.addEventListener('logDetailEdit', (e) => {
+        this.addViewEventListener('logDetailEdit', (e) => {
             const { logId, updatedData } = e.detail;
             this.performEdit(logId, updatedData);
         });
+    }
+    
+    /**
+     * View 이벤트 리스너를 추가합니다
+     * @param {string} eventName - 이벤트 이름
+     * @param {Function} handler - 이벤트 핸들러
+     */
+    addViewEventListener(eventName, handler) {
+        if (this.container) {
+            this.container.addEventListener(eventName, handler);
+            this.viewEventListeners.push({
+                element: this.container,
+                event: eventName,
+                handler: handler
+            });
+        }
     }
     
     /**
@@ -209,8 +244,13 @@ class MyLogsTab {
      * @param {string} viewName - 뷰 이름
      */
     navigateToView(viewName) {
+        console.log('MyLogsTab: navigateToView 호출됨', { viewName, currentView: this.currentView });
+        
+        // 현재 뷰와 동일한 경우에도 강제로 다시 렌더링
         this.currentView = viewName;
         this.renderCurrentView();
+        
+        console.log('MyLogsTab: 뷰 렌더링 완료', { currentView: this.currentView });
     }
     
     /**
@@ -339,6 +379,14 @@ class MyLogsTab {
      * 탭 정리
      */
     async cleanup() {
+        // View 이벤트 리스너 정리
+        if (this.viewEventListeners) {
+            this.viewEventListeners.forEach(({ element, event, handler }) => {
+                element.removeEventListener(event, handler);
+            });
+            this.viewEventListeners = [];
+        }
+        
         // 이벤트 리스너 정리
         if (this.eventManager) {
             this.eventManager.cleanup();

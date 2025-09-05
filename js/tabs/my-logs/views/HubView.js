@@ -160,9 +160,13 @@ class HubView {
         // 트래블 레포트 버튼
         const viewReportBtn = document.getElementById('view-report-btn');
         if (viewReportBtn) {
+            console.log('HubView: 트래블 레포트 버튼 이벤트 바인딩 완료');
             this.eventManager.add(viewReportBtn, 'click', () => {
+                console.log('HubView: 트래블 레포트 버튼 클릭됨');
                 this.onNavigateToTravelReport();
             });
+        } else {
+            console.error('HubView: 트래블 레포트 버튼을 찾을 수 없습니다');
         }
 
         // 설정 버튼
@@ -185,7 +189,8 @@ class HubView {
      * 트래블 레포트로 이동
      */
     onNavigateToTravelReport() {
-        this.dispatchEvent('navigate', { view: 'travel-report' });
+        console.log('HubView: onNavigateToTravelReport 호출됨');
+        this.dispatchEvent('navigate', { view: 'travelReport' });
     }
 
     /**

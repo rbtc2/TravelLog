@@ -22,9 +22,12 @@ class TravelReportView {
      * @param {HTMLElement} container - 렌더링할 컨테이너
      */
     render(container) {
+        console.log('TravelReportView: render 호출됨');
         this.container = container;
         this.container.innerHTML = this.getTravelReportHTML();
+        console.log('TravelReportView: HTML 렌더링 완료');
         this.bindEvents();
+        console.log('TravelReportView: 이벤트 바인딩 완료');
     }
 
     /**
