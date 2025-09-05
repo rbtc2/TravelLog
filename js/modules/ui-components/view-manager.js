@@ -494,9 +494,10 @@ export class ViewManager {
      * @param {Object} logService - LogService 인스턴스
      * @param {Function} renderLogItem - 개별 로그 아이템 렌더링 함수
      * @param {Function} renderPagination - 페이지네이션 렌더링 함수
+     * @param {string} viewMode - 뷰 모드 ('card' 또는 'list')
      * @returns {string} HTML 문자열
      */
-    renderLogsList(logService, renderLogItem, renderPagination) {
+    renderLogsList(logService, renderLogItem, renderPagination, viewMode = 'card') {
         try {
             // 콜백 함수들이 제대로 전달되었는지 확인
             if (typeof renderLogItem !== 'function') {
@@ -522,6 +523,14 @@ export class ViewManager {
                             <div class="header-content">
                                 <h1 class="my-logs-title">📅 나의 일정</h1>
                                 <p class="my-logs-subtitle">총 ${logService.getAllLogs().length}개의 여행 일지</p>
+                            </div>
+                            <div class="view-mode-toggle">
+                                <button class="view-mode-btn ${viewMode === 'card' ? 'active' : ''}" data-mode="card" title="카드 뷰">
+                                    <span class="view-mode-icon">⊞</span>
+                                </button>
+                                <button class="view-mode-btn ${viewMode === 'list' ? 'active' : ''}" data-mode="list" title="리스트 뷰">
+                                    <span class="view-mode-icon">☰</span>
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -20,6 +20,14 @@ class LogsListView {
         this.viewManager = new ViewManager();
         this.paginationManager = new PaginationManager();
         this.container = null;
+        
+        // 저장된 뷰 모드 불러오기 (기본값: 'card')
+        try {
+            this.viewMode = localStorage.getItem('travelLog_viewMode') || 'card';
+        } catch (error) {
+            console.warn('뷰 모드 상태 불러오기 실패:', error);
+            this.viewMode = 'card';
+        }
     }
 
     /**
@@ -46,7 +54,8 @@ class LogsListView {
         this.container.innerHTML = this.viewManager.renderLogsList(
             this.controller.logService,
             (log) => this.renderLogItem(log),
-            (totalPages) => this.renderPagination(totalPages)
+            (totalPages) => this.renderPagination(totalPages),
+            this.viewMode
         );
     }
 
@@ -56,6 +65,19 @@ class LogsListView {
      * @returns {string} HTML 문자열
      */
     renderLogItem(log) {
+        if (this.viewMode === 'list') {
+            return this.renderLogItemList(log);
+        } else {
+            return this.renderLogItemCard(log);
+        }
+    }
+
+    /**
+     * 카드 형태의 일지 아이템을 렌더링합니다
+     * @param {Object} log - 로그 객체
+     * @returns {string} HTML 문자열
+     */
+    renderLogItemCard(log) {
         const startDate = new Date(log.startDate);
         const endDate = new Date(log.endDate);
         const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
@@ -99,7 +121,7 @@ class LogsListView {
         }
         
         return `
-            <div class="log-item clickable" data-log-id="${log.id}">
+            <div class="log-item log-item-card clickable" data-log-id="${log.id}">
                 <!-- 1행: 헤더 (국가명 + 기간/목적 칩 + 편집/삭제 아이콘) -->
                 <div class="log-header">
                     <div class="log-header-left">
@@ -175,6 +197,76 @@ class LogsListView {
     }
 
     /**
+     * 리스트 형태의 일지 아이템을 렌더링합니다 (한 줄)
+     * @param {Object} log - 로그 객체
+     * @returns {string} HTML 문자열
+     */
+    renderLogItemList(log) {
+        const startDate = new Date(log.startDate);
+        const endDate = new Date(log.endDate);
+        const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+        
+        // ViewManager 메서드 호출 시 안전하게 처리
+        let purposeIcon, purposeText;
+        
+        try {
+            purposeIcon = this.viewManager.getPurposeIcon(log.purpose);
+            purposeText = this.viewManager.getPurposeText(log.purpose);
+        } catch (error) {
+            console.error('ViewManager 메서드 호출 중 오류:', error);
+            purposeIcon = '✈️';
+            purposeText = log.purpose || '기타';
+        }
+        
+        // 국가 표시 로직
+        let countryDisplayName = log.country;
+        let countryFlag = '🇰🇷';
+        
+        if (log.country && log.country.length === 2) {
+            try {
+                const countryInfo = this.controller.getCountryByCode(log.country);
+                if (countryInfo) {
+                    countryDisplayName = countryInfo.nameKo;
+                    countryFlag = countryInfo.flag;
+                }
+            } catch (error) {
+                console.warn('국가 정보 조회 실패:', error);
+            }
+        }
+        
+        return `
+            <div class="log-item log-item-list clickable" data-log-id="${log.id}">
+                <div class="log-list-content">
+                    <div class="log-list-left">
+                        <div class="log-list-flag">${countryFlag}</div>
+                        <div class="log-list-info">
+                            <div class="log-list-location">${countryDisplayName} · ${log.city}</div>
+                            <div class="log-list-dates">${startDate.toLocaleDateString('ko-KR')} ~ ${endDate.toLocaleDateString('ko-KR')}</div>
+                        </div>
+                    </div>
+                    <div class="log-list-center">
+                        <div class="log-list-chips">
+                            <span class="log-list-chip duration">${duration}일</span>
+                            <span class="log-list-chip purpose">${purposeIcon} ${purposeText}</span>
+                        </div>
+                    </div>
+                    <div class="log-list-right">
+                        <div class="log-list-rating">${'★'.repeat(parseInt(log.rating))}${'☆'.repeat(5 - parseInt(log.rating))}</div>
+                        <div class="log-list-actions">
+                            <button class="log-action-btn edit-btn" data-log-id="${log.id}" title="편집">
+                                ✏️
+                            </button>
+                            <button class="log-action-btn delete-btn" data-log-id="${log.id}" title="삭제">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
      * 페이지네이션을 렌더링합니다
      * @param {number} totalPages - 전체 페이지 수
      * @returns {string} HTML 문자열
@@ -239,6 +331,15 @@ class LogsListView {
                 }
             });
         });
+        
+        // 뷰 모드 토글 버튼들
+        const viewModeBtns = document.querySelectorAll('.view-mode-btn');
+        viewModeBtns.forEach(btn => {
+            this.eventManager.add(btn, 'click', (e) => {
+                const mode = e.currentTarget.dataset.mode;
+                this.onViewModeChange(mode);
+            });
+        });
     }
 
     /**
@@ -281,6 +382,25 @@ class LogsListView {
         this.controller.setCurrentPage(page);
         this.renderLogsList();
         this.bindEvents();
+    }
+
+    /**
+     * 뷰 모드 변경
+     * @param {string} mode - 뷰 모드 ('card' 또는 'list')
+     */
+    onViewModeChange(mode) {
+        if (mode === this.viewMode) return;
+        
+        this.viewMode = mode;
+        this.renderLogsList();
+        this.bindEvents();
+        
+        // 뷰 모드 상태를 로컬 스토리지에 저장
+        try {
+            localStorage.setItem('travelLog_viewMode', mode);
+        } catch (error) {
+            console.warn('뷰 모드 상태 저장 실패:', error);
+        }
     }
 
     /**
