@@ -29,8 +29,8 @@
  * - 확장성: 새로운 화면 추가 시 기존 코드 영향 최소화
  */
 
-import LogDetailModule from '../modules/log-detail.js';
 import LogEditModule from '../modules/log-edit.js';
+import LogDetailModule from '../modules/log-detail.js';
 import { ToastManager } from '../modules/ui-components/toast-manager.js';
 import { EventManager } from '../modules/utils/event-manager.js';
 import { ModalManager } from '../modules/ui-components/modal-manager.js';
@@ -67,17 +67,12 @@ class MyLogsTab {
         };
         
         // 기존 모듈들 (재사용)
-        this.logDetailModule = new LogDetailModule();
         this.logEditModule = new LogEditModule();
+        this.logDetailModule = new LogDetailModule();
         
         // ViewManager 초기화 확인 (개발 모드에서만)
         if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-            console.log('MyLogsTab: 리팩토링된 모듈 초기화 완료', {
-                controller: this.controller,
-                views: Object.keys(this.views),
-                eventManager: this.eventManager,
-                modalManager: this.modalManager
-            });
+            // 리팩토링된 모듈 초기화 완료
         }
     }
     
@@ -107,17 +102,17 @@ class MyLogsTab {
      * 현재 뷰를 렌더링합니다
      */
     renderCurrentView() {
-        console.log('MyLogsTab: renderCurrentView 호출됨', { currentView: this.currentView });
+        // renderCurrentView 호출됨
         
         if (this.currentView === 'detail') {
-            console.log('MyLogsTab: 로그 상세 화면 렌더링');
+            // 로그 상세 화면 렌더링
             this.renderLogDetail();
         } else {
             const view = this.views[this.currentView];
             if (view) {
-                console.log('MyLogsTab: 뷰 렌더링 시작', { viewName: this.currentView, viewType: view.constructor.name });
+                // 뷰 렌더링 시작
                 view.render(this.container);
-                console.log('MyLogsTab: 뷰 렌더링 완료');
+                // 뷰 렌더링 완료
             } else {
                 console.error('MyLogsTab: 뷰를 찾을 수 없습니다', { currentView: this.currentView, availableViews: Object.keys(this.views) });
             }
@@ -145,6 +140,7 @@ class MyLogsTab {
             return;
         }
         
+        // LogDetailModule을 사용하여 상세 화면 렌더링
         this.logDetailModule.render(this.container, log);
     }
     
@@ -163,7 +159,7 @@ class MyLogsTab {
         
         // 허브 뷰 이벤트
         this.addViewEventListener('hubView:navigate', (e) => {
-            console.log('MyLogsTab: hubView:navigate 이벤트 수신', e.detail);
+            // hubView:navigate 이벤트 수신
             this.navigateToView(e.detail.view);
         });
         
@@ -178,7 +174,7 @@ class MyLogsTab {
         
         // 트래블 레포트 뷰 이벤트
         this.addViewEventListener('travelReportView:navigate', (e) => {
-            console.log('MyLogsTab: travelReportView:navigate 이벤트 수신', e.detail);
+            // travelReportView:navigate 이벤트 수신
             this.navigateToView(e.detail.view);
         });
         
@@ -244,13 +240,13 @@ class MyLogsTab {
      * @param {string} viewName - 뷰 이름
      */
     navigateToView(viewName) {
-        console.log('MyLogsTab: navigateToView 호출됨', { viewName, currentView: this.currentView });
+        // navigateToView 호출됨
         
         // 현재 뷰와 동일한 경우에도 강제로 다시 렌더링
         this.currentView = viewName;
         this.renderCurrentView();
         
-        console.log('MyLogsTab: 뷰 렌더링 완료', { currentView: this.currentView });
+        // 뷰 렌더링 완료
     }
     
     /**
@@ -400,12 +396,12 @@ class MyLogsTab {
         });
         
         // 기존 모듈들 정리
-        if (this.logDetailModule) {
-            this.logDetailModule.cleanup();
-        }
-        
         if (this.logEditModule) {
             this.logEditModule.cleanup();
+        }
+        
+        if (this.logDetailModule) {
+            this.logDetailModule.cleanup();
         }
         
         // Controller 정리

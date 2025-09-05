@@ -11,7 +11,6 @@ import { SearchUIRenderer } from './renderers/SearchUIRenderer.js';
 import { SearchEventHandler } from './handlers/SearchEventHandler.js';
 import { StorageManager } from '../utils/storage-manager.js';
 import { DemoData } from '../utils/demo-data.js';
-import LogDetailModule from '../log-detail.js';
 
 export class SearchTab {
     constructor() {
@@ -97,7 +96,7 @@ export class SearchTab {
             this.bindEvents();
             
             this.isInitialized = true;
-            console.log(`검색 탭 초기화 완료 - 상태: ${this.stateManager.getState()}`);
+            // 검색 탭 초기화 완료
             
         } catch (error) {
             console.error('검색 탭 렌더링 오류:', error);
@@ -169,7 +168,7 @@ export class SearchTab {
      */
     addDemoData() {
         try {
-            console.log('🔍 검색 탭: 데모 데이터 생성 시작');
+            // 데모 데이터 생성 시작
             // DemoData 모듈을 사용하여 데모 데이터 가져오기
             const demoLogs = DemoData.getDefaultLogs();
             
@@ -179,7 +178,7 @@ export class SearchTab {
             // StateManager에 데이터 설정
             this.stateManager.setAllLogs(demoLogs);
             
-            console.log(`🔍 검색 탭: ${demoLogs.length}개의 데모 데이터 생성 완료`);
+            // 데모 데이터 생성 완료
         } catch (error) {
             console.error('검색 탭 데모 데이터 생성 실패:', error);
         }
@@ -192,7 +191,7 @@ export class SearchTab {
         try {
             const allLogs = this.storageManager.loadLogs();
             this.stateManager.setAllLogs(allLogs);
-            console.log(`검색 탭: ${allLogs.length}개의 로그 데이터 로드됨`);
+            // 로그 데이터 로드 완료
         } catch (error) {
             console.error('로그 데이터 로드 실패:', error);
             this.stateManager.setAllLogs([]);
@@ -209,7 +208,7 @@ export class SearchTab {
             const allLogs = this.stateManager.getAllLogs();
             
             if (!logId || !allLogs || allLogs.length === 0) {
-                console.log('⚠️ detail 상태이지만 필요한 데이터가 없음 - initial 상태로 변경');
+                // detail 상태이지만 필요한 데이터가 없음 - initial 상태로 변경
                 this.stateManager.updateState('initial');
             }
         }
@@ -244,7 +243,7 @@ export class SearchTab {
         // 필터 탭 이벤트 바인딩 (필터가 이미 펼쳐져 있는 경우)
         const filterContent = document.getElementById('filter-content');
         if (filterContent && filterContent.classList.contains('expanded')) {
-            console.log('🔗 필터가 이미 펼쳐져 있음 - 탭 이벤트 바인딩 실행');
+            // 필터가 이미 펼쳐져 있음 - 탭 이벤트 바인딩 실행
             this.eventHandler.bindFilterTabEvents(this.callbacks);
         }
         
@@ -340,7 +339,7 @@ export class SearchTab {
                 
                 // 검색 통계 로깅
                 if (searchResult.stats) {
-                    console.log('검색 완료:', searchResult.stats);
+                    // 검색 완료
                 }
             } else {
                 this.resultManager.setResults([]);
@@ -371,7 +370,7 @@ export class SearchTab {
      */
     async showLogDetail(logId) {
         try {
-            console.log(`📋 상세 화면 표시 시작 - logId: ${logId}`);
+            // 상세 화면 표시 시작
             
             const allLogs = this.stateManager.getAllLogs();
             const logData = allLogs.find(log => log.id === logId);
@@ -384,19 +383,30 @@ export class SearchTab {
             this.stateManager.enterDetailMode(logId);
             this.renderUI();
 
-            // LogDetailModule 렌더링
+            // 상세 화면 렌더링 (LogDetailModule 대신 간단한 HTML)
             const detailContainer = document.getElementById('log-detail-container');
             if (!detailContainer) {
                 throw new Error('상세 화면 컨테이너를 찾을 수 없습니다.');
             }
 
-            const logDetailModule = new LogDetailModule();
-            logDetailModule.render(detailContainer, logData);
+            // 간단한 상세 화면 HTML 렌더링
+            detailContainer.innerHTML = `
+                <div class="log-detail-simple">
+                    <h3>${logData.country} - ${logData.city}</h3>
+                    <p>시작일: ${logData.startDate}</p>
+                    <p>종료일: ${logData.endDate}</p>
+                    <p>목적: ${logData.purpose}</p>
+                    <p>평점: ${logData.rating}점</p>
+                    <p>여행 스타일: ${logData.travelStyle}</p>
+                    <p>메모: ${logData.memo || '없음'}</p>
+                    <button onclick="window.dispatchEvent(new CustomEvent('logDetailBack'))">뒤로가기</button>
+                </div>
+            `;
 
             // 상세 화면 이벤트 바인딩
             this.eventHandler.bindDetailEvents(this.callbacks);
 
-            console.log('✅ 상세 화면 표시 완료');
+            // 상세 화면 표시 완료
 
         } catch (error) {
             console.error('로그 상세 화면 표시 오류:', error);
@@ -422,7 +432,7 @@ export class SearchTab {
         // 검색 모드가 아닌 경우 (검색창을 아직 클릭하지 않은 경우)
         if (!this.isSearchMode) {
             // 검색어가 비어있으면 초기 상태 유지
-            if (!safeQuery.trim()) {
+        if (!safeQuery.trim()) {
                 this.stateManager.updateState('initial', { query: safeQuery });
                 this.renderUI();
                 this.bindEvents();
@@ -517,7 +527,7 @@ export class SearchTab {
                 console.error('로그 ID가 없습니다.');
                 return;
             }
-            // LogDetailModule의 편집 기능 사용
+            // 로그 편집 기능 (간단한 구현)
             this.refresh();
         } catch (error) {
             console.error('로그 편집 처리 오류:', error);
@@ -566,7 +576,7 @@ export class SearchTab {
             toggleText.textContent = '필터 접기';
             
             // 필터가 펼쳐질 때 필터 탭 이벤트 바인딩
-            console.log('🔗 필터 펼침 - 탭 이벤트 바인딩 실행');
+            // 필터 펼침 - 탭 이벤트 바인딩 실행
             this.eventHandler.bindFilterTabEvents(this.callbacks);
         }
     }
@@ -579,7 +589,7 @@ export class SearchTab {
             return;
         }
         
-        console.log(`필터 탭 전환: ${targetTab}`);
+        // 필터 탭 전환
         
         // 모든 탭 비활성화
         const allTabs = document.querySelectorAll('.filter-tab');
@@ -593,7 +603,7 @@ export class SearchTab {
         const clickedTab = document.querySelector(`[data-tab="${targetTab}"]`);
         if (clickedTab) {
             clickedTab.classList.add('active');
-            console.log(`탭 활성화 성공: ${targetTab}`);
+            // 탭 활성화 성공
         } else {
             console.error(`탭을 찾을 수 없음: [data-tab="${targetTab}"]`);
         }
@@ -602,7 +612,7 @@ export class SearchTab {
         const targetPanel = document.querySelector(`[data-panel="${targetTab}"]`);
         if (targetPanel) {
             targetPanel.classList.add('active');
-            console.log(`패널 활성화 성공: ${targetTab}`);
+            // 패널 활성화 성공
         } else {
             console.error(`패널을 찾을 수 없음: [data-panel="${targetTab}"]`);
         }
@@ -619,24 +629,24 @@ export class SearchTab {
 
     async applyFilters() {
         try {
-            console.log('🔍 필터 적용 시작');
+            // 필터 적용 시작
             
-            // 필터를 UI에서 읽어와서 적용
-            if (this.container) {
-                this.filterManager.loadFiltersFromUI(this.container);
-            }
-            
+        // 필터를 UI에서 읽어와서 적용
+        if (this.container) {
+            this.filterManager.loadFiltersFromUI(this.container);
+        }
+        
             const filters = this.filterManager.getFilters();
-            console.log('🔍 적용할 필터:', filters);
+            // 적용할 필터 로드
             
             // 검색어가 있는 경우: 기존 검색 + 필터
-            const query = this.stateManager.getQuery();
+        const query = this.stateManager.getQuery();
             if (query && query.trim()) {
-                console.log('🔍 검색어 + 필터 검색 실행');
+                // 검색어 + 필터 검색 실행
                 await this.performSearch(query, { showValidationError: false });
             } else {
                 // 검색어가 없는 경우: 필터 전용 검색
-                console.log('🔍 필터 전용 검색 실행');
+                // 필터 전용 검색 실행
                 await this.performFilterSearch(filters);
             }
             
@@ -693,7 +703,7 @@ export class SearchTab {
                 // 성능 정보 로깅
                 if (searchResult.performance) {
                     const { searchTime, isOptimal } = searchResult.performance;
-                    console.log(`필터 검색 완료: ${searchResult.results.length}개 결과 (${searchTime.toFixed(2)}ms)`);
+                    // 필터 검색 완료
                     
                     if (!isOptimal) {
                         console.warn(`⚠️ 필터 검색 성능 경고: ${searchTime.toFixed(2)}ms`);
@@ -827,7 +837,7 @@ export class SearchTab {
 
     async cleanup() {
         try {
-            console.log('🔧 검색 탭 cleanup 시작');
+            // 검색 탭 cleanup 시작
             
             // 타이머 정리
             if (this.searchTimeout) {
@@ -846,7 +856,7 @@ export class SearchTab {
             this.isInitialized = false;
             this.container = null;
             
-            console.log('✅ 검색 탭 cleanup 완료');
+            // 검색 탭 cleanup 완료
         } catch (error) {
             console.error('검색 탭 정리 오류:', error);
         }

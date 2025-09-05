@@ -4,6 +4,7 @@
  */
 
 import { createCountrySelector } from './ui-components/country-selector.js';
+import { FORM_CONFIG } from '../config/form-config.js';
 
 class LogEditModule {
     constructor() {
@@ -103,19 +104,11 @@ class LogEditModule {
                             <div class="form-group">
                                 <label for="edit-purpose">목적 *</label>
                                 <select id="edit-purpose" name="purpose" required>
-                                    <option value="tourism" ${log.purpose === 'tourism' ? 'selected' : ''}>관광/여행</option>
-                                    <option value="business" ${log.purpose === 'business' ? 'selected' : ''}>업무/출장</option>
-                                    <option value="family" ${log.purpose === 'family' ? 'selected' : ''}>가족/지인 방문</option>
-                                    <option value="study" ${log.purpose === 'study' ? 'selected' : ''}>학업</option>
-                                    <option value="work" ${log.purpose === 'work' ? 'selected' : ''}>취업/근로</option>
-                                    <option value="training" ${log.purpose === 'training' ? 'selected' : ''}>파견/연수</option>
-                                    <option value="event" ${log.purpose === 'event' ? 'selected' : ''}>행사/컨퍼런스</option>
-                                    <option value="volunteer" ${log.purpose === 'volunteer' ? 'selected' : ''}>봉사활동</option>
-                                    <option value="medical" ${log.purpose === 'medical' ? 'selected' : ''}>의료</option>
-                                    <option value="transit" ${log.purpose === 'transit' ? 'selected' : ''}>경유/환승</option>
-                                    <option value="research" ${log.purpose === 'research' ? 'selected' : ''}>연구/학술</option>
-                                    <option value="immigration" ${log.purpose === 'immigration' ? 'selected' : ''}>이주/정착</option>
-                                    <option value="other" ${log.purpose === 'other' ? 'selected' : ''}>기타</option>
+                                    ${FORM_CONFIG.purposeOptions.map(option => `
+                                        <option value="${option.value}" ${log.purpose === option.value ? 'selected' : ''}>
+                                            ${option.icon} ${option.label}
+                                        </option>
+                                    `).join('')}
                                 </select>
                             </div>
                             <div class="form-group">
@@ -135,11 +128,11 @@ class LogEditModule {
                                 <label for="edit-travel-style">여행 스타일</label>
                                 <select id="edit-travel-style" name="travelStyle">
                                     <option value="">선택 안함</option>
-                                    <option value="alone" ${log.travelStyle === 'alone' ? 'selected' : ''}>혼자</option>
-                                    <option value="family" ${log.travelStyle === 'family' ? 'selected' : ''}>가족과</option>
-                                    <option value="couple" ${log.travelStyle === 'couple' ? 'selected' : ''}>연인과</option>
-                                    <option value="friends" ${log.travelStyle === 'friends' ? 'selected' : ''}>친구와</option>
-                                    <option value="colleagues" ${log.travelStyle === 'colleagues' ? 'selected' : ''}>동료와</option>
+                                    ${FORM_CONFIG.travelStyleOptions.map(option => `
+                                        <option value="${option.value}" ${log.travelStyle === option.value ? 'selected' : ''}>
+                                            ${option.icon} ${option.label}
+                                        </option>
+                                    `).join('')}
                                 </select>
                             </div>
                         </div>

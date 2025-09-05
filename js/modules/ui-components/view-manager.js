@@ -595,11 +595,11 @@ export class ViewManager {
      */
     getTravelStyleText(style) {
         const styleTexts = {
-            'solo': '솔로 여행',
-            'couple': '커플 여행',
-            'group': '단체 여행',
-            'family': '가족 여행',
-            'friends': '친구와 함께'
+            'alone': '혼자',
+            'family': '가족과',
+            'couple': '연인과',
+            'friends': '친구와',
+            'colleagues': '동료와'
         };
         return styleTexts[style] || style;
     }

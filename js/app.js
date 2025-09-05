@@ -247,7 +247,13 @@ class AppManager {
         }
         
         // 동적 import로 모듈 로드
-        const module = await import(`./tabs/${tabName}.js`);
+        let moduleName = tabName;
+        if (tabName === 'my-logs') {
+            moduleName = 'my-logs';
+        } else if (tabName === 'search') {
+            moduleName = 'search';
+        }
+        const module = await import(`./tabs/${moduleName}.js`);
         this.tabModules.set(tabName, module);
         
         return module;
