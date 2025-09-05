@@ -186,6 +186,69 @@
     border: 1px solid var(--gray-200);
 }
 
+/* 카드뷰 헤더 레이아웃 최적화 */
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-md);
+}
+
+.log-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    flex: 1;
+    min-width: 0;
+}
+
+.log-country-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.log-country {
+    font-weight: var(--font-semibold);
+    font-size: var(--font-lg);
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.log-country-badge {
+    font-size: var(--font-sm);
+    flex-shrink: 0;
+}
+
+.log-city {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.log-header-right {
+    flex-shrink: 0;
+}
+
+.log-action-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+/* 칩 행 스타일 */
+.log-chips-row {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
 /* 리스트뷰 스타일 (새로운) */
 .log-item-list {
     background: var(--white);
@@ -303,15 +366,16 @@
     border: none;
     font-size: 16px;
     cursor: pointer;
-    padding: 6px;
-    border-radius: 6px;
+    padding: 8px;
+    border-radius: 8px;
     transition: all 0.2s ease;
     color: #718096;
-    min-width: 28px;
-    height: 28px;
+    min-width: 44px; /* 터치 친화성을 위한 최소 크기 */
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .log-action-btn:hover {
@@ -455,6 +519,36 @@
         font-size: 14px;
     }
     
+    /* 카드뷰 모바일 최적화 */
+    .log-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-sm);
+    }
+    
+    .log-header-left {
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .log-header-right {
+        align-self: flex-end;
+    }
+    
+    .log-action-buttons {
+        gap: var(--spacing-sm);
+    }
+    
+    .log-action-btn {
+        min-width: 40px;
+        height: 40px;
+        padding: 6px;
+        font-size: 14px;
+    }
+    
+    .log-chips-row {
+        justify-content: flex-start;
+    }
+    
     /* 리스트뷰 모바일 최적화 */
     .log-list-content {
         flex-direction: column;
@@ -589,5 +683,29 @@
     
     .log-list-rating {
         font-size: var(--font-xs);
+    }
+    
+    /* 카드뷰 초소형 모바일 최적화 */
+    .log-header {
+        gap: var(--spacing-xs);
+    }
+    
+    .log-country {
+        font-size: var(--font-base);
+    }
+    
+    .log-city {
+        font-size: var(--font-xs);
+    }
+    
+    .log-action-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: 4px;
+        font-size: 12px;
+    }
+    
+    .log-chips-row {
+        gap: var(--spacing-xs);
     }
 }
