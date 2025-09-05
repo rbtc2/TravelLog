@@ -441,9 +441,10 @@ class LogDetailModule {
             'transit': '경유/환승',
             'research': '연구/학술',
             'immigration': '이주/정착',
+            'relocation': '이주/정착', // relocation을 immigration과 동일하게 처리
             'other': '기타'
         };
-        return purposeTexts[purpose] || purpose;
+        return purposeTexts[purpose] || '기타';
     }
     
     /**

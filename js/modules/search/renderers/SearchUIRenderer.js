@@ -618,7 +618,7 @@ export class SearchUIRenderer {
      * @returns {string} 표시 이름
      */
     getPurposeDisplayName(purposeCode) {
-        return PURPOSE_DISPLAY_NAMES[purposeCode] || purposeCode;
+        return PURPOSE_DISPLAY_NAMES[purposeCode] || '❓ 기타';
     }
 
     /**

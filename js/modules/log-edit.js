@@ -177,8 +177,10 @@ class LogEditModule {
         const form = this.modal.querySelector('#edit-log-form');
         
         const closeModal = () => {
-            this.modal.remove();
-            this.modal = null;
+            if (this.modal) {
+                this.modal.remove();
+                this.modal = null;
+            }
             this.currentLog = null;
             document.body.style.overflow = ''; // 배경 스크롤 복원
         };
@@ -200,7 +202,7 @@ class LogEditModule {
         
         // ESC 키로 모달 닫기
         const handleEscKey = (e) => {
-            if (e.key === 'Escape') {
+            if (e.key === 'Escape' && this.modal) {
                 closeModal();
                 document.removeEventListener('keydown', handleEscKey);
             }
@@ -329,8 +331,9 @@ class LogEditModule {
         if (this.modal) {
             this.modal.remove();
             this.modal = null;
-            this.currentLog = null;
         }
+        this.currentLog = null;
+        document.body.style.overflow = ''; // 배경 스크롤 복원
     }
     
     /**

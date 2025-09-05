@@ -99,6 +99,9 @@ class MyLogsTab {
                 await countriesManager.initialize();
             }
             
+            // 데이터 마이그레이션 실행
+            this.migratePurposeData();
+            
             // StorageManager를 사용하여 데이터 로드
             const storedLogs = this.storageManager.loadLogs();
             
@@ -115,6 +118,35 @@ class MyLogsTab {
         } catch (error) {
             console.error('일지 데이터 로드 실패:', error);
             this.logService.setLogs([]);
+        }
+    }
+    
+    /**
+     * 목적 데이터 마이그레이션 (relocation -> immigration)
+     */
+    migratePurposeData() {
+        try {
+            const storedLogs = this.storageManager.loadLogs();
+            let hasChanges = false;
+            
+            const migratedLogs = storedLogs.map(log => {
+                if (log.purpose === 'relocation') {
+                    hasChanges = true;
+                    return {
+                        ...log,
+                        purpose: 'immigration',
+                        updatedAt: new Date().toISOString()
+                    };
+                }
+                return log;
+            });
+            
+            if (hasChanges) {
+                this.storageManager.saveLogs(migratedLogs);
+                console.log('목적 데이터 마이그레이션 완료: relocation -> immigration');
+            }
+        } catch (error) {
+            console.error('목적 데이터 마이그레이션 실패:', error);
         }
     }
     
