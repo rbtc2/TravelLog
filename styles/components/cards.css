@@ -40,44 +40,7 @@
     border-bottom: 2px solid var(--gray-200);
 }
 
-/* ===== 요약 아이템 카드 ===== */
-.summary-content {
-    display: flex;
-    gap: var(--spacing-lg);
-    flex-wrap: wrap;
-}
-
-.summary-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-    padding: var(--spacing-lg);
-    background: var(--gray-50);
-    border-radius: var(--border-radius-lg);
-    border: 2px solid var(--gray-200);
-    min-width: 200px;
-}
-
-.summary-icon {
-    font-size: var(--spacing-2xl);
-}
-
-.summary-details {
-    flex: 1;
-}
-
-.summary-value {
-    font-size: var(--font-2xl);
-    font-weight: var(--font-bold);
-    color: var(--text-primary);
-    margin-bottom: var(--spacing-xs);
-}
-
-.summary-label {
-    color: var(--text-muted);
-    font-size: var(--font-sm);
-    font-weight: var(--font-medium);
-}
+/* ===== 기타 카드 컴포넌트 ===== */
 
 /* ===== 보관함 아이템 카드 ===== */
 .archive-content {
@@ -652,22 +615,6 @@
         padding: var(--spacing-lg);
     }
     
-    .summary-content {
-        justify-content: center;
-    }
-    
-    .summary-item {
-        min-width: 160px;
-        padding: var(--spacing-md);
-    }
-    
-    .summary-icon {
-        font-size: var(--font-xl);
-    }
-    
-    .summary-value {
-        font-size: var(--font-xl);
-    }
     
     .archive-item {
         padding: var(--spacing-md);
@@ -801,10 +748,6 @@
 }
 
 @media (min-width: 1024px) {
-    .summary-item {
-        min-width: 200px;
-        padding: var(--spacing-lg);
-    }
     
     .dna-item {
         padding: var(--spacing-lg);

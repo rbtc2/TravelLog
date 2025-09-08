@@ -86,40 +86,6 @@ class HubView {
                     </div>
                 </div>
                 
-                <!-- 요약 섹션 -->
-                <div class="hub-section summary-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📊 요약</h2>
-                    </div>
-                    <div class="summary-content">
-                        <div class="summary-item">
-                            <div class="summary-icon">📝</div>
-                            <div class="summary-details">
-                                <div class="summary-value">${totalLogs}</div>
-                                <div class="summary-label">여행 일지 수</div>
-                            </div>
-                        </div>
-                        
-                        <!-- 추가 KPI 타일 1 (향후 구현 예정) -->
-                        <div class="summary-item kpi-placeholder" style="display: none;">
-                            <div class="summary-icon">🌍</div>
-                            <div class="summary-details">
-                                <div class="summary-value">0</div>
-                                <div class="summary-label">방문 국가 수</div>
-                            </div>
-                        </div>
-                        
-                        <!-- 추가 KPI 타일 2 (향후 구현 예정) -->
-                        <div class="summary-item kpi-placeholder" style="display: none;">
-                            <div class="summary-icon">⭐</div>
-                            <div class="summary-details">
-                                <div class="summary-value">0</div>
-                                <div class="summary-label">평균 평점</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- 보관함 섹션 -->
                 <div class="hub-section archive-section">
                     <div class="section-header">
