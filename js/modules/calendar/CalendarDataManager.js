@@ -8,6 +8,7 @@ import { parseLocalDate, formatDateString } from './CalendarUtils.js';
 export class CalendarDataManager {
     constructor() {
         this.travelLogs = new Map(); // 날짜별 여행 로그 데이터
+        this.allLogs = new Map(); // ID별 여행 로그 데이터 (상세 조회용)
         this.countries = new Map(); // 국가별 정보 캐시
         this.countriesManager = null; // CountriesManager 인스턴스
     }
@@ -67,8 +68,12 @@ export class CalendarDataManager {
      */
     processTravelLogsForCalendar(logs) {
         this.travelLogs.clear();
+        this.allLogs.clear();
         
         logs.forEach(log => {
+            // ID별 로그 저장 (상세 조회용)
+            this.allLogs.set(log.id, log);
+            
             // 날짜 문자열을 로컬 시간대로 정확히 파싱
             const startDate = parseLocalDate(log.startDate);
             const endDate = parseLocalDate(log.endDate);
@@ -186,8 +191,18 @@ export class CalendarDataManager {
      */
     clear() {
         this.travelLogs.clear();
+        this.allLogs.clear();
         this.countries.clear();
         this.countriesManager = null;
+    }
+
+    /**
+     * ID로 로그 조회
+     * @param {string} logId - 로그 ID
+     * @returns {Object|null} 로그 데이터
+     */
+    getLogById(logId) {
+        return this.allLogs.get(logId) || null;
     }
 
     /**

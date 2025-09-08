@@ -19,6 +19,9 @@ import { SwipeGestureHandler } from '../modules/calendar/handlers/SwipeGestureHa
 // 모달 모듈들 import
 import { DatePickerModal } from '../modules/calendar/modals/DatePickerModal.js';
 
+// 로그 상세 모듈 import
+import LogDetailModule from '../modules/log-detail.js';
+
 /**
  * 디버그 모드 확인 유틸리티
  * 브라우저 환경에서도 안전하게 작동
@@ -49,6 +52,11 @@ class CalendarTab {
         // 모달들 초기화
         this.datePickerModal = null;
         
+        // 로그 상세 모듈 초기화
+        this.logDetailModule = new LogDetailModule();
+        this.isDetailMode = false;
+        this.currentLogId = null;
+        
         // 렌더링 최적화
         this.renderQueue = [];
         this.isRendering = false;
@@ -77,8 +85,24 @@ class CalendarTab {
             this.swipeHandler = new SwipeGestureHandler(this);
             
             // UI 렌더링 및 이벤트 바인딩
-            this.renderer.renderContent(this.currentDate, this.currentView);
-            this.eventHandler.bindAllEvents();
+            if (this.isDetailMode && this.currentLogId) {
+                // 상세 모드인 경우 상세 화면 렌더링
+                const logData = this.dataManager.getLogById(this.currentLogId);
+                if (logData) {
+                    this.logDetailModule.render(this.container, logData, { context: 'calendar' });
+                    this.bindDetailEvents();
+                } else {
+                    // 로그를 찾을 수 없으면 캘린더 화면으로 돌아가기
+                    this.isDetailMode = false;
+                    this.currentLogId = null;
+                    this.renderer.renderContent(this.currentDate, this.currentView);
+                    this.eventHandler.bindAllEvents();
+                }
+            } else {
+                // 일반 모드인 경우 캘린더 화면 렌더링
+                this.renderer.renderContent(this.currentDate, this.currentView);
+                this.eventHandler.bindAllEvents();
+            }
             
             this.isInitialized = true;
             // 초기화 완료 (개발 환경에서만 로그)
@@ -100,6 +124,61 @@ class CalendarTab {
     /**
      * 핵심 비즈니스 로직 메서드들
      */
+    
+    /**
+     * 로그 상세 화면 표시
+     * @param {string} logId - 로그 ID
+     */
+    showLogDetail(logId) {
+        if (!logId) return;
+        
+        try {
+            // 로그 데이터 조회
+            const logData = this.dataManager.getLogById(logId);
+            if (!logData) {
+                console.error('로그를 찾을 수 없습니다:', logId);
+                return;
+            }
+            
+            // 상세 모드로 전환
+            this.isDetailMode = true;
+            this.currentLogId = logId;
+            
+            // 로그 상세 화면 렌더링 (캘린더 컨텍스트)
+            this.logDetailModule.render(this.container, logData, { context: 'calendar' });
+            
+            // 뒤로가기 이벤트 바인딩
+            this.bindDetailEvents();
+            
+        } catch (error) {
+            console.error('로그 상세 화면 표시 오류:', error);
+        }
+    }
+    
+    /**
+     * 상세 화면에서 캘린더로 돌아가기
+     */
+    backToCalendar() {
+        this.isDetailMode = false;
+        this.currentLogId = null;
+        
+        // 캘린더 화면 다시 렌더링
+        this.renderer.renderContent(this.currentDate, this.currentView);
+        this.eventHandler.bindAllEvents();
+    }
+    
+    /**
+     * 상세 화면 이벤트 바인딩
+     */
+    bindDetailEvents() {
+        // 뒤로가기 버튼 이벤트
+        const backBtn = document.getElementById('back-to-logs');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                this.backToCalendar();
+            });
+        }
+    }
     
     /**
      * 뷰 전환 처리
@@ -257,6 +336,8 @@ class CalendarTab {
             
             // 상태 초기화
             this.isInitialized = false;
+            this.isDetailMode = false;
+            this.currentLogId = null;
             this.renderQueue = [];
             this.isRendering = false;
             this.container = null;

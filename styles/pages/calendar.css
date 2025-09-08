@@ -9,6 +9,81 @@
     padding-bottom: calc(20px + var(--navigation-height, 80px));
 }
 
+/* ===== 캘린더 상세 화면 스타일 ===== */
+.calendar-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: calc(20px + var(--navigation-height, 80px));
+}
+
+/* 캘린더 상세 화면 헤더 */
+.calendar-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.calendar-detail-header .back-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.calendar-detail-header .back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-5px);
+}
+
+.calendar-detail-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 캘린더 상세 화면 내용 */
+.calendar-detail-content {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .calendar-detail-container {
+        padding: 16px;
+        padding-bottom: calc(16px + var(--navigation-height, 80px));
+    }
+    
+    .calendar-detail-header {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .calendar-detail-title {
+        font-size: 1.5rem;
+    }
+    
+    .calendar-detail-content {
+        padding: 20px;
+    }
+}
+
 /* ===== 캘린더 헤더 ===== */
 .calendar-header {
     display: flex;

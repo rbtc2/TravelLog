@@ -14,10 +14,14 @@ class LogDetailModule {
     
     /**
      * 상세 화면을 렌더링합니다
+     * @param {HTMLElement} container - 컨테이너 요소
+     * @param {Object} logData - 로그 데이터
+     * @param {Object} options - 옵션 (context: 'calendar' | 'mylogs')
      */
-    render(container, logData) {
+    render(container, logData, options = {}) {
         this.currentLog = logData;
         this.container = container;
+        this.context = options.context || 'mylogs';
         
         const detailHTML = this.generateDetailHTML(logData);
         container.innerHTML = detailHTML;
@@ -36,13 +40,19 @@ class LogDetailModule {
         const purposeIcon = this.getPurposeIcon(log.purpose);
         const ratingStars = '★'.repeat(parseInt(log.rating)) + '☆'.repeat(5 - parseInt(log.rating));
         
+        // 컨텍스트에 따라 다른 컨테이너 클래스 사용
+        const containerClass = this.context === 'calendar' ? 'calendar-detail-container' : 'log-detail-container';
+        const headerClass = this.context === 'calendar' ? 'calendar-detail-header' : 'detail-header';
+        const titleClass = this.context === 'calendar' ? 'calendar-detail-title' : 'detail-title';
+        const contentClass = this.context === 'calendar' ? 'calendar-detail-content' : 'detail-content';
+        
         return `
-            <div class="log-detail-container">
+            <div class="${containerClass}">
                 <!-- 헤더 -->
-                <div class="detail-header">
+                <div class="${headerClass}">
                     <button class="back-btn" id="back-to-logs">◀ 뒤로</button>
                     <div class="header-content">
-                        <h1 class="detail-title">${log.country} - ${log.city}</h1>
+                        <h1 class="${titleClass}">${log.country} - ${log.city}</h1>
                         <p class="detail-subtitle">여행 상세 정보</p>
                     </div>
                     <div class="header-actions">
@@ -54,6 +64,9 @@ class LogDetailModule {
                         </button>
                     </div>
                 </div>
+                
+                <!-- 내용 -->
+                <div class="${contentClass}">
                 
                 <!-- 요약 카드 -->
                 <div class="summary-card">
@@ -262,6 +275,7 @@ class LogDetailModule {
                     <button class="action-btn secondary" id="export-log-btn">
                         📄 내보내기
                     </button>
+                </div>
                 </div>
             </div>
         `;

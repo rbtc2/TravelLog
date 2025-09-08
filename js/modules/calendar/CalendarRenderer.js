@@ -316,10 +316,6 @@ export class CalendarRenderer {
                 </div>
                 <div class="card-line-2">
                     <span class="card-period">${startDateFormatted} - ${endDateFormatted} (${totalDays}일)</span>
-                    <button class="card-more-btn" aria-label="더보기">
-                        <span>더보기</span>
-                        <span class="more-arrow">></span>
-                    </button>
                 </div>
             </div>
         `;

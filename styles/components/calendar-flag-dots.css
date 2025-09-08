@@ -585,14 +585,6 @@
         color: #d1d5db;
     }
     
-    .card-more-btn {
-        color: #60a5fa;
-    }
-    
-    .card-more-btn:hover {
-        background: #1e3a8a;
-        color: #93c5fd;
-    }
     
     /* 카드 별점 다크 모드 */
     .card-rating {
@@ -730,7 +722,7 @@
 .card-line-2 {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     font-size: 13px;
     line-height: 1.4;
 }
@@ -738,38 +730,8 @@
 .card-period {
     color: #6b7280;
     font-weight: 500;
-    flex: 1;
 }
 
-.card-more-btn {
-    background: none;
-    border: none;
-    color: #3b82f6;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.card-more-btn:hover {
-    background: #eff6ff;
-    color: #1d4ed8;
-}
-
-.more-arrow {
-    font-size: 10px;
-    transition: transform 0.2s ease;
-}
-
-.card-more-btn:hover .more-arrow {
-    transform: translateX(2px);
-}
 
 
 /* 플레이스홀더 스타일 */
