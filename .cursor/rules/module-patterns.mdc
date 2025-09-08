@@ -10,12 +10,12 @@ This document outlines the specific module patterns and development guidelines u
 
 ## 🏗️ Module Architecture Patterns
 
-### **Tab Module Pattern**
-Every tab module follows this consistent pattern:
+### **Simple Tab Module Pattern** (for basic tabs like home.js)
+Every simple tab module follows this pattern:
 
 ```javascript
 /**
- * Tab Module Template
+ * Simple Tab Module Template
  * @class TabName
  * @version 1.0.0
  * @since 2024-12-29
@@ -23,7 +23,6 @@ Every tab module follows this consistent pattern:
 class TabName {
     constructor() {
         this.isInitialized = false;
-        this.container = null;
         this.eventListeners = [];
     }
     
@@ -31,22 +30,11 @@ class TabName {
      * Renders the tab content
      * @param {HTMLElement} container - Container element
      */
-    async render(container) {
+    render(container) {
         this.container = container;
-        await this.initialize();
         this.renderContent();
         this.bindEvents();
         this.isInitialized = true;
-    }
-    
-    /**
-     * Refreshes tab data when activated
-     */
-    async refresh() {
-        if (this.isInitialized) {
-            await this.loadData();
-            this.renderContent();
-        }
     }
     
     /**
@@ -66,9 +54,9 @@ class TabName {
     }
     
     /**
-     * Cleans up resources
+     * Cleans up resources (optional for simple tabs)
      */
-    async cleanup() {
+    cleanup() {
         // Cleanup event listeners
         this.eventListeners.forEach(({ element, event, handler }) => {
             element.removeEventListener(event, handler);
@@ -80,7 +68,94 @@ class TabName {
     }
 }
 
-export default new TabName();
+// Export as class (not instance)
+export { TabName };
+```
+
+### **Complex Tab Module Pattern** (for advanced tabs like SearchTab.js)
+Complex tabs with multiple modules follow this pattern:
+
+```javascript
+/**
+ * Complex Tab Module Template
+ * @class ComplexTabName
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+class ComplexTabName {
+    constructor() {
+        this.isInitialized = false;
+        this.container = null;
+        this.eventListeners = [];
+        
+        // Module instances
+        this.modules = new Map();
+        this.timeouts = new Map();
+    }
+    
+    /**
+     * Renders the tab content
+     * @param {HTMLElement} container - Container element
+     */
+    async render(container) {
+        this.container = container;
+        await this.initializeModules();
+        this.renderContent();
+        this.bindEvents();
+        this.isInitialized = true;
+    }
+    
+    /**
+     * Initialize all modules
+     */
+    async initializeModules() {
+        // Initialize all required modules
+    }
+    
+    /**
+     * Renders the main content
+     */
+    renderContent() {
+        this.container.innerHTML = `
+            <!-- Tab content HTML -->
+        `;
+    }
+    
+    /**
+     * Binds event listeners
+     */
+    bindEvents() {
+        // Event binding logic with debouncing
+    }
+    
+    /**
+     * Cleans up resources
+     */
+    async cleanup() {
+        // Cleanup all modules
+        this.modules.forEach(module => {
+            if (module.cleanup) {
+                module.cleanup();
+            }
+        });
+        
+        // Clear timeouts
+        this.timeouts.forEach(timeout => clearTimeout(timeout));
+        this.timeouts.clear();
+        
+        // Cleanup event listeners
+        this.eventListeners.forEach(({ element, event, handler }) => {
+            element.removeEventListener(event, handler);
+        });
+        this.eventListeners = [];
+        
+        this.isInitialized = false;
+        this.container = null;
+    }
+}
+
+// Export as class
+export { ComplexTabName };
 ```
 
 ### **Search System Pattern** (Based on [SearchTab.js](mdc:js/modules/search/SearchTab.js))
@@ -98,19 +173,82 @@ The search system uses a modular architecture with separate concerns:
  */
 class SearchTab {
     constructor() {
+        this.isInitialized = false;
+        this.container = null;
+        
+        // Module instances
         this.searchEngine = new SearchEngine();
         this.stateManager = new SearchStateManager();
         this.filterManager = new FilterManager();
         this.resultManager = new SearchResultManager();
         this.uiRenderer = new SearchUIRenderer();
         this.eventHandler = new SearchEventHandler();
+        this.storageManager = new StorageManager();
+        
+        // Debounce and timeout management
+        this.searchTimeout = null;
+        this.debounceDelay = 300;
+        this.timeouts = new Map();
+        
+        // State management
+        this.isSearchMode = false;
+        
+        // Bind callbacks
+        this.bindCallbacks();
+    }
+    
+    /**
+     * Bind callback functions to maintain context
+     */
+    bindCallbacks() {
+        this.callbacks = {
+            handleSearchInput: this.handleSearchInput.bind(this),
+            handleSearchKeypress: this.handleSearchKeypress.bind(this),
+            handleSearchFocus: this.handleSearchFocus.bind(this),
+            handleSearchBlur: this.handleSearchBlur.bind(this),
+            handleSearch: this.handleSearch.bind(this),
+            // ... other callbacks
+        };
     }
     
     async render(container) {
         this.container = container;
-        await this.initialize();
-        this.renderUI();
+        await this.initializeModules();
+        this.renderContent();
         this.bindEvents();
+        this.isInitialized = true;
+    }
+    
+    async initializeModules() {
+        // Initialize all search modules
+        await this.loadInitialData();
+    }
+    
+    renderContent() {
+        this.container.innerHTML = this.uiRenderer.renderSearchInterface();
+    }
+    
+    bindEvents() {
+        // Bind all search-related events
+        this.eventHandler.bindSearchEvents(this.container, this.callbacks);
+    }
+    
+    async cleanup() {
+        // Clear all timeouts
+        this.timeouts.forEach(timeout => clearTimeout(timeout));
+        this.timeouts.clear();
+        
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+        
+        // Cleanup modules
+        if (this.eventHandler && this.eventHandler.cleanup) {
+            this.eventHandler.cleanup();
+        }
+        
+        this.isInitialized = false;
+        this.container = null;
     }
 }
 ```

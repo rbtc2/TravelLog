@@ -37,21 +37,55 @@ TravelLog is a modular SPA (Single Page Application) with a 5-tab structure. Eac
 js/
 ├── app.js                     # Main application entry point
 ├── config/                    # Configuration files
-│   └── app-config.js         # App configuration and metadata
+│   ├── app-config.js         # App configuration and metadata
+│   └── form-config.js        # Form configuration
 ├── data/                      # Data management
 │   └── countries-manager.js   # Country data management
 ├── modules/                   # Common modules
 │   ├── search/               # Search system (refactored)
+│   │   ├── engines/          # Search engines
+│   │   ├── handlers/         # Event handlers
+│   │   ├── managers/         # State and data managers
+│   │   ├── renderers/        # UI renderers
+│   │   ├── utils/            # Search utilities
+│   │   └── SearchTab.js      # Main search controller
 │   ├── calendar/             # Calendar module
+│   │   ├── handlers/         # Event handlers
+│   │   ├── modals/           # Calendar modals
+│   │   ├── CalendarDataManager.js
+│   │   ├── CalendarRenderer.js
+│   │   └── CalendarUtils.js
 │   ├── services/             # Service layer
+│   │   └── log-service.js    # Log service
 │   ├── ui-components/        # UI components
-│   └── utils/                # Utility functions
+│   │   ├── country-selector.js
+│   │   ├── modal-manager.js
+│   │   ├── pagination-manager.js
+│   │   ├── toast-manager.js
+│   │   └── view-manager.js
+│   ├── utils/                # Utility functions
+│   │   ├── country-data-manager.js
+│   │   ├── demo-data.js
+│   │   ├── event-manager.js
+│   │   ├── search-utility.js
+│   │   └── storage-manager.js
+│   ├── log-detail.js         # Log detail module
+│   ├── log-edit.js           # Log edit module
+│   └── repository.js         # Data repository
 └── tabs/                     # Tab modules
     ├── home.js              # Home tab
-    ├── search.js            # Search tab
+    ├── search.js            # Search tab (legacy)
     ├── add-log.js           # Add log tab
     ├── calendar.js          # Calendar tab
-    └── my-logs.js           # My logs tab
+    └── my-logs/             # My logs tab (modular structure)
+        ├── controllers/
+        │   └── MyLogsController.js
+        ├── views/
+        │   ├── HubView.js
+        │   ├── LogsListView.js
+        │   ├── SettingsView.js
+        │   └── TravelReportView.js
+        └── my-logs.js       # Main my-logs entry point
 ```
 
 ### **CSS Structure**
@@ -67,9 +101,35 @@ styles/
 │   ├── forms.css            # Basic forms
 │   └── messages.css         # Message styles
 ├── components/               # Component styles
+│   ├── buttons.css          # Button components
+│   ├── calendar-flag-dots.css # Calendar flag dots
+│   ├── cards.css            # Card components
+│   ├── country-selector.css # Country selector
+│   ├── forms.css            # Form components
+│   ├── modals.css           # Modal components
+│   └── navigation.css       # Navigation components
 ├── layouts/                  # Layout styles
+│   ├── main-layout.css      # Main layout
+│   ├── tab-content.css      # Tab content layout
+│   └── tab-navigation.css   # Tab navigation layout
 ├── pages/                    # Page-specific styles
+│   ├── add-log.css          # Add log page
+│   ├── calendar.css         # Calendar page
+│   ├── error.css            # Error page
+│   ├── home.css             # Home page
+│   ├── log-detail.css       # Log detail page
+│   ├── login.css            # Login page
+│   ├── my-logs.css          # My logs page
+│   ├── search.css           # Search page
+│   ├── settings.css         # Settings page
+│   └── travel-report.css    # Travel report page
 └── utilities/                # Utility styles
+    ├── accessibility.css    # Accessibility utilities
+    ├── animations.css       # Animation utilities
+    ├── dark-mode.css        # Dark mode utilities
+    ├── navigation-utils.css # Navigation utilities
+    ├── responsive.css       # Responsive utilities
+    └── scroll-optimization.css # Scroll optimization
 ```
 
 ## 🔄 Data Flow Patterns
@@ -140,12 +200,49 @@ class BaseTab {
     constructor() {
         this.isInitialized = false;
         this.container = null;
+        this.eventListeners = []; // Event listener tracking
     }
     
     // Required methods
-    render(container) { /* Implementation required */ }
-    cleanup() { /* Implementation required */ }
+    render(container) { 
+        this.container = container;
+        this.renderContent();
+        this.bindEvents();
+        this.isInitialized = true;
+    }
+    
+    renderContent() { /* Implementation required */ }
     bindEvents() { /* Implementation required */ }
+    
+    // Optional methods (recommended for complex tabs)
+    async refresh() { /* Refresh data when tab becomes active */ }
+    cleanup() { /* Clean up resources when tab is deactivated */ }
+}
+```
+
+### **Complex Tab Module Pattern** (for modular tabs like my-logs)
+```javascript
+class ComplexTab {
+    constructor() {
+        this.isInitialized = false;
+        this.container = null;
+        this.eventListeners = [];
+        this.controllers = new Map();
+        this.views = new Map();
+    }
+    
+    async render(container) {
+        this.container = container;
+        await this.initializeModules();
+        this.renderContent();
+        this.bindEvents();
+        this.isInitialized = true;
+    }
+    
+    async initializeModules() { /* Initialize controllers and views */ }
+    renderContent() { /* Render main content */ }
+    bindEvents() { /* Bind event listeners */ }
+    cleanup() { /* Clean up all resources */ }
 }
 ```
 
