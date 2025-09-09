@@ -115,9 +115,9 @@
 /* 토스트 메시지 */
 .toast-message {
     position: fixed;
-    bottom: 100px;
+    top: 20px;
     left: 50%;
-    transform: translateX(-50%) translateY(100px);
+    transform: translateX(-50%) translateY(-20px);
     background: var(--gray-800);
     color: var(--white);
     padding: var(--spacing-sm) var(--spacing-lg);
@@ -127,6 +127,8 @@
     opacity: 0;
     transition: all var(--transition-normal);
     box-shadow: var(--shadow-md);
+    max-width: 400px;
+    text-align: center;
 }
 
 .toast-message.show {

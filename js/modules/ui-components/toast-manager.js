@@ -21,27 +21,16 @@ export class ToastManager {
         toast.className = 'toast-message';
         toast.textContent = message;
         
-        // 스타일 적용
-        Object.assign(toast.style, {
-            position: 'fixed',
-            top: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: '#333',
-            color: 'white',
-            padding: '12px 20px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            zIndex: '10000',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            transition: 'opacity 0.3s ease'
-        });
-        
         document.body.appendChild(toast);
+        
+        // 애니메이션으로 나타나기
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
         
         // 자동 제거
         setTimeout(() => {
-            toast.style.opacity = '0';
+            toast.classList.remove('show');
             setTimeout(() => {
                 if (toast.parentNode) {
                     toast.parentNode.removeChild(toast);

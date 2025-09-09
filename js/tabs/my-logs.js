@@ -266,12 +266,19 @@ class MyLogsTab {
      * @param {string} message - 메시지 내용
      */
     showMessage(type, message) {
+        console.log('showMessage called:', { type, message }); // 디버깅용 로그
+        
         if (type === 'info') {
             ToastManager.info(message);
         } else if (type === 'success') {
             ToastManager.success(message);
         } else if (type === 'error') {
             ToastManager.error(message);
+        } else if (type === 'warning') {
+            ToastManager.warning(message);
+        } else {
+            // 기본적으로 info로 처리
+            ToastManager.info(message);
         }
     }
     
@@ -433,6 +440,15 @@ const myLogsTabInstance = new MyLogsTab();
 if (typeof window !== 'undefined') {
     window.ToastManager = ToastManager;
     window.MyLogsTab = myLogsTabInstance;
+    
+    // 토스트 메시지 테스트 함수들
+    window.testToast = {
+        info: (msg) => ToastManager.info(msg),
+        success: (msg) => ToastManager.success(msg),
+        error: (msg) => ToastManager.error(msg),
+        warning: (msg) => ToastManager.warning(msg),
+        show: (msg) => ToastManager.show(msg)
+    };
 }
 
 export default myLogsTabInstance;
