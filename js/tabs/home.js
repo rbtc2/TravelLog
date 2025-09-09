@@ -18,7 +18,7 @@ class HomeTab {
     
     renderContent() {
         this.container.innerHTML = `
-            <div class="tab-placeholder">
+            <div class="tab-placeholder" style="padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 20px);">
                 <div class="tab-placeholder-icon">🎉</div>
                 <div class="tab-placeholder-title">환영합니다!</div>
                 <div class="tab-placeholder-description">

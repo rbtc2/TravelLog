@@ -4,7 +4,7 @@
 .my-logs-container {
     padding: var(--spacing-lg);
     /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
-    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 20px);
 }
 
 /* ===== Simple Style 프로필 섹션 ===== */
@@ -1394,6 +1394,7 @@ input:checked + .toggle-slider:before {
 @media (max-width: 768px) {
     .my-logs-container {
         padding: 16px;
+        padding-bottom: calc(16px + var(--navigation-height, 80px) + 20px);
     }
     
     /* 프로필 섹션 모바일 최적화 */
