@@ -114,26 +114,32 @@
 
 /* 토스트 메시지 */
 .toast-message {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background: var(--gray-800);
-    color: var(--white);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: var(--border-radius-md);
-    font-size: var(--font-sm);
-    z-index: var(--z-tooltip);
-    opacity: 0;
-    transition: all var(--transition-normal);
-    box-shadow: var(--shadow-md);
-    max-width: 400px;
-    text-align: center;
+    position: fixed !important;
+    top: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(-20px) !important;
+    background: #333 !important;
+    color: white !important;
+    padding: 12px 20px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    z-index: 10000 !important;
+    opacity: 0 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    max-width: 400px !important;
+    min-width: 200px !important;
+    width: auto !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: inline-block !important;
 }
 
 .toast-message.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
+    transform: translateX(-50%) translateY(0) !important;
+    opacity: 1 !important;
 }
 
 /* 모바일 최적화 */
@@ -146,14 +152,19 @@
     }
     
     .toast-message {
-        bottom: 80px;
-        left: 16px;
-        right: 16px;
-        transform: translateY(100px);
-        text-align: center;
+        top: 16px !important;
+        left: 16px !important;
+        right: 16px !important;
+        transform: translateY(-20px) !important;
+        max-width: calc(100vw - 32px) !important;
+        min-width: auto !important;
+        width: auto !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
     
     .toast-message.show {
-        transform: translateY(0);
+        transform: translateY(0) !important;
     }
 }

@@ -620,27 +620,7 @@
 /* ===== 검색 하이라이팅 스타일 ===== */
 /* 공통 스타일은 main.css에서 정의됨 */
 
-/* 토스트 메시지 */
-.toast-message {
-    position: fixed;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: #2d3748;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 14px;
-    z-index: 1000;
-    opacity: 0;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.toast-message.show {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-}
+/* 토스트 메시지 스타일은 styles/base/messages.css에서 관리 */
 
 /* ===== 애니메이션 키프레임 ===== */
 @keyframes fadeInUp {
@@ -789,17 +769,7 @@
         gap: 12px;
     }
     
-    .toast-message {
-        bottom: 80px;
-        left: 16px;
-        right: 16px;
-        transform: translateY(100px);
-        text-align: center;
-    }
-    
-    .toast-message.show {
-        transform: translateY(0);
-    }
+    /* 토스트 메시지 스타일은 styles/base/messages.css에서 관리 */
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
