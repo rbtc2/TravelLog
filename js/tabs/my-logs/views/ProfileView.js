@@ -59,7 +59,7 @@ class ProfileView {
                             <button class="profile-avatar-edit" id="profile-avatar-edit" title="프로필 이미지 변경">
                                 <span class="camera-icon">📷</span>
                             </button>
-                            <input type="file" id="profile-image-input" accept="image/*" style="display: none;">
+                            <input type="file" id="profile-image-input" accept="image/*" autocomplete="off" style="display: none;">
                         </div>
                         <div class="profile-details">
                             <div class="profile-name" id="profile-name">여행자</div>
@@ -111,7 +111,7 @@ class ProfileView {
                             </div>
                             <div class="setting-control">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="email-notifications" checked>
+                                    <input type="checkbox" id="email-notifications" autocomplete="off" checked>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>

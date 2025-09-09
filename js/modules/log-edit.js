@@ -79,24 +79,24 @@ class LogEditModule {
                     <form id="edit-log-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="edit-country">국가 *</label>
+                                <label for="edit-country-selector-input">국가 *</label>
                                 <div id="edit-country-selector-container" class="country-selector-wrapper"></div>
                                 <input type="hidden" id="edit-country" name="country" value="${log.country}" required>
                             </div>
                             <div class="form-group">
                                 <label for="edit-city">도시 *</label>
-                                <input type="text" id="edit-city" name="city" value="${log.city}" required ${!log.country ? 'disabled' : ''} placeholder="${!log.country ? '국가를 먼저 선택해주세요' : '도시를 입력하세요'}">
+                                <input type="text" id="edit-city" name="city" value="${log.city}" autocomplete="address-level2" required ${!log.country ? 'disabled' : ''} placeholder="${!log.country ? '국가를 먼저 선택해주세요' : '도시를 입력하세요'}">
                             </div>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="edit-start-date">시작일 *</label>
-                                <input type="date" id="edit-start-date" name="startDate" value="${log.startDate}" max="${log.endDate}" required>
+                                <input type="date" id="edit-start-date" name="startDate" value="${log.startDate}" max="${log.endDate}" autocomplete="bday" required>
                             </div>
                             <div class="form-group">
                                 <label for="edit-end-date">종료일 *</label>
-                                <input type="date" id="edit-end-date" name="endDate" value="${log.endDate}" min="${log.startDate}" required>
+                                <input type="date" id="edit-end-date" name="endDate" value="${log.endDate}" min="${log.startDate}" autocomplete="bday" required>
                             </div>
                         </div>
                         
@@ -139,7 +139,7 @@ class LogEditModule {
                         
                         <div class="form-group">
                             <label for="edit-memo">메모</label>
-                            <textarea id="edit-memo" name="memo" rows="4" placeholder="여행에 대한 메모를 작성하세요..." maxlength="300">${log.memo || ''}</textarea>
+                            <textarea id="edit-memo" name="memo" rows="4" placeholder="여행에 대한 메모를 작성하세요..." maxlength="300" autocomplete="off">${log.memo || ''}</textarea>
                             <div class="memo-char-count">
                                 <span id="memo-char-display">${(log.memo || '').length}</span>/300
                             </div>
@@ -346,7 +346,8 @@ class LogEditModule {
                 placeholder: '국가를 검색하세요',
                 selectedCountry: currentCountry ? { nameKo: currentCountry } : null,
                 showFlags: true,
-                showEnglishNames: true
+                showEnglishNames: true,
+                inputId: 'edit-country-selector-input'
             });
             
             // 국가 선택 이벤트 리스너

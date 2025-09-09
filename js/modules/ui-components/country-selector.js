@@ -32,6 +32,7 @@ export class CountrySelector {
             showFlags: true,
             showEnglishNames: true,
             maxHeight: 300,
+            inputId: 'country-selector-input',
             ...options
         };
 
@@ -124,6 +125,7 @@ export class CountrySelector {
                 <div class="selector-input">
                     <input 
                         type="text" 
+                        id="${this.options.inputId}"
                         class="form-input" 
                         placeholder="${this.options.placeholder}"
                         autocomplete="off"

@@ -75,7 +75,8 @@ class AddLogTab {
             this.countrySelector = await createCountrySelector(container, {
                 placeholder: FORM_CONFIG.country.placeholder,
                 showFlags: FORM_CONFIG.country.showFlag,
-                showEnglishNames: FORM_CONFIG.country.showEnglishName
+                showEnglishNames: FORM_CONFIG.country.showEnglishName,
+                inputId: 'country-selector-input'
             });
 
             // 국가 선택 이벤트 리스너
@@ -186,7 +187,7 @@ class AddLogTab {
                 <form class="add-log-form" id="add-log-form">
                     <!-- 국가 입력 -->
                     <div class="form-group">
-                        <label for="country" class="form-label required">국가</label>
+                        <label for="country-selector-input" class="form-label required">국가</label>
                         <div id="country-selector-container">
                             <!-- CountrySelector 컴포넌트가 여기에 렌더링됩니다 -->
                         </div>
@@ -210,6 +211,7 @@ class AddLogTab {
                             class="form-input" 
                             placeholder="국가를 먼저 선택해주세요"
                             maxlength="${FORM_CONFIG.city.maxLength}"
+                            autocomplete="address-level2"
                             disabled
                             required
                         >
@@ -224,6 +226,7 @@ class AddLogTab {
                             id="startDate" 
                             name="startDate" 
                             class="form-input" 
+                            autocomplete="bday"
                             required
                         >
                         <div class="form-error" id="startDate-error"></div>
@@ -237,6 +240,7 @@ class AddLogTab {
                             id="endDate" 
                             name="endDate" 
                             class="form-input" 
+                            autocomplete="bday"
                             disabled
                             required
                         >
@@ -300,6 +304,7 @@ class AddLogTab {
                             placeholder="${FORM_CONFIG.memo.placeholder}"
                             maxlength="${FORM_CONFIG.memo.maxLength}"
                             rows="${FORM_CONFIG.memo.rows}"
+                            autocomplete="off"
                         ></textarea>
                         <div class="char-counter">
                             <span id="char-count">0</span>/${FORM_CONFIG.memo.maxLength}

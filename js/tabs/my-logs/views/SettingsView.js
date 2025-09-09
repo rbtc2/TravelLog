@@ -60,7 +60,7 @@ class SettingsView {
                             </div>
                             <div class="setting-control">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" disabled>
+                                    <input type="checkbox" autocomplete="off" disabled>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -76,7 +76,7 @@ class SettingsView {
                             </div>
                             <div class="setting-control">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" disabled>
+                                    <input type="checkbox" autocomplete="off" disabled>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -109,7 +109,7 @@ class SettingsView {
                             </div>
                             <div class="setting-control">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" disabled checked>
+                                    <input type="checkbox" autocomplete="off" disabled checked>
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
