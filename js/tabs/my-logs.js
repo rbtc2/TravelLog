@@ -38,6 +38,7 @@ import { ModalManager } from '../modules/ui-components/modal-manager.js';
 // 새로운 모듈들 import
 import { MyLogsController } from './my-logs/controllers/MyLogsController.js';
 import { HubView } from './my-logs/views/HubView.js';
+import { ProfileView } from './my-logs/views/ProfileView.js';
 import { SettingsView } from './my-logs/views/SettingsView.js';
 import { TravelReportView } from './my-logs/views/TravelReportView.js';
 import { LogsListView } from './my-logs/views/LogsListView.js';
@@ -61,6 +62,7 @@ class MyLogsTab {
         // View 모듈들 초기화
         this.views = {
             hub: new HubView(this.controller),
+            profile: new ProfileView(this.controller),
             settings: new SettingsView(this.controller),
             travelReport: new TravelReportView(this.controller),
             logs: new LogsListView(this.controller)
@@ -164,6 +166,15 @@ class MyLogsTab {
         });
         
         this.addViewEventListener('hubView:showMessage', (e) => {
+            this.showMessage(e.detail.type, e.detail.message);
+        });
+        
+        // 프로필 뷰 이벤트
+        this.addViewEventListener('profileView:navigate', (e) => {
+            this.navigateToView(e.detail.view);
+        });
+        
+        this.addViewEventListener('profileView:showMessage', (e) => {
             this.showMessage(e.detail.type, e.detail.message);
         });
         

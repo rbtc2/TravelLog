@@ -39,7 +39,7 @@ class SettingsView {
                         <button class="back-btn" id="back-to-hub-from-settings">◀ 뒤로</button>
                         <div class="header-content">
                             <h1 class="my-logs-title">⚙️ 설정</h1>
-                            <p class="my-logs-subtitle">앱과 계정 설정을 관리하세요</p>
+                            <p class="my-logs-subtitle">앱 설정을 관리하세요</p>
                         </div>
                     </div>
                 </div>
@@ -113,87 +113,6 @@ class SettingsView {
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 계정 설정 섹션 -->
-                <div class="hub-section account-settings-section">
-                    <div class="section-header">
-                        <h2 class="section-title">👤 계정 설정</h2>
-                    </div>
-                    <div class="settings-content">
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <div class="setting-icon">✏️</div>
-                                <div class="setting-details">
-                                    <div class="setting-title">프로필 편집</div>
-                                    <div class="setting-description">사용자 프로필 정보를 수정하세요</div>
-                                </div>
-                            </div>
-                            <div class="setting-control">
-                                <button class="setting-btn-secondary" disabled>편집</button>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <div class="setting-icon">🔒</div>
-                                <div class="setting-details">
-                                    <div class="setting-title">비밀번호 변경</div>
-                                    <div class="setting-description">계정 보안을 위해 비밀번호를 변경하세요</div>
-                                </div>
-                            </div>
-                            <div class="setting-control">
-                                <button class="setting-btn-secondary" disabled>변경</button>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <div class="setting-icon">📧</div>
-                                <div class="setting-details">
-                                    <div class="setting-title">이메일 설정</div>
-                                    <div class="setting-description">알림 및 마케팅 이메일 수신 설정</div>
-                                </div>
-                            </div>
-                            <div class="setting-control">
-                                <label class="toggle-switch">
-                                    <input type="checkbox" disabled checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <div class="setting-icon">📱</div>
-                                <div class="setting-details">
-                                    <div class="setting-title">계정 연동</div>
-                                    <div class="setting-description">소셜 미디어 계정과 연동하세요</div>
-                                </div>
-                            </div>
-                            <div class="setting-control">
-                                <button class="setting-btn-secondary" disabled>연동</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 하단 정보 섹션 -->
-                <div class="hub-section info-section">
-                    <div class="info-content">
-                        <div class="info-item">
-                            <span class="info-label">앱 버전:</span>
-                            <span class="info-value">DEMO</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">빌드 번호:</span>
-                            <span class="info-value">20250901</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">개발사:</span>
-                            <span class="info-value">REDIPX</span>
                         </div>
                     </div>
                 </div>

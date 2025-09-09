@@ -353,10 +353,7 @@ class HubView {
      * 프로필로 이동
      */
     onNavigateToProfile() {
-        this.dispatchEvent('showMessage', {
-            type: 'info',
-            message: '프로필 기능은 추후 구현 예정입니다.'
-        });
+        this.dispatchEvent('navigate', { view: 'profile' });
     }
 
     /**

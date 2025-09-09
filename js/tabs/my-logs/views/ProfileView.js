@@ -1,0 +1,472 @@
+/**
+ * ProfileView - 프로필 설정 화면 렌더링 및 이벤트 처리
+ * 
+ * 🎯 책임:
+ * - 프로필 설정 화면 UI 렌더링
+ * - 프로필 설정 화면 이벤트 바인딩
+ * - 계정 관련 설정 관리 (프로필 편집, 비밀번호, 이메일, 계정 연동)
+ * 
+ * @class ProfileView
+ */
+import { EventManager } from '../../../modules/utils/event-manager.js';
+
+class ProfileView {
+    constructor(controller) {
+        this.controller = controller;
+        this.eventManager = new EventManager();
+        this.container = null;
+    }
+
+    /**
+     * 프로필 설정 화면을 렌더링합니다
+     * @param {HTMLElement} container - 렌더링할 컨테이너
+     */
+    render(container) {
+        this.container = container;
+        this.container.innerHTML = this.getProfileHTML();
+        this.bindEvents();
+        this.loadProfileData();
+    }
+
+    /**
+     * 프로필 설정 화면 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getProfileHTML() {
+        return `
+            <div class="my-logs-container">
+                <div class="my-logs-header">
+                    <div class="header-with-back">
+                        <button class="back-btn" id="back-to-hub-from-profile">◀ 뒤로</button>
+                        <div class="header-content">
+                            <h1 class="my-logs-title">👤 프로필</h1>
+                            <p class="my-logs-subtitle">계정 정보와 프로필을 관리하세요</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 프로필 정보 섹션 -->
+                <div class="hub-section profile-info-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📋 프로필 정보</h2>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-avatar-container">
+                            <div class="profile-avatar" id="profile-avatar">
+                                <img src="" alt="프로필 이미지" class="profile-image" style="display: none;">
+                                <div class="profile-avatar-placeholder">✈️</div>
+                            </div>
+                            <button class="profile-avatar-edit" id="profile-avatar-edit" title="프로필 이미지 변경">
+                                <span class="camera-icon">📷</span>
+                            </button>
+                            <input type="file" id="profile-image-input" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="profile-details">
+                            <div class="profile-name" id="profile-name">여행자</div>
+                            <div class="profile-email" id="profile-email">user@example.com</div>
+                            <div class="profile-join-date">가입일: 2024년 12월 29일</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 계정 설정 섹션 -->
+                <div class="hub-section account-settings-section">
+                    <div class="section-header">
+                        <h2 class="section-title">⚙️ 계정 설정</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">✏️</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">프로필 편집</div>
+                                    <div class="setting-description">사용자 프로필 정보를 수정하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-primary" id="edit-profile-btn">편집</button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🔒</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">비밀번호 변경</div>
+                                    <div class="setting-description">계정 보안을 위해 비밀번호를 변경하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-secondary" id="change-password-btn" disabled>변경</button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">📧</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">이메일 설정</div>
+                                    <div class="setting-description">알림 및 마케팅 이메일 수신 설정</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="email-notifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">📱</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">계정 연동</div>
+                                    <div class="setting-description">소셜 미디어 계정과 연동하세요</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-secondary" id="link-account-btn" disabled>연동</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 개인정보 섹션 -->
+                <div class="hub-section privacy-section">
+                    <div class="section-header">
+                        <h2 class="section-title">🔐 개인정보</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">📊</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">데이터 내보내기</div>
+                                    <div class="setting-description">여행 데이터를 백업하거나 다른 서비스로 이동</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-secondary" id="export-data-btn" disabled>내보내기</button>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon">🗑️</div>
+                                <div class="setting-details">
+                                    <div class="setting-title">계정 삭제</div>
+                                    <div class="setting-description">모든 데이터와 함께 계정을 영구적으로 삭제</div>
+                                </div>
+                            </div>
+                            <div class="setting-control">
+                                <button class="setting-btn-danger" id="delete-account-btn" disabled>삭제</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 하단 정보 섹션 -->
+                <div class="hub-section info-section">
+                    <div class="info-content">
+                        <div class="info-item">
+                            <span class="info-label">계정 ID:</span>
+                            <span class="info-value">user_12345</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">마지막 로그인:</span>
+                            <span class="info-value">2024년 12월 29일 14:30</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">데이터 사용량:</span>
+                            <span class="info-value">2.3 MB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 프로필 설정 화면의 이벤트를 바인딩합니다
+     */
+    bindEvents() {
+        // 뒤로 가기 버튼
+        const backBtn = document.getElementById('back-to-hub-from-profile');
+        if (backBtn) {
+            this.eventManager.add(backBtn, 'click', () => {
+                this.onNavigateBack();
+            });
+        }
+
+        // 프로필 이미지 업로드
+        this.bindProfileImageEvents();
+
+        // 설정 버튼들
+        this.bindSettingEvents();
+    }
+
+    /**
+     * 프로필 이미지 관련 이벤트를 바인딩합니다
+     */
+    bindProfileImageEvents() {
+        const avatarEditBtn = document.getElementById('profile-avatar-edit');
+        const imageInput = document.getElementById('profile-image-input');
+        
+        if (avatarEditBtn && imageInput) {
+            this.eventManager.add(avatarEditBtn, 'click', () => {
+                imageInput.click();
+            });
+            
+            this.eventManager.add(imageInput, 'change', (e) => {
+                this.handleImageUpload(e);
+            });
+        }
+    }
+
+    /**
+     * 설정 관련 이벤트를 바인딩합니다
+     */
+    bindSettingEvents() {
+        // 프로필 편집 버튼
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        if (editProfileBtn) {
+            this.eventManager.add(editProfileBtn, 'click', () => {
+                this.onEditProfile();
+            });
+        }
+
+        // 이메일 알림 토글
+        const emailNotifications = document.getElementById('email-notifications');
+        if (emailNotifications) {
+            this.eventManager.add(emailNotifications, 'change', (e) => {
+                this.onEmailNotificationChange(e.target.checked);
+            });
+        }
+
+        // 기타 버튼들 (현재 비활성화)
+        const changePasswordBtn = document.getElementById('change-password-btn');
+        const linkAccountBtn = document.getElementById('link-account-btn');
+        const exportDataBtn = document.getElementById('export-data-btn');
+        const deleteAccountBtn = document.getElementById('delete-account-btn');
+
+        if (changePasswordBtn) {
+            this.eventManager.add(changePasswordBtn, 'click', () => {
+                this.onChangePassword();
+            });
+        }
+
+        if (linkAccountBtn) {
+            this.eventManager.add(linkAccountBtn, 'click', () => {
+                this.onLinkAccount();
+            });
+        }
+
+        if (exportDataBtn) {
+            this.eventManager.add(exportDataBtn, 'click', () => {
+                this.onExportData();
+            });
+        }
+
+        if (deleteAccountBtn) {
+            this.eventManager.add(deleteAccountBtn, 'click', () => {
+                this.onDeleteAccount();
+            });
+        }
+    }
+
+    /**
+     * 이미지 업로드를 처리합니다
+     * @param {Event} event - 파일 입력 이벤트
+     */
+    handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // 파일 크기 검증 (5MB 제한)
+        if (file.size > 5 * 1024 * 1024) {
+            this.dispatchEvent('showMessage', {
+                type: 'error',
+                message: '이미지 크기는 5MB 이하여야 합니다.'
+            });
+            return;
+        }
+
+        // 이미지 타입 검증
+        if (!file.type.startsWith('image/')) {
+            this.dispatchEvent('showMessage', {
+                type: 'error',
+                message: '이미지 파일만 업로드할 수 있습니다.'
+            });
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.updateProfileImage(e.target.result);
+            this.saveProfileData();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    /**
+     * 프로필 이미지를 업데이트합니다
+     * @param {string} imageData - 이미지 데이터 URL
+     */
+    updateProfileImage(imageData) {
+        const profileImage = document.querySelector('.profile-image');
+        const placeholder = document.querySelector('.profile-avatar-placeholder');
+        
+        if (profileImage && placeholder) {
+            profileImage.src = imageData;
+            profileImage.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+    }
+
+    /**
+     * 프로필 편집
+     */
+    onEditProfile() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '프로필 편집 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
+     * 비밀번호 변경
+     */
+    onChangePassword() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '비밀번호 변경 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
+     * 이메일 알림 설정 변경
+     * @param {boolean} enabled - 알림 활성화 여부
+     */
+    onEmailNotificationChange(enabled) {
+        this.dispatchEvent('showMessage', {
+            type: 'success',
+            message: `이메일 알림이 ${enabled ? '활성화' : '비활성화'}되었습니다.`
+        });
+    }
+
+    /**
+     * 계정 연동
+     */
+    onLinkAccount() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '계정 연동 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
+     * 데이터 내보내기
+     */
+    onExportData() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '데이터 내보내기 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
+     * 계정 삭제
+     */
+    onDeleteAccount() {
+        this.dispatchEvent('showMessage', {
+            type: 'error',
+            message: '계정 삭제 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
+     * 프로필 데이터를 로드합니다
+     */
+    loadProfileData() {
+        try {
+            const savedData = localStorage.getItem('travelLog_profile');
+            if (savedData) {
+                const profileData = JSON.parse(savedData);
+                
+                const profileName = document.getElementById('profile-name');
+                const profileEmail = document.getElementById('profile-email');
+                
+                if (profileName && profileData.name) {
+                    profileName.textContent = profileData.name;
+                }
+                
+                if (profileEmail && profileData.email) {
+                    profileEmail.textContent = profileData.email;
+                }
+                
+                if (profileData.image) {
+                    this.updateProfileImage(profileData.image);
+                }
+            }
+        } catch (error) {
+            console.error('프로필 데이터 로드 실패:', error);
+        }
+    }
+
+    /**
+     * 프로필 데이터를 저장합니다
+     */
+    saveProfileData() {
+        const profileData = {
+            name: document.getElementById('profile-name')?.textContent || '여행자',
+            email: document.getElementById('profile-email')?.textContent || 'user@example.com',
+            image: document.querySelector('.profile-image')?.src || null
+        };
+
+        try {
+            localStorage.setItem('travelLog_profile', JSON.stringify(profileData));
+            this.dispatchEvent('showMessage', {
+                type: 'success',
+                message: '프로필이 저장되었습니다.'
+            });
+        } catch (error) {
+            console.error('프로필 저장 실패:', error);
+            this.dispatchEvent('showMessage', {
+                type: 'error',
+                message: '프로필 저장에 실패했습니다.'
+            });
+        }
+    }
+
+    /**
+     * 뒤로 가기
+     */
+    onNavigateBack() {
+        this.dispatchEvent('navigate', { view: 'hub' });
+    }
+
+    /**
+     * 커스텀 이벤트를 발생시킵니다
+     * @param {string} eventName - 이벤트 이름
+     * @param {Object} detail - 이벤트 상세 정보
+     */
+    dispatchEvent(eventName, detail) {
+        if (this.container) {
+            const event = new CustomEvent(`profileView:${eventName}`, { detail });
+            this.container.dispatchEvent(event);
+        }
+    }
+
+    /**
+     * View 정리
+     */
+    cleanup() {
+        if (this.eventManager) {
+            this.eventManager.cleanup();
+        }
+        this.container = null;
+    }
+}
+
+export { ProfileView };
