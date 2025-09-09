@@ -44,8 +44,8 @@ class HubView {
                             <h1 class="my-logs-title">📝 나의 로그</h1>
                             <p class="my-logs-subtitle">여행 기록과 계획을 한 곳에서 관리하세요</p>
                         </div>
-                        <button class="settings-btn" id="settings-btn" title="설정">
-                            ⚙️
+                        <button class="settings-btn" id="settings-btn" title="메뉴">
+                            ☰
                         </button>
                     </div>
                 </div>
@@ -159,11 +159,11 @@ class HubView {
             console.error('HubView: 트래블 레포트 버튼을 찾을 수 없습니다');
         }
 
-        // 설정 버튼
+        // 햄버거 메뉴 버튼
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
             this.eventManager.add(settingsBtn, 'click', () => {
-                this.onNavigateToSettings();
+                this.showHamburgerMenu();
             });
         }
 
@@ -191,6 +191,192 @@ class HubView {
      */
     onNavigateToSettings() {
         this.dispatchEvent('navigate', { view: 'settings' });
+    }
+
+    /**
+     * 햄버거 메뉴를 보여줍니다
+     */
+    showHamburgerMenu() {
+        // 기존 메뉴가 있다면 제거
+        this.hideHamburgerMenu();
+        
+        // 햄버거 메뉴 HTML 생성
+        const menuHTML = this.getHamburgerMenuHTML();
+        
+        // 메뉴를 body에 추가
+        document.body.insertAdjacentHTML('beforeend', menuHTML);
+        
+        // 애니메이션을 위해 약간의 지연 후 show 클래스 추가
+        requestAnimationFrame(() => {
+            const overlay = document.querySelector('.hamburger-menu-overlay');
+            const menu = document.querySelector('.hamburger-menu');
+            
+            if (overlay && menu) {
+                overlay.classList.add('show');
+                menu.classList.add('show');
+            }
+        });
+        
+        // 메뉴 이벤트 바인딩
+        this.bindHamburgerMenuEvents();
+    }
+
+    /**
+     * 햄버거 메뉴를 숨깁니다
+     */
+    hideHamburgerMenu() {
+        const overlay = document.querySelector('.hamburger-menu-overlay');
+        const menu = document.querySelector('.hamburger-menu');
+        
+        if (overlay && menu) {
+            overlay.classList.remove('show');
+            menu.classList.remove('show');
+            
+            // 애니메이션 완료 후 DOM에서 제거
+            setTimeout(() => {
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }, 300);
+        }
+    }
+
+    /**
+     * 햄버거 메뉴 HTML을 생성합니다
+     */
+    getHamburgerMenuHTML() {
+        return `
+            <div class="hamburger-menu-overlay" id="hamburger-menu-overlay">
+                <div class="hamburger-menu" id="hamburger-menu">
+                    <div class="hamburger-menu-header">
+                        <h2 class="hamburger-menu-title">메뉴</h2>
+                        <button class="hamburger-menu-close" id="hamburger-menu-close">×</button>
+                    </div>
+                    <div class="hamburger-menu-content">
+                        <div class="hamburger-menu-section">
+                            <h3 class="hamburger-menu-section-title">설정</h3>
+                            <button class="hamburger-menu-item" id="menu-profile">
+                                <span class="hamburger-menu-item-icon">👤</span>
+                                <span class="hamburger-menu-item-text">프로필</span>
+                                <span class="hamburger-menu-item-arrow">▶</span>
+                            </button>
+                            <button class="hamburger-menu-item" id="menu-settings">
+                                <span class="hamburger-menu-item-icon">⚙️</span>
+                                <span class="hamburger-menu-item-text">설정</span>
+                                <span class="hamburger-menu-item-arrow">▶</span>
+                            </button>
+                        </div>
+                        
+                        <div class="hamburger-menu-section">
+                            <h3 class="hamburger-menu-section-title">지원</h3>
+                            <button class="hamburger-menu-item" id="menu-support">
+                                <span class="hamburger-menu-item-icon">❓</span>
+                                <span class="hamburger-menu-item-text">서포트</span>
+                                <span class="hamburger-menu-item-arrow">▶</span>
+                            </button>
+                        </div>
+                        
+                        <div class="hamburger-menu-section">
+                            <button class="hamburger-menu-item version-info" id="menu-version">
+                                <span class="hamburger-menu-item-text">버전 1.0.0</span>
+                            </button>
+                            <button class="hamburger-menu-item logout" id="menu-logout">
+                                <span class="hamburger-menu-item-icon">🚪</span>
+                                <span class="hamburger-menu-item-text">로그아웃</span>
+                                <span class="hamburger-menu-item-arrow">▶</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 햄버거 메뉴 이벤트를 바인딩합니다
+     */
+    bindHamburgerMenuEvents() {
+        // 메뉴 닫기 버튼
+        const closeBtn = document.getElementById('hamburger-menu-close');
+        const overlay = document.getElementById('hamburger-menu-overlay');
+        
+        if (closeBtn) {
+            this.eventManager.add(closeBtn, 'click', () => {
+                this.hideHamburgerMenu();
+            });
+        }
+        
+        if (overlay) {
+            this.eventManager.add(overlay, 'click', (e) => {
+                if (e.target === overlay) {
+                    this.hideHamburgerMenu();
+                }
+            });
+        }
+        
+        // 메뉴 아이템들
+        const profileBtn = document.getElementById('menu-profile');
+        const settingsBtn = document.getElementById('menu-settings');
+        const supportBtn = document.getElementById('menu-support');
+        const logoutBtn = document.getElementById('menu-logout');
+        
+        if (profileBtn) {
+            this.eventManager.add(profileBtn, 'click', () => {
+                this.hideHamburgerMenu();
+                this.onNavigateToProfile();
+            });
+        }
+        
+        if (settingsBtn) {
+            this.eventManager.add(settingsBtn, 'click', () => {
+                this.hideHamburgerMenu();
+                this.onNavigateToSettings();
+            });
+        }
+        
+        if (supportBtn) {
+            this.eventManager.add(supportBtn, 'click', () => {
+                this.hideHamburgerMenu();
+                this.onNavigateToSupport();
+            });
+        }
+        
+        if (logoutBtn) {
+            this.eventManager.add(logoutBtn, 'click', () => {
+                this.hideHamburgerMenu();
+                this.onLogout();
+            });
+        }
+    }
+
+    /**
+     * 프로필로 이동
+     */
+    onNavigateToProfile() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '프로필 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
+     * 서포트로 이동
+     */
+    onNavigateToSupport() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '서포트 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
+     * 로그아웃
+     */
+    onLogout() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '로그아웃 기능은 추후 구현 예정입니다.'
+        });
     }
 
     /**
@@ -391,6 +577,9 @@ class HubView {
      * View 정리
      */
     cleanup() {
+        // 햄버거 메뉴 정리
+        this.hideHamburgerMenu();
+        
         if (this.eventManager) {
             this.eventManager.cleanup();
         }
