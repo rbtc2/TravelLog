@@ -4,7 +4,8 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    padding-bottom: calc(20px + 80px); /* 탭 네비게이션 높이만큼 하단 여백 추가 */
+    padding-bottom: calc(20px + 100px); /* 탭 네비게이션 높이 + 여유 공간 */
+    min-height: calc(100vh - 100px); /* 최소 높이 보장 */
 }
 
 /* 헤더 스타일 */
@@ -410,7 +411,7 @@
 
 /* 통계 섹션 스타일 */
 .stats-section {
-    margin-bottom: 20px;
+    margin-bottom: 40px;
 }
 
 .stats-grid {
@@ -468,7 +469,11 @@
     display: flex;
     gap: 20px;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding: 20px 0;
+    position: relative;
+    z-index: 10;
 }
 
 .action-btn.primary {
@@ -482,6 +487,16 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    min-width: 120px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .action-btn.primary:hover {
@@ -499,12 +514,43 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    min-width: 120px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .action-btn.secondary:hover {
     border-color: #4299e1;
     color: #4299e1;
     transform: translateY(-3px);
+}
+
+/* 데스크탑 전용 스타일 */
+@media (min-width: 769px) {
+    .bottom-actions {
+        margin-top: 40px;
+        margin-bottom: 30px;
+        padding: 30px 0;
+    }
+    
+    .action-btn.primary,
+    .action-btn.secondary {
+        min-width: 140px;
+        height: 55px;
+        font-size: 1.2rem;
+        padding: 18px 36px;
+    }
+    
+    .stats-section {
+        margin-bottom: 50px;
+    }
 }
 
 /* 반응형 디자인 */
