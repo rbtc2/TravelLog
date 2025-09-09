@@ -84,6 +84,21 @@ class HubView {
                             <div class="stat-label">도시 수</div>
                         </div>
                     </div>
+                    
+                    <!-- 액션 버튼들 -->
+                    <div class="profile-action-buttons">
+                        <button class="profile-action-btn primary-btn" id="my-map-btn">
+                            <div class="btn-icon">🗺️</div>
+                            <div class="btn-text">나의 지도</div>
+                        </button>
+                        <button class="profile-action-btn secondary-btn" id="travel-report-btn">
+                            <div class="btn-icon">📊</div>
+                            <div class="btn-text">트래블 레포트</div>
+                        </button>
+                        <button class="profile-action-btn share-btn" id="share-btn" title="공유">
+                            <div class="btn-icon">📤</div>
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- 보관함 섹션 -->
@@ -112,17 +127,6 @@ class HubView {
                     </div>
                 </div>
                 
-                <!-- 트래블 레포트 섹션 -->
-                <div class="hub-section travel-report-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📊 트래블 레포트</h2>
-                    </div>
-                    <div class="travel-report-content">
-                        <div class="report-action">
-                            <button class="view-report-btn" id="view-report-btn">레포트 보기</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         `;
     }
@@ -147,16 +151,32 @@ class HubView {
             });
         }
         
+        // 나의 지도 버튼
+        const myMapBtn = document.getElementById('my-map-btn');
+        if (myMapBtn) {
+            this.eventManager.add(myMapBtn, 'click', () => {
+                this.onNavigateToMyMap();
+            });
+        }
+        
         // 트래블 레포트 버튼
-        const viewReportBtn = document.getElementById('view-report-btn');
-        if (viewReportBtn) {
+        const travelReportBtn = document.getElementById('travel-report-btn');
+        if (travelReportBtn) {
             console.log('HubView: 트래블 레포트 버튼 이벤트 바인딩 완료');
-            this.eventManager.add(viewReportBtn, 'click', () => {
+            this.eventManager.add(travelReportBtn, 'click', () => {
                 console.log('HubView: 트래블 레포트 버튼 클릭됨');
                 this.onNavigateToTravelReport();
             });
         } else {
             console.error('HubView: 트래블 레포트 버튼을 찾을 수 없습니다');
+        }
+        
+        // 공유 버튼
+        const shareBtn = document.getElementById('share-btn');
+        if (shareBtn) {
+            this.eventManager.add(shareBtn, 'click', () => {
+                this.onShareClick();
+            });
         }
 
         // 햄버거 메뉴 버튼
@@ -179,11 +199,31 @@ class HubView {
     }
 
     /**
+     * 나의 지도로 이동
+     */
+    onNavigateToMyMap() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '나의 지도 기능은 추후 구현 예정입니다.'
+        });
+    }
+
+    /**
      * 트래블 레포트로 이동
      */
     onNavigateToTravelReport() {
         console.log('HubView: onNavigateToTravelReport 호출됨');
         this.dispatchEvent('navigate', { view: 'travelReport' });
+    }
+
+    /**
+     * 공유 버튼 클릭
+     */
+    onShareClick() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '공유 기능은 추후 구현 예정입니다.'
+        });
     }
 
     /**

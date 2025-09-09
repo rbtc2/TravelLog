@@ -1390,6 +1390,269 @@ input:checked + .toggle-slider:before {
     }
 }
 
+/* ===== 프로필 액션 버튼 스타일 ===== */
+
+/* 프로필 액션 버튼 컨테이너 */
+.profile-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--gray-200);
+}
+
+/* 프로필 액션 버튼 기본 스타일 */
+.profile-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    border: none;
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+    min-height: 44px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 버튼 아이콘 */
+.btn-icon {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* 버튼 텍스트 */
+.btn-text {
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    white-space: nowrap;
+}
+
+/* Primary 버튼 (나의 지도) - 일반 스타일로 변경 */
+.profile-action-btn.primary-btn {
+    background: var(--gray-200);
+    color: var(--text-primary);
+    border: 2px solid var(--gray-300);
+    flex: 1;
+    max-width: 200px;
+    min-height: 44px;
+}
+
+.profile-action-btn.primary-btn:hover {
+    background: var(--gray-300);
+    border-color: var(--gray-400);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.profile-action-btn.primary-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
+/* Secondary 버튼 (트래블 레포트) - 강조 스타일로 변경 */
+.profile-action-btn.secondary-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    border: 2px solid transparent;
+    flex: 1;
+    max-width: 200px;
+}
+
+.profile-action-btn.secondary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+}
+
+.profile-action-btn.secondary-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
+/* Share 버튼 (아이콘만) - 스크린샷의 공유 아이콘 스타일 */
+.profile-action-btn.share-btn {
+    background: var(--gray-200);
+    color: var(--text-secondary);
+    border: 2px solid var(--gray-300);
+    flex: 0 0 auto;
+    min-width: 44px;
+    max-width: 44px;
+    padding: var(--spacing-md);
+}
+
+.profile-action-btn.share-btn:hover {
+    background: var(--gray-300);
+    border-color: var(--gray-400);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.profile-action-btn.share-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
+/* Share 버튼은 텍스트 숨김 */
+.profile-action-btn.share-btn .btn-text {
+    display: none;
+}
+
+/* 버튼 호버 효과 */
+.profile-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.profile-action-btn:hover::before {
+    left: 100%;
+}
+
+/* 버튼 비활성화 상태 */
+.profile-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.profile-action-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .profile-action-buttons {
+        flex-direction: row;
+        gap: var(--spacing-xs);
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        justify-content: space-between;
+    }
+    
+    .profile-action-btn {
+        min-height: 48px;
+        padding: var(--spacing-md);
+        justify-content: center;
+    }
+    
+    /* 모바일에서 나의 지도 버튼은 아이콘만 표시 */
+    .profile-action-btn.primary-btn .btn-text {
+        display: none;
+    }
+    
+    .profile-action-btn.primary-btn {
+        flex: 0 0 auto;
+        min-width: 48px;
+        max-width: 48px;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-lg);
+        background: var(--gray-200);
+        color: var(--text-primary);
+        border: 2px solid var(--gray-300);
+    }
+    
+    .profile-action-btn.secondary-btn {
+        flex: 1;
+        min-height: 48px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: var(--white);
+        border: 2px solid transparent;
+    }
+    
+    .profile-action-btn.share-btn {
+        flex: 0 0 auto;
+        min-width: 48px;
+        max-width: 48px;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-lg);
+    }
+    
+    .btn-text {
+        font-size: var(--font-sm);
+    }
+    
+    .btn-icon {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-action-buttons {
+        flex-direction: row;
+        gap: var(--spacing-xs);
+        margin-top: var(--spacing-sm);
+        padding-top: var(--spacing-sm);
+        justify-content: space-between;
+    }
+    
+    .profile-action-btn {
+        min-height: 44px;
+        padding: var(--spacing-sm);
+    }
+    
+    /* 작은 모바일에서도 나의 지도 버튼은 아이콘만 표시 */
+    .profile-action-btn.primary-btn .btn-text {
+        display: none;
+    }
+    
+    .profile-action-btn.primary-btn {
+        flex: 0 0 auto;
+        min-width: 44px;
+        max-width: 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--border-radius-md);
+        background: var(--gray-200);
+        color: var(--text-primary);
+        border: 2px solid var(--gray-300);
+    }
+    
+    .profile-action-btn.secondary-btn {
+        flex: 1;
+        min-height: 44px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: var(--white);
+        border: 2px solid transparent;
+    }
+    
+    .profile-action-btn.share-btn {
+        flex: 0 0 auto;
+        min-width: 44px;
+        max-width: 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--border-radius-md);
+    }
+    
+    .btn-text {
+        font-size: var(--font-xs);
+    }
+    
+    .btn-icon {
+        font-size: 18px;
+    }
+}
+
 /* ===== 내 일지 페이지 반응형 스타일 ===== */
 @media (max-width: 768px) {
     .my-logs-container {
