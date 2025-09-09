@@ -25,6 +25,9 @@ export class CalendarRenderer {
      * 구글 캘린더 스타일의 깔끔한 디자인 적용
      */
     renderContent(currentDate, currentView) {
+        // 초기 렌더링 시 스크롤바 중복 방지를 위한 임시 스타일 적용
+        this.container.style.overflow = 'hidden';
+        
         this.container.innerHTML = `
             <div class="calendar-container">
                 <!-- 캘린더 헤더 -->
@@ -91,6 +94,43 @@ export class CalendarRenderer {
                 </div>
             </div>
         `;
+        
+        // 렌더링 완료 후 스크롤 설정 복원
+        this.restoreScrollSettings();
+    }
+    
+    /**
+     * 스크롤 설정 복원 (렌더링 완료 후)
+     */
+    restoreScrollSettings() {
+        // 다음 프레임에서 스크롤 설정 복원
+        requestAnimationFrame(() => {
+            // 컨테이너 스크롤 설정 복원 - 상위 컨테이너에서만 스크롤
+            this.container.style.overflow = '';
+            this.container.style.overflowX = 'hidden';
+            this.container.style.overflowY = 'auto';
+            
+            // 하드웨어 가속 적용
+            this.container.style.transform = 'translateZ(0)';
+            this.container.style.backfaceVisibility = 'hidden';
+            this.container.style.webkitOverflowScrolling = 'touch';
+            
+            // 캘린더 컨테이너 - 스크롤 완전 제거
+            const calendarContainer = this.container.querySelector('.calendar-container');
+            if (calendarContainer) {
+                calendarContainer.style.overflow = 'visible';
+                calendarContainer.style.transform = 'translateZ(0)';
+                calendarContainer.style.backfaceVisibility = 'hidden';
+            }
+            
+            // 그리드 컨테이너 - 스크롤 완전 제거
+            const gridContainer = this.container.querySelector('.calendar-grid-container');
+            if (gridContainer) {
+                gridContainer.style.overflow = 'visible';
+                gridContainer.style.transform = 'translateZ(0)';
+                gridContainer.style.backfaceVisibility = 'hidden';
+            }
+        });
     }
 
     /**

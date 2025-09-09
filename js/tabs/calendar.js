@@ -69,6 +69,9 @@ class CalendarTab {
     async render(container) {
         this.container = container;
         
+        // 초기 렌더링 시 스크롤바 중복 방지
+        this.container.style.overflow = 'hidden';
+        
         try {
             // 데이터 초기화
             await this.dataManager.initializeCountriesManager();
@@ -105,6 +108,10 @@ class CalendarTab {
             }
             
             this.isInitialized = true;
+            
+            // 초기화 완료 후 스크롤 설정 복원
+            this.restoreScrollSettings();
+            
             // 초기화 완료 (개발 환경에서만 로그)
             if (isDebugMode()) {
             console.log('캘린더 탭 초기화 완료');
@@ -120,6 +127,26 @@ class CalendarTab {
         }
     }
     
+    
+    /**
+     * 스크롤 설정 복원 (초기화 완료 후)
+     */
+    restoreScrollSettings() {
+        // 다음 프레임에서 스크롤 설정 복원
+        requestAnimationFrame(() => {
+            if (this.container) {
+                // 컨테이너 스크롤 설정 복원 - 상위 컨테이너에서만 스크롤
+                this.container.style.overflow = '';
+                this.container.style.overflowX = 'hidden';
+                this.container.style.overflowY = 'auto';
+                
+                // 하드웨어 가속 적용
+                this.container.style.transform = 'translateZ(0)';
+                this.container.style.backfaceVisibility = 'hidden';
+                this.container.style.webkitOverflowScrolling = 'touch';
+            }
+        });
+    }
     
     /**
      * 핵심 비즈니스 로직 메서드들

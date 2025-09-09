@@ -1,13 +1,17 @@
 /* ===== 캘린더 그리드 스타일 ===== */
 
-/* 캘린더 그리드 컨테이너 */
+/* 캘린더 그리드 컨테이너 - 스크롤 완전 제거 */
 .calendar-grid-container {
     background: white;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #e2e8f0;
-    overflow: hidden;
+    /* 스크롤 완전 제거 - 상위 컨테이너에서만 스크롤 */
+    overflow: visible !important;
     margin-bottom: 30px;
+    /* 하드웨어 가속 */
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .calendar-grid {

@@ -4,13 +4,10 @@
  * 키워드: scroll, performance, optimization, smooth
  */
 
-/* 기본 스크롤 최적화 */
+/* 기본 스크롤 최적화 - 사용하지 않음 (중복 스크롤바 방지) */
 .scroll-optimized {
-    -webkit-overflow-scrolling: touch;
-    overflow-x: hidden;
-    transform: translate3d(0, 0, 0);
-    backface-visibility: hidden;
-    will-change: scroll-position;
+    /* 이 클래스는 사용하지 않습니다 - 중복 스크롤바 방지 */
+    display: none;
 }
 
 /* 부드러운 스크롤 */
@@ -33,7 +30,6 @@
     overflow-x: hidden;
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
-    will-change: scroll-position;
 }
 
 /* 모바일 스크롤 최적화 */
@@ -42,7 +38,6 @@
     overflow-x: hidden;
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
-    will-change: scroll-position;
     /* 모바일에서 스크롤 성능 향상 */
     -webkit-transform: translate3d(0, 0, 0);
     -moz-transform: translate3d(0, 0, 0);

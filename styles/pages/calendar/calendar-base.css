@@ -1,12 +1,17 @@
 /* ===== 캘린더 기본 구조 스타일 ===== */
 
-/* 캘린더 컨테이너 */
+/* 캘린더 컨테이너 - 스크롤 완전 제거 */
 .calendar-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     /* 네비게이션 여백 적용 */
     padding-bottom: calc(20px + var(--navigation-height, 80px));
+    /* 스크롤 완전 제거 - 상위 컨테이너에서만 스크롤 */
+    overflow: visible !important;
+    /* 하드웨어 가속 */
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 /* ===== 캘린더 상세 화면 스타일 ===== */
@@ -15,6 +20,12 @@
     margin: 0 auto;
     padding: 20px;
     padding-bottom: calc(20px + var(--navigation-height, 80px));
+    /* 스크롤 최적화 - 중복 스크롤바 방지 */
+    overflow-x: hidden;
+    overflow-y: visible;
+    /* 하드웨어 가속 */
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 /* 캘린더 상세 화면 헤더 */
