@@ -35,7 +35,14 @@
 @import url('./pages/home.css');
 @import url('./pages/search.css');
 @import url('./pages/add-log.css');
-@import url('./pages/calendar.css');
+/* 캘린더 모듈화된 스타일 */
+@import url('./pages/calendar/calendar-base.css');
+@import url('./pages/calendar/calendar-grid.css');
+@import url('./pages/calendar/calendar-navigation.css');
+@import url('./pages/calendar/calendar-modal.css');
+@import url('./pages/calendar/calendar-responsive.css');
+@import url('./pages/calendar/calendar-dark-mode.css');
+@import url('./pages/calendar/calendar-animations.css');
 @import url('./pages/my-logs.css');
 @import url('./pages/log-detail.css');
 @import url('./pages/settings.css');
