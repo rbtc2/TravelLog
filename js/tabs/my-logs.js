@@ -88,6 +88,9 @@ class MyLogsTab {
         this.bindViewEvents(); // View 렌더링 전에 이벤트 바인딩
         this.renderCurrentView();
         this.isInitialized = true;
+        
+        // 탭 렌더링 후 스크롤을 상단으로 이동
+        this.scrollToTop();
     }
     
     /**

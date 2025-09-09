@@ -252,6 +252,9 @@ class AppManager {
             // 현재 탭 업데이트
             this.currentTab = tabName;
             
+            // 탭 전환 후 스크롤을 상단으로 이동
+            this.scrollToTop();
+            
         } catch (error) {
             console.error(`탭 전환 실패: ${tabName}`, error);
             this.showError(tabName, error);
@@ -270,6 +273,9 @@ class AppManager {
             this.renderTabContent(module);
             
             this.currentTab = tabName;
+            
+            // 탭 로드 후 스크롤을 상단으로 이동
+            this.scrollToTop();
             
         } catch (error) {
             console.error(`탭 로드 실패: ${tabName}`, error);
@@ -359,6 +365,28 @@ class AppManager {
                 </div>
             </div>
         `;
+    }
+    
+    /**
+     * 스크롤을 맨 위로 즉시 이동시킵니다
+     * 탭 전환 시 사용자 경험을 개선하기 위해 구현
+     */
+    scrollToTop() {
+        // DOM이 완전히 렌더링될 때까지 대기
+        requestAnimationFrame(() => {
+            // 윈도우 스크롤을 맨 위로 이동
+            window.scrollTo({ 
+                top: 0, 
+                left: 0, 
+                behavior: 'instant' 
+            });
+            
+            // 탭 콘텐츠 컨테이너도 스크롤 초기화
+            if (this.tabContent) {
+                this.tabContent.scrollTop = 0;
+                this.tabContent.scrollLeft = 0;
+            }
+        });
     }
     
     // 로그아웃 기능 (향후 구현 예정)

@@ -96,6 +96,10 @@ export class SearchTab {
             this.bindEvents();
             
             this.isInitialized = true;
+            
+            // 탭 렌더링 후 스크롤을 상단으로 이동
+            this.scrollToTop();
+            
             // 검색 탭 초기화 완료
             
         } catch (error) {
@@ -820,6 +824,19 @@ export class SearchTab {
             console.error('토스트 메시지 표시 오류:', error);
             alert(message);
         }
+    }
+
+    /**
+     * 스크롤을 맨 위로 즉시 이동시킵니다
+     */
+    scrollToTop() {
+        requestAnimationFrame(() => {
+            window.scrollTo({ 
+                top: 0, 
+                left: 0, 
+                behavior: 'instant' 
+            });
+        });
     }
 
     showErrorFallback(container) {

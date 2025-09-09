@@ -49,6 +49,41 @@
 @import url('./pages/travel-report.css');
 @import url('./pages/error.css');
 
+/* ===== 스크롤 최적화 스타일 ===== */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 0;
+}
+
+body {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+/* 탭 전환 시 스크롤 위치 초기화 */
+.tab-content {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+/* 스크롤 성능 최적화 */
+* {
+    scroll-behavior: smooth;
+}
+
+/* 모바일에서 스크롤 최적화 */
+@media (max-width: 768px) {
+    html {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+}
+
 /* ===== 공통 검색 하이라이트 스타일 ===== */
 .search-highlight {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

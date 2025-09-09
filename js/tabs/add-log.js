@@ -54,6 +54,9 @@ class AddLogTab {
         });
         
         this.isInitialized = true;
+        
+        // 탭 렌더링 후 스크롤을 상단으로 이동
+        this.scrollToTop();
     }
     
     /**
@@ -812,6 +815,19 @@ class AddLogTab {
             travelStyle: '',
             memo: ''
         };
+    }
+    
+    /**
+     * 스크롤을 맨 위로 즉시 이동시킵니다
+     */
+    scrollToTop() {
+        requestAnimationFrame(() => {
+            window.scrollTo({ 
+                top: 0, 
+                left: 0, 
+                behavior: 'instant' 
+            });
+        });
     }
     
     /**

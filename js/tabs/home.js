@@ -14,6 +14,9 @@ class HomeTab {
         this.renderContent();
         this.bindEvents();
         this.isInitialized = true;
+        
+        // 탭 렌더링 후 스크롤을 상단으로 이동
+        this.scrollToTop();
     }
     
     renderContent() {
@@ -61,6 +64,19 @@ class HomeTab {
     bindEvents() {
         // 향후 이벤트 리스너 추가 예정
         // 예: 버튼 클릭, 스크롤 이벤트 등
+    }
+    
+    /**
+     * 스크롤을 맨 위로 즉시 이동시킵니다
+     */
+    scrollToTop() {
+        requestAnimationFrame(() => {
+            window.scrollTo({ 
+                top: 0, 
+                left: 0, 
+                behavior: 'instant' 
+            });
+        });
     }
     
     async cleanup() {

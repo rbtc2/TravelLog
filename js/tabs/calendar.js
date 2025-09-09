@@ -112,6 +112,9 @@ class CalendarTab {
             // 초기화 완료 후 스크롤 설정 복원
             this.restoreScrollSettings();
             
+            // 탭 렌더링 후 스크롤을 상단으로 이동
+            this.scrollToTop();
+            
             // 초기화 완료 (개발 환경에서만 로그)
             if (isDebugMode()) {
             console.log('캘린더 탭 초기화 완료');
@@ -144,6 +147,26 @@ class CalendarTab {
                 this.container.style.transform = 'translateZ(0)';
                 this.container.style.backfaceVisibility = 'hidden';
                 this.container.style.webkitOverflowScrolling = 'touch';
+            }
+        });
+    }
+    
+    /**
+     * 스크롤을 맨 위로 즉시 이동시킵니다
+     */
+    scrollToTop() {
+        requestAnimationFrame(() => {
+            // 윈도우 스크롤을 맨 위로 이동
+            window.scrollTo({ 
+                top: 0, 
+                left: 0, 
+                behavior: 'instant' 
+            });
+            
+            // 컨테이너 스크롤도 초기화
+            if (this.container) {
+                this.container.scrollTop = 0;
+                this.container.scrollLeft = 0;
             }
         });
     }
