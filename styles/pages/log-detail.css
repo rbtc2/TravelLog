@@ -12,8 +12,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 30px;
-    padding: 20px;
+    margin-bottom: 20px;
+    padding: 15px 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px;
     color: white;
@@ -43,14 +43,14 @@
 }
 
 .detail-title {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    margin: 0 0 8px 0;
+    margin: 0 0 5px 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .detail-subtitle {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     margin: 0;
     opacity: 0.9;
     font-weight: 300;
@@ -87,8 +87,8 @@
 .summary-card {
     background: white;
     border-radius: 20px;
-    padding: 30px;
-    margin-bottom: 30px;
+    padding: 20px;
+    margin-bottom: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -97,7 +97,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .location-info {
@@ -131,17 +131,19 @@
 
 .trip-meta {
     display: flex;
-    gap: 20px;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .meta-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 20px;
+    padding: 8px 16px;
     background: #f7fafc;
     border-radius: 25px;
     border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
 }
 
 .meta-icon {
@@ -156,7 +158,7 @@
 .summary-details {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
 }
 
 .date-range {
@@ -265,19 +267,19 @@
 
 /* 분석 섹션 스타일 */
 .analysis-section {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .analysis-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
 }
 
 .analysis-card {
     background: white;
     border-radius: 16px;
-    padding: 25px;
+    padding: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.3s ease;
@@ -293,11 +295,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .card-title {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: #2d3748;
     margin: 0;
@@ -338,17 +340,17 @@
 
 /* 지도 섹션 스타일 */
 .map-section {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .map-container {
     background: white;
     border-radius: 16px;
-    padding: 40px;
+    padding: 25px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
-    min-height: 300px;
+    margin-bottom: 15px;
+    min-height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -408,30 +410,30 @@
 
 /* 통계 섹션 스타일 */
 .stats-section {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
 }
 
 .stat-card {
     background: white;
     border-radius: 16px;
-    padding: 25px;
+    padding: 15px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(0, 0, 0, 0.05);
     text-align: center;
 }
 
 .stat-header {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .stat-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #4a5568;
     margin: 0;
@@ -466,7 +468,7 @@
     display: flex;
     gap: 20px;
     justify-content: center;
-    margin-top: 40px;
+    margin-top: 20px;
 }
 
 .action-btn.primary {
@@ -507,75 +509,337 @@
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
+    /* 터치 타겟 최소 크기 보장 */
+    .action-btn, .map-btn, .back-btn {
+        min-width: 44px;
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+    
+    /* 터치 피드백 개선 */
+    .action-btn:active, .map-btn:active, .back-btn:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+    }
+    
+    /* 스크롤 최적화 */
     .log-detail-container {
-        padding: 15px;
+        -webkit-overflow-scrolling: touch;
+        overflow-x: hidden;
+        padding: 10px;
+        padding-bottom: calc(10px + 80px);
     }
     
     .detail-header {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
         text-align: center;
+        padding: 12px 15px;
+        margin-bottom: 15px;
     }
     
     .detail-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
+        margin: 0 0 3px 0;
+    }
+    
+    .detail-subtitle {
+        font-size: 0.85rem;
+    }
+    
+    .header-actions {
+        gap: 8px;
+    }
+    
+    .action-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .summary-card {
+        padding: 15px;
+        margin-bottom: 15px;
     }
     
     .summary-header {
         flex-direction: column;
-        gap: 20px;
+        gap: 15px;
         text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .country {
+        font-size: 1.5rem;
+    }
+    
+    .city {
+        font-size: 1rem;
+    }
+    
+    .flag {
+        font-size: 2.5rem;
     }
     
     .trip-meta {
         flex-wrap: wrap;
         justify-content: center;
+        gap: 10px;
+    }
+    
+    .meta-item {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .summary-details {
+        gap: 12px;
     }
     
     .date-range {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
+        padding: 15px;
+    }
+    
+    .date-value {
+        font-size: 1.1rem;
+    }
+    
+    .analysis-section {
+        margin-bottom: 15px;
     }
     
     .analysis-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
     }
     
-    .stats-grid {
-        grid-template-columns: 1fr;
+    .analysis-card {
+        padding: 12px;
+    }
+    
+    .card-header {
+        margin-bottom: 12px;
+    }
+    
+    .card-title {
+        font-size: 1rem;
+    }
+    
+    .map-section {
+        margin-bottom: 15px;
+    }
+    
+    .map-container {
+        padding: 20px 15px;
+        min-height: 150px;
+        margin-bottom: 12px;
+    }
+    
+    .map-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+    
+    .map-text {
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+    
+    .map-subtext {
+        font-size: 0.9rem;
     }
     
     .map-controls {
         flex-direction: column;
         align-items: center;
+        gap: 10px;
+    }
+    
+    .map-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .stats-section {
+        margin-bottom: 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+    }
+    
+    .stat-header {
+        margin-bottom: 12px;
+    }
+    
+    .stat-title {
+        font-size: 0.95rem;
     }
     
     .bottom-actions {
         flex-direction: column;
         align-items: center;
+        margin-top: 15px;
+        gap: 12px;
     }
     
     .action-btn.primary,
     .action-btn.secondary {
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
+        padding: 14px 24px;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 480px) {
+    .log-detail-container {
+        padding: 8px;
+        padding-bottom: calc(8px + 80px);
+    }
+    
+    .detail-header {
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        gap: 12px;
+    }
+    
     .detail-title {
-        font-size: 1.8rem;
+        font-size: 1.3rem;
+        margin: 0 0 2px 0;
+    }
+    
+    .detail-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
     }
     
     .summary-card {
-        padding: 20px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .summary-header {
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .country {
+        font-size: 1.3rem;
+    }
+    
+    .city {
+        font-size: 0.9rem;
+    }
+    
+    .flag {
+        font-size: 2rem;
+    }
+    
+    .trip-meta {
+        gap: 8px;
+    }
+    
+    .meta-item {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .summary-details {
+        gap: 10px;
+    }
+    
+    .date-range {
+        padding: 12px;
+        gap: 10px;
+    }
+    
+    .date-value {
+        font-size: 1rem;
+    }
+    
+    .analysis-section {
+        margin-bottom: 12px;
     }
     
     .analysis-card {
-        padding: 20px;
+        padding: 10px;
+    }
+    
+    .card-header {
+        margin-bottom: 10px;
+    }
+    
+    .card-title {
+        font-size: 0.95rem;
+    }
+    
+    .map-section {
+        margin-bottom: 12px;
     }
     
     .map-container {
-        padding: 30px 20px;
+        padding: 15px 10px;
+        min-height: 120px;
+        margin-bottom: 10px;
+    }
+    
+    .map-icon {
+        font-size: 2.5rem;
+        margin-bottom: 12px;
+    }
+    
+    .map-text {
+        font-size: 1.1rem;
+        margin-bottom: 6px;
+    }
+    
+    .map-subtext {
+        font-size: 0.85rem;
+    }
+    
+    .map-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .stats-section {
+        margin-bottom: 12px;
+    }
+    
+    .stat-card {
+        padding: 10px;
+    }
+    
+    .stat-header {
+        margin-bottom: 10px;
+    }
+    
+    .stat-title {
+        font-size: 0.9rem;
+    }
+    
+    .bottom-actions {
+        margin-top: 12px;
+        gap: 10px;
+    }
+    
+    .action-btn.primary,
+    .action-btn.secondary {
+        max-width: 260px;
+        padding: 12px 20px;
+        font-size: 0.95rem;
     }
 }
