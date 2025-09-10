@@ -103,7 +103,9 @@ js/
 │       ├── demo-data.js           # 데모 데이터
 │       ├── event-manager.js       # 이벤트 관리
 │       ├── search-utility.js      # 검색 유틸리티
-│       └── storage-manager.js     # 저장소 관리
+│       ├── storage-manager.js     # 저장소 관리
+│       ├── theme-manager.js       # 테마 관리자
+│       └── dark-mode-manager.js   # 다크모드 관리자
 └── tabs/
     ├── home.js               # 홈 탭
     ├── search.js             # 검색 탭
@@ -147,6 +149,7 @@ styles/
     ├── animations.css        # 애니메이션
     ├── accessibility.css     # 접근성
     ├── dark-mode.css         # 다크 모드
+    ├── theme-transitions.css # 테마 전환 애니메이션
     ├── responsive.css        # 반응형
     ├── navigation-utils.css  # 네비게이션 유틸리티
     └── scroll-optimization.css # 스크롤 최적화
@@ -245,6 +248,26 @@ UI 이벤트 → 이벤트 핸들러 → 서비스 레이어 →
 - 크로스 브라우저 테스트
 - 성능 테스트
 
+## 🌙 다크모드 아키텍처
+
+### 1. **테마 관리 시스템**
+- **ThemeManager**: 중앙화된 테마 상태 관리
+- **DarkModeManager**: 실시간 다크모드 스타일 관리
+- **테마 전환**: 부드러운 애니메이션과 함께 테마 전환
+- **시스템 통합**: 자동 시스템 테마 감지
+
+### 2. **다크모드 개발 도구**
+- **CSS 생성기**: 자동화된 다크모드 스타일 생성
+- **관리 스크립트**: 다크모드 작업을 위한 명령줄 도구
+- **검증 시스템**: 실시간 다크모드 스타일 검증
+- **자동 수정**: 다크모드 이슈 자동 수정
+
+### 3. **설정 관리**
+- **중앙화된 설정**: `config/dark-mode-config.js`로 테마 설정 관리
+- **CSS 변수**: 동적 테마 변수 시스템
+- **컴포넌트 스타일**: 컴포넌트별 사전 정의된 다크모드 스타일
+- **접근성 지원**: 고대비 및 애니메이션 감소 지원
+
 ## 🔮 향후 아키텍처 개선
 
 ### 1. **마이크로 프론트엔드**
@@ -264,4 +287,7 @@ UI 이벤트 → 이벤트 핸들러 → 서비스 레이어 →
 
 ---
 
-**다음 단계**: [검색 시스템](./../features/search-system.md) 또는 [국가 선택기](./../features/country-selector.md) 문서를 참조하여 구체적인 기능 구현을 확인하세요.
+**다음 단계**: 
+- [다크모드 개발 규칙](./../rules/dark-mode.md) - 다크모드 개발 가이드라인
+- [검색 시스템](./../features/search-system.md) - 검색 기능 구현
+- [국가 선택기](./../features/country-selector.md) - 국가 선택기 구현

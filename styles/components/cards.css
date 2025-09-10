@@ -10,6 +10,13 @@
     border: 1px solid var(--gray-200);
 }
 
+/* 다크모드 허브 섹션 카드 */
+.dark .hub-section {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 .section-header {
     margin-bottom: var(--spacing-lg);
     display: flex;
@@ -28,6 +35,11 @@
     margin: 0;
 }
 
+/* 다크모드 섹션 제목 */
+.dark .section-title {
+    color: var(--text-primary, #f7fafc);
+}
+
 /* 보관함 섹션 특별 스타일 */
 .archive-section .section-title {
     color: var(--text-primary);
@@ -38,6 +50,15 @@
     margin-bottom: var(--spacing-lg);
     padding-bottom: var(--spacing-sm);
     border-bottom: 2px solid var(--gray-200);
+}
+
+/* 다크모드 보관함 섹션 */
+.dark .archive-section .section-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .archive-section .section-header {
+    border-bottom-color: var(--gray-400, #718096);
 }
 
 /* ===== 기타 카드 컴포넌트 ===== */
@@ -116,6 +137,40 @@
     padding: var(--spacing-xs) var(--spacing-sm);
     background: var(--gray-100);
     border-radius: var(--border-radius-full);
+}
+
+/* 다크모드 보관함 아이템들 */
+.dark .archive-item {
+    background: var(--gray-100, #4a5568);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .archive-item:hover:not(.disabled) {
+    background: var(--gray-200, #718096);
+    border-color: var(--gray-500, #a0aec0);
+}
+
+.dark .archive-icon {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .archive-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .archive-description {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .archive-arrow {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .archive-status {
+    background: var(--gray-200, #718096);
+    color: var(--text-muted, #a0aec0);
 }
 
 /* ===== 일지 아이템 카드 ===== */

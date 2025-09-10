@@ -776,6 +776,12 @@
     transition: all var(--transition-normal);
 }
 
+/* 다크모드 햄버거 메뉴 오버레이 */
+.dark .hamburger-menu-overlay {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+}
+
 .hamburger-menu-overlay.show {
     opacity: 1;
     visibility: visible;
@@ -797,6 +803,13 @@
     border-left: 1px solid var(--gray-200);
 }
 
+/* 다크모드 햄버거 메뉴 컨테이너 */
+.dark .hamburger-menu {
+    background: var(--bg-secondary, #2d2d2d);
+    border-left-color: var(--gray-400, #718096);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
 .hamburger-menu.show {
     transform: translateX(0);
 }
@@ -814,11 +827,22 @@
     z-index: 10;
 }
 
+/* 다크모드 햄버거 메뉴 헤더 */
+.dark .hamburger-menu-header {
+    background: var(--bg-secondary, #2d2d2d);
+    border-bottom-color: var(--gray-400, #718096);
+}
+
 .hamburger-menu-title {
     color: var(--text-primary);
     font-size: var(--font-xl);
     font-weight: var(--font-semibold);
     margin: 0;
+}
+
+/* 다크모드 햄버거 메뉴 제목 */
+.dark .hamburger-menu-title {
+    color: var(--text-primary, #f7fafc);
 }
 
 .hamburger-menu-close {
@@ -841,6 +865,16 @@
     background: var(--gray-100);
     color: var(--text-primary);
     transform: scale(1.1);
+}
+
+/* 다크모드 햄버거 메뉴 닫기 버튼 */
+.dark .hamburger-menu-close {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .hamburger-menu-close:hover {
+    background: var(--gray-100, #4a5568);
+    color: var(--text-primary, #f7fafc);
 }
 
 .hamburger-menu-close:active {
@@ -914,6 +948,24 @@
     background: var(--gray-200, #4a5568);
 }
 
+/* 다크모드 메뉴 아이템 아이콘 */
+.dark .hamburger-menu-item-icon {
+    color: var(--text-secondary, #a0aec0);
+}
+
+.dark .hamburger-menu-item:hover .hamburger-menu-item-icon {
+    color: var(--primary-color, #4dabf7);
+}
+
+/* 다크모드 메뉴 아이템 화살표 */
+.dark .hamburger-menu-item-arrow {
+    color: var(--gray-400, #718096);
+}
+
+.dark .hamburger-menu-item:hover .hamburger-menu-item-arrow {
+    color: var(--primary-color, #4dabf7);
+}
+
 .hamburger-menu-item.disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -968,6 +1020,16 @@
     color: var(--text-muted);
 }
 
+/* 다크모드 버전 정보 */
+.dark .hamburger-menu-item.version-info {
+    border-top-color: var(--gray-400, #718096);
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .hamburger-menu-item.version-info:hover {
+    color: var(--text-muted, #a0aec0);
+}
+
 /* 로그아웃 버튼 스타일 */
 .hamburger-menu-item.logout {
     color: var(--error-color);
@@ -986,6 +1048,25 @@
 
 .hamburger-menu-item.logout:hover .hamburger-menu-item-icon {
     color: var(--error-dark);
+}
+
+/* 다크모드 로그아웃 버튼 */
+.dark .hamburger-menu-item.logout {
+    border-top-color: var(--gray-400, #718096);
+    color: var(--error-color, #fc8181);
+}
+
+.dark .hamburger-menu-item.logout:hover {
+    background: rgba(252, 129, 129, 0.1);
+    color: var(--error-dark, #f56565);
+}
+
+.dark .hamburger-menu-item.logout .hamburger-menu-item-icon {
+    color: var(--error-color, #fc8181);
+}
+
+.dark .hamburger-menu-item.logout:hover .hamburger-menu-item-icon {
+    color: var(--error-dark, #f56565);
 }
 
 /* 모바일 반응형 */

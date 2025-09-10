@@ -86,9 +86,10 @@ export class ThemeManager {
      * 테마를 설정합니다
      * @param {string} theme - 설정할 테마 ('light' 또는 'dark')
      * @param {boolean} save - 저장 여부 (기본값: true)
+     * @param {boolean} withAnimation - 애니메이션 사용 여부 (기본값: true)
      * @returns {boolean} 설정 성공 여부
      */
-    setTheme(theme, save = true) {
+    setTheme(theme, save = true, withAnimation = true) {
         if (theme !== 'light' && theme !== 'dark') {
             console.error('유효하지 않은 테마입니다:', theme);
             return false;
@@ -97,12 +98,17 @@ export class ThemeManager {
         const previousTheme = this.currentTheme;
         this.currentTheme = theme;
         
-        // 테마 적용
-        this.applyTheme(theme);
+        // 애니메이션과 함께 테마 적용
+        this.applyTheme(theme, withAnimation);
         
         // 저장
         if (save) {
             this.storageManager.saveTheme(theme);
+        }
+        
+        // 사용자 피드백 제공 (애니메이션이 활성화된 경우에만)
+        if (withAnimation) {
+            this.provideUserFeedback(theme);
         }
         
         // 이벤트 발생
@@ -110,10 +116,11 @@ export class ThemeManager {
             type: 'themeChanged',
             theme: theme,
             previousTheme: previousTheme,
-            isSystemTheme: !save
+            isSystemTheme: !save,
+            withAnimation: withAnimation
         });
         
-        console.log(`테마가 ${theme}으로 변경되었습니다.`);
+        console.log(`테마가 ${theme}으로 변경되었습니다. (애니메이션: ${withAnimation})`);
         return true;
     }
     
@@ -143,24 +150,192 @@ export class ThemeManager {
     
     /**
      * 테마를 토글합니다
+     * @param {boolean} withAnimation - 애니메이션 사용 여부 (기본값: true)
      * @returns {boolean} 토글 성공 여부
      */
-    toggleTheme() {
+    toggleTheme(withAnimation = true) {
         const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
-        return this.setTheme(newTheme);
+        return this.setTheme(newTheme, true, withAnimation);
+    }
+    
+    /**
+     * 시스템 테마를 따르도록 설정합니다
+     * @returns {boolean} 설정 성공 여부
+     */
+    followSystemTheme() {
+        if (!this.systemThemeQuery) {
+            console.warn('시스템 테마 감지가 지원되지 않습니다.');
+            return false;
+        }
+        
+        const systemTheme = this.systemThemeQuery.matches ? 'dark' : 'light';
+        return this.setTheme(systemTheme, false, true);
+    }
+    
+    /**
+     * 테마 전환 시 사용자 피드백을 제공합니다
+     * @param {string} theme - 새로운 테마
+     * @private
+     */
+    provideUserFeedback(theme) {
+        // 햅틱 피드백 (지원되는 경우)
+        if (navigator.vibrate) {
+            navigator.vibrate(50); // 짧은 진동
+        }
+        
+        // 시각적 피드백 (토스트 메시지 등)
+        this.showThemeChangeToast(theme);
+    }
+    
+    /**
+     * 테마 변경 토스트 메시지를 표시합니다
+     * @param {string} theme - 새로운 테마
+     * @private
+     */
+    showThemeChangeToast(theme) {
+        // 기존 토스트가 있다면 제거
+        const existingToast = document.querySelector('.theme-change-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+        
+        // 토스트 메시지 생성
+        const toast = document.createElement('div');
+        toast.className = 'theme-change-toast';
+        toast.innerHTML = `
+            <div class="toast-content">
+                <span class="toast-icon">${theme === 'dark' ? '🌙' : '☀️'}</span>
+                <span class="toast-text">${theme === 'dark' ? '다크 모드' : '라이트 모드'}로 변경되었습니다</span>
+            </div>
+        `;
+        
+        // 토스트 스타일 적용
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary, #2d2d2d);
+            color: var(--text-primary, #f7fafc);
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+        `;
+        
+        // 토스트 내용 스타일
+        const toastContent = toast.querySelector('.toast-content');
+        toastContent.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        `;
+        
+        // 아이콘 스타일
+        const toastIcon = toast.querySelector('.toast-icon');
+        toastIcon.style.cssText = `
+            font-size: 16px;
+        `;
+        
+        // 문서에 추가
+        document.body.appendChild(toast);
+        
+        // 애니메이션으로 표시
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateX(0)';
+        });
+        
+        // 3초 후 자동 제거
+        setTimeout(() => {
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+    
+    /**
+     * 접근성 설정을 확인하고 적용합니다
+     * @private
+     */
+    checkAccessibilitySettings() {
+        // 애니메이션 감소 설정 확인
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        // 고대비 설정 확인
+        const prefersHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+        
+        // 접근성 설정에 따른 테마 조정
+        if (prefersHighContrast) {
+            this.applyHighContrastTheme();
+        }
+        
+        return {
+            reducedMotion: prefersReducedMotion,
+            highContrast: prefersHighContrast
+        };
+    }
+    
+    /**
+     * 고대비 테마를 적용합니다
+     * @private
+     */
+    applyHighContrastTheme() {
+        const root = document.documentElement;
+        
+        if (this.currentTheme === 'dark') {
+            root.style.setProperty('--primary-color', '#60a5fa');
+            root.style.setProperty('--text-primary', '#ffffff');
+            root.style.setProperty('--bg-primary', '#000000');
+            root.style.setProperty('--bg-secondary', '#1a1a1a');
+        } else {
+            root.style.setProperty('--primary-color', '#1d4ed8');
+            root.style.setProperty('--text-primary', '#000000');
+            root.style.setProperty('--bg-primary', '#ffffff');
+            root.style.setProperty('--bg-secondary', '#f8f9fa');
+        }
+    }
+    
+    /**
+     * 성능 최적화를 위한 테마 전환을 수행합니다
+     * @param {string} theme - 새로운 테마
+     * @private
+     */
+    optimizedThemeTransition(theme) {
+        // GPU 가속을 위한 transform 속성 사용
+        const body = document.body;
+        body.style.willChange = 'background-color, color';
+        
+        // 테마 적용
+        this.applyTheme(theme, true);
+        
+        // 애니메이션 완료 후 willChange 제거
+        setTimeout(() => {
+            body.style.willChange = 'auto';
+        }, 400);
+        
+        return true;
     }
     
     /**
      * 테마를 적용합니다
      * @param {string} theme - 적용할 테마
+     * @param {boolean} withAnimation - 애니메이션 사용 여부 (기본값: true)
      * @private
      */
-    applyTheme(theme) {
+    applyTheme(theme, withAnimation = true) {
         const body = document.body;
         const html = document.documentElement;
         
-        // 테마 전환 애니메이션 시작
-        body.classList.add('theme-transitioning');
+        // 테마 전환 애니메이션 시작 (애니메이션이 활성화된 경우에만)
+        if (withAnimation) {
+            body.classList.add('theme-transitioning');
+        }
         
         // 테마 클래스 적용
         if (theme === 'dark') {
@@ -176,9 +351,11 @@ export class ThemeManager {
         }
         
         // 애니메이션 완료 후 클래스 제거
-        setTimeout(() => {
-            body.classList.remove('theme-transitioning');
-        }, 300);
+        if (withAnimation) {
+            setTimeout(() => {
+                body.classList.remove('theme-transitioning');
+            }, 400); // 애니메이션 시간에 맞춰 조정
+        }
     }
     
     /**
@@ -337,5 +514,18 @@ export const ThemeUtils = {
      * 라이트모드 여부 확인
      * @returns {boolean} 라이트모드 여부
      */
-    isLight: () => themeManager.isLightMode()
+    isLight: () => themeManager.isLightMode(),
+    
+    /**
+     * 접근성 설정을 확인하고 적용합니다
+     * @returns {Object} 접근성 설정 정보
+     */
+    checkAccessibility: () => themeManager.checkAccessibilitySettings(),
+    
+    /**
+     * 성능 최적화된 테마 전환을 수행합니다
+     * @param {string} theme - 새로운 테마
+     * @returns {boolean} 전환 성공 여부
+     */
+    optimizedTransition: (theme) => themeManager.optimizedThemeTransition(theme)
 };
