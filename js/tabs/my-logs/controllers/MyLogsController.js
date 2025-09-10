@@ -312,7 +312,7 @@ class MyLogsController {
      */
     getTravelDataByYear(year) {
         try {
-            const allLogs = this.logService.getLogs();
+            const allLogs = this.getAllLogs();
             const yearInt = parseInt(year);
             
             // 해당 연도의 로그만 필터링

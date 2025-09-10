@@ -187,7 +187,6 @@ class TravelReportView {
                                     </div>
                                 `).join('')}
                             </div>
-                            <div class="heatmap-caption">언제 가장 많이 여행했나?</div>
                         </div>
                     </div>
                 </div>
@@ -458,11 +457,17 @@ class TravelReportView {
         // 월별 여행 활동 데이터를 계산합니다
         const monthlyActivity = this.calculateMonthlyActivity(travelData, year);
         
+        // 해당 연도의 최대 활동 수를 계산하여 상대적 강도 기준을 설정합니다
+        const maxActivity = Math.max(...Object.values(monthlyActivity));
+        const hasAnyActivity = maxActivity > 0;
+        
+        console.log(`${year}년 히트맵 데이터:`, monthlyActivity, `최대 활동: ${maxActivity}`);
+        
         // 히트맵 그리드를 업데이트합니다
         heatmapGrid.innerHTML = Array.from({length: 12}, (_, i) => {
             const month = i + 1;
             const activity = monthlyActivity[month] || 0;
-            const activityLevel = this.getActivityLevel(activity);
+            const activityLevel = this.getActivityLevel(activity, maxActivity, hasAnyActivity);
             
             return `
                 <div class="heatmap-month">
@@ -507,15 +512,24 @@ class TravelReportView {
     }
 
     /**
-     * 활동 수준에 따른 CSS 클래스를 반환합니다
+     * 활동 수준에 따른 CSS 클래스를 반환합니다 (상대적 강도 기반)
      * @param {number} activity - 활동 수
+     * @param {number} maxActivity - 해당 연도의 최대 활동 수
+     * @param {boolean} hasAnyActivity - 해당 연도에 활동이 있는지 여부
      * @returns {string} CSS 클래스명
      */
-    getActivityLevel(activity) {
+    getActivityLevel(activity, maxActivity = 0, hasAnyActivity = false) {
         if (activity === 0) return 'activity-none';
-        if (activity <= 1) return 'activity-low';
-        if (activity <= 3) return 'activity-medium';
-        if (activity <= 5) return 'activity-high';
+        
+        // 해당 연도에 활동이 없으면 모든 활동을 low로 처리
+        if (!hasAnyActivity || maxActivity === 0) return 'activity-low';
+        
+        // 상대적 강도 계산 (0-1 사이의 값)
+        const relativeIntensity = activity / maxActivity;
+        
+        if (relativeIntensity <= 0.2) return 'activity-low';
+        if (relativeIntensity <= 0.4) return 'activity-medium';
+        if (relativeIntensity <= 0.7) return 'activity-high';
         return 'activity-very-high';
     }
 
