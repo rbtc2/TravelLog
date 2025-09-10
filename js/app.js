@@ -4,6 +4,7 @@
  */
 
 import { AppInfo } from './config/app-config.js';
+import { themeManager } from './modules/utils/theme-manager.js';
 
 // 모바일 환경 최적화
 (function() {
@@ -400,6 +401,15 @@ class AppManager {
 
 // 애플리케이션 초기화
 document.addEventListener('DOMContentLoaded', () => {
+    // 테마 매니저 초기화 (앱 시작 전)
+    console.log('테마 매니저 초기화 중...');
+    console.log('현재 테마:', themeManager.getCurrentTheme());
+    console.log('테마 정보:', themeManager.getThemeInfo());
+    
+    // 전역에서 테마 매니저 접근 가능하도록 설정
+    window.themeManager = themeManager;
+    
+    // 앱 매니저 초기화
     new AppManager();
 });
 

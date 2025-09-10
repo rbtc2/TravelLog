@@ -12,6 +12,12 @@
     position: relative;
 }
 
+/* 다크모드 메인 앱 */
+.dark .main-app {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
+}
+
 /* Phase 4: 로그인 화면 관련 스타일 복원 */
 .main-app.hidden {
     display: none !important;
@@ -31,6 +37,12 @@
     transform: translateZ(0);
     backface-visibility: hidden;
     position: relative;
+}
+
+/* 다크모드 메인 콘텐츠 */
+.dark #main-content {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
 }
 
 /* Phase 4 완료 후 제거 예정: 기존 네비게이션 여백 */
@@ -58,6 +70,12 @@
     left: 0;
     right: 0;
     bottom: 0;
+}
+
+/* 다크모드 탭 콘텐츠 */
+.dark #tab-content {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
 }
 
 /* 페이지별 레이아웃 */

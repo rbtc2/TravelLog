@@ -9,6 +9,12 @@
     padding-bottom: calc(20px + var(--navigation-height, 80px));
 }
 
+/* 다크모드 홈 페이지 컨테이너 */
+.dark .home-container {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
+}
+
 /* 홈 페이지 헤더 */
 .home-header {
     text-align: center;
@@ -48,6 +54,17 @@
 .home-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
+}
+
+/* 다크모드 홈 페이지 카드 */
+.dark .home-card {
+    background: var(--bg-secondary, #2d2d2d);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .home-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .home-card-title {

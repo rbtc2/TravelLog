@@ -109,6 +109,50 @@ input:disabled + .toggle-slider {
     cursor: not-allowed;
 }
 
+/* 다크모드 토글 스위치 스타일 */
+.dark .toggle-slider {
+    background-color: var(--gray-400, #718096);
+}
+
+.dark input:checked + .toggle-slider {
+    background-color: var(--primary-color, #4dabf7);
+}
+
+.dark .toggle-slider:before {
+    background-color: var(--white, #ffffff);
+}
+
+/* 다크모드 설정 선택 박스 */
+.dark .setting-select {
+    background: var(--bg-secondary, #2d2d2d);
+    color: var(--text-primary, #f7fafc);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .setting-select:disabled {
+    background: var(--bg-tertiary, #2d3748);
+    color: var(--text-muted, #a0aec0);
+}
+
+/* 다크모드 설정 아이템 스타일 */
+.dark .setting-item {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .setting-icon {
+    background: var(--bg-tertiary, #2d3748);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .setting-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .setting-description {
+    color: var(--text-muted, #a0aec0);
+}
+
 /* 설정 선택 박스 */
 .setting-select {
     padding: 8px 12px;

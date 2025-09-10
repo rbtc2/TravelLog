@@ -9,6 +9,12 @@
     padding-bottom: calc(20px + var(--navigation-height, 80px));
 }
 
+/* 다크모드 검색 컨테이너 */
+.dark .search-container {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
+}
+
 /* 기존 방식 - Phase 3 완료 후 제거 예정 */
 /* padding-bottom: calc(20px + 80px); */
 
@@ -30,6 +36,15 @@
     font-size: 16px;
 }
 
+/* 다크모드 검색 헤더 */
+.dark .search-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .search-subtitle {
+    color: var(--text-muted, #a0aec0);
+}
+
 /* 검색바 */
 .search-bar-container {
     margin-bottom: 30px;
@@ -44,6 +59,13 @@
     padding: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+}
+
+/* 다크모드 검색바 */
+.dark .search-input-wrapper {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .search-input-wrapper:focus-within {
@@ -87,6 +109,32 @@
     transform: translateY(-1px);
 }
 
+/* 다크모드 검색 입력 필드 */
+.dark .search-input-wrapper:focus-within {
+    border-color: var(--primary-color, #4dabf7);
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.1);
+}
+
+.dark .search-icon {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .search-input {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .search-input::placeholder {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .search-btn {
+    background: var(--primary-color, #4dabf7);
+}
+
+.dark .search-btn:hover {
+    background: var(--primary-dark, #339af0);
+}
+
 /* 필터 섹션 */
 .filter-section {
     background: white;
@@ -94,6 +142,12 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 30px;
     overflow: hidden;
+}
+
+/* 다크모드 필터 섹션 */
+.dark .filter-section {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .filter-header {
@@ -129,6 +183,27 @@
 .filter-toggle-btn:hover {
     background: #f7fafc;
     border-color: #cbd5e1;
+}
+
+/* 다크모드 필터 헤더 */
+.dark .filter-header {
+    background: var(--bg-tertiary, #2d3748);
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+.dark .filter-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .filter-toggle-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .filter-toggle-btn:hover {
+    background: var(--gray-200, #4a5568);
+    border-color: var(--gray-300, #718096);
 }
 
 .toggle-icon {
@@ -233,6 +308,16 @@
     margin-bottom: 16px;
 }
 
+/* 다크모드 검색 가이드 섹션 */
+.dark .search-guide-section {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .guide-title {
+    color: var(--text-primary, #f7fafc);
+}
+
 .guide-description {
     font-size: 16px;
     color: #718096;
@@ -264,6 +349,20 @@
     transform: translateX(4px);
 }
 
+/* 다크모드 가이드 설명과 팁 */
+.dark .guide-description {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .tip-item {
+    background: var(--bg-tertiary, #2d3748);
+    border-left-color: var(--primary-color, #4dabf7);
+}
+
+.dark .tip-item:hover {
+    background: var(--gray-200, #4a5568);
+}
+
 .tip-icon {
     font-size: 20px;
     color: #667eea;
@@ -288,6 +387,24 @@
     font-weight: 500;
 }
 
+/* 다크모드 팁 아이콘, 텍스트, 통계 */
+.dark .tip-icon {
+    color: var(--primary-color, #4dabf7);
+}
+
+.dark .tip-text {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .guide-stats {
+    background: var(--primary-50, #1e3a8a);
+    border-color: var(--primary-200, #3b82f6);
+}
+
+.dark .stats-text {
+    color: var(--primary-300, #93c5fd);
+}
+
 /* 검색 로딩 섹션 */
 .search-loading-section {
     background: white;
@@ -296,6 +413,12 @@
     margin-bottom: 30px;
     overflow: hidden;
     animation: fadeInUp 0.4s ease-out;
+}
+
+/* 다크모드 검색 로딩 섹션 */
+.dark .search-loading-section {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .loading-content {
@@ -355,6 +478,25 @@
 .results-count {
     font-size: 14px;
     color: #718096;
+}
+
+/* 다크모드 검색 결과 섹션 */
+.dark .search-results-section {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .results-header {
+    background: var(--bg-tertiary, #2d3748);
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+.dark .results-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .results-count {
+    color: var(--text-muted, #a0aec0);
 }
 
 .count-number {

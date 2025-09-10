@@ -126,4 +126,39 @@ export class StorageManager {
     setStorageKey(newKey) {
         this.storageKey = newKey;
     }
+    
+    // ===== 테마 관련 메서드 =====
+    
+    /**
+     * 테마 설정을 저장합니다
+     * @param {string} theme - 저장할 테마 ('light' 또는 'dark')
+     * @returns {boolean} 저장 성공 여부
+     */
+    saveTheme(theme) {
+        return this.save('travelLog_theme', theme);
+    }
+    
+    /**
+     * 테마 설정을 로드합니다
+     * @returns {string|null} 로드된 테마 또는 null
+     */
+    loadTheme() {
+        return this.load('travelLog_theme', null);
+    }
+    
+    /**
+     * 테마 설정을 삭제합니다
+     * @returns {boolean} 삭제 성공 여부
+     */
+    removeTheme() {
+        return this.remove('travelLog_theme');
+    }
+    
+    /**
+     * 테마 설정이 존재하는지 확인합니다
+     * @returns {boolean} 테마 설정 존재 여부
+     */
+    hasTheme() {
+        return this.has('travelLog_theme');
+    }
 }

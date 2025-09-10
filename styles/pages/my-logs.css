@@ -7,6 +7,14 @@
     padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 20px);
 }
 
+/* ===== 다크모드 스타일 ===== */
+
+/* 다크모드 나의 로그 컨테이너 */
+.dark .my-logs-container {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
+}
+
 /* ===== Simple Style 프로필 섹션 ===== */
 
 /* 프로필 섹션 전체 */
@@ -17,6 +25,13 @@
     margin-bottom: var(--spacing-lg);
     padding: var(--spacing-lg);
     border: 1px solid var(--gray-200);
+}
+
+/* 다크모드 프로필 섹션 */
+.dark .profile-section {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
 }
 
 /* 프로필 콘텐츠 컨테이너 */
@@ -131,6 +146,19 @@
     white-space: pre-wrap;
 }
 
+/* 다크모드 프로필 정보 */
+.dark .profile-name {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .profile-name:hover {
+    color: var(--primary-color, #4dabf7);
+}
+
+.dark .profile-bio {
+    color: var(--text-secondary, #e2e8f0);
+}
+
 .profile-bio:hover {
     background: var(--gray-50);
 }
@@ -186,6 +214,19 @@
     letter-spacing: 0.5px;
 }
 
+/* 다크모드 프로필 통계 */
+.dark .profile-stats {
+    border-top-color: var(--gray-400, #718096);
+}
+
+.dark .stat-value {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .stat-label {
+    color: var(--text-secondary, #e2e8f0);
+}
+
 /* 통계 구분선 */
 .stat-item:not(:last-child)::after {
     content: '';
@@ -217,9 +258,19 @@
     margin-bottom: 8px;
 }
 
+/* 다크모드 제목 */
+.dark .my-logs-title {
+    color: var(--text-primary, #f7fafc);
+}
+
 .my-logs-subtitle {
     color: #718096;
     font-size: 16px;
+}
+
+/* 다크모드 부제목 */
+.dark .my-logs-subtitle {
+    color: var(--text-muted, #a0aec0);
 }
 
 /* 설정 버튼이 있는 헤더 */
@@ -272,6 +323,13 @@
     height: 40px;
 }
 
+/* 다크모드 뷰 모드 토글 버튼 */
+.dark .view-mode-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
 .view-mode-btn:hover {
     border-color: var(--primary-color);
     background-color: var(--primary-color);
@@ -312,6 +370,16 @@
     flex-shrink: 0;
     position: absolute;
     top: 0;
+}
+
+/* 다크모드 뒤로 가기 버튼 */
+.dark .back-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.back-btn {
     left: 0;
     z-index: 10;
 }
@@ -381,6 +449,13 @@
     border: 1px solid var(--gray-200);
 }
 
+/* 다크모드 로그 아이템 카드 */
+.dark .log-item-card {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 /* 카드뷰 헤더 레이아웃 최적화 */
 .log-header {
     display: flex;
@@ -411,6 +486,11 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* 다크모드 로그 아이템 텍스트 */
+.dark .log-country {
+    color: var(--text-primary, #f7fafc);
 }
 
 .log-country-badge {
@@ -787,6 +867,11 @@
     margin: 0;
 }
 
+/* 다크모드 메뉴 섹션 */
+.dark .hamburger-menu-section-title {
+    color: var(--text-muted, #a0aec0);
+}
+
 /* 메뉴 아이템 */
 .hamburger-menu-item {
     display: flex;
@@ -813,6 +898,20 @@
 .hamburger-menu-item:active {
     background: var(--gray-100);
     transform: scale(0.98);
+}
+
+/* 다크모드 메뉴 아이템 */
+.dark .hamburger-menu-item {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .hamburger-menu-item:hover {
+    background: var(--gray-100, #2d3748);
+    color: var(--primary-color, #4dabf7);
+}
+
+.dark .hamburger-menu-item:active {
+    background: var(--gray-200, #4a5568);
 }
 
 .hamburger-menu-item.disabled {
@@ -1447,6 +1546,18 @@ input:checked + .toggle-slider:before {
     min-height: 44px;
 }
 
+/* 다크모드 프로필 액션 버튼 */
+.dark .profile-action-btn.primary-btn {
+    background: var(--bg-tertiary, #2d3748);
+    color: var(--text-primary, #f7fafc);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .profile-action-btn.primary-btn:hover {
+    background: var(--gray-200, #4a5568);
+    border-color: var(--gray-300, #718096);
+}
+
 .profile-action-btn.primary-btn:hover {
     background: var(--gray-300);
     border-color: var(--gray-400);
@@ -1496,6 +1607,19 @@ input:checked + .toggle-slider:before {
     color: var(--text-primary);
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
+}
+
+/* 다크모드 Share 버튼 */
+.dark .profile-action-btn.share-btn {
+    background: var(--bg-tertiary, #2d3748);
+    color: var(--text-secondary, #e2e8f0);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .profile-action-btn.share-btn:hover {
+    background: var(--gray-200, #4a5568);
+    border-color: var(--gray-300, #718096);
+    color: var(--text-primary, #f7fafc);
 }
 
 .profile-action-btn.share-btn:active {

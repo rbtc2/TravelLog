@@ -14,6 +14,12 @@
     backface-visibility: hidden;
 }
 
+/* 다크모드 캘린더 컨테이너 */
+.dark .calendar-container {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
+}
+
 /* ===== 캘린더 상세 화면 스타일 ===== */
 .calendar-detail-container {
     max-width: 1200px;
@@ -26,6 +32,12 @@
     /* 하드웨어 가속 */
     transform: translateZ(0);
     backface-visibility: hidden;
+}
+
+/* 다크모드 캘린더 상세 화면 */
+.dark .calendar-detail-container {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
 }
 
 /* 캘린더 상세 화면 헤더 */

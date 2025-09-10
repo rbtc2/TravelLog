@@ -14,6 +14,13 @@
     backface-visibility: hidden;
 }
 
+/* 다크모드 캘린더 그리드 컨테이너 */
+.dark .calendar-grid-container {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 .calendar-grid {
     width: 100%;
 }
@@ -48,6 +55,25 @@
     color: #3182ce; /* 토요일 파란색 */
 }
 
+/* 다크모드 요일 헤더 */
+.dark .calendar-weekdays {
+    background: var(--bg-tertiary, #2d3748);
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+.dark .weekday {
+    color: var(--text-primary, #f7fafc);
+    border-right-color: var(--gray-400, #718096);
+}
+
+.dark .weekday:first-child {
+    color: #ff6b6b; /* 다크모드 일요일 빨간색 */
+}
+
+.dark .weekday:last-child {
+    color: #4dabf7; /* 다크모드 토요일 파란색 */
+}
+
 /* 날짜 그리드 */
 .calendar-days {
     display: grid;
@@ -80,6 +106,19 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* 다크모드 날짜 셀 */
+.dark .calendar-day {
+    background: var(--bg-secondary, #2d2d2d);
+    border-right-color: var(--gray-400, #718096);
+    border-bottom-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .calendar-day:hover {
+    background: var(--bg-tertiary, #2d3748);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
 /* 다른 달 날짜 */
 .calendar-day.other-month {
     background: #f8f9fa;
@@ -96,6 +135,23 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-weight: var(--font-bold);
+}
+
+/* 다크모드 다른 달 날짜 */
+.dark .calendar-day.other-month {
+    background: var(--bg-tertiary, #2d3748);
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .calendar-day.other-month:hover {
+    background: var(--gray-200, #4a5568);
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 다크모드 오늘 날짜 */
+.dark .calendar-day.today {
+    background: linear-gradient(135deg, #4dabf7 0%, #9775fa 100%);
+    color: white;
 }
 
 .calendar-day.today:hover {

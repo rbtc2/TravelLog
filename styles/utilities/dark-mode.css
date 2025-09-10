@@ -4,128 +4,527 @@
  * 키워드: dark-mode, theme, color-scheme, prefers-color-scheme
  */
 
-/* 기본 다크 모드 스타일 */
+/* 다크 모드 CSS 변수 정의 */
+.dark {
+    /* 색상 팔레트 - 다크 모드 */
+    --primary-color: #4dabf7;
+    --primary-dark: #339af0;
+    --primary-light: #74c0fc;
+    --secondary-color: #9775fa;
+    --secondary-dark: #845ef7;
+    
+    /* 상태 색상 - 다크 모드 */
+    --success-color: #51cf66;
+    --success-dark: #40c057;
+    --error-color: #ff6b6b;
+    --error-dark: #ff5252;
+    --warning-color: #ffd43b;
+    --warning-dark: #ffcc02;
+    
+    /* 중성 색상 - 다크 모드 */
+    --white: #ffffff;
+    --gray-50: #1a1a1a;
+    --gray-100: #2d3748;
+    --gray-200: #4a5568;
+    --gray-300: #718096;
+    --gray-400: #a0aec0;
+    --gray-500: #cbd5e0;
+    --gray-600: #e2e8f0;
+    --gray-700: #f7fafc;
+    --gray-800: #f8f9fa;
+    --gray-900: #ffffff;
+    
+    /* 텍스트 색상 - 다크 모드 */
+    --text-primary: #f7fafc;
+    --text-secondary: #e2e8f0;
+    --text-muted: #a0aec0;
+    --text-light: #718096;
+    
+    /* 배경 색상 - 다크 모드 */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #2d3748;
+    
+    /* 그림자 - 다크 모드 (더 강한 그림자) */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* 라이트 모드 CSS 변수 정의 (명시적) */
+.light {
+    /* 색상 팔레트 - 라이트 모드 (기본값) */
+    --primary-color: #667eea;
+    --primary-dark: #5a67d8;
+    --primary-light: #4dabf7;
+    --secondary-color: #764ba2;
+    --secondary-dark: #6b46c1;
+    
+    /* 상태 색상 - 라이트 모드 */
+    --success-color: #48bb78;
+    --success-dark: #38a169;
+    --error-color: #e53e3e;
+    --error-dark: #c53030;
+    --warning-color: #fbbf24;
+    --warning-dark: #f59e0b;
+    
+    /* 중성 색상 - 라이트 모드 */
+    --white: #ffffff;
+    --gray-50: #f8f9fa;
+    --gray-100: #f7fafc;
+    --gray-200: #edf2f7;
+    --gray-300: #e2e8f0;
+    --gray-400: #cbd5e0;
+    --gray-500: #a0aec0;
+    --gray-600: #718096;
+    --gray-700: #4a5568;
+    --gray-800: #2d3748;
+    --gray-900: #1a202c;
+    
+    /* 텍스트 색상 - 라이트 모드 */
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --text-light: #a0aec0;
+    
+    /* 배경 색상 - 라이트 모드 */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #f7fafc;
+    
+    /* 그림자 - 라이트 모드 */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* 시스템 다크 모드 자동 감지 (기존 호환성 유지) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* 시스템 다크모드일 때 기본값을 다크모드로 설정 */
+        --primary-color: #4dabf7;
+        --primary-dark: #339af0;
+        --primary-light: #74c0fc;
+        --secondary-color: #9775fa;
+        --secondary-dark: #845ef7;
+        
+        --success-color: #51cf66;
+        --success-dark: #40c057;
+        --error-color: #ff6b6b;
+        --error-dark: #ff5252;
+        --warning-color: #ffd43b;
+        --warning-dark: #ffcc02;
+        
+        --white: #ffffff;
+        --gray-50: #1a1a1a;
+        --gray-100: #2d3748;
+        --gray-200: #4a5568;
+        --gray-300: #718096;
+        --gray-400: #a0aec0;
+        --gray-500: #cbd5e0;
+        --gray-600: #e2e8f0;
+        --gray-700: #f7fafc;
+        --gray-800: #f8f9fa;
+        --gray-900: #ffffff;
+        
+        --text-primary: #f7fafc;
+        --text-secondary: #e2e8f0;
+        --text-muted: #a0aec0;
+        --text-light: #718096;
+        
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --bg-tertiary: #2d3748;
+        
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.5);
+        --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+}
+
+/* 기본 다크 모드 스타일 (기존 호환성 유지) */
 @media (prefers-color-scheme: dark) {
     body {
-        background-color: #1a1a1a;
-        color: #e9ecef;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
     }
     
     .login-container {
-        background-color: #2d2d2d;
-        color: #e9ecef;
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
     }
     
     .login-title {
-        color: #f7fafc;
+        color: var(--text-primary);
     }
     
     .login-subtitle {
-        color: #a0aec0;
+        color: var(--text-muted);
     }
     
     .form-label {
-        color: #e2e8f0;
+        color: var(--text-secondary);
     }
     
     .form-input {
-        background-color: #4a5568;
-        border-color: #4a5568;
-        color: #e9ecef;
+        background-color: var(--gray-100);
+        border-color: var(--gray-100);
+        color: var(--text-primary);
     }
     
     .form-input:focus {
-        background-color: #2d3748;
-        border-color: #667eea;
+        background-color: var(--bg-tertiary);
+        border-color: var(--primary-color);
     }
     
     .form-options {
-        color: #e2e8f0;
+        color: var(--text-secondary);
     }
     
     .signup-link {
-        color: #e2e8f0;
+        color: var(--text-secondary);
     }
     
     .main-app {
-        background-color: #1a1a1a;
+        background-color: var(--bg-primary);
     }
     
     #main-content {
-        background-color: #2d2d2d;
+        background-color: var(--bg-secondary);
     }
     
     #tab-navigation {
-        background-color: #2d2d2d;
-        border-top-color: #404040;
+        background-color: var(--bg-secondary);
+        border-top-color: var(--gray-200);
     }
     
     .tab-btn {
-        color: #adb5bd;
+        color: var(--text-muted);
     }
     
     .tab-btn:hover {
-        background-color: #404040;
-        color: #ced4da;
+        background-color: var(--gray-100);
+        color: var(--text-secondary);
     }
     
     .tab-btn.active {
-        color: #4dabf7;
-        background-color: #1e3a5f;
+        color: var(--primary-light);
+        background-color: var(--primary-dark);
     }
     
     .tab-placeholder-title {
-        color: #ced4da;
+        color: var(--text-secondary);
     }
     
     .tab-placeholder-description {
-        color: #adb5bd;
+        color: var(--text-muted);
     }
     
     /* 일지 추가 탭 다크 모드 */
     .add-log-container {
-        background-color: #1a202c;
-        color: #e2e8f0;
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
     }
     
     .add-log-title {
-        color: #f7fafc;
+        color: var(--text-primary);
     }
     
     .add-log-subtitle {
-        color: #a0aec0;
+        color: var(--text-muted);
     }
     
     .form-textarea {
-        background-color: #2d3748;
-        border-color: #4a5568;
-        color: #e2e8f0;
+        background-color: var(--bg-tertiary);
+        border-color: var(--gray-100);
+        color: var(--text-secondary);
     }
     
     .form-textarea:focus {
-        background-color: #2d3748;
-        border-color: #667eea;
+        background-color: var(--bg-tertiary);
+        border-color: var(--primary-color);
     }
     
     .radio-label {
-        background-color: #2d3748;
-        border-color: #4a5568;
-        color: #e2e8f0;
+        background-color: var(--bg-tertiary);
+        border-color: var(--gray-100);
+        color: var(--text-secondary);
     }
     
     .radio-label:hover {
-        background-color: #4a5568;
+        background-color: var(--gray-100);
     }
     
     .star {
-        color: #4a5568;
+        color: var(--gray-100);
     }
     
     .star.filled {
-        color: #fbbf24;
+        color: var(--warning-color);
     }
     
     .star.filled:hover {
-        color: #f59e0b;
+        color: var(--warning-dark);
+    }
+}
+
+/* ===== 다크 모드 전용 스타일 (클래스 기반) ===== */
+.dark {
+    /* 기본 요소 스타일 */
+    body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    
+    /* 로그인 화면 */
+    .login-container {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+    
+    .login-title {
+        color: var(--text-primary);
+    }
+    
+    .login-subtitle {
+        color: var(--text-muted);
+    }
+    
+    .form-label {
+        color: var(--text-secondary);
+    }
+    
+    .form-input {
+        background-color: var(--gray-100);
+        border-color: var(--gray-100);
+        color: var(--text-primary);
+    }
+    
+    .form-input:focus {
+        background-color: var(--bg-tertiary);
+        border-color: var(--primary-color);
+    }
+    
+    .form-options {
+        color: var(--text-secondary);
+    }
+    
+    .signup-link {
+        color: var(--text-secondary);
+    }
+    
+    /* 메인 앱 */
+    .main-app {
+        background-color: var(--bg-primary);
+    }
+    
+    #main-content {
+        background-color: var(--bg-secondary);
+    }
+    
+    #tab-navigation {
+        background-color: var(--bg-secondary);
+        border-top-color: var(--gray-200);
+    }
+    
+    .tab-btn {
+        color: var(--text-muted);
+    }
+    
+    .tab-btn:hover {
+        background-color: var(--gray-100);
+        color: var(--text-secondary);
+    }
+    
+    .tab-btn.active {
+        color: var(--primary-light);
+        background-color: var(--primary-dark);
+    }
+    
+    .tab-placeholder-title {
+        color: var(--text-secondary);
+    }
+    
+    .tab-placeholder-description {
+        color: var(--text-muted);
+    }
+    
+    /* 일지 추가 탭 */
+    .add-log-container {
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
+    }
+    
+    .add-log-title {
+        color: var(--text-primary);
+    }
+    
+    .add-log-subtitle {
+        color: var(--text-muted);
+    }
+    
+    .form-textarea {
+        background-color: var(--bg-tertiary);
+        border-color: var(--gray-100);
+        color: var(--text-secondary);
+    }
+    
+    .form-textarea:focus {
+        background-color: var(--bg-tertiary);
+        border-color: var(--primary-color);
+    }
+    
+    .radio-label {
+        background-color: var(--bg-tertiary);
+        border-color: var(--gray-100);
+        color: var(--text-secondary);
+    }
+    
+    .radio-label:hover {
+        background-color: var(--gray-100);
+    }
+    
+    .star {
+        color: var(--gray-100);
+    }
+    
+    .star.filled {
+        color: var(--warning-color);
+    }
+    
+    .star.filled:hover {
+        color: var(--warning-dark);
+    }
+}
+
+/* ===== 라이트 모드 전용 스타일 (클래스 기반) ===== */
+.light {
+    /* 기본 요소 스타일 */
+    body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    
+    /* 로그인 화면 */
+    .login-container {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+    
+    .login-title {
+        color: var(--text-primary);
+    }
+    
+    .login-subtitle {
+        color: var(--text-muted);
+    }
+    
+    .form-label {
+        color: var(--text-secondary);
+    }
+    
+    .form-input {
+        background-color: var(--white);
+        border-color: var(--gray-300);
+        color: var(--text-primary);
+    }
+    
+    .form-input:focus {
+        background-color: var(--white);
+        border-color: var(--primary-color);
+    }
+    
+    .form-options {
+        color: var(--text-secondary);
+    }
+    
+    .signup-link {
+        color: var(--text-secondary);
+    }
+    
+    /* 메인 앱 */
+    .main-app {
+        background-color: var(--bg-primary);
+    }
+    
+    #main-content {
+        background-color: var(--bg-secondary);
+    }
+    
+    #tab-navigation {
+        background-color: var(--bg-secondary);
+        border-top-color: var(--gray-300);
+    }
+    
+    .tab-btn {
+        color: var(--text-muted);
+    }
+    
+    .tab-btn:hover {
+        background-color: var(--gray-100);
+        color: var(--text-secondary);
+    }
+    
+    .tab-btn.active {
+        color: var(--primary-color);
+        background-color: var(--primary-light);
+    }
+    
+    .tab-placeholder-title {
+        color: var(--text-secondary);
+    }
+    
+    .tab-placeholder-description {
+        color: var(--text-muted);
+    }
+    
+    /* 일지 추가 탭 */
+    .add-log-container {
+        background-color: var(--bg-tertiary);
+        color: var(--text-secondary);
+    }
+    
+    .add-log-title {
+        color: var(--text-primary);
+    }
+    
+    .add-log-subtitle {
+        color: var(--text-muted);
+    }
+    
+    .form-textarea {
+        background-color: var(--white);
+        border-color: var(--gray-300);
+        color: var(--text-primary);
+    }
+    
+    .form-textarea:focus {
+        background-color: var(--white);
+        border-color: var(--primary-color);
+    }
+    
+    .radio-label {
+        background-color: var(--bg-tertiary);
+        border-color: var(--gray-300);
+        color: var(--text-secondary);
+    }
+    
+    .radio-label:hover {
+        background-color: var(--gray-100);
+    }
+    
+    .star {
+        color: var(--gray-400);
+    }
+    
+    .star.filled {
+        color: var(--warning-color);
+    }
+    
+    .star.filled:hover {
+        color: var(--warning-dark);
     }
 }

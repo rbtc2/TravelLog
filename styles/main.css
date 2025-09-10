@@ -13,6 +13,7 @@
 @import url('./utilities/animations.css');
 @import url('./utilities/accessibility.css');
 @import url('./utilities/dark-mode.css');
+@import url('./utilities/theme-transitions.css'); /* Phase 2: 테마 전환 애니메이션 추가 */
 @import url('./utilities/responsive.css');
 @import url('./utilities/navigation-utils.css'); /* Phase 1: 네비게이션 유틸리티 추가 */
 @import url('./utilities/scroll-optimization.css'); /* 스크롤 최적화 유틸리티 추가 */

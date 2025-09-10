@@ -38,6 +38,27 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+/* 다크모드 뷰 전환 버튼 */
+.dark .view-toggle {
+    background: var(--bg-tertiary, #2d3748);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .view-btn {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .view-btn:hover {
+    background: var(--gray-200, #4a5568);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .view-btn.active {
+    background: linear-gradient(135deg, #4dabf7 0%, #9775fa 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(77, 171, 247, 0.3);
+}
+
 .view-icon {
     font-size: 16px;
 }
@@ -82,6 +103,25 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* 다크모드 날짜 네비게이션 */
+.dark .calendar-navigation {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .nav-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .nav-btn:hover {
+    background: var(--bg-tertiary, #2d3748);
+    border-color: var(--gray-300, #718096);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 .nav-btn:active {
     transform: translateY(0);
 }
@@ -111,6 +151,17 @@
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
+/* 다크모드 오늘 버튼 */
+.dark .today-btn {
+    background: linear-gradient(135deg, #4dabf7 0%, #9775fa 100%);
+    color: white;
+}
+
+.dark .today-btn:hover {
+    background: linear-gradient(135deg, #339af0 0%, #845ef7 100%);
+    box-shadow: 0 4px 12px rgba(77, 171, 247, 0.3);
+}
+
 /* 이전 버튼 - 왼쪽 배치 */
 .prev-btn {
     order: 1;
@@ -127,6 +178,11 @@
     flex: 1;
     margin: 0 20px;
     order: 4;
+}
+
+/* 다크모드 현재 날짜 표시 */
+.dark .current-date-display {
+    color: var(--text-primary, #f7fafc);
 }
 
 /* 날짜 피커 트리거 버튼 */

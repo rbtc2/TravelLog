@@ -9,6 +9,7 @@
  * @class SettingsView
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
+import { themeManager } from '../../../modules/utils/theme-manager.js';
 
 class SettingsView {
     constructor(controller) {
@@ -60,7 +61,7 @@ class SettingsView {
                             </div>
                             <div class="setting-control">
                                 <label class="toggle-switch">
-                                    <input type="checkbox" autocomplete="off" disabled>
+                                    <input type="checkbox" id="dark-mode-toggle" autocomplete="off">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -131,6 +132,69 @@ class SettingsView {
                 this.onNavigateBack();
             });
         }
+
+        // 다크모드 토글
+        this.bindDarkModeToggle();
+        
+        // 테마 변경 리스너 등록
+        this.bindThemeChangeListener();
+    }
+
+    /**
+     * 다크모드 토글 이벤트를 바인딩합니다
+     */
+    bindDarkModeToggle() {
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            // 현재 테마 상태로 토글 초기화
+            this.updateDarkModeToggle();
+            
+            // 토글 이벤트 바인딩
+            this.eventManager.add(darkModeToggle, 'change', (event) => {
+                this.onDarkModeToggle(event.target.checked);
+            });
+        }
+    }
+
+    /**
+     * 테마 변경 리스너를 등록합니다
+     */
+    bindThemeChangeListener() {
+        // 테마 변경 시 토글 상태 업데이트
+        this.themeChangeListener = (event) => {
+            this.updateDarkModeToggle();
+        };
+        themeManager.addThemeChangeListener(this.themeChangeListener);
+    }
+
+    /**
+     * 다크모드 토글 상태를 업데이트합니다
+     */
+    updateDarkModeToggle() {
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        if (darkModeToggle) {
+            darkModeToggle.checked = themeManager.isDarkMode();
+        }
+    }
+
+    /**
+     * 다크모드 토글 이벤트 핸들러
+     * @param {boolean} isDarkMode - 다크모드 활성화 여부
+     */
+    onDarkModeToggle(isDarkMode) {
+        try {
+            if (isDarkMode) {
+                themeManager.setTheme('dark');
+                console.log('다크모드가 활성화되었습니다.');
+            } else {
+                themeManager.setTheme('light');
+                console.log('라이트모드가 활성화되었습니다.');
+            }
+        } catch (error) {
+            console.error('테마 변경 중 오류가 발생했습니다:', error);
+            // 오류 발생 시 토글 상태 복원
+            this.updateDarkModeToggle();
+        }
     }
 
     /**
@@ -159,6 +223,13 @@ class SettingsView {
         if (this.eventManager) {
             this.eventManager.cleanup();
         }
+        
+        // 테마 변경 리스너 정리
+        if (this.themeChangeListener) {
+            themeManager.removeThemeChangeListener(this.themeChangeListener);
+            this.themeChangeListener = null;
+        }
+        
         this.container = null;
     }
 }
