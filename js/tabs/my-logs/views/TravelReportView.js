@@ -28,6 +28,8 @@ class TravelReportView {
         console.log('TravelReportView: HTML 렌더링 완료');
         this.renderBasicStats();
         console.log('TravelReportView: 기본 통계 렌더링 완료');
+        this.renderInitialHeatmap();
+        console.log('TravelReportView: 초기 히트맵 렌더링 완료');
         this.bindEvents();
         console.log('TravelReportView: 이벤트 바인딩 완료');
     }
@@ -51,9 +53,6 @@ class TravelReportView {
                 
                 <!-- 기본 통계 카드 -->
                 <div class="hub-section basic-stats-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📊 기본 통계</h2>
-                    </div>
                     <div class="stats-grid" id="basic-stats-grid">
                         <!-- 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
                     </div>
@@ -171,10 +170,11 @@ class TravelReportView {
                     <div class="chart-frame">
                         <div class="chart-header">
                             <div class="chart-controls">
-                                <select class="year-selector disabled" disabled>
-                                    <option>2024년</option>
-                                    <option>2023년</option>
-                                    <option>2022년</option>
+                                <select class="year-selector" id="heatmap-year-selector">
+                                    <option value="2025" selected>2025년</option>
+                                    <option value="2024">2024년</option>
+                                    <option value="2023">2023년</option>
+                                    <option value="2022">2022년</option>
                                 </select>
                             </div>
                         </div>
@@ -222,6 +222,18 @@ class TravelReportView {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * 초기 히트맵을 렌더링합니다
+     */
+    renderInitialHeatmap() {
+        try {
+            // 기본 연도(2025년)로 히트맵을 렌더링합니다
+            this.updateHeatmap('2025');
+        } catch (error) {
+            console.error('초기 히트맵 렌더링 중 오류:', error);
+        }
     }
 
     /**
@@ -363,11 +375,11 @@ class TravelReportView {
             });
         });
         
-        // 연도 선택기 클릭 (비활성)
-        const yearSelector = document.querySelector('.year-selector');
+        // 연도 선택기 변경
+        const yearSelector = document.getElementById('heatmap-year-selector');
         if (yearSelector) {
-            this.eventManager.add(yearSelector, 'change', () => {
-                this.onYearSelectorChange();
+            this.eventManager.add(yearSelector, 'change', (e) => {
+                this.onYearSelectorChange(e.target.value);
             });
         }
     }
@@ -401,12 +413,138 @@ class TravelReportView {
     }
 
     /**
-     * 연도 선택기 변경 (비활성)
+     * 연도 선택기 변경
+     * @param {string} selectedYear - 선택된 연도
      */
-    onYearSelectorChange() {
+    onYearSelectorChange(selectedYear) {
+        console.log(`히트맵 연도 변경: ${selectedYear}년`);
+        this.updateHeatmap(selectedYear);
+    }
+
+    /**
+     * 히트맵을 업데이트합니다
+     * @param {string} year - 선택된 연도
+     */
+    updateHeatmap(year) {
+        try {
+            // 컨트롤러에서 해당 연도의 여행 데이터를 가져옵니다
+            const travelData = this.controller.getTravelDataByYear(year);
+            
+            // 히트맵 그리드를 업데이트합니다
+            this.renderHeatmapGrid(travelData, year);
+            
+            console.log(`${year}년 히트맵 업데이트 완료`);
+        } catch (error) {
+            console.error('히트맵 업데이트 중 오류:', error);
+            this.dispatchEvent('showMessage', { 
+                type: 'error', 
+                message: '히트맵 데이터를 불러오는데 실패했습니다.' 
+            });
+        }
+    }
+
+    /**
+     * 히트맵 그리드를 렌더링합니다
+     * @param {Object} travelData - 여행 데이터
+     * @param {string} year - 연도
+     */
+    renderHeatmapGrid(travelData, year) {
+        const heatmapGrid = document.querySelector('.heatmap-grid');
+        if (!heatmapGrid) {
+            console.warn('히트맵 그리드를 찾을 수 없습니다.');
+            return;
+        }
+
+        // 월별 여행 활동 데이터를 계산합니다
+        const monthlyActivity = this.calculateMonthlyActivity(travelData, year);
+        
+        // 히트맵 그리드를 업데이트합니다
+        heatmapGrid.innerHTML = Array.from({length: 12}, (_, i) => {
+            const month = i + 1;
+            const activity = monthlyActivity[month] || 0;
+            const activityLevel = this.getActivityLevel(activity);
+            
+            return `
+                <div class="heatmap-month">
+                    <div class="month-label">${month}월</div>
+                    <div class="month-activity ${activityLevel}" data-month="${month}" data-activity="${activity}">
+                        ${activity > 0 ? activity : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // 히트맵 아이템에 클릭 이벤트를 추가합니다
+        this.bindHeatmapEvents();
+    }
+
+    /**
+     * 월별 여행 활동을 계산합니다
+     * @param {Object} travelData - 여행 데이터
+     * @param {string} year - 연도
+     * @returns {Object} 월별 활동 데이터
+     */
+    calculateMonthlyActivity(travelData, year) {
+        const monthlyActivity = {};
+        
+        // 1월부터 12월까지 초기화
+        for (let i = 1; i <= 12; i++) {
+            monthlyActivity[i] = 0;
+        }
+
+        // 여행 데이터가 있는 경우 실제 계산
+        if (travelData && travelData.logs) {
+            travelData.logs.forEach(log => {
+                const logDate = new Date(log.startDate);
+                if (logDate.getFullYear() == year) {
+                    const month = logDate.getMonth() + 1;
+                    monthlyActivity[month] = (monthlyActivity[month] || 0) + 1;
+                }
+            });
+        }
+
+        return monthlyActivity;
+    }
+
+    /**
+     * 활동 수준에 따른 CSS 클래스를 반환합니다
+     * @param {number} activity - 활동 수
+     * @returns {string} CSS 클래스명
+     */
+    getActivityLevel(activity) {
+        if (activity === 0) return 'activity-none';
+        if (activity <= 1) return 'activity-low';
+        if (activity <= 3) return 'activity-medium';
+        if (activity <= 5) return 'activity-high';
+        return 'activity-very-high';
+    }
+
+    /**
+     * 히트맵 이벤트를 바인딩합니다
+     */
+    bindHeatmapEvents() {
+        const heatmapItems = document.querySelectorAll('.month-activity');
+        heatmapItems.forEach(item => {
+            this.eventManager.add(item, 'click', (e) => {
+                const month = e.currentTarget.dataset.month;
+                const activity = e.currentTarget.dataset.activity;
+                this.onHeatmapItemClick(month, activity);
+            });
+        });
+    }
+
+    /**
+     * 히트맵 아이템 클릭
+     * @param {string} month - 월
+     * @param {string} activity - 활동 수
+     */
+    onHeatmapItemClick(month, activity) {
+        const yearSelector = document.getElementById('heatmap-year-selector');
+        const selectedYear = yearSelector ? yearSelector.value : '2025';
+        
         this.dispatchEvent('showMessage', { 
             type: 'info', 
-            message: '연도 선택 기능은 준비 중입니다.' 
+            message: `${selectedYear}년 ${month}월: ${activity}번의 여행 활동` 
         });
     }
 

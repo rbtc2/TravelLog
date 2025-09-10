@@ -2190,3 +2190,203 @@ input:checked + .toggle-slider:before {
         gap: var(--spacing-xs);
     }
 }
+
+/* ===== 히트맵 스타일 ===== */
+
+/* 히트맵 그리드 */
+.heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--spacing-xs);
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-md);
+    background: var(--white);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--gray-200);
+}
+
+/* 다크모드 히트맵 그리드 */
+.dark .heatmap-grid {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+}
+
+/* 히트맵 월 컨테이너 */
+.heatmap-month {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+/* 월 라벨 */
+.month-label {
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+    color: var(--text-secondary, #718096);
+    text-align: center;
+}
+
+/* 다크모드 월 라벨 */
+.dark .month-label {
+    color: var(--text-secondary, #a0aec0);
+}
+
+/* 월별 활동 박스 */
+.month-activity {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border: 1px solid transparent;
+}
+
+/* 활동 수준별 색상 */
+.month-activity.activity-none {
+    background-color: var(--gray-100, #f7fafc);
+    color: var(--text-tertiary, #a0aec0);
+}
+
+.month-activity.activity-low {
+    background-color: #c6f6d5;
+    color: #22543d;
+}
+
+.month-activity.activity-medium {
+    background-color: #68d391;
+    color: #1a365d;
+}
+
+.month-activity.activity-high {
+    background-color: #38a169;
+    color: var(--white);
+}
+
+.month-activity.activity-very-high {
+    background-color: #2f855a;
+    color: var(--white);
+}
+
+/* 다크모드 활동 수준별 색상 */
+.dark .month-activity.activity-none {
+    background-color: var(--gray-700, #4a5568);
+    color: var(--text-tertiary, #718096);
+}
+
+.dark .month-activity.activity-low {
+    background-color: #2d5016;
+    color: #9ae6b4;
+}
+
+.dark .month-activity.activity-medium {
+    background-color: #38a169;
+    color: var(--white);
+}
+
+.dark .month-activity.activity-high {
+    background-color: #2f855a;
+    color: var(--white);
+}
+
+.dark .month-activity.activity-very-high {
+    background-color: #276749;
+    color: var(--white);
+}
+
+/* 히트맵 아이템 호버 효과 */
+.month-activity:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--primary-color, #667eea);
+}
+
+/* 히트맵 캡션 */
+.heatmap-caption {
+    text-align: center;
+    font-size: var(--font-sm);
+    color: var(--text-secondary, #718096);
+    margin-top: var(--spacing-md);
+    font-style: italic;
+}
+
+/* 다크모드 히트맵 캡션 */
+.dark .heatmap-caption {
+    color: var(--text-secondary, #a0aec0);
+}
+
+/* 연도 선택기 스타일 */
+.year-selector {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--gray-300, #e2e8f0);
+    border-radius: var(--border-radius-md);
+    background: var(--white);
+    color: var(--text-primary, #2d3748);
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.year-selector:hover {
+    border-color: var(--primary-color, #667eea);
+    box-shadow: var(--shadow-sm);
+}
+
+.year-selector:focus {
+    outline: none;
+    border-color: var(--primary-color, #667eea);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 다크모드 연도 선택기 */
+.dark .year-selector {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .year-selector:hover {
+    border-color: var(--primary-color, #667eea);
+}
+
+.dark .year-selector:focus {
+    border-color: var(--primary-color, #667eea);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* 모바일 반응형 히트맵 */
+@media (max-width: 768px) {
+    .heatmap-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm);
+    }
+    
+    .month-activity {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+    
+    .month-label {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .heatmap-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .month-activity {
+        width: 18px;
+        height: 18px;
+        font-size: 9px;
+    }
+}

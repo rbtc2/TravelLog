@@ -306,6 +306,39 @@ class MyLogsController {
     }
 
     /**
+     * 특정 연도의 여행 데이터를 가져옵니다
+     * @param {string} year - 연도
+     * @returns {Object} 해당 연도의 여행 데이터
+     */
+    getTravelDataByYear(year) {
+        try {
+            const allLogs = this.logService.getLogs();
+            const yearInt = parseInt(year);
+            
+            // 해당 연도의 로그만 필터링
+            const yearLogs = allLogs.filter(log => {
+                const logDate = new Date(log.startDate);
+                return logDate.getFullYear() === yearInt;
+            });
+            
+            return {
+                year: year,
+                logs: yearLogs,
+                totalLogs: yearLogs.length,
+                hasData: yearLogs.length > 0
+            };
+        } catch (error) {
+            console.error('연도별 여행 데이터 조회 중 오류:', error);
+            return {
+                year: year,
+                logs: [],
+                totalLogs: 0,
+                hasData: false
+            };
+        }
+    }
+
+    /**
      * 컨트롤러 정리
      */
     cleanup() {
