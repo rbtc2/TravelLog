@@ -2191,6 +2191,64 @@ input:checked + .toggle-slider:before {
     }
 }
 
+/* ===== 차트 스타일 ===== */
+
+/* 차트 프레임 */
+.chart-frame {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    margin-bottom: var(--spacing-lg);
+    overflow: hidden;
+}
+
+/* 다크모드 차트 프레임 */
+.dark .chart-frame {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+}
+
+/* 차트 헤더 */
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--gray-50, #f9fafb);
+    min-height: 60px;
+}
+
+/* 다크모드 차트 헤더 */
+.dark .chart-header {
+    background: var(--bg-tertiary, #374151);
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+/* 차트 제목 */
+.chart-title {
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary, #1f2937);
+    margin: 0;
+    line-height: 1.2;
+    flex: 1;
+}
+
+/* 다크모드 차트 제목 */
+.dark .chart-title {
+    color: var(--text-primary, #f9fafb);
+}
+
+/* 차트 컨트롤 */
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    flex-shrink: 0;
+}
+
 /* ===== 히트맵 스타일 ===== */
 
 /* 히트맵 그리드 */
@@ -2440,6 +2498,10 @@ input:checked + .toggle-slider:before {
     font-weight: var(--font-medium);
     cursor: pointer;
     transition: all var(--transition-normal);
+    vertical-align: middle;
+    height: 40px;
+    display: flex;
+    align-items: center;
 }
 
 .year-selector:hover {
@@ -2458,6 +2520,10 @@ input:checked + .toggle-slider:before {
     background: var(--bg-secondary, #2d2d2d);
     border-color: var(--gray-400, #718096);
     color: var(--text-primary, #f7fafc);
+    vertical-align: middle;
+    height: 40px;
+    display: flex;
+    align-items: center;
 }
 
 .dark .year-selector:hover {
@@ -2467,6 +2533,33 @@ input:checked + .toggle-slider:before {
 .dark .year-selector:focus {
     border-color: var(--primary-color, #667eea);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* 모바일 반응형 차트 */
+@media (max-width: 768px) {
+    .chart-header {
+        flex-direction: row;
+        gap: var(--spacing-md);
+        align-items: center;
+        padding: var(--spacing-md);
+        min-height: 50px;
+    }
+    
+    .chart-title {
+        font-size: var(--font-base);
+        flex: 1;
+    }
+    
+    .chart-controls {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .year-selector {
+        height: 36px;
+        font-size: var(--font-xs);
+    }
 }
 
 /* 모바일 반응형 히트맵 */
@@ -2502,6 +2595,27 @@ input:checked + .toggle-slider:before {
 }
 
 @media (max-width: 480px) {
+    .chart-header {
+        padding: var(--spacing-sm) var(--spacing-md);
+        min-height: 45px;
+    }
+    
+    .chart-title {
+        font-size: var(--font-sm);
+        flex: 1;
+    }
+    
+    .chart-controls {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+    }
+    
+    .year-selector {
+        height: 32px;
+        font-size: 11px;
+    }
+    
     .heatmap-grid {
         grid-template-columns: repeat(4, 1fr);
     }

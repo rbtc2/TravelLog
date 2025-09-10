@@ -169,6 +169,7 @@ class TravelReportView {
                     <!-- 차트 프레임 3: 월별 활동 히트맵 -->
                     <div class="chart-frame">
                         <div class="chart-header">
+                            <h3 class="chart-title">일정 히트맵</h3>
                             <div class="chart-controls">
                                 <select class="year-selector" id="heatmap-year-selector">
                                     <option value="2025" selected>2025년</option>
