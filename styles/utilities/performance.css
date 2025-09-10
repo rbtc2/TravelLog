@@ -1,0 +1,394 @@
+/* ===== 성능 최적화 유틸리티 ===== */
+/* 
+ * CSS 로딩 최적화 및 성능 모니터링을 위한 유틸리티
+ */
+
+/* ===== Critical CSS ===== */
+/* 
+ * Above-the-fold 콘텐츠를 위한 필수 스타일
+ * 페이지 로딩 시 즉시 필요한 스타일만 포함
+ */
+
+/* 기본 레이아웃 - 즉시 로드 */
+.critical-layout {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+.critical-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    transition: all var(--duration-200) var(--ease-out);
+}
+
+.critical-content {
+    padding-top: 80px; /* 헤더 높이만큼 여백 */
+    min-height: 100vh;
+}
+
+/* ===== Lazy Loading 스타일 ===== */
+
+/* 지연 로딩 요소 */
+.lazy-load {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all var(--duration-300) var(--ease-out);
+}
+
+.lazy-load.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 이미지 지연 로딩 */
+.lazy-image {
+    background: var(--gray-200);
+    background-image: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-300) 50%, var(--gray-200) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.lazy-image.loaded {
+    background: none;
+    animation: none;
+}
+
+/* ===== 가상 스크롤링 ===== */
+
+/* 가상 스크롤 컨테이너 */
+.virtual-scroll-container {
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.virtual-scroll-content {
+    position: relative;
+    will-change: transform;
+}
+
+.virtual-scroll-item {
+    position: absolute;
+    width: 100%;
+    will-change: transform;
+}
+
+/* ===== GPU 가속 ===== */
+
+/* GPU 가속 활성화 */
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* 애니메이션 최적화 */
+.animate-optimized {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+}
+
+.animate-optimized:hover {
+    will-change: auto;
+}
+
+/* ===== 폰트 로딩 최적화 ===== */
+
+/* 폰트 디스플레이 최적화 */
+@font-face {
+    font-family: 'Inter';
+    font-display: swap; /* 폰트 로딩 중에도 텍스트 표시 */
+    src: url('fonts/Inter-Regular.woff2') format('woff2');
+}
+
+/* 폰트 로딩 상태 */
+.font-loading {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-display: swap;
+}
+
+.font-loaded {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ===== 이미지 최적화 ===== */
+
+/* 반응형 이미지 */
+.responsive-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* WebP 지원 */
+.webp .responsive-image {
+    background-image: url('image.webp');
+}
+
+.no-webp .responsive-image {
+    background-image: url('image.jpg');
+}
+
+/* ===== CSS 컨테이너 쿼리 ===== */
+
+/* 컨테이너 쿼리 지원 */
+@container (min-width: 300px) {
+    .container-responsive {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+    }
+}
+
+@container (min-width: 600px) {
+    .container-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ===== 성능 모니터링 ===== */
+
+/* 로딩 상태 표시 */
+.loading-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gray-200);
+    z-index: var(--z-toast);
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-500), var(--secondary-500));
+    width: 0%;
+    transition: width var(--duration-300) var(--ease-out);
+}
+
+/* 성능 메트릭 표시 (개발 모드) */
+.dev-metrics {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-family: monospace;
+    z-index: var(--z-tooltip);
+    display: none;
+}
+
+.dev-mode .dev-metrics {
+    display: block;
+}
+
+/* ===== 메모리 최적화 ===== */
+
+/* 불필요한 요소 숨김 */
+.hidden-offscreen {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* DOM 정리용 */
+.cleanup-target {
+    contain: layout style paint;
+}
+
+/* ===== 네트워크 최적화 ===== */
+
+/* 중요하지 않은 리소스 지연 로딩 */
+.non-critical {
+    loading: lazy;
+}
+
+/* 프리로드 힌트 */
+.preload-hint {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>');
+}
+
+/* ===== 반응형 최적화 ===== */
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    .mobile-optimized {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    .mobile-optimized input,
+    .mobile-optimized textarea {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+    
+    /* 터치 최적화 */
+    .touch-optimized {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+    }
+}
+
+/* ===== 애니메이션 성능 ===== */
+
+/* 60fps 애니메이션 */
+@keyframes smoothSlide {
+    from {
+        transform: translate3d(0, 0, 0);
+        opacity: 0;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+.smooth-animation {
+    animation: smoothSlide var(--duration-300) var(--ease-out);
+    will-change: transform, opacity;
+}
+
+/* 리듀스 모션 지원 */
+@media (prefers-reduced-motion: reduce) {
+    .smooth-animation {
+        animation: none;
+    }
+    
+    .lazy-load {
+        transition: none;
+    }
+    
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== CSS 컨테이너 쿼리 폴백 ===== */
+
+/* 컨테이너 쿼리 미지원 브라우저용 */
+@supports not (container-type: inline-size) {
+    .container-responsive {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+    
+    .container-responsive > * {
+        flex: 1 1 300px;
+    }
+}
+
+/* ===== 성능 경고 ===== */
+
+/* 개발 모드에서 성능 경고 */
+.dev-warning {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--warning-500);
+    color: white;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    z-index: var(--z-toast);
+    display: none;
+}
+
+.dev-mode .dev-warning {
+    display: block;
+}
+
+/* ===== 메모리 사용량 모니터링 ===== */
+
+.memory-indicator {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-family: monospace;
+    z-index: var(--z-tooltip);
+    display: none;
+}
+
+.dev-mode .memory-indicator {
+    display: block;
+}
+
+/* ===== CSS 로딩 순서 최적화 ===== */
+
+/* 중요도별 로딩 */
+.critical-css {
+    /* 즉시 필요한 스타일 */
+}
+
+.important-css {
+    /* 중요한 스타일 */
+}
+
+.normal-css {
+    /* 일반적인 스타일 */
+}
+
+.low-priority-css {
+    /* 낮은 우선순위 스타일 */
+}
+
+/* ===== 브라우저별 최적화 ===== */
+
+/* Chrome 최적화 */
+@supports (-webkit-appearance: none) {
+    .chrome-optimized {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Firefox 최적화 */
+@-moz-document url-prefix() {
+    .firefox-optimized {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Safari 최적화 */
+@supports (-webkit-touch-callout: none) {
+    .safari-optimized {
+        -webkit-overflow-scrolling: touch;
+    }
+}

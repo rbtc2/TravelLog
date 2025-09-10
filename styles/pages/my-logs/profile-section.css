@@ -1,0 +1,622 @@
+/* ===== 프로필 섹션 스타일 ===== */
+
+/* 프로필 섹션 전체 */
+.profile-section {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--gray-200);
+}
+
+/* 다크모드 프로필 섹션 */
+.dark .profile-section {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+/* 프로필 콘텐츠 컨테이너 */
+.profile-content {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* 프로필 아바타 컨테이너 */
+.profile-avatar-container {
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* 프로필 아바타 */
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 32px;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid var(--white);
+    box-shadow: var(--shadow-md);
+}
+
+/* 프로필 이미지 */
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* 프로필 아바타 플레이스홀더 */
+.profile-avatar-placeholder {
+    font-size: 32px;
+}
+
+/* 프로필 이미지 편집 버튼 */
+.profile-avatar-edit {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 28px;
+    height: 28px;
+    background: var(--primary-color);
+    border: 2px solid var(--white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-avatar-edit:hover {
+    background: var(--primary-dark);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+.profile-avatar-edit:active {
+    transform: scale(0.95);
+}
+
+.camera-icon {
+    font-size: 12px;
+    color: var(--white);
+}
+
+/* 프로필 정보 */
+.profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+/* 프로필 이름 */
+.profile-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    cursor: pointer;
+    transition: color var(--transition-normal);
+    word-wrap: break-word;
+}
+
+.profile-name:hover {
+    color: var(--primary-color);
+}
+
+/* 프로필 한마디 */
+.profile-bio {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    cursor: text;
+    min-height: 24px;
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-normal);
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+/* 다크모드 프로필 정보 */
+.dark .profile-name {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .profile-name:hover {
+    color: var(--primary-color, #4dabf7);
+}
+
+.dark .profile-bio {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.profile-bio:hover {
+    background: var(--gray-50);
+}
+
+.profile-bio:focus {
+    outline: none;
+    background: var(--white);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.profile-bio:empty:before {
+    content: attr(data-placeholder);
+    color: var(--gray-400);
+    font-style: italic;
+}
+
+/* 프로필 통계 섹션 */
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--spacing-lg) 0;
+    border-top: 1px solid var(--gray-200);
+    gap: var(--spacing-md);
+}
+
+/* 통계 아이템 */
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+}
+
+/* 통계 값 */
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1;
+}
+
+/* 통계 라벨 */
+.stat-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 다크모드 프로필 통계 */
+.dark .profile-stats {
+    border-top-color: var(--gray-400, #718096);
+}
+
+.dark .stat-value {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .stat-label {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 통계 구분선 */
+.stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 40px;
+    background: var(--gray-300);
+}
+
+.stat-item:last-child::after {
+    display: none;
+}
+
+/* ===== 프로필 액션 버튼 스타일 ===== */
+
+/* 프로필 액션 버튼 컨테이너 */
+.profile-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--gray-200);
+}
+
+/* 프로필 액션 버튼 기본 스타일 */
+.profile-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    border: none;
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-sm);
+    min-height: 44px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 버튼 아이콘 */
+.btn-icon {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* 버튼 텍스트 */
+.btn-text {
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    white-space: nowrap;
+}
+
+/* Primary 버튼 (나의 지도) - 일반 스타일로 변경 */
+.profile-action-btn.primary-btn {
+    background: var(--gray-200);
+    color: var(--text-primary);
+    border: 2px solid var(--gray-300);
+    flex: 1;
+    max-width: 200px;
+    min-height: 44px;
+}
+
+/* 다크모드 프로필 액션 버튼 */
+.dark .profile-action-btn.primary-btn {
+    background: var(--bg-tertiary, #2d3748);
+    color: var(--text-primary, #f7fafc);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .profile-action-btn.primary-btn:hover {
+    background: var(--gray-200, #4a5568);
+    border-color: var(--gray-300, #718096);
+}
+
+.profile-action-btn.primary-btn:hover {
+    background: var(--gray-300);
+    border-color: var(--gray-400);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.profile-action-btn.primary-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
+/* Secondary 버튼 (트래블 레포트) - 강조 스타일로 변경 */
+.profile-action-btn.secondary-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+    border: 2px solid transparent;
+    flex: 1;
+    max-width: 200px;
+}
+
+.profile-action-btn.secondary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+}
+
+.profile-action-btn.secondary-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
+/* Share 버튼 (아이콘만) - 스크린샷의 공유 아이콘 스타일 */
+.profile-action-btn.share-btn {
+    background: var(--gray-200);
+    color: var(--text-secondary);
+    border: 2px solid var(--gray-300);
+    flex: 0 0 auto;
+    min-width: 44px;
+    max-width: 44px;
+    padding: var(--spacing-md);
+}
+
+.profile-action-btn.share-btn:hover {
+    background: var(--gray-300);
+    border-color: var(--gray-400);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* 다크모드 Share 버튼 */
+.dark .profile-action-btn.share-btn {
+    background: var(--bg-tertiary, #2d3748);
+    color: var(--text-secondary, #e2e8f0);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .profile-action-btn.share-btn:hover {
+    background: var(--gray-200, #4a5568);
+    border-color: var(--gray-300, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.profile-action-btn.share-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-md);
+}
+
+/* Share 버튼은 텍스트 숨김 */
+.profile-action-btn.share-btn .btn-text {
+    display: none;
+}
+
+/* 버튼 호버 효과 */
+.profile-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.profile-action-btn:hover::before {
+    left: 100%;
+}
+
+/* 버튼 비활성화 상태 */
+.profile-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.profile-action-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+/* ===== 프로필 섹션 반응형 스타일 ===== */
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .profile-section {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .profile-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+    }
+    
+    .profile-avatar-edit {
+        width: 24px;
+        height: 24px;
+        bottom: -1px;
+        right: -1px;
+    }
+    
+    .camera-icon {
+        font-size: 10px;
+    }
+    
+    .profile-name {
+        font-size: 20px;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .profile-bio {
+        font-size: 14px;
+        text-align: center;
+        max-width: 100%;
+    }
+    
+    .profile-stats {
+        padding: var(--spacing-md) 0;
+        gap: var(--spacing-sm);
+    }
+    
+    .stat-value {
+        font-size: 24px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+    }
+    
+    /* 통계 구분선 모바일에서 제거 */
+    .stat-item:not(:last-child)::after {
+        display: none;
+    }
+    
+    .profile-action-buttons {
+        flex-direction: row;
+        gap: var(--spacing-xs);
+        margin-top: var(--spacing-md);
+        padding-top: var(--spacing-md);
+        justify-content: space-between;
+    }
+    
+    .profile-action-btn {
+        min-height: 48px;
+        padding: var(--spacing-md);
+        justify-content: center;
+    }
+    
+    /* 모바일에서 나의 지도 버튼은 아이콘만 표시 */
+    .profile-action-btn.primary-btn .btn-text {
+        display: none;
+    }
+    
+    .profile-action-btn.primary-btn {
+        flex: 0 0 auto;
+        min-width: 48px;
+        max-width: 48px;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-lg);
+        background: var(--gray-200);
+        color: var(--text-primary);
+        border: 2px solid var(--gray-300);
+    }
+    
+    .profile-action-btn.secondary-btn {
+        flex: 1;
+        min-height: 48px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: var(--white);
+        border: 2px solid transparent;
+    }
+    
+    .profile-action-btn.share-btn {
+        flex: 0 0 auto;
+        min-width: 48px;
+        max-width: 48px;
+        width: 48px;
+        height: 48px;
+        border-radius: var(--border-radius-lg);
+    }
+    
+    .btn-text {
+        font-size: var(--font-sm);
+    }
+    
+    .btn-icon {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 프로필 섹션 초소형 모바일 최적화 */
+    .profile-section {
+        padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .profile-content {
+        gap: var(--spacing-sm);
+    }
+    
+    .profile-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .profile-avatar-edit {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .camera-icon {
+        font-size: 8px;
+    }
+    
+    .profile-name {
+        font-size: 18px;
+    }
+    
+    .profile-bio {
+        font-size: 13px;
+        padding: var(--spacing-xs);
+    }
+    
+    .profile-stats {
+        padding: var(--spacing-sm) 0;
+        gap: var(--spacing-xs);
+    }
+    
+    .stat-value {
+        font-size: 20px;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+    }
+    
+    .profile-action-buttons {
+        flex-direction: row;
+        gap: var(--spacing-xs);
+        margin-top: var(--spacing-sm);
+        padding-top: var(--spacing-sm);
+        justify-content: space-between;
+    }
+    
+    .profile-action-btn {
+        min-height: 44px;
+        padding: var(--spacing-sm);
+    }
+    
+    /* 작은 모바일에서도 나의 지도 버튼은 아이콘만 표시 */
+    .profile-action-btn.primary-btn .btn-text {
+        display: none;
+    }
+    
+    .profile-action-btn.primary-btn {
+        flex: 0 0 auto;
+        min-width: 44px;
+        max-width: 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--border-radius-md);
+        background: var(--gray-200);
+        color: var(--text-primary);
+        border: 2px solid var(--gray-300);
+    }
+    
+    .profile-action-btn.secondary-btn {
+        flex: 1;
+        min-height: 44px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: var(--white);
+        border: 2px solid transparent;
+    }
+    
+    .profile-action-btn.share-btn {
+        flex: 0 0 auto;
+        min-width: 44px;
+        max-width: 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: var(--border-radius-md);
+    }
+    
+    .btn-text {
+        font-size: var(--font-xs);
+    }
+    
+    .btn-icon {
+        font-size: 18px;
+    }
+}

@@ -223,7 +223,61 @@
     opacity: 0.7;
 }
 
-.settings-btn:hover,
+/* 설정 버튼 위치 (우측 상단) */
+.settings-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: var(--z-fixed);
+    background: var(--white);
+    border: 2px solid var(--gray-300);
+    box-shadow: var(--shadow-sm);
+}
+
+.settings-btn:hover {
+    background: var(--gray-50);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+/* 다크모드 설정 버튼 */
+.dark .settings-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .settings-btn:hover {
+    background: var(--gray-800, #2d3748);
+    border-color: var(--primary-color, #667eea);
+    color: var(--primary-color, #667eea);
+}
+
+/* 모바일 반응형 설정 버튼 */
+@media (max-width: 768px) {
+    .settings-btn {
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .settings-btn {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
+
 .back-btn:hover {
     background-color: var(--gray-100);
     color: var(--primary-color);
