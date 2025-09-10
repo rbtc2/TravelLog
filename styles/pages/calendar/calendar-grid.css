@@ -21,6 +21,11 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* 다크모드 캘린더 그리드 */
+.dark .calendar-grid {
+    background: var(--bg-secondary, #2d2d2d);
+}
+
 .calendar-grid {
     width: 100%;
 }
@@ -170,6 +175,18 @@
     background: #b2f5ea;
 }
 
+/* 다크모드 선택된 날짜 */
+.dark .calendar-day.selected {
+    background: var(--bg-tertiary, #2d3748);
+    border: 2px solid #4dabf7;
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .calendar-day.selected:hover {
+    background: var(--gray-200, #4a5568);
+}
+
 /* 여행 로그가 있는 날짜 */
 .calendar-day.has-travel-log {
     background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%);
@@ -178,6 +195,17 @@
 
 .calendar-day.has-travel-log:hover {
     background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+}
+
+/* 다크모드 여행 로그가 있는 날짜 */
+.dark .calendar-day.has-travel-log {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    border-left: 4px solid #f59e0b;
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .calendar-day.has-travel-log:hover {
+    background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
 }
 
 /* 날짜 번호 */
@@ -262,4 +290,28 @@
 .travel-log-more:hover {
     background: #5a67d8;
     transform: scale(1.2);
+}
+
+/* 다크모드 여행 로그 표시기 */
+.dark .travel-log-indicator {
+    background: var(--bg-primary, #1a1a1a);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dark .travel-log-indicator:hover {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dark .travel-log-more {
+    background: #4dabf7;
+    color: white;
+    box-shadow: 0 2px 4px rgba(77, 171, 247, 0.3);
+}
+
+.dark .travel-log-more:hover {
+    background: #339af0;
+    box-shadow: 0 4px 8px rgba(77, 171, 247, 0.4);
 }

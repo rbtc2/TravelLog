@@ -109,7 +109,7 @@ export class SearchEventHandler {
     bindDetailEvents(callbacks) {
         try {
             // 뒤로가기 버튼 이벤트
-            const backBtn = document.getElementById('back-to-logs');
+            const backBtn = document.getElementById('back-from-detail');
             if (backBtn) {
                 this.addEventListener(backBtn, 'click', callbacks.handleBackFromDetail.bind(callbacks));
             }

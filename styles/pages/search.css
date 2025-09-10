@@ -793,6 +793,145 @@
     100% { transform: rotate(360deg); }
 }
 
+/* ===== 로그 상세 화면 스타일 ===== */
+.log-detail-view {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.log-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.log-detail-header .back-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.log-detail-header .back-btn:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+.log-detail-title h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+}
+
+.log-detail-content {
+    padding: 20px;
+}
+
+.log-detail-info {
+    margin-bottom: 24px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 14px;
+}
+
+.info-value {
+    color: #2d3748;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.log-detail-memo {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.log-detail-memo h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 12px 0;
+}
+
+.log-detail-memo p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* 다크모드 로그 상세 화면 */
+.dark .log-detail-view {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .log-detail-header {
+    background: var(--bg-tertiary, #2d3748);
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+.dark .log-detail-title h2 {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .info-label {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .info-value {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .log-detail-memo {
+    background: var(--bg-tertiary, #2d3748);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .log-detail-memo h3 {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .log-detail-memo p {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .log-detail-header .back-btn {
+    background: var(--primary-color, #4dabf7);
+}
+
+.dark .log-detail-header .back-btn:hover {
+    background: var(--primary-dark, #339af0);
+}
+
 /* ===== 검색 페이지 반응형 스타일 ===== */
 @media (max-width: 768px) {
     .search-container {
@@ -909,6 +1048,61 @@
     .sort-options {
         flex-direction: column;
         gap: 12px;
+    }
+    
+    /* 모바일 로그 상세 화면 */
+    .log-detail-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+    }
+    
+    .log-detail-title h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .log-detail-content {
+        padding: 16px;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 16px 0;
+    }
+    
+    .info-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    .log-detail-memo {
+        padding: 12px;
+    }
+    
+    .log-detail-memo h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    
+    .log-detail-memo p {
+        font-size: 13px;
+    }
+    
+    .log-detail-header .back-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        width: 100%;
+        text-align: center;
     }
     
     /* 토스트 메시지 스타일은 styles/base/messages.css에서 관리 */

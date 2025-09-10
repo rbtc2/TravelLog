@@ -393,17 +393,45 @@ export class SearchTab {
                 throw new Error('상세 화면 컨테이너를 찾을 수 없습니다.');
             }
 
-            // 간단한 상세 화면 HTML 렌더링
+            // 개선된 상세 화면 HTML 렌더링
             detailContainer.innerHTML = `
-                <div class="log-detail-simple">
-                    <h3>${logData.country} - ${logData.city}</h3>
-                    <p>시작일: ${logData.startDate}</p>
-                    <p>종료일: ${logData.endDate}</p>
-                    <p>목적: ${logData.purpose}</p>
-                    <p>평점: ${logData.rating}점</p>
-                    <p>여행 스타일: ${logData.travelStyle}</p>
-                    <p>메모: ${logData.memo || '없음'}</p>
-                    <button onclick="window.dispatchEvent(new CustomEvent('logDetailBack'))">뒤로가기</button>
+                <div class="log-detail-view">
+                    <div class="log-detail-header">
+                        <button class="back-btn" id="back-from-detail">◀ 뒤로가기</button>
+                        <div class="log-detail-title">
+                            <h2>${logData.country} - ${logData.city}</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="log-detail-content">
+                        <div class="log-detail-info">
+                            <div class="info-item">
+                                <span class="info-label">시작일:</span>
+                                <span class="info-value">${logData.startDate}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">종료일:</span>
+                                <span class="info-value">${logData.endDate}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">목적:</span>
+                                <span class="info-value">${logData.purpose}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">평점:</span>
+                                <span class="info-value">${logData.rating}점</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">여행 스타일:</span>
+                                <span class="info-value">${logData.travelStyle}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="log-detail-memo">
+                            <h3>메모</h3>
+                            <p>${logData.memo || '메모가 없습니다.'}</p>
+                        </div>
+                    </div>
                 </div>
             `;
 
