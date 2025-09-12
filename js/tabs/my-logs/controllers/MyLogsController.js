@@ -19,6 +19,11 @@ class MyLogsController {
         this.logService = new LogService();
         this.storageManager = new StorageManager();
         this.isInitialized = false;
+        
+        // 캐싱을 위한 속성들
+        this._purposeAnalysisCache = null;
+        this._basicStatsCache = null;
+        this._lastDataHash = null;
     }
 
     /**
@@ -117,6 +122,7 @@ class MyLogsController {
     addLog(logData) {
         const newLog = this.logService.createLog(logData);
         this.storageManager.saveLogs(this.logService.getAllLogs());
+        this.invalidateCache(); // 캐시 무효화
         return newLog;
     }
 
@@ -130,6 +136,7 @@ class MyLogsController {
         
         if (deleted) {
             this.storageManager.saveLogs(this.logService.getAllLogs());
+            this.invalidateCache(); // 캐시 무효화
             
             // 현재 페이지가 비어있고 이전 페이지가 있으면 이전 페이지로 이동
             const totalPages = Math.ceil(this.logService.getAllLogs().length / this.logService.logsPerPage);
@@ -152,6 +159,7 @@ class MyLogsController {
         
         if (updatedLog) {
             this.storageManager.saveLogs(this.logService.getAllLogs());
+            this.invalidateCache(); // 캐시 무효화
         }
         
         return updatedLog;
@@ -339,12 +347,167 @@ class MyLogsController {
     }
 
     /**
+     * 여행 목적별 비율을 분석합니다 (캐싱 적용)
+     * @returns {Object} 목적별 분석 결과
+     */
+    getPurposeAnalysis() {
+        try {
+            // 데이터 해시 계산 (캐시 무효화 확인용)
+            const currentDataHash = this._calculateDataHash();
+            
+            // 캐시가 유효한 경우 캐시된 결과 반환
+            if (this._purposeAnalysisCache && this._lastDataHash === currentDataHash) {
+                return this._purposeAnalysisCache;
+            }
+
+            const logs = this.getAllLogs();
+            
+            if (!logs || logs.length === 0) {
+                const result = {
+                    hasData: false,
+                    totalLogs: 0,
+                    purposeBreakdown: [],
+                    topPurposes: [],
+                    summary: '아직 여행 기록이 없습니다'
+                };
+                
+                // 캐시에 저장
+                this._purposeAnalysisCache = result;
+                this._lastDataHash = currentDataHash;
+                return result;
+            }
+
+            // 목적별 카운트 계산
+            const purposeCounts = {};
+            logs.forEach(log => {
+                if (log.purpose) {
+                    purposeCounts[log.purpose] = (purposeCounts[log.purpose] || 0) + 1;
+                }
+            });
+
+            // 비율 계산 및 정렬
+            const purposeBreakdown = Object.entries(purposeCounts)
+                .map(([purpose, count]) => ({
+                    purpose: purpose,
+                    count: count,
+                    percentage: Math.round((count / logs.length) * 100)
+                }))
+                .sort((a, b) => b.count - a.count);
+
+            // 상위 목적들 (5% 이상인 것들만)
+            const topPurposes = purposeBreakdown
+                .filter(item => item.percentage >= 5)
+                .slice(0, 3); // 최대 3개
+
+            // 요약 텍스트 생성
+            let summary = '';
+            if (topPurposes.length === 0) {
+                summary = '여행 목적이 다양합니다';
+            } else if (topPurposes.length === 1) {
+                const purpose = this.getPurposeDisplayName(topPurposes[0].purpose);
+                summary = `${purpose} ${topPurposes[0].percentage}%`;
+            } else {
+                const purposeTexts = topPurposes.map(item => 
+                    `${this.getPurposeDisplayName(item.purpose)} ${item.percentage}%`
+                );
+                summary = purposeTexts.join(', ');
+            }
+
+            const result = {
+                hasData: true,
+                totalLogs: logs.length,
+                purposeBreakdown: purposeBreakdown,
+                topPurposes: topPurposes,
+                summary: summary
+            };
+
+            // 캐시에 저장
+            this._purposeAnalysisCache = result;
+            this._lastDataHash = currentDataHash;
+            
+            return result;
+
+        } catch (error) {
+            console.error('목적 분석 중 오류:', error);
+            return {
+                hasData: false,
+                totalLogs: 0,
+                purposeBreakdown: [],
+                topPurposes: [],
+                summary: '데이터 분석 중 오류가 발생했습니다'
+            };
+        }
+    }
+
+    /**
+     * 데이터 해시를 계산합니다 (캐시 무효화 확인용)
+     * @returns {string} 데이터 해시
+     */
+    _calculateDataHash() {
+        try {
+            const logs = this.getAllLogs();
+            const dataString = JSON.stringify(logs.map(log => ({
+                id: log.id,
+                purpose: log.purpose,
+                startDate: log.startDate,
+                endDate: log.endDate
+            })));
+            
+            // 간단한 해시 함수 (실제 프로덕션에서는 더 정교한 해시 함수 사용)
+            let hash = 0;
+            for (let i = 0; i < dataString.length; i++) {
+                const char = dataString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // 32비트 정수로 변환
+            }
+            return hash.toString();
+        } catch (error) {
+            console.error('데이터 해시 계산 중 오류:', error);
+            return Date.now().toString(); // 폴백으로 현재 시간 사용
+        }
+    }
+
+    /**
+     * 목적 코드를 사용자 친화적인 이름으로 변환합니다
+     * @param {string} purposeCode - 목적 코드
+     * @returns {string} 표시 이름
+     */
+    getPurposeDisplayName(purposeCode) {
+        const purposeNames = {
+            'tourism': '관광/여행',
+            'business': '업무/출장',
+            'family': '가족/지인 방문',
+            'study': '학업',
+            'work': '취업/근로',
+            'training': '파견/연수',
+            'event': '행사/컨퍼런스',
+            'volunteer': '봉사활동',
+            'medical': '의료',
+            'transit': '경유/환승',
+            'research': '연구/학술',
+            'immigration': '이주/정착',
+            'other': '기타'
+        };
+        return purposeNames[purposeCode] || '기타';
+    }
+
+    /**
+     * 캐시를 무효화합니다
+     */
+    invalidateCache() {
+        this._purposeAnalysisCache = null;
+        this._basicStatsCache = null;
+        this._lastDataHash = null;
+    }
+
+    /**
      * 컨트롤러 정리
      */
     cleanup() {
         this.isInitialized = false;
         this.logService.setLogs([]);
         this.logService.setCurrentPage(1);
+        this.invalidateCache();
     }
 }
 
