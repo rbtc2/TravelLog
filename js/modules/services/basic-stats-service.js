@@ -8,10 +8,12 @@
  * - 통계 계산 최적화
  * 
  * @class BasicStatsService
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2024-12-29
  */
 import { CacheManager } from './cache-manager.js';
+import { DateUtils } from '../utils/date-utils.js';
+import { StatsUtils } from '../utils/stats-utils.js';
 
 class BasicStatsService {
     constructor(logDataService, cacheManager = null) {
@@ -68,13 +70,9 @@ class BasicStatsService {
             }
 
             const allLogs = this.logDataService.getAllLogs();
-            const yearInt = parseInt(year);
             
-            // 해당 연도의 로그만 필터링
-            const yearLogs = allLogs.filter(log => {
-                const logDate = new Date(log.startDate);
-                return logDate.getFullYear() === yearInt;
-            });
+            // DateUtils를 사용한 연도별 필터링
+            const yearLogs = DateUtils.filterLogsByYear(allLogs, year);
             
             const result = {
                 year: year,
@@ -111,46 +109,28 @@ class BasicStatsService {
             }
 
             const logs = this.logDataService.getAllLogs();
-            if (!logs || logs.length === 0) {
-                const currentYear = new Date().getFullYear();
-                const result = [currentYear.toString()];
-                this.cacheManager.set(cacheKey, result, dataHash, this.cacheTTL);
-                return result;
+            
+            // DateUtils를 사용한 연도 추출
+            let years = DateUtils.extractYearsFromLogs(logs);
+            
+            // 데이터가 없으면 현재 연도 추가
+            if (years.length === 0) {
+                years = [DateUtils.getCurrentYear()];
+            }
+            
+            // 현재 연도가 포함되어 있지 않으면 추가
+            const currentYear = DateUtils.getCurrentYear();
+            if (!years.includes(currentYear)) {
+                years.unshift(currentYear);
+                years.sort((a, b) => parseInt(b) - parseInt(a)); // 최신순 재정렬
             }
 
-            // 로그에서 연도 추출 (문자열로 저장)
-            const years = new Set();
-            logs.forEach(log => {
-                if (log.startDate) {
-                    const year = new Date(log.startDate).getFullYear();
-                    if (!isNaN(year)) {
-                        years.add(year.toString());
-                    }
-                }
-            });
-
-            // 연도 배열로 변환하고 최신순 정렬
-            const yearArray = Array.from(years)
-                .map(year => parseInt(year))
-                .sort((a, b) => b - a)
-                .map(year => year.toString());
-            
-            // 현재 연도 확인
-            const currentYear = new Date().getFullYear();
-            const currentYearStr = currentYear.toString();
-            
-            if (!yearArray.includes(currentYearStr)) {
-                yearArray.unshift(currentYearStr);
-            }
-
-            const result = [...new Set(yearArray)];
-            this.cacheManager.set(cacheKey, result, dataHash, this.cacheTTL);
-            return result;
+            this.cacheManager.set(cacheKey, years, dataHash, this.cacheTTL);
+            return years;
 
         } catch (error) {
             console.error('사용 가능한 연도 목록 조회 중 오류:', error);
-            const currentYear = new Date().getFullYear();
-            return [currentYear.toString()];
+            return [DateUtils.getCurrentYear()];
         }
     }
 
@@ -163,9 +143,8 @@ class BasicStatsService {
     _calculateBasicStats(logs) {
         const uniqueCountries = new Set();
         const uniqueCities = new Set();
-        let totalTravelDays = 0;
-        let totalRating = 0;
-        let validRatingCount = 0;
+        const travelDays = [];
+        const ratings = [];
 
         logs.forEach(log => {
             // 국가와 도시 수집
@@ -176,44 +155,32 @@ class BasicStatsService {
                 uniqueCities.add(log.city.trim());
             }
 
-            // 여행 일수 계산
+            // DateUtils를 사용한 여행 일수 계산
             if (log.startDate && log.endDate) {
-                try {
-                    const startDate = new Date(log.startDate);
-                    const endDate = new Date(log.endDate);
-                    
-                    // 유효한 날짜인지 확인
-                    if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
-                        const timeDiff = endDate.getTime() - startDate.getTime();
-                        const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
-                        
-                        // 음수가 아닌 유효한 일수만 추가
-                        if (daysDiff > 0) {
-                            totalTravelDays += daysDiff;
-                        }
-                    }
-                } catch (dateError) {
-                    console.warn('날짜 계산 오류:', dateError, log);
+                const days = DateUtils.calculateDaysBetween(log.startDate, log.endDate);
+                if (days > 0) {
+                    travelDays.push(days);
                 }
             }
 
-            // 평점 계산
+            // 평점 수집
             if (log.rating && !isNaN(parseFloat(log.rating))) {
                 const rating = parseFloat(log.rating);
                 if (rating >= 0 && rating <= 5) {
-                    totalRating += rating;
-                    validRatingCount++;
+                    ratings.push(rating);
                 }
             }
         });
 
-        const averageRating = validRatingCount > 0 ? totalRating / validRatingCount : 0;
+        // StatsUtils를 사용한 통계 계산
+        const totalTravelDays = StatsUtils.sum(travelDays);
+        const averageRating = StatsUtils.average(ratings, 1);
 
         return {
             visitedCountries: uniqueCountries.size,
             visitedCities: uniqueCities.size,
             totalTravelDays: totalTravelDays,
-            averageRating: Math.round(averageRating * 10) / 10,
+            averageRating: averageRating,
             hasData: true,
             totalLogs: logs.length
         };

@@ -8,10 +8,13 @@
  * - 국가 분석 결과 캐싱
  * 
  * @class CountryAnalysisService
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2024-12-29
  */
 import { CacheManager } from './cache-manager.js';
+import { CountryUtils } from '../utils/country-utils.js';
+import { DateUtils } from '../utils/date-utils.js';
+import { StatsUtils } from '../utils/stats-utils.js';
 
 class CountryAnalysisService {
     constructor(logDataService, cacheManager = null) {
@@ -19,30 +22,6 @@ class CountryAnalysisService {
         this.cacheManager = cacheManager || new CacheManager();
         this.cacheKey = 'country_analysis';
         this.cacheTTL = 5 * 60 * 1000; // 5분
-
-        // 국가 코드 매핑
-        this.countryNames = {
-            'JP': '일본',
-            'KR': '한국',
-            'US': '미국',
-            'GB': '영국',
-            'FR': '프랑스',
-            'DE': '독일',
-            'IT': '이탈리아',
-            'ES': '스페인',
-            'CN': '중국',
-            'TH': '태국',
-            'SG': '싱가포르',
-            'AU': '호주',
-            'CA': '캐나다',
-            'BR': '브라질',
-            'IN': '인도',
-            'RU': '러시아',
-            'MX': '멕시코',
-            'ID': '인도네시아',
-            'TR': '터키',
-            'EG': '이집트'
-        };
     }
 
     /**
@@ -121,23 +100,23 @@ class CountryAnalysisService {
             if (!log.country) return;
 
             const country = log.country;
-            const startDate = new Date(log.startDate);
-            const endDate = new Date(log.endDate);
             const rating = parseFloat(log.rating) || 0;
 
-            // 유효한 날짜인지 확인
-            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return;
+            // DateUtils를 사용한 날짜 검증 및 일수 계산
+            if (!DateUtils.isValidDate(log.startDate) || !DateUtils.isValidDate(log.endDate)) {
+                return;
+            }
 
-            // 체류 일수 계산 (시작일과 종료일 포함)
-            const stayDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            const startDate = DateUtils.parseDate(log.startDate);
+            const endDate = DateUtils.parseDate(log.endDate);
+            const stayDays = DateUtils.calculateDaysBetween(log.startDate, log.endDate);
 
             if (!countryMap.has(country)) {
                 countryMap.set(country, {
                     country: country,
                     visitCount: 0,
                     totalStayDays: 0,
-                    totalRating: 0,
-                    ratingCount: 0,
+                    ratings: [],
                     averageRating: 0,
                     lastVisitDate: null,
                     visits: []
@@ -147,9 +126,13 @@ class CountryAnalysisService {
             const stats = countryMap.get(country);
             stats.visitCount += 1;
             stats.totalStayDays += stayDays;
-            stats.totalRating += rating;
-            stats.ratingCount += 1;
-            stats.averageRating = stats.totalRating / stats.ratingCount;
+            
+            if (rating > 0) {
+                stats.ratings.push(rating);
+            }
+            
+            // StatsUtils를 사용한 평균 계산
+            stats.averageRating = StatsUtils.average(stats.ratings, 1);
             
             // 최근 방문일 업데이트
             if (!stats.lastVisitDate || startDate > stats.lastVisitDate) {
@@ -212,7 +195,7 @@ class CountryAnalysisService {
      * @returns {string} 국가 표시명
      */
     getCountryDisplayName(countryCode) {
-        return this.countryNames[countryCode] || countryCode;
+        return CountryUtils.getCountryName(countryCode);
     }
 
     /**
@@ -220,7 +203,7 @@ class CountryAnalysisService {
      * @returns {Object} 국가 코드 매핑 객체
      */
     getAllCountryNames() {
-        return { ...this.countryNames };
+        return CountryUtils.COUNTRY_NAMES;
     }
 
     /**

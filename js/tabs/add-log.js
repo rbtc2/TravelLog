@@ -1,5 +1,7 @@
 import { FORM_CONFIG, VALIDATION_RULES } from '../config/form-config.js';
 import { createCountrySelector } from '../modules/ui-components/country-selector.js';
+import { ValidationUtils } from '../modules/utils/validation-utils.js';
+import { DateUtils } from '../modules/utils/date-utils.js';
 
 /**
  * 일지 추가 탭 모듈

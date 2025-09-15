@@ -8,10 +8,12 @@
  * - 목적 분석 결과 캐싱
  * 
  * @class PurposeAnalysisService
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2024-12-29
  */
 import { CacheManager } from './cache-manager.js';
+import { StatsUtils } from '../utils/stats-utils.js';
+import { DateUtils } from '../utils/date-utils.js';
 
 class PurposeAnalysisService {
     constructor(logDataService, cacheManager = null) {
@@ -94,25 +96,18 @@ class PurposeAnalysisService {
      * @private
      */
     _calculatePurposeAnalysis(logs) {
-        // 목적별 카운트 계산
-        const purposeCounts = {};
-        logs.forEach(log => {
-            if (log.purpose) {
-                purposeCounts[log.purpose] = (purposeCounts[log.purpose] || 0) + 1;
-            }
-        });
+        // StatsUtils를 사용한 빈도 분석
+        const frequencyAnalysis = StatsUtils.frequency(logs, 'purpose');
+        
+        // 목적별 데이터 구조 변환
+        const purposeBreakdown = frequencyAnalysis.map(item => ({
+            purpose: item.value,
+            purposeName: this.getPurposeDisplayName(item.value),
+            count: item.count,
+            percentage: Math.round(item.percentage)
+        }));
 
-        // 비율 계산 및 정렬
-        const purposeBreakdown = Object.entries(purposeCounts)
-            .map(([purpose, count]) => ({
-                purpose: purpose,
-                purposeName: this.getPurposeDisplayName(purpose),
-                count: count,
-                percentage: Math.round((count / logs.length) * 100)
-            }))
-            .sort((a, b) => b.count - a.count);
-
-        // 상위 목적들 (5% 이상인 것들만)
+        // StatsUtils를 사용한 상위 목적 추출 (5% 이상)
         const topPurposes = purposeBreakdown
             .filter(item => item.percentage >= 5)
             .slice(0, 3); // 최대 3개
@@ -136,7 +131,7 @@ class PurposeAnalysisService {
             purposeBreakdown: purposeBreakdown,
             topPurposes: topPurposes,
             summary: summary,
-            totalPurposes: Object.keys(purposeCounts).length
+            totalPurposes: purposeBreakdown.length
         };
     }
 
