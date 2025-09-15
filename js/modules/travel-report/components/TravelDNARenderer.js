@@ -61,8 +61,8 @@ class TravelDNARenderer {
     }
 
     /**
-     * 최애 국가 아이템을 업데이트합니다 (TOP 3 랭킹)
-     * @param {HTMLElement} favoriteCountryItem - 최애 국가 아이템
+     * 주요방문국 순위 아이템을 업데이트합니다 (TOP 3 랭킹)
+     * @param {HTMLElement} favoriteCountryItem - 주요방문국 순위 아이템
      */
     updateFavoriteCountry(favoriteCountryItem) {
         if (!favoriteCountryItem) return;
@@ -80,7 +80,7 @@ class TravelDNARenderer {
                 }
             }
         } catch (error) {
-            console.error('최애 국가 업데이트 중 오류:', error);
+            console.error('주요방문국 순위 업데이트 중 오류:', error);
             const favoriteCountryValue = favoriteCountryItem.querySelector('.dna-value');
             if (favoriteCountryValue) {
                 favoriteCountryValue.innerHTML = '<div class="error-message">데이터 분석 중 오류가 발생했습니다</div>';
