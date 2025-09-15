@@ -43,6 +43,7 @@
 /* 캘린더 모듈화된 스타일 */
 @import url('./pages/calendar/calendar-base.css');
 @import url('./pages/calendar/calendar-grid.css');
+@import url('./pages/calendar/calendar-bars.css'); /* 바 형태 일정 표시 스타일 */
 @import url('./pages/calendar/calendar-navigation.css');
 @import url('./pages/calendar/calendar-modal.css');
 @import url('./pages/calendar/calendar-responsive.css');

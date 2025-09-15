@@ -88,7 +88,7 @@
 
 .calendar-day {
     position: relative;
-    min-height: 120px;
+    min-height: 140px; /* 바 형태 시스템을 위해 높이 증가 */
     padding: 12px 8px;
     border-right: 1px solid #e2e8f0;
     border-bottom: 1px solid #e2e8f0;
@@ -244,7 +244,7 @@
     }
 }
 
-/* ===== 여행 로그 표시기 ===== */
+/* ===== 여행 로그 표시기 (레거시 - 호환성 유지) ===== */
 .travel-log-indicators {
     display: flex;
     flex-wrap: wrap;

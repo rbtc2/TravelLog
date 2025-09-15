@@ -1,0 +1,305 @@
+/* ===== 캘린더 바 형태 일정 표시 스타일 ===== */
+
+/* 바 형태 일정 컨테이너 */
+.travel-log-bars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: auto;
+    width: 100%;
+    padding: 2px;
+    min-height: 24px;
+}
+
+/* 개별 일정 바 */
+.travel-log-bar {
+    position: relative;
+    height: 10px;
+    background: var(--bar-color, #667eea);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.travel-log-bar:hover {
+    transform: scale(1.05);
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.travel-log-bar:active {
+    transform: scale(0.98);
+}
+
+/* 바 내용 */
+.bar-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 4px;
+    position: relative;
+}
+
+/* 바 텍스트 */
+.bar-text {
+    font-size: 8px;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1;
+}
+
+/* 시작일 표시 */
+.travel-log-bar.start-day {
+    border-left: 2px solid #fff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.travel-log-bar.start-day .start-indicator {
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--bar-color);
+}
+
+/* 종료일 표시 */
+.travel-log-bar.end-day {
+    border-right: 2px solid #fff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.travel-log-bar.end-day .end-indicator {
+    position: absolute;
+    top: -2px;
+    right: 2px;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--bar-color);
+}
+
+/* 중간일 표시 */
+.travel-log-bar.middle-day {
+    opacity: 0.8;
+    background: linear-gradient(90deg, 
+        var(--bar-color) 0%, 
+        color-mix(in srgb, var(--bar-color) 80%, white) 50%, 
+        var(--bar-color) 100%);
+}
+
+/* 더보기 배지 */
+.travel-log-more-badge {
+    position: absolute;
+    top: -8px;
+    right: 2px;
+    background: #667eea;
+    color: white;
+    font-size: 7px;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    z-index: 3;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1;
+    min-width: 12px;
+    text-align: center;
+}
+
+.travel-log-more-badge:hover {
+    background: #5a67d8;
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 다크모드 스타일 */
+.dark .travel-log-bar {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark .travel-log-bar:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dark .travel-log-more-badge {
+    background: #4dabf7;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.dark .travel-log-more-badge:hover {
+    background: #339af0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .travel-log-bars {
+        gap: 1.5px;
+        padding: 1.5px;
+    }
+    
+    .travel-log-bar {
+        height: 9px;
+        border-radius: 3px;
+    }
+    
+    .bar-text {
+        font-size: 7px;
+    }
+    
+    .travel-log-more-badge {
+        font-size: 6px;
+        padding: 1px 3px;
+        top: -6px;
+    }
+}
+
+@media (max-width: 768px) {
+    .travel-log-bars {
+        gap: 1px;
+        padding: 1px;
+    }
+    
+    .travel-log-bar {
+        height: 8px;
+        border-radius: 3px;
+    }
+    
+    .bar-text {
+        font-size: 7px;
+    }
+    
+    .travel-log-more-badge {
+        font-size: 6px;
+        padding: 1px 3px;
+        top: -6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .travel-log-bars {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1px;
+    }
+    
+    .travel-log-bar {
+        height: 7px;
+    }
+    
+    .bar-text {
+        font-size: 6px;
+    }
+    
+    .travel-log-more-badge {
+        font-size: 5px;
+        padding: 1px 2px;
+        top: -5px;
+    }
+}
+
+@media (max-width: 360px) {
+    .travel-log-bars {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1px;
+    }
+    
+    .travel-log-bar {
+        height: 6px;
+    }
+    
+    .bar-text {
+        font-size: 5px;
+    }
+}
+
+/* 접근성 개선 */
+.travel-log-bar:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 1px;
+}
+
+.dark .travel-log-bar:focus {
+    outline-color: #4dabf7;
+}
+
+/* 애니메이션 */
+@keyframes barSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.travel-log-bar {
+    animation: barSlideIn 0.3s ease-out;
+}
+
+.travel-log-bar:nth-child(1) { animation-delay: 0.05s; }
+.travel-log-bar:nth-child(2) { animation-delay: 0.1s; }
+.travel-log-bar:nth-child(3) { animation-delay: 0.15s; }
+.travel-log-bar:nth-child(4) { animation-delay: 0.2s; }
+.travel-log-bar:nth-child(5) { animation-delay: 0.25s; }
+.travel-log-bar:nth-child(6) { animation-delay: 0.3s; }
+
+/* 호버 효과 개선 */
+.travel-log-bar:hover .bar-text {
+    font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) and (pointer: coarse) {
+    .travel-log-bar:hover {
+        transform: none;
+    }
+    
+    .travel-log-bar:active {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+    .travel-log-bar {
+        border: 1px solid currentColor;
+    }
+    
+    .bar-text {
+        text-shadow: none;
+        font-weight: 700;
+    }
+}
+
+/* 모션 감소 설정 */
+@media (prefers-reduced-motion: reduce) {
+    .travel-log-bar {
+        animation: none;
+        transition: none;
+    }
+    
+    .travel-log-bar:hover {
+        transform: none;
+    }
+}

@@ -11,6 +11,7 @@ import {
     getCountryInfo,
     generateTooltipText 
 } from './CalendarUtils.js';
+import { continentColorManager } from './ContinentColorManager.js';
 
 export class CalendarRenderer {
     constructor(container, dataManager) {
@@ -18,6 +19,8 @@ export class CalendarRenderer {
         this.dataManager = dataManager;
         this.calendarCache = new Map();
         this.lastRenderDate = null;
+        this.isDarkMode = false; // 다크모드 상태 추적
+        this.useBarSystem = true; // 바 형태 시스템 사용 여부
     }
 
     /**
@@ -199,7 +202,7 @@ export class CalendarRenderer {
                         
                         <div class="day-number">${currentDate.getDate()}</div>
                         
-                        ${hasTravelLog ? this.renderTravelLogIndicators(travelLogs) : ''}
+                        ${hasTravelLog ? (this.useBarSystem ? this.renderTravelLogIndicators(travelLogs) : this.renderTravelLogIndicatorsLegacy(travelLogs)) : ''}
                         
                         ${isToday ? '<div class="today-indicator"></div>' : ''}
                     </div>
@@ -220,10 +223,81 @@ export class CalendarRenderer {
     }
 
     /**
-     * 여행 로그 표시기 렌더링 (국기 도트 + 멀티 레이어 시스템)
+     * 여행 로그 바 형태 표시기 렌더링 (멀티 라인 시스템)
      * @param {Array} travelLogs - 해당 날짜의 여행 로그 배열
      */
     renderTravelLogIndicators(travelLogs) {
+        if (!travelLogs || travelLogs.length === 0) return '';
+        
+        // 다크모드 상태 확인
+        this.updateDarkModeState();
+        
+        // 최대 6개까지 표시 (한 줄에 3개씩, 2줄)
+        const maxDisplay = 6;
+        const displayLogs = travelLogs.slice(0, maxDisplay);
+        const remainingCount = travelLogs.length - maxDisplay;
+        
+        let indicatorsHTML = '<div class="travel-log-bars" role="group" aria-label="여행 기록">';
+        
+        // 더보기 표시 (6개 초과 시)
+        if (remainingCount > 0) {
+            indicatorsHTML += `
+                <div class="travel-log-more-badge" 
+                     title="${remainingCount}개 더 보기"
+                     role="button"
+                     tabindex="0"
+                     aria-label="${remainingCount}개 더 보기">
+                    +${remainingCount}
+                </div>
+            `;
+        }
+        
+        // 바 형태로 일정 표시
+        displayLogs.forEach((log, index) => {
+            const countryInfo = getCountryInfo(log.country, this.dataManager.getCountriesManager());
+            const countryName = countryInfo ? countryInfo.nameKo : log.country;
+            const continent = continentColorManager.getContinent(log.country);
+            const barColor = continentColorManager.getCountryColor(log.country, this.isDarkMode);
+            
+            // 여행 기간 상태에 따른 클래스
+            let statusClass = '';
+            if (log.isStartDay) statusClass = 'start-day';
+            else if (log.isEndDay) statusClass = 'end-day';
+            else if (log.isMiddleDay) statusClass = 'middle-day';
+            
+            // 툴팁 텍스트 생성
+            const tooltipText = generateTooltipText(log, countryName);
+            
+            indicatorsHTML += `
+                <div class="travel-log-bar ${statusClass}" 
+                     data-country="${log.country || 'unknown'}"
+                     data-log-id="${log.id || ''}"
+                     data-day-of-trip="${log.dayOfTrip || 1}"
+                     data-total-days="${log.totalDays || 1}"
+                     data-continent="${continent}"
+                     style="--bar-color: ${barColor};"
+                     title="${tooltipText}"
+                     role="button"
+                     tabindex="0"
+                     aria-label="${tooltipText}">
+                    <div class="bar-content">
+                        <span class="bar-text">${countryName}</span>
+                        ${log.isStartDay ? '<span class="start-indicator" aria-hidden="true">●</span>' : ''}
+                        ${log.isEndDay ? '<span class="end-indicator" aria-hidden="true">●</span>' : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        indicatorsHTML += '</div>';
+        return indicatorsHTML;
+    }
+
+    /**
+     * 레거시 여행 로그 표시기 렌더링 (기존 도트 시스템)
+     * @param {Array} travelLogs - 해당 날짜의 여행 로그 배열
+     */
+    renderTravelLogIndicatorsLegacy(travelLogs) {
         if (!travelLogs || travelLogs.length === 0) return '';
         
         // 최대 3개까지만 표시 (나머지는 +N 형태)
@@ -458,6 +532,32 @@ export class CalendarRenderer {
     }
 
     /**
+     * 다크모드 상태 업데이트
+     */
+    updateDarkModeState() {
+        this.isDarkMode = document.documentElement.classList.contains('dark') || 
+                         document.body.classList.contains('dark');
+    }
+
+    /**
+     * 바 형태 시스템 사용 여부 설정
+     * @param {boolean} useBarSystem - 바 형태 시스템 사용 여부
+     */
+    setBarSystem(useBarSystem) {
+        this.useBarSystem = useBarSystem;
+        // 캐시 무효화하여 새로운 시스템으로 다시 렌더링
+        this.clearCache();
+    }
+
+    /**
+     * 현재 사용 중인 시스템 반환
+     * @returns {string} 'bar' | 'legacy'
+     */
+    getCurrentSystem() {
+        return this.useBarSystem ? 'bar' : 'legacy';
+    }
+
+    /**
      * 캐시 정리
      */
     clearCache() {
@@ -483,5 +583,110 @@ export class CalendarRenderer {
         }
         
         // 캐시 정리 로그 제거 (성능 최적화)
+    }
+
+    /**
+     * 바 형태 렌더링 성능 최적화
+     * @param {Array} travelLogs - 여행 로그 배열
+     * @returns {string} 최적화된 HTML
+     */
+    renderTravelLogIndicatorsOptimized(travelLogs) {
+        if (!travelLogs || travelLogs.length === 0) return '';
+        
+        // 다크모드 상태 확인 (캐시된 값 사용)
+        if (!this.isDarkMode) {
+            this.updateDarkModeState();
+        }
+        
+        // 최대 6개까지 표시 (한 줄에 3개씩, 2줄)
+        const maxDisplay = 6;
+        const displayLogs = travelLogs.slice(0, maxDisplay);
+        const remainingCount = travelLogs.length - maxDisplay;
+        
+        // DocumentFragment 사용으로 DOM 조작 최소화
+        const fragment = document.createDocumentFragment();
+        const container = document.createElement('div');
+        container.className = 'travel-log-bars';
+        container.setAttribute('role', 'group');
+        container.setAttribute('aria-label', '여행 기록');
+        
+        // 더보기 배지 (6개 초과 시)
+        if (remainingCount > 0) {
+            const moreBadge = document.createElement('div');
+            moreBadge.className = 'travel-log-more-badge';
+            moreBadge.title = `${remainingCount}개 더 보기`;
+            moreBadge.setAttribute('role', 'button');
+            moreBadge.setAttribute('tabindex', '0');
+            moreBadge.setAttribute('aria-label', `${remainingCount}개 더 보기`);
+            moreBadge.textContent = `+${remainingCount}`;
+            moreBadge.style.position = 'absolute';
+            moreBadge.style.top = '-8px';
+            moreBadge.style.right = '2px';
+            moreBadge.style.zIndex = '3';
+            container.appendChild(moreBadge);
+        }
+        
+        // 바 형태로 일정 표시 (배치 처리)
+        displayLogs.forEach((log, index) => {
+            const countryInfo = getCountryInfo(log.country, this.dataManager.getCountriesManager());
+            const countryName = countryInfo ? countryInfo.nameKo : log.country;
+            const continent = continentColorManager.getContinent(log.country);
+            const barColor = continentColorManager.getCountryColor(log.country, this.isDarkMode);
+            
+            // 여행 기간 상태에 따른 클래스
+            let statusClass = '';
+            if (log.isStartDay) statusClass = 'start-day';
+            else if (log.isEndDay) statusClass = 'end-day';
+            else if (log.isMiddleDay) statusClass = 'middle-day';
+            
+            // 툴팁 텍스트 생성
+            const tooltipText = generateTooltipText(log, countryName);
+            
+            const bar = document.createElement('div');
+            bar.className = `travel-log-bar ${statusClass}`;
+            bar.setAttribute('data-country', log.country || 'unknown');
+            bar.setAttribute('data-log-id', log.id || '');
+            bar.setAttribute('data-day-of-trip', log.dayOfTrip || 1);
+            bar.setAttribute('data-total-days', log.totalDays || 1);
+            bar.setAttribute('data-continent', continent);
+            bar.style.setProperty('--bar-color', barColor);
+            bar.title = tooltipText;
+            bar.setAttribute('role', 'button');
+            bar.setAttribute('tabindex', '0');
+            bar.setAttribute('aria-label', tooltipText);
+            
+            const barContent = document.createElement('div');
+            barContent.className = 'bar-content';
+            
+            const barText = document.createElement('span');
+            barText.className = 'bar-text';
+            barText.textContent = countryName;
+            barContent.appendChild(barText);
+            
+            // 시작일/종료일 표시기
+            if (log.isStartDay) {
+                const startIndicator = document.createElement('span');
+                startIndicator.className = 'start-indicator';
+                startIndicator.setAttribute('aria-hidden', 'true');
+                startIndicator.textContent = '●';
+                barContent.appendChild(startIndicator);
+            }
+            
+            if (log.isEndDay) {
+                const endIndicator = document.createElement('span');
+                endIndicator.className = 'end-indicator';
+                endIndicator.setAttribute('aria-hidden', 'true');
+                endIndicator.textContent = '●';
+                barContent.appendChild(endIndicator);
+            }
+            
+            bar.appendChild(barContent);
+            container.appendChild(bar);
+        });
+        
+        fragment.appendChild(container);
+        
+        // HTML 문자열로 변환하여 반환
+        return container.outerHTML;
     }
 }
