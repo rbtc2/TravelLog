@@ -835,12 +835,21 @@ class MyLogsController {
                 const changeValue = current - previous;
                 const changePercent = Math.round((changeValue / previous) * 100);
                 
+                // 평균 별점은 소수점 한 자리까지만 표시
+                const formatChangeValue = (value) => {
+                    if (metric === 'averageRating') {
+                        return value > 0 ? `+${value.toFixed(1)}` : value.toFixed(1);
+                    } else {
+                        return value > 0 ? `+${value}개` : `${value}개`;
+                    }
+                };
+                
                 if (changeValue > 0) {
                     changes[metric] = {
                         type: 'positive',
                         value: changeValue,
                         percent: changePercent,
-                        display: `+${changeValue}개`,
+                        display: formatChangeValue(changeValue),
                         displayPercent: `+${changePercent}%`,
                         color: 'green'
                     };
@@ -849,7 +858,7 @@ class MyLogsController {
                         type: 'negative',
                         value: changeValue,
                         percent: changePercent,
-                        display: `${changeValue}개`,
+                        display: formatChangeValue(changeValue),
                         displayPercent: `${changePercent}%`,
                         color: 'red'
                     };
@@ -858,7 +867,7 @@ class MyLogsController {
                         type: 'neutral',
                         value: 0,
                         percent: 0,
-                        display: '0개',
+                        display: metric === 'averageRating' ? '0.0' : '0개',
                         displayPercent: '0%',
                         color: 'gray'
                     };
@@ -905,6 +914,49 @@ class MyLogsController {
         });
         
         return changes;
+    }
+
+    /**
+     * 사용 가능한 연도 목록을 반환합니다
+     * @returns {Array} 연도 목록 (최신순)
+     */
+    getAvailableYears() {
+        try {
+            const logs = this.getAllLogs();
+            if (!logs || logs.length === 0) {
+                // 데이터가 없으면 현재 연도만 반환
+                const currentYear = new Date().getFullYear();
+                return [currentYear.toString()];
+            }
+
+            // 로그에서 연도 추출
+            const years = new Set();
+            logs.forEach(log => {
+                if (log.startDate) {
+                    const year = new Date(log.startDate).getFullYear();
+                    if (!isNaN(year)) {
+                        years.add(year);
+                    }
+                }
+            });
+
+            // 연도 배열로 변환하고 최신순 정렬
+            const yearArray = Array.from(years).sort((a, b) => b - a);
+            
+            // 현재 연도가 없으면 추가 (중복 방지)
+            const currentYear = new Date().getFullYear();
+            if (!yearArray.includes(currentYear)) {
+                yearArray.unshift(currentYear);
+            }
+
+            // 중복 제거 후 반환
+            return [...new Set(yearArray)];
+
+        } catch (error) {
+            console.error('사용 가능한 연도 목록 조회 중 오류:', error);
+            const currentYear = new Date().getFullYear();
+            return [currentYear.toString()];
+        }
     }
 
     /**

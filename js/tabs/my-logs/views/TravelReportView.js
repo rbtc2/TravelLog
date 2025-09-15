@@ -158,12 +158,9 @@ class TravelReportView {
                 <div class="hub-section yearly-stats-section">
                     <div class="section-header">
                         <h2 class="section-title">📅 연도별 통계</h2>
-                        <select id="yearly-stats-selector" class="year-selector">
-                            <option value="2024">2024년</option>
-                            <option value="2023">2023년</option>
-                            <option value="2022">2022년</option>
-                            <option value="2021">2021년</option>
-                        </select>
+                        <div class="year-selector-container">
+                            <!-- 연도 선택기가 여기에 동적으로 렌더링됩니다 -->
+                        </div>
                     </div>
                     <div class="yearly-stats-content">
                         <!-- 연도별 통계 카드들이 여기에 동적으로 렌더링됩니다 -->

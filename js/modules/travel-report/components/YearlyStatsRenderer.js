@@ -51,11 +51,47 @@ class YearlyStatsRenderer {
     renderYearlyStats() {
         if (!this.container) return;
 
+        // 연도 선택기 먼저 렌더링
+        this.renderYearSelector();
+        
         const yearlyStats = this.controller.getYearlyStatsAnalysis(this.currentYear);
         this.container.innerHTML = this.generateYearlyStatsHTML(yearlyStats);
         
         // 카운트업 애니메이션 실행
         this.animateCountUp();
+    }
+
+    /**
+     * 연도 선택기를 렌더링합니다
+     */
+    renderYearSelector() {
+        const selectorContainer = document.querySelector('.year-selector-container');
+        if (selectorContainer) {
+            selectorContainer.innerHTML = this.generateYearSelector();
+            // 동적으로 생성된 선택기에 이벤트 바인딩
+            this.rebindYearSelectorEvents();
+        }
+    }
+
+    /**
+     * 연도 선택기를 동적으로 생성합니다
+     */
+    generateYearSelector() {
+        const availableYears = this.controller.getAvailableYears();
+        
+        // 현재 연도가 선택된 상태로 설정 (이미 getAvailableYears에서 현재 연도가 포함됨)
+        this.currentYear = availableYears.includes(this.currentYear) ? this.currentYear : availableYears[0];
+        
+        const options = availableYears.map(year => {
+            const isSelected = year === this.currentYear ? 'selected' : '';
+            return `<option value="${year}" ${isSelected}>${year}년</option>`;
+        }).join('');
+        
+        return `
+            <select id="yearly-stats-selector" class="year-selector">
+                ${options}
+            </select>
+        `;
     }
 
     /**
@@ -194,6 +230,21 @@ class YearlyStatsRenderer {
         // 연도 선택기 변경 - 상위 컨테이너에서 찾기
         const yearSelector = document.querySelector('#yearly-stats-selector');
         if (yearSelector) {
+            this.eventManager.add(yearSelector, 'change', (e) => {
+                this.onYearChange(e.target.value);
+            });
+        }
+    }
+
+    /**
+     * 연도 선택기 이벤트를 다시 바인딩합니다 (동적 생성 후)
+     */
+    rebindYearSelectorEvents() {
+        const yearSelector = document.querySelector('#yearly-stats-selector');
+        if (yearSelector) {
+            // 기존 이벤트 제거
+            this.eventManager.remove(yearSelector, 'change');
+            // 새 이벤트 바인딩
             this.eventManager.add(yearSelector, 'change', (e) => {
                 this.onYearChange(e.target.value);
             });

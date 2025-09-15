@@ -515,6 +515,11 @@
     margin-bottom: var(--spacing-lg);
 }
 
+.year-selector-container {
+    display: flex;
+    align-items: center;
+}
+
 .yearly-stats-section .section-title {
     color: white !important;
     font-size: var(--font-xl);
