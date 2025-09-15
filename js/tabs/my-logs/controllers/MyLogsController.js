@@ -536,10 +536,17 @@ class MyLogsController {
             
             let summary = '';
             if (favoriteCountry) {
-                const countryName = this._getCountryDisplayName(favoriteCountry.country);
-                summary = `${countryName} (${favoriteCountry.visitCount}회 방문, 총 ${favoriteCountry.totalStayDays}일)`;
+                // TOP 3 랭킹 생성
+                const top3Countries = sortedCountries.slice(0, 3);
+                const rankingItems = top3Countries.map((country, index) => {
+                    const countryName = this._getCountryDisplayName(country.country);
+                    const rank = index + 1;
+                    return `${rank}위 ${countryName} (${country.visitCount}회 방문, 총 ${country.totalStayDays}일)`;
+                });
+                
+                summary = rankingItems.join('\n');
             } else {
-                summary = '여행 기록이 없습니다';
+                summary = '아직 여행 기록이 없습니다';
             }
 
             const result = {
@@ -548,6 +555,7 @@ class MyLogsController {
                 countryStats: countryStats,
                 sortedCountries: sortedCountries,
                 favoriteCountry: favoriteCountry,
+                top3Countries: sortedCountries.slice(0, 3),
                 summary: summary
             };
 

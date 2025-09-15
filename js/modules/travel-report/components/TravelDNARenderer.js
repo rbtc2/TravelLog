@@ -61,7 +61,7 @@ class TravelDNARenderer {
     }
 
     /**
-     * 최애 국가 아이템을 업데이트합니다
+     * 최애 국가 아이템을 업데이트합니다 (TOP 3 랭킹)
      * @param {HTMLElement} favoriteCountryItem - 최애 국가 아이템
      */
     updateFavoriteCountry(favoriteCountryItem) {
@@ -72,19 +72,49 @@ class TravelDNARenderer {
             const favoriteCountryValue = favoriteCountryItem.querySelector('.dna-value');
             
             if (favoriteCountryValue) {
-                if (favoriteCountryAnalysis.hasData && favoriteCountryAnalysis.favoriteCountry) {
-                    favoriteCountryValue.textContent = favoriteCountryAnalysis.summary;
+                if (favoriteCountryAnalysis.hasData && favoriteCountryAnalysis.top3Countries) {
+                    // TOP 3 랭킹 HTML 생성
+                    favoriteCountryValue.innerHTML = this.generateTop3RankingHTML(favoriteCountryAnalysis.top3Countries);
                 } else {
-                    favoriteCountryValue.textContent = '아직 여행 기록이 없습니다';
+                    favoriteCountryValue.innerHTML = '<div class="no-data-message">아직 여행 기록이 없습니다</div>';
                 }
             }
         } catch (error) {
             console.error('최애 국가 업데이트 중 오류:', error);
             const favoriteCountryValue = favoriteCountryItem.querySelector('.dna-value');
             if (favoriteCountryValue) {
-                favoriteCountryValue.textContent = '데이터 분석 중 오류가 발생했습니다';
+                favoriteCountryValue.innerHTML = '<div class="error-message">데이터 분석 중 오류가 발생했습니다</div>';
             }
         }
+    }
+
+    /**
+     * TOP 3 랭킹 HTML을 생성합니다
+     * @param {Array} top3Countries - TOP 3 국가 배열
+     * @returns {string} HTML 문자열
+     */
+    generateTop3RankingHTML(top3Countries) {
+        if (!top3Countries || top3Countries.length === 0) {
+            return '<div class="no-data-message">아직 여행 기록이 없습니다</div>';
+        }
+
+        return top3Countries.map((country, index) => {
+            const rank = index + 1;
+            const countryName = this.controller._getCountryDisplayName(country.country);
+            const rankClass = rank === 1 ? 'ranking-item first-place' : 
+                             rank === 2 ? 'ranking-item second-place' : 
+                             'ranking-item third-place';
+            
+            return `
+                <div class="${rankClass}">
+                    <div class="rank-number">${rank}위</div>
+                    <div class="country-info">
+                        <div class="country-name">${countryName}</div>
+                        <div class="country-stats">${country.visitCount}회 방문, 총 ${country.totalStayDays}일</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     /**
