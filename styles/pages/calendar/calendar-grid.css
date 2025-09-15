@@ -187,25 +187,25 @@
     background: var(--gray-200, #4a5568);
 }
 
-/* 여행 로그가 있는 날짜 */
+/* 여행 로그가 있는 날짜 - 미묘한 중성 톤 */
 .calendar-day.has-travel-log {
-    background: linear-gradient(135deg, #fef5e7 0%, #fed7aa 100%);
-    border-left: 4px solid #f59e0b;
+    background: linear-gradient(135deg, #fafbff 0%, #f8fafc 100%);
+    border-left: 2px solid #e2e8f0;
 }
 
 .calendar-day.has-travel-log:hover {
-    background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
 }
 
-/* 다크모드 여행 로그가 있는 날짜 */
+/* 다크모드 여행 로그가 있는 날짜 - 미묘한 중성 톤 */
 .dark .calendar-day.has-travel-log {
-    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-    border-left: 4px solid #f59e0b;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    border-left: 2px solid #4a5568;
     color: var(--text-primary, #f7fafc);
 }
 
 .dark .calendar-day.has-travel-log:hover {
-    background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
 }
 
 /* 날짜 번호 */
