@@ -497,7 +497,203 @@ class MyLogsController {
     invalidateCache() {
         this._purposeAnalysisCache = null;
         this._basicStatsCache = null;
+        this._favoriteCountryCache = null;
         this._lastDataHash = null;
+    }
+
+    /**
+     * 최애 국가 분석을 수행합니다
+     * @returns {Object} 최애 국가 분석 결과
+     */
+    getFavoriteCountryAnalysis() {
+        try {
+            const currentDataHash = this._calculateDataHash();
+            if (this._favoriteCountryCache && this._lastDataHash === currentDataHash) {
+                return this._favoriteCountryCache;
+            }
+
+            const logs = this.getAllLogs();
+            if (!logs || logs.length === 0) {
+                const result = {
+                    hasData: false,
+                    totalLogs: 0,
+                    countryStats: [],
+                    favoriteCountry: null,
+                    summary: '아직 여행 기록이 없습니다'
+                };
+                this._favoriteCountryCache = result;
+                this._lastDataHash = currentDataHash;
+                return result;
+            }
+
+            // 국가별 통계 계산
+            const countryStats = this._calculateCountryStats(logs);
+            
+            // 5단계 우선순위로 정렬
+            const sortedCountries = this._sortCountriesByPriority(countryStats);
+            
+            const favoriteCountry = sortedCountries.length > 0 ? sortedCountries[0] : null;
+            
+            let summary = '';
+            if (favoriteCountry) {
+                const countryName = this._getCountryDisplayName(favoriteCountry.country);
+                summary = `${countryName} (${favoriteCountry.visitCount}회 방문, 총 ${favoriteCountry.totalStayDays}일)`;
+            } else {
+                summary = '여행 기록이 없습니다';
+            }
+
+            const result = {
+                hasData: true,
+                totalLogs: logs.length,
+                countryStats: countryStats,
+                sortedCountries: sortedCountries,
+                favoriteCountry: favoriteCountry,
+                summary: summary
+            };
+
+            this._favoriteCountryCache = result;
+            this._lastDataHash = currentDataHash;
+            return result;
+
+        } catch (error) {
+            console.error('최애 국가 분석 중 오류:', error);
+            return {
+                hasData: false,
+                totalLogs: 0,
+                countryStats: [],
+                favoriteCountry: null,
+                summary: '데이터 분석 중 오류가 발생했습니다'
+            };
+        }
+    }
+
+    /**
+     * 국가별 통계를 계산합니다
+     * @param {Array} logs - 여행 로그 배열
+     * @returns {Array} 국가별 통계 배열
+     */
+    _calculateCountryStats(logs) {
+        const countryMap = new Map();
+
+        logs.forEach(log => {
+            if (!log.country) return;
+
+            const country = log.country;
+            const startDate = new Date(log.startDate);
+            const endDate = new Date(log.endDate);
+            const rating = parseFloat(log.rating) || 0;
+
+            // 유효한 날짜인지 확인
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return;
+
+            // 체류 일수 계산 (시작일과 종료일 포함)
+            const stayDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+            if (!countryMap.has(country)) {
+                countryMap.set(country, {
+                    country: country,
+                    visitCount: 0,
+                    totalStayDays: 0,
+                    totalRating: 0,
+                    ratingCount: 0,
+                    averageRating: 0,
+                    lastVisitDate: null,
+                    visits: []
+                });
+            }
+
+            const stats = countryMap.get(country);
+            stats.visitCount += 1;
+            stats.totalStayDays += stayDays;
+            stats.totalRating += rating;
+            stats.ratingCount += 1;
+            stats.averageRating = stats.totalRating / stats.ratingCount;
+            
+            // 최근 방문일 업데이트
+            if (!stats.lastVisitDate || startDate > stats.lastVisitDate) {
+                stats.lastVisitDate = startDate;
+            }
+
+            stats.visits.push({
+                startDate: startDate,
+                endDate: endDate,
+                stayDays: stayDays,
+                rating: rating
+            });
+        });
+
+        return Array.from(countryMap.values());
+    }
+
+    /**
+     * 5단계 우선순위로 국가를 정렬합니다
+     * @param {Array} countryStats - 국가별 통계 배열
+     * @returns {Array} 정렬된 국가 배열
+     */
+    _sortCountriesByPriority(countryStats) {
+        return countryStats.sort((a, b) => {
+            // 1단계: 방문 횟수 (내림차순)
+            if (a.visitCount !== b.visitCount) {
+                return b.visitCount - a.visitCount;
+            }
+
+            // 2단계: 총 체류 일수 (내림차순)
+            if (a.totalStayDays !== b.totalStayDays) {
+                return b.totalStayDays - a.totalStayDays;
+            }
+
+            // 3단계: 평균 별점 (내림차순)
+            if (a.averageRating !== b.averageRating) {
+                return b.averageRating - a.averageRating;
+            }
+
+            // 4단계: 최근 방문일 (내림차순)
+            if (a.lastVisitDate && b.lastVisitDate) {
+                if (a.lastVisitDate.getTime() !== b.lastVisitDate.getTime()) {
+                    return b.lastVisitDate - a.lastVisitDate;
+                }
+            } else if (a.lastVisitDate && !b.lastVisitDate) {
+                return -1;
+            } else if (!a.lastVisitDate && b.lastVisitDate) {
+                return 1;
+            }
+
+            // 5단계: 국가명 가나다순 (오름차순)
+            return a.country.localeCompare(b.country, 'ko-KR');
+        });
+    }
+
+    /**
+     * 국가 코드를 표시명으로 변환합니다
+     * @param {string} countryCode - 국가 코드
+     * @returns {string} 국가 표시명
+     */
+    _getCountryDisplayName(countryCode) {
+        // 국가 코드 매핑 (필요에 따라 확장)
+        const countryNames = {
+            'JP': '일본',
+            'KR': '한국',
+            'US': '미국',
+            'GB': '영국',
+            'FR': '프랑스',
+            'DE': '독일',
+            'IT': '이탈리아',
+            'ES': '스페인',
+            'CN': '중국',
+            'TH': '태국',
+            'SG': '싱가포르',
+            'AU': '호주',
+            'CA': '캐나다',
+            'BR': '브라질',
+            'IN': '인도',
+            'RU': '러시아',
+            'MX': '멕시코',
+            'ID': '인도네시아',
+            'TR': '터키',
+            'EG': '이집트'
+        };
+
+        return countryNames[countryCode] || countryCode;
     }
 
     /**

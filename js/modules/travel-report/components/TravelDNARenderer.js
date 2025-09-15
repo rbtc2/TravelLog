@@ -53,17 +53,54 @@ class TravelDNARenderer {
     updateDNAItems(container, purposeAnalysis) {
         const dnaItems = container.querySelectorAll('.dna-item');
         
-        // 주요 목적 아이템 찾기 (4번째 아이템)
-        const purposeItem = dnaItems[3]; // 0: 최애 국가, 1: 베이스캠프, 2: 여행 스타일, 3: 주요 목적
+        // 최애 국가 아이템 업데이트 (1번째 아이템)
+        this.updateFavoriteCountry(dnaItems[0]);
         
-        if (purposeItem) {
-            const purposeValue = purposeItem.querySelector('.dna-value');
-            if (purposeValue) {
-                if (purposeAnalysis.hasData) {
-                    purposeValue.textContent = purposeAnalysis.summary;
+        // 주요 목적 아이템 업데이트 (4번째 아이템)
+        this.updateMainPurpose(dnaItems[3], purposeAnalysis);
+    }
+
+    /**
+     * 최애 국가 아이템을 업데이트합니다
+     * @param {HTMLElement} favoriteCountryItem - 최애 국가 아이템
+     */
+    updateFavoriteCountry(favoriteCountryItem) {
+        if (!favoriteCountryItem) return;
+
+        try {
+            const favoriteCountryAnalysis = this.controller.getFavoriteCountryAnalysis();
+            const favoriteCountryValue = favoriteCountryItem.querySelector('.dna-value');
+            
+            if (favoriteCountryValue) {
+                if (favoriteCountryAnalysis.hasData && favoriteCountryAnalysis.favoriteCountry) {
+                    favoriteCountryValue.textContent = favoriteCountryAnalysis.summary;
                 } else {
-                    purposeValue.textContent = '아직 여행 기록이 없습니다';
+                    favoriteCountryValue.textContent = '아직 여행 기록이 없습니다';
                 }
+            }
+        } catch (error) {
+            console.error('최애 국가 업데이트 중 오류:', error);
+            const favoriteCountryValue = favoriteCountryItem.querySelector('.dna-value');
+            if (favoriteCountryValue) {
+                favoriteCountryValue.textContent = '데이터 분석 중 오류가 발생했습니다';
+            }
+        }
+    }
+
+    /**
+     * 주요 목적 아이템을 업데이트합니다
+     * @param {HTMLElement} purposeItem - 주요 목적 아이템
+     * @param {Object} purposeAnalysis - 목적 분석 데이터
+     */
+    updateMainPurpose(purposeItem, purposeAnalysis) {
+        if (!purposeItem) return;
+
+        const purposeValue = purposeItem.querySelector('.dna-value');
+        if (purposeValue) {
+            if (purposeAnalysis.hasData) {
+                purposeValue.textContent = purposeAnalysis.summary;
+            } else {
+                purposeValue.textContent = '아직 여행 기록이 없습니다';
             }
         }
     }

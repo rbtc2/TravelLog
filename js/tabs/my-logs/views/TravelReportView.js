@@ -85,7 +85,7 @@ class TravelReportView {
                         <div class="dna-item">
                             <div class="dna-icon">🏆</div>
                             <div class="dna-details">
-                                <div class="dna-label">최애 국가</div>
+                                <div class="dna-label">주요 방문국</div>
                                 <div class="dna-value">일본 (5회 방문, 총 47일)</div>
                             </div>
                         </div>
