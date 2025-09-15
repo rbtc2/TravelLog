@@ -495,3 +495,271 @@
         font-size: var(--font-sm);
     }
 }
+
+/* ===== 연도별 통계 섹션 스타일 ===== */
+
+/* 연도별 통계 섹션 */
+.yearly-stats-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    margin: var(--spacing-md) 0;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.yearly-stats-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.yearly-stats-section .section-title {
+    color: white !important;
+    font-size: var(--font-xl);
+    font-weight: var(--font-bold);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.year-selector {
+    background: rgba(255, 255, 255, 0.9);
+    color: #667eea;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 120px;
+}
+
+.year-selector:hover {
+    background: white;
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.year-selector:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    transform: none; /* 포커스 시에도 transform 방지 */
+}
+
+.year-selector:active {
+    transform: none; /* 클릭 시에도 transform 방지 */
+}
+
+/* 연도별 통계 그리드 */
+.yearly-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+/* 연도별 통계 카드 */
+.yearly-stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    color: #2d3748;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all var(--transition-normal);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 120px;
+    position: relative;
+    overflow: hidden;
+}
+
+.yearly-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.yearly-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 1);
+}
+
+/* 통계 아이콘 */
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+    display: block;
+    line-height: 1;
+}
+
+/* 통계 내용 */
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+}
+
+.stat-label {
+    font-size: var(--font-sm);
+    color: #718096;
+    font-weight: var(--font-medium);
+    line-height: 1.2;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: var(--font-bold);
+    color: #2d3748;
+    line-height: 1.2;
+    margin: var(--spacing-xs) 0;
+}
+
+.stat-change {
+    font-size: var(--font-xs);
+    font-weight: var(--font-semibold);
+    padding: 4px 8px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
+}
+
+.stat-change.positive {
+    background: rgba(56, 161, 105, 0.1);
+    color: #38a169;
+    border: 1px solid rgba(56, 161, 105, 0.2);
+}
+
+.stat-change.negative {
+    background: rgba(229, 62, 62, 0.1);
+    color: #e53e3e;
+    border: 1px solid rgba(229, 62, 62, 0.2);
+}
+
+.stat-change.neutral {
+    background: rgba(113, 128, 150, 0.1);
+    color: #718096;
+    border: 1px solid rgba(113, 128, 150, 0.2);
+}
+
+.stat-change.first {
+    background: rgba(66, 153, 225, 0.1);
+    color: #4299e1;
+    border: 1px solid rgba(66, 153, 225, 0.2);
+}
+
+/* 연도별 통계 에러 상태 */
+.yearly-stats-error {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.yearly-stats-error .error-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.yearly-stats-error .error-message {
+    font-size: var(--font-base);
+}
+
+/* 연도별 통계 반응형 */
+@media (max-width: 768px) {
+    .yearly-stats-section {
+        padding: var(--spacing-md);
+        margin: var(--spacing-sm) 0;
+    }
+    
+    .yearly-stats-section .section-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: stretch;
+    }
+    
+    .yearly-stats-section .section-title {
+        font-size: var(--font-lg);
+        text-align: center;
+    }
+    
+    .year-selector {
+        align-self: center;
+        min-width: 100px;
+    }
+    
+    .yearly-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    .yearly-stat-card {
+        padding: var(--spacing-md);
+        min-height: 100px;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: var(--font-xs);
+    }
+    
+    .stat-change {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .yearly-stats-section {
+        padding: var(--spacing-xl);
+        margin: var(--spacing-lg) 0;
+    }
+    
+    .yearly-stats-grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: var(--spacing-lg);
+    }
+    
+    .yearly-stat-card {
+        padding: var(--spacing-xl);
+        min-height: 140px;
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+    }
+    
+    .stat-label {
+        font-size: var(--font-base);
+    }
+    
+    .stat-change {
+        font-size: var(--font-sm);
+        padding: 6px 12px;
+    }
+}

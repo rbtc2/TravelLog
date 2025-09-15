@@ -706,6 +706,208 @@ class MyLogsController {
     }
 
     /**
+     * 연도별 통계 분석을 수행합니다
+     * @param {string} year - 분석할 연도
+     * @returns {Object} 연도별 통계 분석 결과
+     */
+    getYearlyStatsAnalysis(year) {
+        try {
+            const currentYear = parseInt(year);
+            const previousYear = currentYear - 1;
+            
+            // 현재 연도 데이터
+            const currentYearData = this.getTravelDataByYear(currentYear.toString());
+            const previousYearData = this.getTravelDataByYear(previousYear.toString());
+            
+            // 현재 연도 통계 계산
+            const currentStats = this._calculateYearlyStats(currentYearData);
+            
+            // 전년도 통계 계산
+            const previousStats = this._calculateYearlyStats(previousYearData);
+            
+            // 증감률 계산
+            const changes = this._calculateYearlyChanges(currentStats, previousStats);
+            
+            const result = {
+                year: currentYear,
+                hasData: currentStats.totalTrips > 0,
+                currentStats: currentStats,
+                previousStats: previousStats,
+                changes: changes,
+                isFirstYear: previousStats.totalTrips === 0
+            };
+
+            return result;
+
+        } catch (error) {
+            console.error('연도별 통계 분석 중 오류:', error);
+            return {
+                year: parseInt(year),
+                hasData: false,
+                currentStats: this._getEmptyYearlyStats(),
+                previousStats: this._getEmptyYearlyStats(),
+                changes: this._getEmptyChanges(),
+                isFirstYear: true
+            };
+        }
+    }
+
+    /**
+     * 연도별 통계를 계산합니다
+     * @param {Object} yearData - 연도별 데이터
+     * @returns {Object} 연도별 통계
+     */
+    _calculateYearlyStats(yearData) {
+        if (!yearData || !yearData.logs || yearData.logs.length === 0) {
+            return this._getEmptyYearlyStats();
+        }
+
+        const logs = yearData.logs;
+        
+        // 고유 국가 및 도시 계산
+        const uniqueCountries = new Set();
+        const uniqueCities = new Set();
+        
+        let totalTravelDays = 0;
+        let totalRating = 0;
+        let validRatingCount = 0;
+
+        logs.forEach(log => {
+            if (log.country) uniqueCountries.add(log.country);
+            if (log.city) uniqueCities.add(log.city);
+            
+            // 체류 일수 계산
+            const startDate = new Date(log.startDate);
+            const endDate = new Date(log.endDate);
+            if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+                const stayDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                totalTravelDays += stayDays;
+            }
+            
+            // 별점 계산
+            const rating = parseFloat(log.rating);
+            if (rating > 0) {
+                totalRating += rating;
+                validRatingCount++;
+            }
+        });
+
+        const averageTravelDays = logs.length > 0 ? Math.round(totalTravelDays / logs.length * 10) / 10 : 0;
+        const averageRating = validRatingCount > 0 ? Math.round(totalRating / validRatingCount * 10) / 10 : 0;
+
+        return {
+            totalTrips: logs.length,
+            uniqueCountries: uniqueCountries.size,
+            uniqueCities: uniqueCities.size,
+            totalTravelDays: totalTravelDays,
+            averageTravelDays: averageTravelDays,
+            averageRating: averageRating
+        };
+    }
+
+    /**
+     * 연도별 증감률을 계산합니다
+     * @param {Object} currentStats - 현재 연도 통계
+     * @param {Object} previousStats - 전년도 통계
+     * @returns {Object} 증감률 정보
+     */
+    _calculateYearlyChanges(currentStats, previousStats) {
+        const changes = {};
+        
+        // 각 지표별 증감률 계산
+        const metrics = [
+            'totalTrips', 'uniqueCountries', 'uniqueCities', 
+            'totalTravelDays', 'averageTravelDays', 'averageRating'
+        ];
+        
+        metrics.forEach(metric => {
+            const current = currentStats[metric];
+            const previous = previousStats[metric];
+            
+            if (previous === 0) {
+                changes[metric] = {
+                    type: 'first',
+                    value: 0,
+                    display: '첫 해 기록',
+                    color: 'blue'
+                };
+            } else {
+                const changeValue = current - previous;
+                const changePercent = Math.round((changeValue / previous) * 100);
+                
+                if (changeValue > 0) {
+                    changes[metric] = {
+                        type: 'positive',
+                        value: changeValue,
+                        percent: changePercent,
+                        display: `+${changeValue}개`,
+                        displayPercent: `+${changePercent}%`,
+                        color: 'green'
+                    };
+                } else if (changeValue < 0) {
+                    changes[metric] = {
+                        type: 'negative',
+                        value: changeValue,
+                        percent: changePercent,
+                        display: `${changeValue}개`,
+                        displayPercent: `${changePercent}%`,
+                        color: 'red'
+                    };
+                } else {
+                    changes[metric] = {
+                        type: 'neutral',
+                        value: 0,
+                        percent: 0,
+                        display: '0개',
+                        displayPercent: '0%',
+                        color: 'gray'
+                    };
+                }
+            }
+        });
+        
+        return changes;
+    }
+
+    /**
+     * 빈 연도별 통계를 반환합니다
+     * @returns {Object} 빈 통계 객체
+     */
+    _getEmptyYearlyStats() {
+        return {
+            totalTrips: 0,
+            uniqueCountries: 0,
+            uniqueCities: 0,
+            totalTravelDays: 0,
+            averageTravelDays: 0,
+            averageRating: 0
+        };
+    }
+
+    /**
+     * 빈 증감률 정보를 반환합니다
+     * @returns {Object} 빈 증감률 객체
+     */
+    _getEmptyChanges() {
+        const changes = {};
+        const metrics = [
+            'totalTrips', 'uniqueCountries', 'uniqueCities', 
+            'totalTravelDays', 'averageTravelDays', 'averageRating'
+        ];
+        
+        metrics.forEach(metric => {
+            changes[metric] = {
+                type: 'first',
+                value: 0,
+                display: '첫 해 기록',
+                color: 'blue'
+            };
+        });
+        
+        return changes;
+    }
+
+    /**
      * 컨트롤러 정리
      */
     cleanup() {

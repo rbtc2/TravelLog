@@ -14,6 +14,7 @@ import { TravelDNARenderer } from '../../../modules/travel-report/components/Tra
 import { HeatmapRenderer } from '../../../modules/travel-report/components/HeatmapRenderer.js';
 import { ChartRenderer } from '../../../modules/travel-report/components/ChartRenderer.js';
 import { InsightsRenderer } from '../../../modules/travel-report/components/InsightsRenderer.js';
+import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js';
 
 class TravelReportView {
     constructor(controller) {
@@ -27,6 +28,7 @@ class TravelReportView {
         this.heatmapRenderer = new HeatmapRenderer(controller);
         this.chartRenderer = new ChartRenderer(controller);
         this.insightsRenderer = new InsightsRenderer(controller);
+        this.yearlyStatsRenderer = new YearlyStatsRenderer(controller);
     }
 
     /**
@@ -48,6 +50,8 @@ class TravelReportView {
         console.log('TravelReportView: 차트 렌더링 완료');
         this.renderInsights();
         console.log('TravelReportView: 인사이트 렌더링 완료');
+        this.renderYearlyStats();
+        console.log('TravelReportView: 연도별 통계 렌더링 완료');
         this.bindEvents();
         console.log('TravelReportView: 이벤트 바인딩 완료');
     }
@@ -147,6 +151,22 @@ class TravelReportView {
                                 <div class="dna-value">여행 70%, 출장 30%</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- 연도별 통계 섹션 -->
+                <div class="hub-section yearly-stats-section">
+                    <div class="section-header">
+                        <h2 class="section-title">📅 연도별 통계</h2>
+                        <select id="yearly-stats-selector" class="year-selector">
+                            <option value="2024">2024년</option>
+                            <option value="2023">2023년</option>
+                            <option value="2022">2022년</option>
+                            <option value="2021">2021년</option>
+                        </select>
+                    </div>
+                    <div class="yearly-stats-content">
+                        <!-- 연도별 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
                     </div>
                 </div>
                 
@@ -336,6 +356,18 @@ class TravelReportView {
         }
     }
 
+    /**
+     * 연도별 통계 섹션을 렌더링합니다
+     */
+    renderYearlyStats() {
+        const yearlyStatsContent = document.querySelector('.yearly-stats-content');
+        if (yearlyStatsContent) {
+            this.yearlyStatsRenderer.render(yearlyStatsContent);
+        } else {
+            console.warn('연도별 통계 컨텐츠를 찾을 수 없습니다.');
+        }
+    }
+
 
     /**
      * 트래블 레포트 화면의 이벤트를 바인딩합니다
@@ -454,6 +486,9 @@ class TravelReportView {
         }
         if (this.insightsRenderer) {
             this.insightsRenderer.cleanup();
+        }
+        if (this.yearlyStatsRenderer) {
+            this.yearlyStatsRenderer.cleanup();
         }
         
         if (this.eventManager) {
