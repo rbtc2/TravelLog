@@ -536,12 +536,13 @@ class MyLogsController {
             
             let summary = '';
             if (favoriteCountry) {
-                // TOP 3 랭킹 생성
+                // TOP 3 랭킹 생성 (평균 별점 포함)
                 const top3Countries = sortedCountries.slice(0, 3);
                 const rankingItems = top3Countries.map((country, index) => {
                     const countryName = this._getCountryDisplayName(country.country);
                     const rank = index + 1;
-                    return `${rank}위 ${countryName} (${country.visitCount}회 방문, 총 ${country.totalStayDays}일)`;
+                    const avgRating = country.averageRating > 0 ? country.averageRating.toFixed(1) : 'N/A';
+                    return `${rank}위 ${countryName} (${country.visitCount}회 방문, 총 ${country.totalStayDays}일, ⭐${avgRating})`;
                 });
                 
                 summary = rankingItems.join('\n');

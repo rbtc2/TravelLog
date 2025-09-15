@@ -93,6 +93,10 @@ class TravelReportView {
                                             <div class="country-name">일본</div>
                                             <div class="country-stats">5회 방문, 총 47일</div>
                                         </div>
+                                        <div class="country-rating">
+                                            <span class="rating-star">⭐</span>
+                                            <span class="rating-value">4.8</span>
+                                        </div>
                                     </div>
                                     <div class="ranking-item second-place">
                                         <div class="rank-number">2위</div>
@@ -100,12 +104,20 @@ class TravelReportView {
                                             <div class="country-name">프랑스</div>
                                             <div class="country-stats">2회 방문, 총 12일</div>
                                         </div>
+                                        <div class="country-rating">
+                                            <span class="rating-star">⭐</span>
+                                            <span class="rating-value">4.5</span>
+                                        </div>
                                     </div>
                                     <div class="ranking-item third-place">
                                         <div class="rank-number">3위</div>
                                         <div class="country-info">
                                             <div class="country-name">이탈리아</div>
                                             <div class="country-stats">1회 방문, 총 8일</div>
+                                        </div>
+                                        <div class="country-rating">
+                                            <span class="rating-star">⭐</span>
+                                            <span class="rating-value">4.2</span>
                                         </div>
                                     </div>
                                 </div>

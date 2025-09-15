@@ -104,6 +104,7 @@ class TravelDNARenderer {
             const rankClass = rank === 1 ? 'ranking-item first-place' : 
                              rank === 2 ? 'ranking-item second-place' : 
                              'ranking-item third-place';
+            const avgRating = country.averageRating > 0 ? country.averageRating.toFixed(1) : 'N/A';
             
             return `
                 <div class="${rankClass}">
@@ -111,6 +112,10 @@ class TravelDNARenderer {
                     <div class="country-info">
                         <div class="country-name">${countryName}</div>
                         <div class="country-stats">${country.visitCount}회 방문, 총 ${country.totalStayDays}일</div>
+                    </div>
+                    <div class="country-rating">
+                        <span class="rating-star">⭐</span>
+                        <span class="rating-value">${avgRating}</span>
                     </div>
                 </div>
             `;
