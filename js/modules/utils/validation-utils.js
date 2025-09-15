@@ -477,6 +477,118 @@ class ValidationUtils {
     static getValidationRules() {
         return { ...this.VALIDATION_RULES };
     }
+
+    /**
+     * 필수 필드인지 확인합니다
+     * @param {*} value - 확인할 값
+     * @returns {boolean} 필수 필드 조건을 만족하는지 여부
+     */
+    static isRequired(value) {
+        try {
+            if (value === null || value === undefined) {
+                return false;
+            }
+            
+            if (typeof value === 'string') {
+                return value.trim().length > 0;
+            }
+            
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            }
+            
+            if (typeof value === 'object') {
+                return Object.keys(value).length > 0;
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('필수 필드 검증 오류:', error);
+            return false;
+        }
+    }
+
+    /**
+     * 날짜가 유효한 범위 내에 있는지 확인합니다
+     * @param {string|Date} date - 확인할 날짜
+     * @returns {boolean} 유효한 날짜 범위인지 여부
+     */
+    static isDateInRange(date) {
+        try {
+            const dateObj = new Date(date);
+            
+            // 유효한 날짜인지 확인
+            if (isNaN(dateObj.getTime())) {
+                return false;
+            }
+            
+            const year = dateObj.getFullYear();
+            const { minYear, maxYear } = this.VALIDATION_RULES.DATE_LIMITS;
+            
+            return year >= minYear && year <= maxYear;
+        } catch (error) {
+            console.error('날짜 범위 검증 오류:', error);
+            return false;
+        }
+    }
+
+    /**
+     * 이메일 주소가 유효한지 확인합니다
+     * @param {string} email - 확인할 이메일 주소
+     * @returns {boolean} 유효한 이메일인지 여부
+     */
+    static isValidEmail(email) {
+        try {
+            if (!email || typeof email !== 'string') {
+                return false;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email.trim());
+        } catch (error) {
+            console.error('이메일 검증 오류:', error);
+            return false;
+        }
+    }
+
+    /**
+     * URL이 유효한지 확인합니다
+     * @param {string} url - 확인할 URL
+     * @returns {boolean} 유효한 URL인지 여부
+     */
+    static isValidUrl(url) {
+        try {
+            if (!url || typeof url !== 'string') {
+                return false;
+            }
+            
+            const urlRegex = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            return urlRegex.test(url.trim());
+        } catch (error) {
+            console.error('URL 검증 오류:', error);
+            return false;
+        }
+    }
+
+    /**
+     * 전화번호가 유효한지 확인합니다 (한국 형식)
+     * @param {string} phone - 확인할 전화번호
+     * @returns {boolean} 유효한 전화번호인지 여부
+     */
+    static isValidPhone(phone) {
+        try {
+            if (!phone || typeof phone !== 'string') {
+                return false;
+            }
+            
+            // 한국 전화번호 형식 (01X-XXXX-XXXX, 02-XXXX-XXXX 등)
+            const phoneRegex = /^0\d{1,2}-\d{3,4}-\d{4}$/;
+            return phoneRegex.test(phone.trim());
+        } catch (error) {
+            console.error('전화번호 검증 오류:', error);
+            return false;
+        }
+    }
 }
 
 export { ValidationUtils };

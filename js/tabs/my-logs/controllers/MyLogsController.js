@@ -520,10 +520,14 @@ class MyLogsController {
                 const changeValue = current - previous;
                 const changePercent = Math.round((changeValue / previous) * 100);
                 
-                // 평균 별점은 소수점 한 자리까지만 표시
+                // 각 지표별 표시 형식 설정
                 const formatChangeValue = (value) => {
                     if (metric === 'averageRating') {
-                        return value > 0 ? `+${value.toFixed(1)}` : value.toFixed(1);
+                        return value > 0 ? `+${value.toFixed(1)}점` : `${value.toFixed(1)}점`;
+                    } else if (metric === 'totalTravelDays' || metric === 'averageTravelDays') {
+                        return value > 0 ? `+${value}일` : `${value}일`;
+                    } else if (metric === 'totalTrips') {
+                        return value > 0 ? `+${value}회` : `${value}회`;
                     } else {
                         return value > 0 ? `+${value}개` : `${value}개`;
                     }
@@ -548,11 +552,21 @@ class MyLogsController {
                         color: 'red'
                     };
                 } else {
+                    // 중립 상태일 때의 표시 형식
+                    let neutralDisplay = '0개';
+                    if (metric === 'averageRating') {
+                        neutralDisplay = '0.0점';
+                    } else if (metric === 'totalTravelDays' || metric === 'averageTravelDays') {
+                        neutralDisplay = '0일';
+                    } else if (metric === 'totalTrips') {
+                        neutralDisplay = '0회';
+                    }
+                    
                     changes[metric] = {
                         type: 'neutral',
                         value: 0,
                         percent: 0,
-                        display: metric === 'averageRating' ? '0.0' : '0개',
+                        display: neutralDisplay,
                         displayPercent: '0%',
                         color: 'gray'
                     };
