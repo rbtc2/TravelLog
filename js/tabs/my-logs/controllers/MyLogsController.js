@@ -284,6 +284,12 @@ class MyLogsController {
         // 새로운 CacheManager를 사용하여 캐시 무효화
         this.cacheManager.invalidatePattern('.*'); // 모든 캐시 무효화
         
+        // 각 서비스의 캐시도 무효화
+        this.yearlyStatsService.invalidateCache();
+        this.basicStatsService.invalidateCache();
+        this.purposeAnalysisService.invalidateCache();
+        this.countryAnalysisService.invalidateCache();
+        
         // 기존 호환성을 위한 속성들도 무효화
         this._purposeAnalysisCache = null;
         this._basicStatsCache = null;

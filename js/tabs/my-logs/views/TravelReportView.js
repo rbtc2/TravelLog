@@ -241,10 +241,7 @@ class TravelReportView {
                             <h3 class="chart-title">일정 히트맵</h3>
                             <div class="chart-controls">
                                 <select class="year-selector" id="heatmap-year-selector">
-                                    <option value="2025" selected>2025년</option>
-                                    <option value="2024">2024년</option>
-                                    <option value="2023">2023년</option>
-                                    <option value="2022">2022년</option>
+                                    <!-- 연도 선택기는 HeatmapRenderer에서 동적으로 생성됩니다 -->
                                 </select>
                             </div>
                         </div>

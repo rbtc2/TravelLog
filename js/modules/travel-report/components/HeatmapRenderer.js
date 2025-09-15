@@ -34,14 +34,46 @@ class HeatmapRenderer {
                 return;
             }
 
-            // 기본 연도(2025년)로 히트맵을 렌더링합니다
-            this.updateHeatmap('2025');
+            // 연도 선택기를 동적으로 생성합니다
+            this.renderYearSelector();
+            
+            // 사용 가능한 연도 중 첫 번째(최신) 연도로 히트맵을 렌더링합니다
+            const availableYears = this.controller.getAvailableYears();
+            const defaultYear = availableYears.length > 0 ? availableYears[0] : '2025';
+            this.updateHeatmap(defaultYear);
             this.bindEvents();
             
             console.log('HeatmapRenderer: 히트맵 렌더링 완료');
         } catch (error) {
             console.error('HeatmapRenderer: 렌더링 중 오류:', error);
             this.renderError(container);
+        }
+    }
+
+    /**
+     * 연도 선택기를 렌더링합니다
+     */
+    renderYearSelector() {
+        try {
+            const yearSelector = document.getElementById('heatmap-year-selector');
+            if (yearSelector) {
+                const availableYears = this.controller.getAvailableYears();
+                
+                // 현재 연도가 유효하지 않거나 목록에 없으면 첫 번째 연도(최신) 선택
+                if (!this.currentYear || !availableYears.includes(this.currentYear)) {
+                    this.currentYear = availableYears[0];
+                }
+                
+                const options = availableYears.map(year => {
+                    const isSelected = year === this.currentYear ? 'selected' : '';
+                    return `<option value="${year}" ${isSelected}>${year}년</option>`;
+                }).join('');
+                
+                yearSelector.innerHTML = options;
+                console.log('HeatmapRenderer: 연도 선택기 업데이트 완료');
+            }
+        } catch (error) {
+            console.error('HeatmapRenderer: 연도 선택기 렌더링 중 오류:', error);
         }
     }
 
