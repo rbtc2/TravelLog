@@ -79,8 +79,10 @@ class YearlyStatsRenderer {
     generateYearSelector() {
         const availableYears = this.controller.getAvailableYears();
         
-        // 현재 연도가 선택된 상태로 설정 (이미 getAvailableYears에서 현재 연도가 포함됨)
-        this.currentYear = availableYears.includes(this.currentYear) ? this.currentYear : availableYears[0];
+        // 현재 연도가 유효하지 않거나 목록에 없으면 첫 번째 연도(최신) 선택
+        if (!this.currentYear || !availableYears.includes(this.currentYear)) {
+            this.currentYear = availableYears[0];
+        }
         
         const options = availableYears.map(year => {
             const isSelected = year === this.currentYear ? 'selected' : '';

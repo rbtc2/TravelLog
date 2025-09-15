@@ -929,24 +929,30 @@ class MyLogsController {
                 return [currentYear.toString()];
             }
 
-            // 로그에서 연도 추출
+            // 로그에서 연도 추출 (문자열로 저장)
             const years = new Set();
             logs.forEach(log => {
                 if (log.startDate) {
                     const year = new Date(log.startDate).getFullYear();
                     if (!isNaN(year)) {
-                        years.add(year);
+                        years.add(year.toString()); // 문자열로 저장
                     }
                 }
             });
 
             // 연도 배열로 변환하고 최신순 정렬
-            const yearArray = Array.from(years).sort((a, b) => b - a);
+            const yearArray = Array.from(years)
+                .map(year => parseInt(year)) // 숫자로 변환하여 정렬
+                .sort((a, b) => b - a) // 내림차순 정렬
+                .map(year => year.toString()); // 다시 문자열로 변환
             
-            // 현재 연도가 없으면 추가 (중복 방지)
+            // 현재 연도 확인
             const currentYear = new Date().getFullYear();
-            if (!yearArray.includes(currentYear)) {
-                yearArray.unshift(currentYear);
+            const currentYearStr = currentYear.toString();
+            
+            // 현재 연도가 없으면 추가 (실제로 없는 경우만)
+            if (!yearArray.includes(currentYearStr)) {
+                yearArray.unshift(currentYearStr);
             }
 
             // 중복 제거 후 반환
