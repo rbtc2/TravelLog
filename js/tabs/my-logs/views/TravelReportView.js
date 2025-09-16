@@ -335,6 +335,12 @@ class TravelReportView {
                     </div>
                     <div class="exploration-percentage">${stats.progressPercentage}%</div>
                 </div>
+                
+                <!-- 대륙별 컴팩트 요약 -->
+                <div class="continent-summary">
+                    ${this.generateContinentSummaryHTML(stats.continentStats)}
+                </div>
+                
                 <div class="exploration-progress">
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: ${stats.progressPercentage}%"></div>
@@ -342,6 +348,25 @@ class TravelReportView {
                 </div>
             </div>
         `;
+    }
+
+    /**
+     * 대륙별 컴팩트 요약 HTML을 생성합니다
+     * @param {Array} continentStats - 대륙별 통계 배열
+     * @returns {string} HTML 문자열
+     */
+    generateContinentSummaryHTML(continentStats) {
+        if (!continentStats || continentStats.length === 0) {
+            return '<div class="continent-mini">데이터 없음</div>';
+        }
+        
+        return continentStats.map(continent => `
+            <div class="continent-mini" data-continent="${continent.continent}">
+                <span class="continent-emoji">${continent.emoji}</span>
+                <span class="continent-name">${continent.nameKo}</span>
+                <span class="continent-count">${continent.visited}/${continent.total}</span>
+            </div>
+        `).join('');
     }
 
     /**

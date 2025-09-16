@@ -27,16 +27,6 @@ class TravelCollectionView {
         // 실제 데이터는 controller에서 가져옴 (데모 데이터는 fallback용)
         this.visitedCountries = this.generateDemoVisitedCountries();
         
-        // 대륙별 정보
-        this.continents = {
-            'Asia': { nameKo: '아시아', total: 48, visited: 12 },
-            'Europe': { nameKo: '유럽', total: 44, visited: 10 },
-            'North America': { nameKo: '북미', total: 23, visited: 8 },
-            'South America': { nameKo: '남미', total: 12, visited: 3 },
-            'Africa': { nameKo: '아프리카', total: 54, visited: 2 },
-            'Oceania': { nameKo: '오세아니아', total: 14, visited: 2 }
-        };
-        
         // 바인딩
         this.bindMethods();
     }
@@ -133,16 +123,6 @@ class TravelCollectionView {
                     </div>
                 </div>
                 
-                <!-- 대륙별 진행률 -->
-                <div class="hub-section continent-section">
-                    <div class="section-header">
-                        <h2 class="section-title">🌏 대륙별 진행률</h2>
-                    </div>
-                    <div class="continent-grid">
-                        ${this.renderContinentCards()}
-                    </div>
-                </div>
-                
                 <!-- 방문한 국가 필터 -->
                 <div class="hub-section filter-section">
                     <div class="section-header">
@@ -153,10 +133,7 @@ class TravelCollectionView {
                     <div class="filter-controls">
                         <div class="continent-filter">
                             <select id="continent-select" class="continent-select">
-                                <option value="all">모든 대륙</option>
-                                ${Object.entries(this.continents).map(([continent, info]) => 
-                                    `<option value="${continent}">${info.nameKo} (${info.visited}개국)</option>`
-                                ).join('')}
+                                ${this.generateContinentFilterOptions()}
                             </select>
                         </div>
                         
@@ -184,26 +161,34 @@ class TravelCollectionView {
         this.renderCountryGrid();
     }
 
+
     /**
-     * 대륙 카드들 렌더링
+     * 대륙 필터 옵션을 생성합니다
      */
-    renderContinentCards() {
-        return Object.entries(this.continents).map(([continent, info]) => {
-            const percentage = Math.round((info.visited / info.total) * 100);
+    generateContinentFilterOptions() {
+        try {
+            // 컨트롤러에서 대륙별 통계 가져오기
+            const continentStats = this.controller.getContinentStats();
             
+            let options = '<option value="all">모든 대륙</option>';
+            
+            continentStats.forEach(continent => {
+                if (continent.visited > 0) { // 방문한 국가가 있는 대륙만 표시
+                    options += `<option value="${continent.continent}">${continent.emoji} ${continent.nameKo} (${continent.visited}개국)</option>`;
+                }
+            });
+            
+            return options;
+        } catch (error) {
+            console.error('TravelCollectionView: 대륙 필터 옵션 생성 오류:', error);
+            // 기본 옵션 반환
             return `
-                <div class="continent-card" data-continent="${continent}">
-                    <div class="continent-header">
-                        <h4 class="continent-name">${info.nameKo}</h4>
-                        <span class="continent-progress">${info.visited}/${info.total}</span>
-                    </div>
-                    <div class="continent-progress-bar">
-                        <div class="continent-progress-fill" style="width: ${percentage}%"></div>
-                    </div>
-                    <div class="continent-percentage">${percentage}%</div>
-                </div>
+                <option value="all">모든 대륙</option>
+                <option value="Asia">🌏 아시아</option>
+                <option value="Europe">🇪🇺 유럽</option>
+                <option value="North America">🇺🇸 북미</option>
             `;
-        }).join('');
+        }
     }
 
     /**
@@ -238,11 +223,6 @@ class TravelCollectionView {
                 <div class="country-visit-stats">
                     <div class="visit-count-badge">${visitCount}회 방문</div>
                     <div class="last-visit-info">${this.formatLastVisit(lastVisit)}</div>
-                </div>
-                <div class="country-actions">
-                    <button class="view-logs-btn" data-country="${country.code}">
-                        일지 보기
-                    </button>
                 </div>
             </div>
         `;
@@ -366,13 +346,8 @@ class TravelCollectionView {
 
     handleCountryClick(e) {
         const countryCard = e.target.closest('.country-card');
-        const actionBtn = e.target.closest('.action-btn');
         
-        if (actionBtn && actionBtn.classList.contains('view-logs-btn')) {
-            // 일지 보기 버튼 클릭
-            const countryCode = actionBtn.dataset.country;
-            this.showCountryLogs(countryCode);
-        } else if (countryCard) {
+        if (countryCard) {
             // 국가 카드 클릭
             const countryCode = countryCard.dataset.country;
             this.showCountryDetail(countryCode);
@@ -415,11 +390,6 @@ class TravelCollectionView {
                 </div>
                 <div class="country-detail-actions">
                     <button class="modal-close-btn">닫기</button>
-                    ${visitInfo ? `
-                        <button class="view-logs-btn" data-country="${countryCode}">일지 보기</button>
-                    ` : `
-                        <button class="plan-trip-btn" data-country="${countryCode}">여행 계획하기</button>
-                    `}
                 </div>
             </div>
         `;
@@ -430,17 +400,6 @@ class TravelCollectionView {
         alert(`${country.flag} ${country.nameKo}\n${visitInfo ? `방문 ${visitInfo.count}회` : '미방문'}`);
     }
 
-    /**
-     * 국가별 일지 목록 표시
-     */
-    showCountryLogs(countryCode) {
-        const country = countriesManager.getCountryByCode(countryCode);
-        if (!country) return;
-        
-        // 향후 실제 일지 목록으로 연동
-        console.log(`${country.nameKo} 일지 목록 표시`);
-        alert(`${country.nameKo}의 여행 일지를 표시합니다.`);
-    }
 
     /**
      * 마지막 방문일 포맷팅

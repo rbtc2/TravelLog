@@ -819,10 +819,14 @@ class MyLogsController {
             const visitedCountries = visitedCountrySet.size;
             const progressPercentage = Math.round((visitedCountries / totalCountries) * 100);
             
+            // 대륙별 통계 계산
+            const continentStats = this.getContinentStats();
+            
             return {
                 totalCountries: totalCountries,
                 visitedCountries: visitedCountries,
                 progressPercentage: progressPercentage,
+                continentStats: continentStats,
                 hasData: visitedCountries > 0
             };
         } catch (error) {
@@ -831,9 +835,109 @@ class MyLogsController {
                 totalCountries: 195,
                 visitedCountries: 0,
                 progressPercentage: 0,
+                continentStats: this.getDefaultContinentStats(),
                 hasData: false
             };
         }
+    }
+
+    /**
+     * 대륙별 통계를 계산합니다
+     * @returns {Array} 대륙별 통계 배열
+     */
+    getContinentStats() {
+        try {
+            const logs = this.getAllLogs();
+            const visitedCountriesByContinent = {};
+            
+            // 방문한 국가들을 대륙별로 분류
+            logs.forEach(log => {
+                if (log.country) {
+                    const continent = this.getCountryContinent(log.country);
+                    if (continent) {
+                        if (!visitedCountriesByContinent[continent]) {
+                            visitedCountriesByContinent[continent] = new Set();
+                        }
+                        visitedCountriesByContinent[continent].add(log.country);
+                    }
+                }
+            });
+            
+            // 대륙별 정보 정의 (실제 국가 수 기준)
+            const continentInfo = {
+                'Asia': { nameKo: '아시아', emoji: '🌏', total: 48 },
+                'Europe': { nameKo: '유럽', emoji: '🇪🇺', total: 44 },
+                'North America': { nameKo: '북미', emoji: '🇺🇸', total: 23 },
+                'South America': { nameKo: '남미', emoji: '🌎', total: 12 },
+                'Africa': { nameKo: '아프리카', emoji: '🌍', total: 54 },
+                'Oceania': { nameKo: '오세아니아', emoji: '🇦🇺', total: 14 }
+            };
+            
+            // 대륙별 통계 생성
+            return Object.entries(continentInfo).map(([continent, info]) => {
+                const visited = visitedCountriesByContinent[continent] ? visitedCountriesByContinent[continent].size : 0;
+                const percentage = Math.round((visited / info.total) * 100);
+                
+                return {
+                    continent: continent,
+                    nameKo: info.nameKo,
+                    emoji: info.emoji,
+                    visited: visited,
+                    total: info.total,
+                    percentage: percentage
+                };
+            });
+        } catch (error) {
+            console.error('MyLogsController: 대륙별 통계 계산 오류:', error);
+            return this.getDefaultContinentStats();
+        }
+    }
+
+    /**
+     * 기본 대륙별 통계를 반환합니다 (에러 시 fallback)
+     * @returns {Array} 기본 대륙별 통계
+     */
+    getDefaultContinentStats() {
+        return [
+            { continent: 'Asia', nameKo: '아시아', emoji: '🌏', visited: 0, total: 48, percentage: 0 },
+            { continent: 'Europe', nameKo: '유럽', emoji: '🇪🇺', visited: 0, total: 44, percentage: 0 },
+            { continent: 'North America', nameKo: '북미', emoji: '🇺🇸', visited: 0, total: 23, percentage: 0 },
+            { continent: 'South America', nameKo: '남미', emoji: '🌎', visited: 0, total: 12, percentage: 0 },
+            { continent: 'Africa', nameKo: '아프리카', emoji: '🌍', visited: 0, total: 54, percentage: 0 },
+            { continent: 'Oceania', nameKo: '오세아니아', emoji: '🇦🇺', visited: 0, total: 14, percentage: 0 }
+        ];
+    }
+
+    /**
+     * 국가의 대륙을 반환합니다
+     * @param {string} countryCode - 국가 코드
+     * @returns {string|null} 대륙명
+     */
+    getCountryContinent(countryCode) {
+        // 간단한 국가-대륙 매핑 (실제로는 countriesManager에서 가져와야 함)
+        const countryToContinentMap = {
+            // 아시아
+            'JP': 'Asia', 'KR': 'Asia', 'CN': 'Asia', 'TH': 'Asia', 'VN': 'Asia', 'SG': 'Asia',
+            'MY': 'Asia', 'ID': 'Asia', 'PH': 'Asia', 'IN': 'Asia', 'TR': 'Asia', 'AE': 'Asia',
+            
+            // 유럽
+            'FR': 'Europe', 'DE': 'Europe', 'IT': 'Europe', 'ES': 'Europe', 'GB': 'Europe', 'NL': 'Europe',
+            'BE': 'Europe', 'CH': 'Europe', 'AT': 'Europe', 'PT': 'Europe', 'GR': 'Europe', 'CZ': 'Europe',
+            
+            // 북미
+            'US': 'North America', 'CA': 'North America', 'MX': 'North America',
+            
+            // 남미
+            'BR': 'South America', 'AR': 'South America', 'CL': 'South America', 'PE': 'South America',
+            
+            // 아프리카
+            'EG': 'Africa', 'ZA': 'Africa', 'MA': 'Africa', 'KE': 'Africa',
+            
+            // 오세아니아
+            'AU': 'Oceania', 'NZ': 'Oceania', 'FJ': 'Oceania'
+        };
+        
+        return countryToContinentMap[countryCode] || null;
     }
 }
 

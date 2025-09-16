@@ -86,6 +86,55 @@
     box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
+/* 대륙별 컴팩트 요약 */
+.continent-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: var(--spacing-xs);
+    margin: var(--spacing-md) 0;
+    padding: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-md);
+    backdrop-filter: blur(10px);
+}
+
+.continent-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+    background: rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    min-height: 50px;
+}
+
+.continent-mini:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.continent-emoji {
+    font-size: var(--font-base);
+    margin-bottom: var(--spacing-xs);
+}
+
+.continent-name {
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.continent-count {
+    font-size: var(--font-xs);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: var(--font-bold);
+}
+
 /* 에러 상태 */
 .world-exploration-content.error .exploration-percentage {
     color: rgba(255, 255, 255, 0.6);
@@ -124,6 +173,30 @@
     .exploration-subtitle {
         font-size: var(--font-xs);
     }
+    
+    /* 모바일에서 대륙별 요약 */
+    .continent-summary {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xs);
+        padding: var(--spacing-xs);
+    }
+    
+    .continent-mini {
+        min-height: 45px;
+        padding: var(--spacing-xs);
+    }
+    
+    .continent-emoji {
+        font-size: var(--font-sm);
+    }
+    
+    .continent-name {
+        font-size: 10px;
+    }
+    
+    .continent-count {
+        font-size: 10px;
+    }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -137,6 +210,15 @@
     
     .exploration-percentage {
         font-size: var(--font-3xl);
+    }
+    
+    /* 태블릿에서 대륙별 요약 */
+    .continent-summary {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .continent-mini {
+        min-height: 55px;
     }
 }
 
