@@ -20,10 +20,9 @@ class TravelCollectionView {
         this.eventManager = new EventManager();
         this.container = null;
         
-        // 상태 관리
-        this.currentFilter = 'all'; // all, visited, unvisited
+        // 상태 관리 (방문한 국가만 표시하는 단순한 시스템)
         this.currentContinent = 'all'; // all, Asia, Europe, etc.
-        this.sortBy = 'alphabet'; // alphabet, visitCount, lastVisit
+        this.sortBy = 'visitCount'; // visitCount, lastVisit, alphabet
         this.isLoading = false;
         
         // 실제 데이터는 controller에서 가져옴 (데모 데이터는 fallback용)
@@ -47,12 +46,10 @@ class TravelCollectionView {
      * 메서드 바인딩
      */
     bindMethods() {
-        this.handleFilterChange = this.handleFilterChange.bind(this);
         this.handleContinentFilter = this.handleContinentFilter.bind(this);
         this.handleSortChange = this.handleSortChange.bind(this);
         this.handleCountryClick = this.handleCountryClick.bind(this);
         this.handleBackToHub = this.handleBackToHub.bind(this);
-        this.handleSearchInput = this.handleSearchInput.bind(this);
     }
 
     /**
@@ -157,20 +154,6 @@ class TravelCollectionView {
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: ${progressPercentage}%"></div>
                         </div>
-                        <div class="achievement-badges">
-                            <div class="badge ${visitedTotal >= 10 ? 'unlocked' : 'locked'}">
-                                <span class="badge-icon">✈️</span>
-                                <span class="badge-label">여행 초보자</span>
-                            </div>
-                            <div class="badge ${visitedTotal >= 25 ? 'unlocked' : 'locked'}">
-                                <span class="badge-icon">🗺️</span>
-                                <span class="badge-label">세계 탐험가</span>
-                            </div>
-                            <div class="badge ${visitedTotal >= 50 ? 'unlocked' : 'locked'}">
-                                <span class="badge-icon">🏆</span>
-                                <span class="badge-label">글로벌 여행자</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
@@ -184,56 +167,30 @@ class TravelCollectionView {
                     </div>
                 </div>
                 
-                <!-- 필터 및 정렬 옵션 -->
+                <!-- 방문한 국가 필터 -->
                 <div class="hub-section filter-section">
                     <div class="section-header">
-                        <h2 class="section-title">🔍 국가 컬렉션</h2>
+                        <h2 class="section-title">🏆 방문한 국가 (${visitedTotal}개국)</h2>
                     </div>
                     
-                    <!-- 검색 바 -->
-                    <div class="search-container">
-                        <div class="search-input-wrapper">
-                            <input 
-                                type="text" 
-                                id="collection-search" 
-                                class="collection-search-input"
-                                placeholder="국가명으로 검색..."
-                                autocomplete="off"
-                            >
-                            <span class="search-icon">🔍</span>
+                    <!-- 대륙 필터와 정렬을 한 줄로 -->
+                    <div class="filter-controls">
+                        <div class="continent-filter">
+                            <select id="continent-select" class="continent-select">
+                                <option value="all">모든 대륙</option>
+                                ${Object.entries(this.continents).map(([continent, info]) => 
+                                    `<option value="${continent}">${info.nameKo} (${info.visited}개국)</option>`
+                                ).join('')}
+                            </select>
                         </div>
-                    </div>
-                    
-                    <!-- 필터 탭 -->
-                    <div class="filter-tabs">
-                        <button class="filter-tab ${this.currentFilter === 'all' ? 'active' : ''}" data-filter="all">
-                            전체 (${totalCountries})
-                        </button>
-                        <button class="filter-tab ${this.currentFilter === 'visited' ? 'active' : ''}" data-filter="visited">
-                            방문함 (${visitedTotal})
-                        </button>
-                        <button class="filter-tab ${this.currentFilter === 'unvisited' ? 'active' : ''}" data-filter="unvisited">
-                            미방문 (${totalCountries - visitedTotal})
-                        </button>
-                    </div>
-                    
-                    <!-- 대륙 필터 -->
-                    <div class="continent-filter">
-                        <select id="continent-select" class="continent-select">
-                            <option value="all">모든 대륙</option>
-                            ${Object.entries(this.continents).map(([continent, info]) => 
-                                `<option value="${continent}">${info.nameKo} (${info.visited}/${info.total})</option>`
-                            ).join('')}
-                        </select>
-                    </div>
-                    
-                    <!-- 정렬 옵션 -->
-                    <div class="sort-options">
-                        <select id="sort-select" class="sort-select">
-                            <option value="alphabet">가나다순</option>
-                            <option value="visitCount">방문횟수순</option>
-                            <option value="lastVisit">최근방문순</option>
-                        </select>
+                        
+                        <div class="sort-options">
+                            <select id="sort-select" class="sort-select">
+                                <option value="visitCount">방문횟수순</option>
+                                <option value="lastVisit">최근방문순</option>
+                                <option value="alphabet">가나다순</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
@@ -320,76 +277,51 @@ class TravelCollectionView {
     }
 
     /**
-     * 개별 국가 카드 렌더링
+     * 방문한 국가 카드 렌더링 (스크린샷 스타일)
      */
     renderCountryCard(country) {
         const visitInfo = this.visitedCountries[country.code];
-        const isVisited = !!visitInfo;
-        const visitCount = visitInfo ? visitInfo.count : 0;
-        const lastVisit = visitInfo ? visitInfo.lastVisit : null;
+        const visitCount = visitInfo.count;
+        const lastVisit = visitInfo.lastVisit;
         
         return `
-            <div class="country-card ${isVisited ? 'visited' : 'unvisited'}" data-country="${country.code}">
-                <div class="country-flag">
-                    <span class="flag-emoji">${country.flag}</span>
-                    ${isVisited ? '<div class="visited-badge">✓</div>' : ''}
-                </div>
-                <div class="country-info">
-                    <h4 class="country-name">${country.nameKo}</h4>
-                    <p class="country-name-en">${country.nameEn}</p>
-                    <p class="country-continent">${country.continentKo}</p>
-                </div>
-                <div class="country-stats">
-                    ${isVisited ? `
-                        <div class="visit-count">방문 ${visitCount}회</div>
-                        <div class="last-visit">${this.formatLastVisit(lastVisit)}</div>
-                    ` : `
-                        <div class="unvisited-label">미방문</div>
-                    `}
-                </div>
-                ${isVisited ? `
-                    <div class="country-actions">
-                        <button class="action-btn view-logs-btn" data-country="${country.code}">
-                            일지 보기
-                        </button>
+            <div class="visited-country-card" data-country="${country.code}">
+                <div class="country-flag-section">
+                    <span class="country-flag-large">${country.flag}</span>
+                    <div class="country-basic-info">
+                        <h4 class="country-name">${country.nameKo}</h4>
+                        <p class="country-name-en">${country.nameEn}</p>
                     </div>
-                ` : ''}
+                </div>
+                <div class="country-visit-stats">
+                    <div class="visit-count-badge">${visitCount}회 방문</div>
+                    <div class="last-visit-info">${this.formatLastVisit(lastVisit)}</div>
+                </div>
+                <div class="country-actions">
+                    <button class="view-logs-btn" data-country="${country.code}">
+                        일지 보기
+                    </button>
+                </div>
             </div>
         `;
     }
 
     /**
-     * 필터링 및 정렬된 국가 목록 반환
+     * 방문한 국가만 필터링 및 정렬하여 반환
      */
     getFilteredAndSortedCountries() {
-        let countries = [...countriesManager.countries];
+        // 방문한 국가만 추출
+        const visitedCountryCodes = Object.keys(this.visitedCountries);
+        let countries = visitedCountryCodes.map(code => countriesManager.getCountryByCode(code)).filter(Boolean);
         
         // 대륙 필터 적용
         if (this.currentContinent !== 'all') {
             countries = countries.filter(country => country.continent === this.currentContinent);
         }
         
-        // 방문 상태 필터 적용
-        if (this.currentFilter === 'visited') {
-            countries = countries.filter(country => this.visitedCountries[country.code]);
-        } else if (this.currentFilter === 'unvisited') {
-            countries = countries.filter(country => !this.visitedCountries[country.code]);
-        }
-        
-        // 검색 쿼리 필터 적용
-        const searchQuery = this.container.querySelector('#collection-search')?.value?.toLowerCase();
-        if (searchQuery) {
-            countries = countries.filter(country => 
-                country.nameKo.toLowerCase().includes(searchQuery) ||
-                country.nameEn.toLowerCase().includes(searchQuery)
-            );
-        }
-        
         // 정렬 적용
         countries.sort((a, b) => {
             switch (this.sortBy) {
-                case 'alphabet':
-                    return a.nameKo.localeCompare(b.nameKo);
                 case 'visitCount':
                     const aCount = this.visitedCountries[a.code]?.count || 0;
                     const bCount = this.visitedCountries[b.code]?.count || 0;
@@ -398,6 +330,8 @@ class TravelCollectionView {
                     const aDate = this.visitedCountries[a.code]?.lastVisit || '1970-01-01';
                     const bDate = this.visitedCountries[b.code]?.lastVisit || '1970-01-01';
                     return new Date(bDate) - new Date(aDate);
+                case 'alphabet':
+                    return a.nameKo.localeCompare(b.nameKo);
                 default:
                     return 0;
             }
@@ -418,12 +352,6 @@ class TravelCollectionView {
             this.eventManager.add(backBtn, 'click', this.handleBackToHub);
         }
         
-        // 필터 탭
-        const filterTabs = this.container.querySelectorAll('.filter-tab');
-        filterTabs.forEach(tab => {
-            this.eventManager.add(tab, 'click', this.handleFilterChange);
-        });
-        
         // 대륙 선택
         const continentSelect = this.container.querySelector('#continent-select');
         if (continentSelect) {
@@ -434,12 +362,6 @@ class TravelCollectionView {
         const sortSelect = this.container.querySelector('#sort-select');
         if (sortSelect) {
             this.eventManager.add(sortSelect, 'change', this.handleSortChange);
-        }
-        
-        // 검색
-        const searchInput = this.container.querySelector('#collection-search');
-        if (searchInput) {
-            this.eventManager.add(searchInput, 'input', this.handleSearchInput);
         }
         
         // 대륙 카드 클릭
@@ -468,21 +390,6 @@ class TravelCollectionView {
         this.dispatchEvent('navigate', { view: 'hub' });
     }
 
-    handleFilterChange(e) {
-        const filter = e.target.dataset.filter;
-        if (filter) {
-            this.currentFilter = filter;
-            
-            // UI 업데이트
-            this.container.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            e.target.classList.add('active');
-            
-            // 그리드 재렌더링
-            this.renderCountryGrid();
-        }
-    }
 
     handleContinentFilter(e) {
         this.currentContinent = e.target.value;
@@ -502,13 +409,6 @@ class TravelCollectionView {
         this.renderCountryGrid();
     }
 
-    handleSearchInput(e) {
-        // 디바운싱 적용
-        clearTimeout(this.searchTimeout);
-        this.searchTimeout = setTimeout(() => {
-            this.renderCountryGrid();
-        }, 300);
-    }
 
     handleCountryClick(e) {
         const countryCard = e.target.closest('.country-card');

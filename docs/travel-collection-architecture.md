@@ -81,28 +81,6 @@ continentStats = {
 }
 ```
 
-### 3. 성취 시스템 구조
-```javascript
-achievements = [
-    {
-        id: "beginner",
-        icon: "✈️",
-        label: "여행 초보자",
-        description: "10개국 방문",
-        threshold: 10,
-        unlocked: true
-    },
-    {
-        id: "explorer", 
-        icon: "🗺️",
-        label: "세계 탐험가",
-        description: "25개국 방문",
-        threshold: 25,
-        unlocked: false
-    }
-    // ...
-]
-```
 
 ## 🔧 주요 메서드 및 API
 
@@ -334,26 +312,6 @@ class CollectionManager {
 </div>
 ```
 
-### 3. 성취 시스템 확장
-
-#### 컬렉션별 성취
-```javascript
-const achievementCategories = {
-    countries: [
-        { id: 'first_country', threshold: 1, label: '첫 여행' },
-        { id: 'asia_explorer', threshold: 10, label: '아시아 탐험가', region: 'Asia' },
-        { id: 'global_traveler', threshold: 50, label: '글로벌 여행자' }
-    ],
-    cities: [
-        { id: 'first_city', threshold: 1, label: '첫 도시' },
-        { id: 'mega_city_collector', threshold: 10, label: '거대도시 수집가' }
-    ],
-    landmarks: [
-        { id: 'wonder_seeker', threshold: 1, label: '경이로움 추구자' },
-        { id: 'heritage_hunter', threshold: 5, label: '유산 사냥꾼' }
-    ]
-};
-```
 
 ## 🔄 데이터 연동 및 동기화
 
@@ -366,9 +324,6 @@ class TravelCollectionSync {
         // 새로운 일지 데이터 기반으로 컬렉션 업데이트
         const updatedCountries = await this.updateCountryCollection(logData);
         const updatedCities = await this.updateCityCollection(logData);
-        
-        // 성취 달성 확인
-        this.checkAchievements(updatedCountries, updatedCities);
         
         // UI 갱신 이벤트 발생
         EventManager.dispatch('collection:updated', {

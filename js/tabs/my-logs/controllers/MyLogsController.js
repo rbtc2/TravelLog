@@ -776,44 +776,10 @@ class MyLogsController {
             visited: visitedTotal,
             percentage: Math.round((visitedTotal / totalCountries) * 100),
             continents: continentStats,
-            visitedCountries: visitedCountries,
-            achievements: this.calculateAchievements(visitedTotal)
+            visitedCountries: visitedCountries
         };
     }
 
-    /**
-     * 성취 달성 상태를 계산합니다
-     * @param {number} visitedCount - 방문한 국가 수
-     * @returns {Array} 성취 목록
-     */
-    calculateAchievements(visitedCount) {
-        return [
-            {
-                id: 'beginner',
-                icon: '✈️',
-                label: '여행 초보자',
-                description: '10개국 방문',
-                threshold: 10,
-                unlocked: visitedCount >= 10
-            },
-            {
-                id: 'explorer',
-                icon: '🗺️',
-                label: '세계 탐험가',
-                description: '25개국 방문',
-                threshold: 25,
-                unlocked: visitedCount >= 25
-            },
-            {
-                id: 'master',
-                icon: '🏆',
-                label: '글로벌 여행자',
-                description: '50개국 방문',
-                threshold: 50,
-                unlocked: visitedCount >= 50
-            }
-        ];
-    }
 
     /**
      * 국가별 여행 일지를 반환합니다
