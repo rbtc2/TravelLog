@@ -133,7 +133,10 @@ class CSSBuilder {
             'base/typography.css',
             'base/layout.css',
             'utilities/performance.css',
-            'components/common-components.css'
+            'components/common-components.css',
+            // 모듈화된 검색 페이지 기본 스타일
+            'pages/search/search-base.css',
+            'pages/search/search-bar.css'
         ];
         
         let criticalCSS = '';

@@ -1,0 +1,57 @@
+/* ===== 검색 페이지 기본 스타일 ===== */
+
+/* 검색 컨테이너 */
+.search-container {
+    padding: 20px;
+    max-width: var(--container-desktop-md);
+    margin: 0 auto;
+    /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
+    padding-bottom: calc(20px + var(--navigation-height, 80px));
+}
+
+/* 반응형 검색 컨테이너 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .search-container {
+        max-width: var(--container-desktop-sm);
+        padding: 30px;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .search-container {
+        max-width: var(--container-desktop-md);
+        padding: 40px;
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .search-container {
+        max-width: var(--container-desktop-lg);
+        padding: 50px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .search-container {
+        max-width: var(--container-desktop-xl);
+        padding: 60px;
+    }
+}
+
+/* 검색 헤더 */
+.search-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.search-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.search-subtitle {
+    color: #718096;
+    font-size: 16px;
+}
