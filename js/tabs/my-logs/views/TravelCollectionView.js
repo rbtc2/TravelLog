@@ -23,7 +23,6 @@ class TravelCollectionView {
         // 상태 관리 (방문한 국가만 표시하는 단순한 시스템)
         this.currentContinent = 'all'; // all, Asia, Europe, etc.
         this.sortBy = 'visitCount'; // visitCount, lastVisit, alphabet
-        this.isLoading = false;
         
         // 실제 데이터는 controller에서 가져옴 (데모 데이터는 fallback용)
         this.visitedCountries = this.generateDemoVisitedCountries();
@@ -60,8 +59,6 @@ class TravelCollectionView {
         this.container = container;
         
         try {
-            this.isLoading = true;
-            
             // 국가 데이터 로드
             if (!countriesManager.isInitialized) {
                 await countriesManager.initialize();
@@ -77,8 +74,6 @@ class TravelCollectionView {
         } catch (error) {
             console.error('TravelCollectionView: 렌더링 실패:', error);
             this.renderError();
-        } finally {
-            this.isLoading = false;
         }
     }
 
@@ -200,18 +195,6 @@ class TravelCollectionView {
                         <!-- 국가 카드들이 여기에 동적으로 렌더링됩니다 -->
                     </div>
                     
-                    <!-- 로딩 인디케이터 -->
-                    <div class="loading-indicator hidden" id="loading-indicator">
-                        <div class="loading-spinner"></div>
-                        <p>국가 정보를 불러오는 중...</p>
-                    </div>
-                    
-                    <!-- 빈 상태 -->
-                    <div class="empty-state hidden" id="empty-state">
-                        <div class="empty-icon">🔍</div>
-                        <h3>검색 결과가 없습니다</h3>
-                        <p>다른 검색어를 시도해보세요</p>
-                    </div>
                 </div>
             </div>
         `;
@@ -247,33 +230,11 @@ class TravelCollectionView {
      */
     renderCountryGrid() {
         const gridContainer = this.container.querySelector('#collection-grid');
-        const loadingIndicator = this.container.querySelector('#loading-indicator');
-        const emptyState = this.container.querySelector('#empty-state');
         
         if (!gridContainer) return;
         
-        // 로딩 상태 표시
-        loadingIndicator.classList.remove('hidden');
-        gridContainer.classList.add('hidden');
-        emptyState.classList.add('hidden');
-        
-        // 약간의 지연을 주어 로딩 느낌 연출
-        setTimeout(() => {
-            const countries = this.getFilteredAndSortedCountries();
-            
-            if (countries.length === 0) {
-                loadingIndicator.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                gridContainer.classList.add('hidden');
-                return;
-            }
-            
-            gridContainer.innerHTML = countries.map(country => this.renderCountryCard(country)).join('');
-            
-            loadingIndicator.classList.add('hidden');
-            gridContainer.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-        }, 300);
+        const countries = this.getFilteredAndSortedCountries();
+        gridContainer.innerHTML = countries.map(country => this.renderCountryCard(country)).join('');
     }
 
     /**
@@ -580,7 +541,7 @@ class TravelCollectionView {
                     <div class="error-message">
                         <div class="error-icon">⚠️</div>
                         <h3>데이터를 불러올 수 없습니다</h3>
-                        <p>국가 정보를 불러오는 중 오류가 발생했습니다.</p>
+                        <p>여행 도감을 표시하는 중 오류가 발생했습니다.</p>
                         <button class="action-btn retry-btn" onclick="location.reload()">다시 시도</button>
                     </div>
                 </div>
@@ -609,7 +570,6 @@ class TravelCollectionView {
         
         // 상태 초기화
         this.container = null;
-        this.isLoading = false;
         
         console.log('TravelCollectionView: 정리 완료');
     }
