@@ -60,6 +60,9 @@
 @import url('./pages/settings.css');
 @import url('./pages/travel-report.css');
 @import url('./pages/travel-collection.css');
+
+/* 컬렉션 탭 컴포넌트 */
+@import url('./components/collection-tabs.css');
 @import url('./pages/error.css');
 
 /* ===== 스크롤 최적화 스타일 ===== */

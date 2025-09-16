@@ -28,7 +28,7 @@ class TravelReportView {
         this.heatmapRenderer = new HeatmapRenderer(controller);
         this.chartRenderer = new ChartRenderer(controller);
         this.insightsRenderer = new InsightsRenderer(controller);
-        this.yearlyStatsRenderer = new YearlyStatsRenderer(controller);
+        // this.yearlyStatsRenderer = new YearlyStatsRenderer(controller); // 미구현
     }
 
     /**
@@ -52,8 +52,8 @@ class TravelReportView {
         console.log('TravelReportView: 차트 렌더링 완료');
         this.renderInsights();
         console.log('TravelReportView: 인사이트 렌더링 완료');
-        this.renderYearlyStats();
-        console.log('TravelReportView: 연도별 통계 렌더링 완료');
+        // this.renderYearlyStats(); // 미구현
+        // console.log('TravelReportView: 연도별 통계 렌더링 완료');
         this.bindEvents();
         console.log('TravelReportView: 이벤트 바인딩 완료');
     }

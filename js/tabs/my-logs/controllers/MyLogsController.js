@@ -20,7 +20,7 @@ import { CountryAnalysisService } from '../../../modules/services/country-analys
 import { YearlyStatsService } from '../../../modules/services/yearly-stats-service.js';
 import { DemoData } from '../../../modules/utils/demo-data.js';
 import { countriesManager } from '../../../data/countries-manager.js';
-import { TravelCollectionView } from '../views/TravelCollectionView.js';
+import TravelCollectionView from '../views/TravelCollectionView.js';
 
 class MyLogsController {
     constructor() {
@@ -718,7 +718,14 @@ class MyLogsController {
             }
         });
         
-        return visitedCountries;
+        // CountriesCollectionView에서 필요한 형태로 데이터 변환
+        const visitedCountryCodes = Object.keys(visitedCountries);
+        
+        return {
+            visitedCountryCodes: visitedCountryCodes,
+            countries: visitedCountries,
+            totalCount: visitedCountryCodes.length
+        };
     }
 
     /**
