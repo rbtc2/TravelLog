@@ -539,6 +539,11 @@
     cursor: pointer;
     transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     min-width: 120px;
+    min-height: 44px;
+    height: auto;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
 }
 
 .year-selector:hover {
@@ -817,6 +822,11 @@
     background: rgba(45, 55, 72, 0.9);
     color: var(--text-primary, #f7fafc);
     border-color: rgba(74, 85, 104, 0.6);
+    min-height: 44px;
+    height: auto;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
 }
 
 .dark .year-selector:hover {
