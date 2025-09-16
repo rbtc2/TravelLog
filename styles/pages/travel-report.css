@@ -768,3 +768,157 @@
         padding: 6px 12px;
     }
 }
+
+/* ===== 다크모드 스타일 ===== */
+
+/* 기본 통계 섹션 다크모드 */
+.dark .my-logs-container .hub-section.basic-stats-section {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark .my-logs-container .hub-section.basic-stats-section .section-title {
+    color: var(--text-primary, #f7fafc) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dark .stats-card {
+    background: rgba(45, 55, 72, 0.95);
+    color: var(--text-primary, #f7fafc);
+    border-color: rgba(74, 85, 104, 0.3);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .stats-card:hover {
+    background: rgba(45, 55, 72, 1);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dark .stats-card .stats-value {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .stats-card .stats-label {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 연도별 통계 섹션 다크모드 */
+.dark .yearly-stats-section {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark .yearly-stats-section .section-title {
+    color: var(--text-primary, #f7fafc) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dark .year-selector {
+    background: rgba(45, 55, 72, 0.9);
+    color: var(--text-primary, #f7fafc);
+    border-color: rgba(74, 85, 104, 0.6);
+}
+
+.dark .year-selector:hover {
+    background: rgba(45, 55, 72, 1);
+    border-color: rgba(74, 85, 104, 0.8);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark .year-selector:focus {
+    box-shadow: 0 0 0 3px rgba(74, 85, 104, 0.5);
+}
+
+/* 연도별 통계 카드 다크모드 */
+.dark .yearly-stat-card {
+    background: rgba(45, 55, 72, 0.95);
+    color: var(--text-primary, #f7fafc);
+    border-color: rgba(74, 85, 104, 0.3);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .yearly-stat-card::before {
+    background: linear-gradient(90deg, #4dabf7, #339af0);
+}
+
+.dark .yearly-stat-card:hover {
+    background: rgba(45, 55, 72, 1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dark .stat-label {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .stat-value {
+    color: var(--text-primary, #f7fafc);
+}
+
+/* 연도별 통계 증감률 다크모드 */
+.dark .stat-change.positive {
+    background: rgba(72, 187, 120, 0.2);
+    color: #68d391;
+    border-color: rgba(72, 187, 120, 0.3);
+}
+
+.dark .stat-change.negative {
+    background: rgba(229, 62, 62, 0.2);
+    color: #fc8181;
+    border-color: rgba(229, 62, 62, 0.3);
+}
+
+.dark .stat-change.neutral {
+    background: rgba(160, 174, 192, 0.2);
+    color: var(--text-secondary, #e2e8f0);
+    border-color: rgba(160, 174, 192, 0.3);
+}
+
+.dark .stat-change.first {
+    background: rgba(77, 171, 247, 0.2);
+    color: #4dabf7;
+    border-color: rgba(77, 171, 247, 0.3);
+}
+
+/* 연도별 통계 에러 상태 다크모드 */
+.dark .yearly-stats-error {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* TOP 3 랭킹 다크모드 */
+.dark .ranking-item:hover {
+    background-color: rgba(74, 85, 104, 0.2);
+}
+
+.dark .first-place {
+    background: linear-gradient(135deg, #b7791f, #d69e2e);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 2px 8px rgba(183, 121, 31, 0.4);
+}
+
+.dark .first-place .rank-number {
+    color: #fbd38d;
+}
+
+.dark .second-place {
+    background: linear-gradient(135deg, #4a5568, #718096);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 2px 6px rgba(74, 85, 104, 0.4);
+}
+
+.dark .second-place .rank-number {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .third-place {
+    background: linear-gradient(135deg, #9c4221, #c05621);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 2px 6px rgba(156, 66, 33, 0.4);
+}
+
+.dark .third-place .rank-number {
+    color: #fbd38d;
+}
+
+.dark .country-rating {
+    background: rgba(74, 85, 104, 0.3);
+}
