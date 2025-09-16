@@ -93,12 +93,10 @@ export class BaseCollectionView {
                     <p class="collection-description">${this.config.description || ''}</p>
                 </div>
                 
-                <!-- 필터 및 정렬 컨트롤 -->
-                <div class="collection-controls">
-                    <div class="filter-controls">
+                <!-- 필터 및 정렬 컨트롤 (2025년 모던 디자인) -->
+                <div class="modern-collection-controls">
+                    <div class="controls-container">
                         ${this.renderFilterControls()}
-                    </div>
-                    <div class="sort-controls">
                         ${this.renderSortControls()}
                     </div>
                 </div>

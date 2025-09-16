@@ -64,51 +64,82 @@ export class CountriesCollectionView extends BaseCollectionView {
     }
     
     /**
-     * 필터 컨트롤을 렌더링합니다
+     * 필터 컨트롤을 렌더링합니다 (2025년 모던 디자인)
      * @returns {string} HTML 문자열
      */
     renderFilterControls() {
         const filterOptions = this.generateContinentFilterOptions();
         
         return `
-            <div class="filter-group">
-                <label for="continent-filter" class="filter-label">대륙 필터</label>
-                <select id="continent-filter" class="filter-control continent-filter">
-                    ${filterOptions}
-                </select>
+            <div class="modern-filter-group">
+                <div class="filter-header">
+                    <div class="filter-icon">🌍</div>
+                    <span class="filter-title">대륙별 필터</span>
+                </div>
+                <div class="custom-select-wrapper">
+                    <select id="continent-filter" class="modern-select continent-filter">
+                        ${filterOptions}
+                    </select>
+                    <div class="select-arrow">
+                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
             </div>
         `;
     }
     
     /**
-     * 정렬 컨트롤을 렌더링합니다
+     * 정렬 컨트롤을 렌더링합니다 (2025년 모던 디자인)
      * @returns {string} HTML 문자열
      */
     renderSortControls() {
         return `
-            <div class="sort-group">
-                <label for="country-sort" class="sort-label">정렬</label>
-                <select id="country-sort" class="sort-control">
-                    <option value="visitCount" ${this.sortBy === 'visitCount' ? 'selected' : ''}>방문 횟수</option>
-                    <option value="lastVisit" ${this.sortBy === 'lastVisit' ? 'selected' : ''}>최근 방문</option>
-                    <option value="alphabet" ${this.sortBy === 'alphabet' ? 'selected' : ''}>가나다순</option>
-                </select>
+            <div class="modern-sort-group">
+                <div class="sort-header">
+                    <div class="sort-icon">🔀</div>
+                    <span class="sort-title">정렬 기준</span>
+                </div>
+                <div class="custom-select-wrapper">
+                    <select id="country-sort" class="modern-select sort-select">
+                        <option value="visitCount" ${this.sortBy === 'visitCount' ? 'selected' : ''}>방문 횟수</option>
+                        <option value="lastVisit" ${this.sortBy === 'lastVisit' ? 'selected' : ''}>최근 방문</option>
+                        <option value="alphabet" ${this.sortBy === 'alphabet' ? 'selected' : ''}>가나다순</option>
+                    </select>
+                    <div class="select-arrow">
+                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                            <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
             </div>
         `;
     }
     
     /**
-     * 통계 정보를 렌더링합니다 (간소화된 버전)
+     * 통계 정보를 렌더링합니다 (2025년 모던 디자인)
      * @returns {string} HTML 문자열
      */
     renderStats() {
         const visitedCount = this.data.length;
         
         return `
-            <div class="collection-stats-simple">
-                <div class="stats-info">
-                    <span class="stats-icon">🏴</span>
-                    <span class="stats-text">총 ${visitedCount}개국 방문</span>
+            <div class="modern-stats-card">
+                <div class="stats-content">
+                    <div class="stats-icon-wrapper">
+                        <div class="stats-icon">🏴</div>
+                        <div class="stats-icon-glow"></div>
+                    </div>
+                    <div class="stats-text-content">
+                        <div class="stats-number">${visitedCount}</div>
+                        <div class="stats-label">개국 방문</div>
+                    </div>
+                </div>
+                <div class="stats-decoration">
+                    <div class="decoration-dot"></div>
+                    <div class="decoration-dot"></div>
+                    <div class="decoration-dot"></div>
                 </div>
             </div>
         `;
