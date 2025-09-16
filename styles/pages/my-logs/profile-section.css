@@ -273,7 +273,7 @@
     white-space: nowrap;
 }
 
-/* Primary 버튼 (나의 지도) - 일반 스타일로 변경 */
+/* Primary 버튼 (여행 도감) - 일반 스타일로 변경 */
 .profile-action-btn.primary-btn {
     background: var(--gray-200);
     color: var(--text-primary);
@@ -474,7 +474,7 @@
         justify-content: center;
     }
     
-    /* 모바일에서 나의 지도 버튼은 아이콘만 표시 */
+    /* 모바일에서 여행 도감 버튼은 아이콘만 표시 */
     .profile-action-btn.primary-btn .btn-text {
         display: none;
     }
@@ -578,7 +578,7 @@
         padding: var(--spacing-sm);
     }
     
-    /* 작은 모바일에서도 나의 지도 버튼은 아이콘만 표시 */
+    /* 작은 모바일에서도 여행 도감 버튼은 아이콘만 표시 */
     .profile-action-btn.primary-btn .btn-text {
         display: none;
     }

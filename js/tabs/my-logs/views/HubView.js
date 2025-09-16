@@ -88,8 +88,8 @@ class HubView {
                     <!-- 액션 버튼들 -->
                     <div class="profile-action-buttons">
                         <button class="profile-action-btn primary-btn" id="my-map-btn">
-                            <div class="btn-icon">🗺️</div>
-                            <div class="btn-text">나의 지도</div>
+                            <div class="btn-icon">📖</div>
+                            <div class="btn-text">여행 도감</div>
                         </button>
                         <button class="profile-action-btn secondary-btn" id="travel-report-btn">
                             <div class="btn-icon">📊</div>
@@ -151,7 +151,7 @@ class HubView {
             });
         }
         
-        // 나의 지도 버튼
+        // 여행 도감 버튼
         const myMapBtn = document.getElementById('my-map-btn');
         if (myMapBtn) {
             this.eventManager.add(myMapBtn, 'click', () => {
@@ -199,12 +199,12 @@ class HubView {
     }
 
     /**
-     * 나의 지도로 이동
+     * 여행 도감으로 이동
      */
     onNavigateToMyMap() {
         this.dispatchEvent('showMessage', {
             type: 'info',
-            message: '나의 지도 기능은 추후 구현 예정입니다.'
+            message: '여행 도감 기능은 추후 구현 예정입니다.'
         });
     }
 
