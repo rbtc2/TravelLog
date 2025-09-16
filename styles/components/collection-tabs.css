@@ -180,6 +180,49 @@
 }
 
 /* ===============================
+   다크모드 지원
+   =============================== */
+
+@media (prefers-color-scheme: dark) {
+    .collection-tabs {
+        background: var(--gray-800);
+        border-color: var(--gray-700);
+    }
+    
+    .collection-tab {
+        color: var(--gray-300);
+    }
+    
+    .collection-tab:hover {
+        background: var(--gray-700);
+        color: var(--gray-100);
+    }
+    
+    .collection-tab.active {
+        background: var(--primary-color);
+        color: var(--white);
+        box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    .tab-icon {
+        color: inherit;
+    }
+    
+    .tab-label {
+        color: inherit;
+    }
+    
+    .tab-count {
+        background: rgba(255, 255, 255, 0.2);
+        color: inherit;
+    }
+    
+    .collection-tab.active .tab-count {
+        background: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* ===============================
    반응형 디자인
    =============================== */
 

@@ -101,11 +101,6 @@ export class BaseCollectionView {
                     </div>
                 </div>
                 
-                <!-- 통계 정보 -->
-                <div class="collection-stats">
-                    ${this.renderStats()}
-                </div>
-                
                 <!-- 컬렉션 아이템들 -->
                 <div class="collection-items">
                     ${this.isLoading ? this.renderLoading() : this.renderItems()}

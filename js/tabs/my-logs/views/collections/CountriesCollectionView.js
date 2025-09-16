@@ -21,7 +21,7 @@ export class CountriesCollectionView extends BaseCollectionView {
         
         // 국가별 특수 속성
         this.currentContinent = 'all';
-        this.visitedCountries = this.generateDemoVisitedCountries();
+        this.visitedCountries = {};
         
         // 메서드 바인딩
         this.handleContinentFilter = this.handleContinentFilter.bind(this);
@@ -50,16 +50,16 @@ export class CountriesCollectionView extends BaseCollectionView {
                     countries: Object.keys(this.visitedCountries).length
                 });
             } else {
-                // 실제 데이터가 없으면 데모 데이터 사용
-                this.data = Object.keys(this.visitedCountries);
-                console.log('CountriesCollectionView: 데모 데이터 사용', {
-                    dataCount: this.data.length
-                });
+                // 실제 데이터가 없으면 빈 배열 사용
+                this.data = [];
+                this.visitedCountries = {};
+                console.log('CountriesCollectionView: 방문한 국가가 없습니다');
             }
         } catch (error) {
             console.error('CountriesCollectionView: 데이터 로드 실패:', error);
-            // 에러 발생 시 데모 데이터 사용
-            this.data = Object.keys(this.visitedCountries);
+            // 에러 발생 시 빈 배열 사용
+            this.data = [];
+            this.visitedCountries = {};
         }
     }
     
@@ -72,10 +72,6 @@ export class CountriesCollectionView extends BaseCollectionView {
         
         return `
             <div class="modern-filter-group">
-                <div class="filter-header">
-                    <div class="filter-icon">🌍</div>
-                    <span class="filter-title">대륙별 필터</span>
-                </div>
                 <div class="custom-select-wrapper">
                     <select id="continent-filter" class="modern-select continent-filter">
                         ${filterOptions}
@@ -97,10 +93,6 @@ export class CountriesCollectionView extends BaseCollectionView {
     renderSortControls() {
         return `
             <div class="modern-sort-group">
-                <div class="sort-header">
-                    <div class="sort-icon">🔀</div>
-                    <span class="sort-title">정렬 기준</span>
-                </div>
                 <div class="custom-select-wrapper">
                     <select id="country-sort" class="modern-select sort-select">
                         <option value="visitCount" ${this.sortBy === 'visitCount' ? 'selected' : ''}>방문 횟수</option>
@@ -118,31 +110,11 @@ export class CountriesCollectionView extends BaseCollectionView {
     }
     
     /**
-     * 통계 정보를 렌더링합니다 (2025년 모던 디자인)
+     * 통계 정보를 렌더링합니다 (통계 정보 제거됨)
      * @returns {string} HTML 문자열
      */
     renderStats() {
-        const visitedCount = this.data.length;
-        
-        return `
-            <div class="modern-stats-card">
-                <div class="stats-content">
-                    <div class="stats-icon-wrapper">
-                        <div class="stats-icon">🏴</div>
-                        <div class="stats-icon-glow"></div>
-                    </div>
-                    <div class="stats-text-content">
-                        <div class="stats-number">${visitedCount}</div>
-                        <div class="stats-label">개국 방문</div>
-                    </div>
-                </div>
-                <div class="stats-decoration">
-                    <div class="decoration-dot"></div>
-                    <div class="decoration-dot"></div>
-                    <div class="decoration-dot"></div>
-                </div>
-            </div>
-        `;
+        return '';
     }
     
     /**
@@ -175,10 +147,6 @@ export class CountriesCollectionView extends BaseCollectionView {
      * @returns {string} HTML 문자열
      */
     renderCountryCard(country) {
-        const visitInfo = this.visitedCountries[country.code] || { count: 0, lastVisit: null };
-        const visitCount = visitInfo.count || 0;
-        const lastVisit = visitInfo.lastVisit;
-        
         return `
             <div class="visited-country-card" data-country="${country.code}">
                 <div class="country-flag-section">
@@ -189,8 +157,7 @@ export class CountriesCollectionView extends BaseCollectionView {
                     <p class="country-name-en">${country.nameEn}</p>
                 </div>
                 <div class="country-visit-stats">
-                    <div class="visit-count-badge">${visitCount}회 방문</div>
-                    <div class="last-visit-info">${this.formatLastVisit(lastVisit)}</div>
+                    <div class="visit-count-badge">방문 완료</div>
                 </div>
             </div>
         `;
@@ -217,18 +184,15 @@ export class CountriesCollectionView extends BaseCollectionView {
                 );
             }
             
-            // 정렬
+            // 정렬 (실제 데이터만 사용)
             filteredCountries.sort((a, b) => {
-                const visitInfoA = this.visitedCountries[a.code] || { count: 0, lastVisit: null };
-                const visitInfoB = this.visitedCountries[b.code] || { count: 0, lastVisit: null };
-                
                 switch (this.sortBy) {
                     case 'visitCount':
-                        return (visitInfoB.count || 0) - (visitInfoA.count || 0);
+                        // 방문 횟수로 정렬 (실제 데이터가 없으므로 알파벳 순으로 대체)
+                        return a.nameKo.localeCompare(b.nameKo);
                     case 'lastVisit':
-                        const dateA = visitInfoA.lastVisit ? new Date(visitInfoA.lastVisit) : new Date(0);
-                        const dateB = visitInfoB.lastVisit ? new Date(visitInfoB.lastVisit) : new Date(0);
-                        return dateB - dateA;
+                        // 최근 방문일로 정렬 (실제 데이터가 없으므로 알파벳 순으로 대체)
+                        return a.nameKo.localeCompare(b.nameKo);
                     case 'alphabet':
                         return a.nameKo.localeCompare(b.nameKo);
                     default:
@@ -332,58 +296,11 @@ export class CountriesCollectionView extends BaseCollectionView {
         const country = countriesManager.getCountryByCode(countryCode);
         if (!country) return;
         
-        const visitInfo = this.visitedCountries[countryCode];
-        
         // 향후 모달로 개선 예정
         console.log('국가 상세 정보:', country.nameKo);
-        alert(`${country.flag} ${country.nameKo}\n${visitInfo ? `방문 ${visitInfo.count}회` : '미방문'}`);
+        alert(`${country.flag} ${country.nameKo}\n방문 완료`);
     }
     
-    /**
-     * 마지막 방문일을 포맷팅합니다
-     * @param {string} dateString - 날짜 문자열
-     * @returns {string} 포맷된 날짜
-     */
-    formatLastVisit(dateString) {
-        if (!dateString) return '';
-        
-        try {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 30) {
-                return `${diffDays}일 전`;
-            } else if (diffDays < 365) {
-                const months = Math.floor(diffDays / 30);
-                return `${months}개월 전`;
-            } else {
-                const years = Math.floor(diffDays / 365);
-                return `${years}년 전`;
-            }
-        } catch (error) {
-            return dateString;
-        }
-    }
     
-    /**
-     * 데모 방문 국가 데이터를 생성합니다
-     * @returns {Object} 데모 방문 국가 객체
-     */
-    generateDemoVisitedCountries() {
-        return {
-            'JP': { count: 5, lastVisit: '2024-10-15' },
-            'FR': { count: 2, lastVisit: '2024-08-20' },
-            'IT': { count: 1, lastVisit: '2024-06-10' },
-            'TH': { count: 3, lastVisit: '2024-09-05' },
-            'US': { count: 2, lastVisit: '2024-07-22' },
-            'KR': { count: 8, lastVisit: '2024-11-01' },
-            'CN': { count: 1, lastVisit: '2024-04-18' },
-            'VN': { count: 2, lastVisit: '2024-05-25' },
-            'SG': { count: 4, lastVisit: '2024-09-12' },
-            'MY': { count: 1, lastVisit: '2024-03-30' }
-        };
-    }
     
 }
