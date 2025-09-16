@@ -41,6 +41,7 @@ import { HubView } from './my-logs/views/HubView.js';
 import { ProfileView } from './my-logs/views/ProfileView.js';
 import { SettingsView } from './my-logs/views/SettingsView.js';
 import { TravelReportView } from './my-logs/views/TravelReportView.js';
+import { TravelCollectionView } from './my-logs/views/TravelCollectionView.js';
 import { LogsListView } from './my-logs/views/LogsListView.js';
 
 // 전역에서 접근할 수 있도록 window 객체에 등록 (디버깅용)
@@ -65,6 +66,7 @@ class MyLogsTab {
             profile: new ProfileView(this.controller),
             settings: new SettingsView(this.controller),
             travelReport: new TravelReportView(this.controller),
+            collection: new TravelCollectionView(this.controller),
             logs: new LogsListView(this.controller)
         };
         
@@ -193,6 +195,15 @@ class MyLogsTab {
         });
         
         this.addViewEventListener('travelReportView:showMessage', (e) => {
+            this.showMessage(e.detail.type, e.detail.message);
+        });
+        
+        // 여행 도감 뷰 이벤트
+        this.addViewEventListener('travelCollectionView:navigate', (e) => {
+            this.navigateToView(e.detail.view);
+        });
+        
+        this.addViewEventListener('travelCollectionView:showMessage', (e) => {
             this.showMessage(e.detail.type, e.detail.message);
         });
         

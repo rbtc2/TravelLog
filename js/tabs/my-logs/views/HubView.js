@@ -202,10 +202,8 @@ class HubView {
      * 여행 도감으로 이동
      */
     onNavigateToMyMap() {
-        this.dispatchEvent('showMessage', {
-            type: 'info',
-            message: '여행 도감 기능은 추후 구현 예정입니다.'
-        });
+        console.log('HubView: 여행 도감으로 이동');
+        this.dispatchEvent('navigate', { view: 'collection' });
     }
 
     /**

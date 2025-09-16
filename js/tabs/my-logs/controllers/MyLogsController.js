@@ -20,6 +20,7 @@ import { CountryAnalysisService } from '../../../modules/services/country-analys
 import { YearlyStatsService } from '../../../modules/services/yearly-stats-service.js';
 import { DemoData } from '../../../modules/utils/demo-data.js';
 import { countriesManager } from '../../../data/countries-manager.js';
+import { TravelCollectionView } from '../views/TravelCollectionView.js';
 
 class MyLogsController {
     constructor() {
@@ -33,6 +34,9 @@ class MyLogsController {
         this.purposeAnalysisService = new PurposeAnalysisService(this.logDataService, this.cacheManager);
         this.countryAnalysisService = new CountryAnalysisService(this.logDataService, this.cacheManager);
         this.yearlyStatsService = new YearlyStatsService(this.logDataService, this.cacheManager);
+        
+        // 뷰 인스턴스들 초기화
+        this.travelCollectionView = new TravelCollectionView(this);
         
         this.isInitialized = false;
         
@@ -648,6 +652,185 @@ class MyLogsController {
         
         // 기존 호환성을 위한 정리
         this.invalidateCache();
+    }
+
+    // ===============================
+    // 여행 도감 관련 메서드들
+    // ===============================
+
+    /**
+     * 여행 도감 뷰를 렌더링합니다
+     * @param {HTMLElement} container - 렌더링할 컨테이너
+     */
+    async renderTravelCollection(container) {
+        try {
+            if (!this.isInitialized) {
+                await this.initialize();
+            }
+            
+            await this.travelCollectionView.render(container);
+        } catch (error) {
+            console.error('여행 도감 렌더링 실패:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 방문한 국가 목록을 반환합니다
+     * @returns {Object} 방문한 국가 정보
+     */
+    getVisitedCountries() {
+        const logs = this.getAllLogs();
+        const visitedCountries = {};
+        
+        logs.forEach(log => {
+            const countryCode = log.country;
+            if (!countryCode) return;
+            
+            if (!visitedCountries[countryCode]) {
+                visitedCountries[countryCode] = {
+                    count: 0,
+                    totalDays: 0,
+                    lastVisit: null,
+                    logs: []
+                };
+            }
+            
+            visitedCountries[countryCode].count++;
+            visitedCountries[countryCode].logs.push(log);
+            
+            // 체류 일수 계산
+            if (log.startDate && log.endDate) {
+                const start = new Date(log.startDate);
+                const end = new Date(log.endDate);
+                const diffTime = Math.abs(end - start);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                visitedCountries[countryCode].totalDays += diffDays;
+            }
+            
+            // 최근 방문일 업데이트
+            const logDate = log.endDate || log.startDate || log.createdAt;
+            if (logDate) {
+                if (!visitedCountries[countryCode].lastVisit || 
+                    new Date(logDate) > new Date(visitedCountries[countryCode].lastVisit)) {
+                    visitedCountries[countryCode].lastVisit = logDate;
+                }
+            }
+        });
+        
+        return visitedCountries;
+    }
+
+    /**
+     * 대륙별 방문 통계를 반환합니다
+     * @returns {Object} 대륙별 통계
+     */
+    getContinentStats() {
+        if (!countriesManager.isInitialized) {
+            return {};
+        }
+        
+        const visitedCountries = this.getVisitedCountries();
+        const continentStats = {};
+        
+        // 모든 대륙 초기화
+        const continents = countriesManager.getContinents();
+        Object.keys(continents).forEach(continent => {
+            continentStats[continent] = {
+                nameKo: continents[continent].nameKo,
+                total: continents[continent].count,
+                visited: 0,
+                percentage: 0
+            };
+        });
+        
+        // 방문한 국가들을 대륙별로 집계
+        Object.keys(visitedCountries).forEach(countryCode => {
+            const country = countriesManager.getCountryByCode(countryCode);
+            if (country && continentStats[country.continent]) {
+                continentStats[country.continent].visited++;
+            }
+        });
+        
+        // 퍼센티지 계산
+        Object.keys(continentStats).forEach(continent => {
+            const stats = continentStats[continent];
+            stats.percentage = stats.total > 0 ? Math.round((stats.visited / stats.total) * 100) : 0;
+        });
+        
+        return continentStats;
+    }
+
+    /**
+     * 여행 도감 관련 통계를 반환합니다
+     * @returns {Object} 여행 도감 통계
+     */
+    getTravelCollectionStats() {
+        const visitedCountries = this.getVisitedCountries();
+        const continentStats = this.getContinentStats();
+        const totalCountries = 195; // 전 세계 총 국가 수
+        const visitedTotal = Object.keys(visitedCountries).length;
+        
+        return {
+            total: totalCountries,
+            visited: visitedTotal,
+            percentage: Math.round((visitedTotal / totalCountries) * 100),
+            continents: continentStats,
+            visitedCountries: visitedCountries,
+            achievements: this.calculateAchievements(visitedTotal)
+        };
+    }
+
+    /**
+     * 성취 달성 상태를 계산합니다
+     * @param {number} visitedCount - 방문한 국가 수
+     * @returns {Array} 성취 목록
+     */
+    calculateAchievements(visitedCount) {
+        return [
+            {
+                id: 'beginner',
+                icon: '✈️',
+                label: '여행 초보자',
+                description: '10개국 방문',
+                threshold: 10,
+                unlocked: visitedCount >= 10
+            },
+            {
+                id: 'explorer',
+                icon: '🗺️',
+                label: '세계 탐험가',
+                description: '25개국 방문',
+                threshold: 25,
+                unlocked: visitedCount >= 25
+            },
+            {
+                id: 'master',
+                icon: '🏆',
+                label: '글로벌 여행자',
+                description: '50개국 방문',
+                threshold: 50,
+                unlocked: visitedCount >= 50
+            }
+        ];
+    }
+
+    /**
+     * 국가별 여행 일지를 반환합니다
+     * @param {string} countryCode - 국가 코드
+     * @returns {Array} 해당 국가의 여행 일지 목록
+     */
+    getLogsByCountry(countryCode) {
+        return this.getAllLogs().filter(log => log.country === countryCode);
+    }
+
+    /**
+     * 여행 도감 뷰 정리
+     */
+    cleanupTravelCollection() {
+        if (this.travelCollectionView) {
+            this.travelCollectionView.cleanup();
+        }
     }
 }
 
