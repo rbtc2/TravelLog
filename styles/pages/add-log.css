@@ -2,9 +2,40 @@
 
 /* 일지 추가 컨테이너 */
 .add-log-container {
+    max-width: var(--container-desktop-md);
+    margin: 0 auto;
     padding: var(--spacing-lg);
     /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
     padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
+}
+
+/* 반응형 일지 추가 컨테이너 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .add-log-container {
+        max-width: var(--container-desktop-sm);
+        padding: var(--spacing-xl);
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .add-log-container {
+        max-width: var(--container-desktop-md);
+        padding: var(--spacing-2xl);
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .add-log-container {
+        max-width: var(--container-desktop-lg);
+        padding: var(--spacing-3xl);
+    }
+}
+
+@media (min-width: 1600px) {
+    .add-log-container {
+        max-width: var(--container-desktop-xl);
+        padding: var(--spacing-3xl);
+    }
 }
 
 /* 기존 방식 - Phase 3 완료 후 제거 예정 */

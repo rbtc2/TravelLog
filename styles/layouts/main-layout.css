@@ -80,7 +80,7 @@
 
 /* 페이지별 레이아웃 */
 .page-container {
-    max-width: 1200px;
+    max-width: var(--container-desktop-md);
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
     /* 스크롤 성능 최적화 - 중복 제거 */
@@ -100,12 +100,47 @@
     }
     
     .page-container {
+        max-width: var(--container-mobile);
         padding: 0 var(--spacing-md);
     }
 }
 
-@media (min-width: 1024px) {
+/* 태블릿 최적화 (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
     .page-container {
-        max-width: 1400px;
+        max-width: var(--container-tablet);
+        padding: 0 var(--spacing-lg);
+    }
+}
+
+/* 소형 데스크톱 (1024px - 1280px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .page-container {
+        max-width: var(--container-desktop-sm);
+        padding: 0 var(--spacing-xl);
+    }
+}
+
+/* 중형 데스크톱 (1280px - 1440px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .page-container {
+        max-width: var(--container-desktop-md);
+        padding: 0 var(--spacing-xl);
+    }
+}
+
+/* 대형 데스크톱 (1440px - 1600px) */
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .page-container {
+        max-width: var(--container-desktop-lg);
+        padding: 0 var(--spacing-2xl);
+    }
+}
+
+/* 초대형 데스크톱 (1600px+) */
+@media (min-width: 1600px) {
+    .page-container {
+        max-width: var(--container-desktop-xl);
+        padding: 0 var(--spacing-3xl);
     }
 }

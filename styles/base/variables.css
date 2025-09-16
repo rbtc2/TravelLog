@@ -101,4 +101,20 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+  
+  /* 컨테이너 크기 (반응형 최적화) */
+  --container-mobile: 100%;
+  --container-tablet: 90%;
+  --container-desktop-sm: 1000px;
+  --container-desktop-md: 1200px;
+  --container-desktop-lg: 1400px;
+  --container-desktop-xl: 1600px;
+  
+  /* 반응형 브레이크포인트 */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+  --breakpoint-3xl: 1600px;
 }

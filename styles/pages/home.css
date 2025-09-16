@@ -2,11 +2,40 @@
 
 /* 홈 페이지 컨테이너 */
 .home-container {
-    max-width: 800px;
+    max-width: var(--container-desktop-md);
     margin: 0 auto;
     padding: 20px;
     /* Phase 4: 네비게이션 여백 적용 - 콘텐츠가 가려지지 않도록 */
     padding-bottom: calc(20px + var(--navigation-height, 80px));
+}
+
+/* 반응형 홈 컨테이너 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .home-container {
+        max-width: var(--container-desktop-sm);
+        padding: 30px;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .home-container {
+        max-width: var(--container-desktop-md);
+        padding: 40px;
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .home-container {
+        max-width: var(--container-desktop-lg);
+        padding: 50px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .home-container {
+        max-width: var(--container-desktop-xl);
+        padding: 60px;
+    }
 }
 
 /* 다크모드 홈 페이지 컨테이너 */

@@ -2,7 +2,7 @@
 
 /* 캘린더 컨테이너 - 스크롤 완전 제거 */
 .calendar-container {
-    max-width: 1200px;
+    max-width: var(--container-desktop-md);
     margin: 0 auto;
     padding: 20px;
     /* 네비게이션 여백 적용 */
@@ -14,6 +14,35 @@
     backface-visibility: hidden;
 }
 
+/* 반응형 캘린더 컨테이너 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .calendar-container {
+        max-width: var(--container-desktop-sm);
+        padding: 30px;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .calendar-container {
+        max-width: var(--container-desktop-md);
+        padding: 40px;
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .calendar-container {
+        max-width: var(--container-desktop-lg);
+        padding: 50px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .calendar-container {
+        max-width: var(--container-desktop-xl);
+        padding: 60px;
+    }
+}
+
 /* 다크모드 캘린더 컨테이너 */
 .dark .calendar-container {
     background-color: var(--bg-primary, #1a1a1a);
@@ -22,7 +51,7 @@
 
 /* ===== 캘린더 상세 화면 스타일 ===== */
 .calendar-detail-container {
-    max-width: 1200px;
+    max-width: var(--container-desktop-md);
     margin: 0 auto;
     padding: 20px;
     padding-bottom: calc(20px + var(--navigation-height, 80px));
@@ -32,6 +61,35 @@
     /* 하드웨어 가속 */
     transform: translateZ(0);
     backface-visibility: hidden;
+}
+
+/* 반응형 캘린더 상세 화면 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .calendar-detail-container {
+        max-width: var(--container-desktop-sm);
+        padding: 30px;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .calendar-detail-container {
+        max-width: var(--container-desktop-md);
+        padding: 40px;
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .calendar-detail-container {
+        max-width: var(--container-desktop-lg);
+        padding: 50px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .calendar-detail-container {
+        max-width: var(--container-desktop-xl);
+        padding: 60px;
+    }
 }
 
 /* 다크모드 캘린더 상세 화면 */

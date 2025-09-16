@@ -4,15 +4,15 @@
  * 키워드: responsive, mobile, tablet, desktop, media-query
  */
 
-/* 태블릿 이상 (768px 이상) */
-@media (min-width: 768px) {
+/* 태블릿 (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
     .login-container {
         padding: 50px;
         max-width: 450px;
     }
     
     .main-app {
-        max-width: 768px;
+        max-width: var(--container-tablet);
         border-left: 1px solid #e9ecef;
         border-right: 1px solid #e9ecef;
     }
@@ -32,14 +32,95 @@
     }
 }
 
-/* 데스크톱 (1024px 이상) */
-@media (min-width: 1024px) {
+/* 소형 데스크톱 (1024px - 1280px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
     .main-app {
-        max-width: 1024px;
+        max-width: var(--container-desktop-sm);
+        border-left: 1px solid #e9ecef;
+        border-right: 1px solid #e9ecef;
     }
     
     #main-content {
         padding: 40px;
+    }
+    
+    .tab-btn {
+        padding: 18px 14px;
+        min-height: 75px;
+        font-size: 15px;
+    }
+    
+    .tab-icon {
+        font-size: 26px;
+    }
+}
+
+/* 중형 데스크톱 (1280px - 1440px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .main-app {
+        max-width: var(--container-desktop-md);
+        border-left: 1px solid #e9ecef;
+        border-right: 1px solid #e9ecef;
+    }
+    
+    #main-content {
+        padding: 50px;
+    }
+    
+    .tab-btn {
+        padding: 20px 16px;
+        min-height: 80px;
+        font-size: 16px;
+    }
+    
+    .tab-icon {
+        font-size: 28px;
+    }
+}
+
+/* 대형 데스크톱 (1440px - 1600px) */
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .main-app {
+        max-width: var(--container-desktop-lg);
+        border-left: 1px solid #e9ecef;
+        border-right: 1px solid #e9ecef;
+    }
+    
+    #main-content {
+        padding: 60px;
+    }
+    
+    .tab-btn {
+        padding: 22px 18px;
+        min-height: 85px;
+        font-size: 17px;
+    }
+    
+    .tab-icon {
+        font-size: 30px;
+    }
+}
+
+/* 초대형 데스크톱 (1600px+) */
+@media (min-width: 1600px) {
+    .main-app {
+        max-width: var(--container-desktop-xl);
+        border-left: 1px solid #e9ecef;
+        border-right: 1px solid #e9ecef;
+    }
+    
+    #main-content {
+        padding: 70px;
+    }
+    
+    .tab-btn {
+        padding: 24px 20px;
+        min-height: 90px;
+        font-size: 18px;
+    }
+    
+    .tab-icon {
+        font-size: 32px;
     }
 }
 
