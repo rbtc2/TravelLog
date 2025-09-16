@@ -48,8 +48,8 @@ class InsightsRenderer {
     renderInsights() {
         if (!this.container) return;
 
-        // 현재는 하드코딩된 인사이트를 사용 (향후 실제 데이터 분석으로 교체)
-        const insights = this.generateInsights();
+        // 실제 데이터 기반 인사이트 생성 (백오프로 하드코딩된 데이터)
+        const insights = this.generateRealInsights();
         
         const insightsContent = this.container.querySelector('.insights-content');
         if (insightsContent) {
@@ -62,12 +62,28 @@ class InsightsRenderer {
         }
     }
 
+
     /**
-     * 인사이트 데이터를 생성합니다 (임시 하드코딩)
-     * @returns {Array} 인사이트 데이터
+     * 실제 데이터 기반 인사이트를 생성합니다 (향후 구현)
+     * @returns {Array} 실제 데이터 기반 인사이트
      */
-    generateInsights() {
-        // 향후 실제 데이터 분석으로 교체 예정
+    generateRealInsights() {
+        // TODO: 실제 여행 데이터를 분석하여 인사이트 생성
+        // - 여행 패턴 분석
+        // - 계절별 여행 빈도 분석
+        // - 목적별 여행 패턴 분석
+        // - 체류 기간 트렌드 분석
+        // - 국가/도시 선호도 분석
+        
+        const logs = this.controller.getAllLogs();
+        if (!logs || logs.length === 0) {
+            return [{
+                icon: '💡',
+                text: '아직 여행 기록이 없어서 인사이트를 제공할 수 없습니다.'
+            }];
+        }
+
+        // 실제 분석 로직은 향후 구현, 현재는 하드코딩된 데이터 반환
         return [
             {
                 icon: '💡',
@@ -90,30 +106,6 @@ class InsightsRenderer {
                 text: '가을철 여행 빈도가 점점 증가하고 있어요'
             }
         ];
-    }
-
-    /**
-     * 실제 데이터 기반 인사이트를 생성합니다 (향후 구현)
-     * @returns {Array} 실제 데이터 기반 인사이트
-     */
-    generateRealInsights() {
-        // TODO: 실제 여행 데이터를 분석하여 인사이트 생성
-        // - 여행 패턴 분석
-        // - 계절별 여행 빈도 분석
-        // - 목적별 여행 패턴 분석
-        // - 체류 기간 트렌드 분석
-        // - 국가/도시 선호도 분석
-        
-        const logs = this.controller.getAllLogs();
-        if (!logs || logs.length === 0) {
-            return [{
-                icon: '💡',
-                text: '아직 여행 기록이 없어서 인사이트를 제공할 수 없습니다.'
-            }];
-        }
-
-        // 실제 분석 로직은 향후 구현
-        return this.generateInsights();
     }
 
     /**

@@ -38,7 +38,6 @@ class TravelDNARenderer {
             // DNA 아이템들을 동적으로 업데이트
             this.updateDNAItems(container, purposeAnalysis);
             
-            console.log('TravelDNARenderer: 여행 DNA 렌더링 완료');
         } catch (error) {
             console.error('TravelDNARenderer: 렌더링 중 오류:', error);
             this.renderError(container);

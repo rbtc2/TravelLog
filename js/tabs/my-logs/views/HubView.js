@@ -162,13 +162,9 @@ class HubView {
         // 트래블 레포트 버튼
         const travelReportBtn = document.getElementById('travel-report-btn');
         if (travelReportBtn) {
-            console.log('HubView: 트래블 레포트 버튼 이벤트 바인딩 완료');
             this.eventManager.add(travelReportBtn, 'click', () => {
-                console.log('HubView: 트래블 레포트 버튼 클릭됨');
                 this.onNavigateToTravelReport();
             });
-        } else {
-            console.error('HubView: 트래블 레포트 버튼을 찾을 수 없습니다');
         }
         
         // 공유 버튼

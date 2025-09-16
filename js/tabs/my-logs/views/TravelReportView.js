@@ -14,7 +14,7 @@ import { TravelDNARenderer } from '../../../modules/travel-report/components/Tra
 import { HeatmapRenderer } from '../../../modules/travel-report/components/HeatmapRenderer.js';
 import { ChartRenderer } from '../../../modules/travel-report/components/ChartRenderer.js';
 import { InsightsRenderer } from '../../../modules/travel-report/components/InsightsRenderer.js';
-import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js';
+// import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js'; // 미구현
 
 class TravelReportView {
     constructor(controller) {
@@ -36,26 +36,18 @@ class TravelReportView {
      * @param {HTMLElement} container - 렌더링할 컨테이너
      */
     render(container) {
-        console.log('TravelReportView: render 호출됨');
         this.container = container;
         this.container.innerHTML = this.getTravelReportHTML();
-        console.log('TravelReportView: HTML 렌더링 완료');
         this.renderWorldExploration();
-        console.log('TravelReportView: 전세계 탐험 현황 렌더링 완료');
         this.renderBasicStats();
-        console.log('TravelReportView: 기본 통계 렌더링 완료');
         this.renderTravelDNA();
-        console.log('TravelReportView: 여행 DNA 렌더링 완료');
         this.renderInitialHeatmap();
-        console.log('TravelReportView: 초기 히트맵 렌더링 완료');
         this.renderCharts();
-        console.log('TravelReportView: 차트 렌더링 완료');
         this.renderInsights();
-        console.log('TravelReportView: 인사이트 렌더링 완료');
         // this.renderYearlyStats(); // 미구현
-        // console.log('TravelReportView: 연도별 통계 렌더링 완료');
         this.bindEvents();
-        console.log('TravelReportView: 이벤트 바인딩 완료');
+        
+        console.log('TravelReportView: 렌더링 완료');
     }
 
     /**
@@ -65,235 +57,213 @@ class TravelReportView {
     getTravelReportHTML() {
         return `
             <div class="my-logs-container">
-                <div class="my-logs-header">
-                    <div class="header-with-back">
-                        <button class="back-btn" id="back-to-hub-from-report">◀ 뒤로</button>
-                        <div class="header-content">
-                            <h1 class="my-logs-title">📊 트래블 레포트</h1>
-                            <p class="my-logs-subtitle">여행 데이터 분석 및 인사이트</p>
-                        </div>
+                ${this.getHeaderHTML()}
+                ${this.getWorldExplorationSectionHTML()}
+                ${this.getBasicStatsSectionHTML()}
+                ${this.getTravelDNASectionHTML()}
+                ${this.getYearlyStatsSectionHTML()}
+                ${this.getChartsSectionHTML()}
+                ${this.getInsightsSectionHTML()}
+            </div>
+        `;
+    }
+
+    /**
+     * 헤더 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getHeaderHTML() {
+        return `
+            <div class="my-logs-header">
+                <div class="header-with-back">
+                    <button class="back-btn" id="back-to-hub-from-report">◀ 뒤로</button>
+                    <div class="header-content">
+                        <h1 class="my-logs-title">📊 트래블 레포트</h1>
+                        <p class="my-logs-subtitle">여행 데이터 분석 및 인사이트</p>
                     </div>
                 </div>
-                
-                <!-- 전세계 탐험 현황 -->
-                <div class="hub-section world-exploration-section">
-                    <div class="world-exploration-card" id="world-exploration-card">
-                        <!-- 전세계 탐험 현황이 여기에 동적으로 렌더링됩니다 -->
+            </div>
+        `;
+    }
+
+    /**
+     * 전세계 탐험 현황 섹션 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getWorldExplorationSectionHTML() {
+        return `
+            <div class="hub-section world-exploration-section">
+                <div class="world-exploration-card" id="world-exploration-card">
+                    <!-- 전세계 탐험 현황이 여기에 동적으로 렌더링됩니다 -->
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 기본 통계 섹션 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getBasicStatsSectionHTML() {
+        return `
+            <div class="hub-section basic-stats-section">
+                <div class="stats-grid" id="basic-stats-grid">
+                    <!-- 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 여행 DNA 섹션 HTML을 생성합니다 (하드코딩된 데모 데이터)
+     * @returns {string} HTML 문자열
+     */
+    getTravelDNASectionHTML() {
+        return `
+            <div class="hub-section travel-dna-section">
+                <div class="section-header">
+                    <h2 class="section-title">🧬 나의 여행 DNA</h2>
+                </div>
+                <div class="dna-content">
+                    <!-- 여행 DNA 컨텐츠가 여기에 동적으로 렌더링됩니다 -->
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 연도별 통계 섹션 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getYearlyStatsSectionHTML() {
+        return `
+            <div class="hub-section yearly-stats-section">
+                <div class="section-header">
+                    <h2 class="section-title">📅 연도별 통계</h2>
+                    <div class="year-selector-container">
+                        <!-- 연도 선택기가 여기에 동적으로 렌더링됩니다 -->
                     </div>
                 </div>
-                
-                <!-- 기본 통계 카드 -->
-                <div class="hub-section basic-stats-section">
-                    <div class="stats-grid" id="basic-stats-grid">
-                        <!-- 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
-                    </div>
+                <div class="yearly-stats-content">
+                    <!-- 연도별 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 차트 섹션 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getChartsSectionHTML() {
+        return `
+            <div class="hub-section charts-section">
+                <div class="section-header">
+                    <h2 class="section-title">📈 순위/활동 차트</h2>
                 </div>
                 
-                <!-- 나의 여행 DNA 카드 -->
-                <div class="hub-section travel-dna-section">
-                    <div class="section-header">
-                        <h2 class="section-title">🧬 나의 여행 DNA</h2>
-                    </div>
-                    <div class="dna-content">
-                        <div class="dna-item">
-                            <div class="dna-icon">🏆</div>
-                            <div class="dna-details">
-                                <div class="dna-label">주요 방문국</div>
-                                <div class="dna-value">
-                                    <div class="ranking-item first-place">
-                                        <div class="rank-number">1위</div>
-                                        <div class="country-info">
-                                            <div class="country-name">일본</div>
-                                            <div class="country-stats">5회 방문, 총 47일</div>
-                                        </div>
-                                        <div class="country-rating">
-                                            <span class="rating-star">⭐</span>
-                                            <span class="rating-value">4.8</span>
-                                        </div>
-                                    </div>
-                                    <div class="ranking-item second-place">
-                                        <div class="rank-number">2위</div>
-                                        <div class="country-info">
-                                            <div class="country-name">프랑스</div>
-                                            <div class="country-stats">2회 방문, 총 12일</div>
-                                        </div>
-                                        <div class="country-rating">
-                                            <span class="rating-star">⭐</span>
-                                            <span class="rating-value">4.5</span>
-                                        </div>
-                                    </div>
-                                    <div class="ranking-item third-place">
-                                        <div class="rank-number">3위</div>
-                                        <div class="country-info">
-                                            <div class="country-name">이탈리아</div>
-                                            <div class="country-stats">1회 방문, 총 8일</div>
-                                        </div>
-                                        <div class="country-rating">
-                                            <span class="rating-star">⭐</span>
-                                            <span class="rating-value">4.2</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="dna-item">
-                            <div class="dna-icon">🏙️</div>
-                            <div class="dna-details">
-                                <div class="dna-label">베이스캠프</div>
-                                <div class="dna-value">도쿄 (3회, 총 21일)</div>
-                            </div>
-                        </div>
-                        
-                        <div class="dna-item">
-                            <div class="dna-icon">⏱️</div>
-                            <div class="dna-details">
-                                <div class="dna-label">여행 스타일</div>
-                                <div class="dna-value">장기체류형 (평균 9.2일)</div>
-                            </div>
-                        </div>
-                        
-                        <div class="dna-item">
-                            <div class="dna-icon">🎯</div>
-                            <div class="dna-details">
-                                <div class="dna-label">주요 목적</div>
-                                <div class="dna-value">여행 70%, 출장 30%</div>
-                            </div>
-                        </div>
+                ${this.getCountryRankingChartHTML()}
+                ${this.getCityRankingChartHTML()}
+                ${this.getHeatmapChartHTML()}
+            </div>
+        `;
+    }
+
+    /**
+     * 국가별 랭킹 차트 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getCountryRankingChartHTML() {
+        return `
+            <div class="chart-frame">
+                <div class="chart-header">
+                    <div class="chart-tabs">
+                        <button class="chart-tab disabled" data-tab="visits">방문 횟수</button>
+                        <button class="chart-tab disabled" data-tab="duration">체류일 수</button>
                     </div>
                 </div>
-                
-                <!-- 연도별 통계 섹션 -->
-                <div class="hub-section yearly-stats-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📅 연도별 통계</h2>
-                        <div class="year-selector-container">
-                            <!-- 연도 선택기가 여기에 동적으로 렌더링됩니다 -->
+                <div class="chart-placeholder">
+                    <div class="placeholder-text">준비 중</div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 도시별 랭킹 차트 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getCityRankingChartHTML() {
+        const cities = [
+            { name: '도쿄', visits: 3, days: 21 },
+            { name: '파리', visits: 2, days: 12 },
+            { name: '방콕', visits: 1, days: 6 },
+            { name: '런던', visits: 1, days: 5 },
+            { name: '뉴욕', visits: 1, days: 4 }
+        ];
+
+        return `
+            <div class="chart-frame">
+                <div class="chart-header">
+                    <h3 class="chart-title">도시별 랭킹 (Top 5)</h3>
+                </div>
+                <div class="city-ranking-list">
+                    ${cities.map((city, index) => `
+                        <div class="city-ranking-item" data-city="${city.name}">
+                            <div class="city-rank">${index + 1}</div>
+                            <div class="city-info">
+                                <div class="city-name">${city.name}</div>
+                                <div class="city-stats">${city.visits}회 방문, 총 ${city.days}일</div>
+                            </div>
+                            <div class="city-arrow">▶</div>
                         </div>
-                    </div>
-                    <div class="yearly-stats-content">
-                        <!-- 연도별 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 히트맵 차트 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getHeatmapChartHTML() {
+        return `
+            <div class="chart-frame">
+                <div class="chart-header">
+                    <h3 class="chart-title">일정 히트맵</h3>
+                    <div class="chart-controls">
+                        <select class="year-selector" id="heatmap-year-selector">
+                            <!-- 연도 선택기는 HeatmapRenderer에서 동적으로 생성됩니다 -->
+                        </select>
                     </div>
                 </div>
-                
-                <!-- 순위/활동 차트 섹션 -->
-                <div class="hub-section charts-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📈 순위/활동 차트</h2>
-                    </div>
-                    
-                    <!-- 차트 프레임 1: 국가별 랭킹 -->
-                    <div class="chart-frame">
-                        <div class="chart-header">
-                            <div class="chart-tabs">
-                                <button class="chart-tab disabled" data-tab="visits">방문 횟수</button>
-                                <button class="chart-tab disabled" data-tab="duration">체류일 수</button>
+                <div class="heatmap-placeholder">
+                    <div class="heatmap-grid">
+                        ${Array.from({length: 12}, (_, i) => `
+                            <div class="heatmap-month">
+                                <div class="month-label">${i + 1}월</div>
+                                <div class="month-activity placeholder-box"></div>
                             </div>
-                        </div>
-                        <div class="chart-placeholder">
-                            <div class="placeholder-text">준비 중</div>
-                        </div>
-                    </div>
-                    
-                    <!-- 차트 프레임 2: 도시별 랭킹 -->
-                    <div class="chart-frame">
-                        <div class="chart-header">
-                            <h3 class="chart-title">도시별 랭킹 (Top 5)</h3>
-                        </div>
-                        <div class="city-ranking-list">
-                            <div class="city-ranking-item" data-city="도쿄">
-                                <div class="city-rank">1</div>
-                                <div class="city-info">
-                                    <div class="city-name">도쿄</div>
-                                    <div class="city-stats">3회 방문, 총 21일</div>
-                                </div>
-                                <div class="city-arrow">▶</div>
-                            </div>
-                            <div class="city-ranking-item" data-city="파리">
-                                <div class="city-rank">2</div>
-                                <div class="city-info">
-                                    <div class="city-name">파리</div>
-                                    <div class="city-stats">2회 방문, 총 12일</div>
-                                </div>
-                                <div class="city-arrow">▶</div>
-                            </div>
-                            <div class="city-ranking-item" data-city="방콕">
-                                <div class="city-rank">3</div>
-                                <div class="city-info">
-                                    <div class="city-name">방콕</div>
-                                    <div class="city-stats">1회 방문, 총 6일</div>
-                                </div>
-                                <div class="city-arrow">▶</div>
-                            </div>
-                            <div class="city-ranking-item" data-city="런던">
-                                <div class="city-rank">4</div>
-                                <div class="city-info">
-                                    <div class="city-name">런던</div>
-                                    <div class="city-stats">1회 방문, 총 5일</div>
-                                </div>
-                                <div class="city-arrow">▶</div>
-                            </div>
-                            <div class="city-ranking-item" data-city="뉴욕">
-                                <div class="city-rank">5</div>
-                                <div class="city-info">
-                                    <div class="city-name">뉴욕</div>
-                                    <div class="city-stats">1회 방문, 총 4일</div>
-                                </div>
-                                <div class="city-arrow">▶</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 차트 프레임 3: 월별 활동 히트맵 -->
-                    <div class="chart-frame">
-                        <div class="chart-header">
-                            <h3 class="chart-title">일정 히트맵</h3>
-                            <div class="chart-controls">
-                                <select class="year-selector" id="heatmap-year-selector">
-                                    <!-- 연도 선택기는 HeatmapRenderer에서 동적으로 생성됩니다 -->
-                                </select>
-                            </div>
-                        </div>
-                        <div class="heatmap-placeholder">
-                            <div class="heatmap-grid">
-                                ${Array.from({length: 12}, (_, i) => `
-                                    <div class="heatmap-month">
-                                        <div class="month-label">${i + 1}월</div>
-                                        <div class="month-activity placeholder-box"></div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
+                        `).join('')}
                     </div>
                 </div>
-                
-                <!-- 여행 패턴 인사이트 카드 -->
-                <div class="hub-section insights-section">
-                    <div class="section-header">
-                        <h2 class="section-title">💡 여행 패턴 인사이트</h2>
-                    </div>
-                    <div class="insights-content">
-                        <div class="insight-item">
-                            <div class="insight-icon">💡</div>
-                            <div class="insight-text">주로 3–4월에 여행을 떠나시네요!</div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">💡</div>
-                            <div class="insight-text">출장보다 여행을 위한 방문이 많아요</div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">💡</div>
-                            <div class="insight-text">평균 체류기간이 늘어나고 있어요 📈</div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">💡</div>
-                            <div class="insight-text">일본을 정말 좋아하시는군요! 🇯🇵</div>
-                        </div>
-                        <div class="insight-item">
-                            <div class="insight-icon">💡</div>
-                            <div class="insight-text">가을철 여행 빈도가 점점 증가하고 있어요</div>
-                        </div>
-                    </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 인사이트 섹션 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getInsightsSectionHTML() {
+        return `
+            <div class="hub-section insights-section">
+                <div class="section-header">
+                    <h2 class="section-title">💡 여행 패턴 인사이트</h2>
+                </div>
+                <div class="insights-content">
+                    <!-- 인사이트가 여기에 동적으로 렌더링됩니다 -->
                 </div>
             </div>
         `;
@@ -584,9 +554,9 @@ class TravelReportView {
         if (this.insightsRenderer) {
             this.insightsRenderer.cleanup();
         }
-        if (this.yearlyStatsRenderer) {
-            this.yearlyStatsRenderer.cleanup();
-        }
+        // if (this.yearlyStatsRenderer) {
+        //     this.yearlyStatsRenderer.cleanup();
+        // }
         
         if (this.eventManager) {
             this.eventManager.cleanup();
