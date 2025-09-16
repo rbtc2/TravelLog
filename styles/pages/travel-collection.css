@@ -241,6 +241,30 @@
     margin-top: var(--spacing-md);
 }
 
+.sort-controls {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-md);
+}
+
+.filter-group,
+.sort-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.filter-label,
+.sort-label {
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
 /* 대륙 필터와 정렬 옵션 */
 .continent-filter,
 .sort-options {
@@ -248,7 +272,9 @@
 }
 
 .continent-select,
-.sort-select {
+.sort-select,
+.filter-control,
+.sort-control {
     width: 100%;
     padding: var(--spacing-sm) var(--spacing-md);
     border: 2px solid var(--gray-300);
@@ -261,7 +287,9 @@
 }
 
 .continent-select:focus,
-.sort-select:focus {
+.sort-select:focus,
+.filter-control:focus,
+.sort-control:focus {
     outline: none;
     border-color: var(--primary-color);
 }
@@ -575,7 +603,9 @@
     }
     
     .continent-select,
-    .sort-select {
+    .sort-select,
+    .filter-control,
+    .sort-control {
         background: var(--gray-800);
         border-color: var(--gray-700);
         color: var(--gray-100);
@@ -638,7 +668,9 @@
 .continent-card:focus,
 .filter-tab:focus,
 .continent-select:focus,
-.sort-select:focus {
+.sort-select:focus,
+.filter-control:focus,
+.sort-control:focus {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }

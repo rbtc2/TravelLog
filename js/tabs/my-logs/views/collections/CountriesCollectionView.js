@@ -68,11 +68,13 @@ export class CountriesCollectionView extends BaseCollectionView {
      * @returns {string} HTML 문자열
      */
     renderFilterControls() {
+        const filterOptions = this.generateContinentFilterOptions();
+        
         return `
             <div class="filter-group">
                 <label for="continent-filter" class="filter-label">대륙 필터</label>
                 <select id="continent-filter" class="filter-control continent-filter">
-                    ${this.generateContinentFilterOptions()}
+                    ${filterOptions}
                 </select>
             </div>
         `;
@@ -221,12 +223,21 @@ export class CountriesCollectionView extends BaseCollectionView {
             
             let options = '<option value="all">모든 대륙</option>';
             
-            continentStats.forEach(continent => {
-                if (continent.visited > 0) { // 방문한 국가가 있는 대륙만 표시
-                    const selected = this.currentContinent === continent.continent ? 'selected' : '';
-                    options += `<option value="${continent.continent}" ${selected}>${continent.emoji} ${continent.nameKo} (${continent.visited}개국)</option>`;
-                }
-            });
+            if (continentStats && continentStats.length > 0) {
+                continentStats.forEach(continent => {
+                    if (continent.visited > 0) { // 방문한 국가가 있는 대륙만 표시
+                        const selected = this.currentContinent === continent.continent ? 'selected' : '';
+                        options += `<option value="${continent.continent}" ${selected}>${continent.emoji} ${continent.nameKo} (${continent.visited}개국)</option>`;
+                    }
+                });
+            } else {
+                // 기본 옵션 추가
+                options += `
+                    <option value="Asia">🌏 아시아</option>
+                    <option value="Europe">🇪🇺 유럽</option>
+                    <option value="North America">🇺🇸 북미</option>
+                `;
+            }
             
             return options;
         } catch (error) {
