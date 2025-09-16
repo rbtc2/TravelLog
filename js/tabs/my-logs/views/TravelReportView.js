@@ -40,6 +40,8 @@ class TravelReportView {
         this.container = container;
         this.container.innerHTML = this.getTravelReportHTML();
         console.log('TravelReportView: HTML 렌더링 완료');
+        this.renderWorldExploration();
+        console.log('TravelReportView: 전세계 탐험 현황 렌더링 완료');
         this.renderBasicStats();
         console.log('TravelReportView: 기본 통계 렌더링 완료');
         this.renderTravelDNA();
@@ -70,6 +72,13 @@ class TravelReportView {
                             <h1 class="my-logs-title">📊 트래블 레포트</h1>
                             <p class="my-logs-subtitle">여행 데이터 분석 및 인사이트</p>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- 전세계 탐험 현황 -->
+                <div class="hub-section world-exploration-section">
+                    <div class="world-exploration-card" id="world-exploration-card">
+                        <!-- 전세계 탐험 현황이 여기에 동적으로 렌더링됩니다 -->
                     </div>
                 </div>
                 
@@ -284,6 +293,75 @@ class TravelReportView {
                             <div class="insight-icon">💡</div>
                             <div class="insight-text">가을철 여행 빈도가 점점 증가하고 있어요</div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 전세계 탐험 현황을 렌더링합니다
+     */
+    renderWorldExploration() {
+        const container = this.container.querySelector('#world-exploration-card');
+        if (!container) {
+            console.error('TravelReportView: world-exploration-card 컨테이너를 찾을 수 없습니다');
+            return;
+        }
+
+        try {
+            // 컨트롤러에서 전세계 탐험 현황 데이터 가져오기
+            const explorationStats = this.controller.getWorldExplorationStats();
+            container.innerHTML = this.getWorldExplorationHTML(explorationStats);
+        } catch (error) {
+            console.error('TravelReportView: 전세계 탐험 현황 렌더링 오류:', error);
+            container.innerHTML = this.getWorldExplorationErrorHTML();
+        }
+    }
+
+    /**
+     * 전세계 탐험 현황 HTML을 생성합니다
+     * @param {Object} stats - 탐험 현황 통계
+     * @returns {string} HTML 문자열
+     */
+    getWorldExplorationHTML(stats) {
+        return `
+            <div class="world-exploration-content">
+                <div class="exploration-header">
+                    <div class="exploration-icon">🌍</div>
+                    <div class="exploration-info">
+                        <h3 class="exploration-title">전 세계 탐험 현황</h3>
+                        <p class="exploration-subtitle">전 세계 ${stats.totalCountries}개국 중 ${stats.visitedCountries}개국 방문</p>
+                    </div>
+                    <div class="exploration-percentage">${stats.progressPercentage}%</div>
+                </div>
+                <div class="exploration-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${stats.progressPercentage}%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 전세계 탐험 현황 에러 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getWorldExplorationErrorHTML() {
+        return `
+            <div class="world-exploration-content error">
+                <div class="exploration-header">
+                    <div class="exploration-icon">🌍</div>
+                    <div class="exploration-info">
+                        <h3 class="exploration-title">전 세계 탐험 현황</h3>
+                        <p class="exploration-subtitle">데이터를 불러올 수 없습니다</p>
+                    </div>
+                    <div class="exploration-percentage">--%</div>
+                </div>
+                <div class="exploration-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
                     </div>
                 </div>
             </div>

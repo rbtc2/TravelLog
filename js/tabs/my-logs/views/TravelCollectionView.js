@@ -118,9 +118,7 @@ class TravelCollectionView {
      * 메인 컨텐츠 렌더링
      */
     renderContent() {
-        const totalCountries = 195;
         const visitedTotal = Object.keys(this.visitedCountries).length;
-        const progressPercentage = Math.round((visitedTotal / totalCountries) * 100);
         
         this.container.innerHTML = `
             <div class="my-logs-container">
@@ -131,23 +129,6 @@ class TravelCollectionView {
                         <div class="header-content">
                             <h1 class="my-logs-title">📖 여행 도감</h1>
                             <p class="my-logs-subtitle">방문한 국가들을 수집하고 관리하세요</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 전체 진행률 카드 -->
-                <div class="hub-section progress-section">
-                    <div class="collection-stats-card">
-                        <div class="stats-header">
-                            <div class="stats-icon">🌍</div>
-                            <div class="stats-info">
-                                <h3 class="stats-title">전 세계 탐험 현황</h3>
-                                <p class="stats-subtitle">전 세계 ${totalCountries}개국 중 ${visitedTotal}개국 방문</p>
-                            </div>
-                            <div class="stats-percentage">${progressPercentage}%</div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${progressPercentage}%"></div>
                         </div>
                     </div>
                 </div>
@@ -349,6 +330,18 @@ class TravelCollectionView {
     handleBackToHub() {
         console.log('TravelCollectionView: 허브로 돌아가기');
         this.dispatchEvent('navigate', { view: 'hub' });
+    }
+
+    /**
+     * 커스텀 이벤트를 발생시킵니다
+     * @param {string} eventName - 이벤트 이름
+     * @param {Object} detail - 이벤트 상세 정보
+     */
+    dispatchEvent(eventName, detail) {
+        if (this.container) {
+            const event = new CustomEvent(`travelCollectionView:${eventName}`, { detail });
+            this.container.dispatchEvent(event);
+        }
     }
 
 

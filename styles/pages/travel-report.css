@@ -1,5 +1,145 @@
 /* ===== 트래블 레포트 페이지 스타일 ===== */
 
+/* 전세계 탐험 현황 섹션 스타일 */
+.my-logs-container .hub-section.world-exploration-section {
+    margin: var(--spacing-md) 0;
+}
+
+.world-exploration-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    transition: all var(--transition-normal);
+}
+
+.world-exploration-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.world-exploration-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.exploration-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.exploration-icon {
+    font-size: var(--font-2xl);
+    flex-shrink: 0;
+}
+
+.exploration-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.exploration-title {
+    font-size: var(--font-lg);
+    font-weight: var(--font-bold);
+    margin: 0 0 var(--spacing-xs) 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.exploration-subtitle {
+    font-size: var(--font-sm);
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+}
+
+.exploration-percentage {
+    font-size: var(--font-2xl);
+    font-weight: var(--font-bold);
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+}
+
+.exploration-progress {
+    width: 100%;
+}
+
+.exploration-progress .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius-full);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.exploration-progress .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    border-radius: var(--border-radius-full);
+    transition: width var(--transition-slow);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+/* 에러 상태 */
+.world-exploration-content.error .exploration-percentage {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.world-exploration-content.error .exploration-progress .progress-fill {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 767px) {
+    .exploration-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .exploration-info {
+        order: 1;
+    }
+    
+    .exploration-icon {
+        order: 0;
+    }
+    
+    .exploration-percentage {
+        order: 2;
+        font-size: var(--font-xl);
+    }
+    
+    .exploration-title {
+        font-size: var(--font-base);
+    }
+    
+    .exploration-subtitle {
+        font-size: var(--font-xs);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .exploration-title {
+        font-size: var(--font-xl);
+    }
+    
+    .exploration-subtitle {
+        font-size: var(--font-base);
+    }
+    
+    .exploration-percentage {
+        font-size: var(--font-3xl);
+    }
+}
+
 /* 기본 통계 섹션 스타일 */
 .my-logs-container .hub-section.basic-stats-section {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
