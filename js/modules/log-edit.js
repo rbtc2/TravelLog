@@ -340,7 +340,7 @@ class LogEditModule {
     
     /**
      * CountrySelector를 초기화합니다
-     * @param {string} currentCountry - 현재 선택된 국가명
+     * @param {string} currentCountry - 현재 선택된 국가 코드 (예: 'KR', 'US', 'JP')
      */
     async initializeCountrySelector(currentCountry) {
         try {
@@ -364,10 +364,10 @@ class LogEditModule {
                 const selectedCountry = event.detail;
                 console.log('LogEditModule: 국가 선택됨', selectedCountry);
                 
-                // 숨겨진 입력 필드에 국가명 업데이트
+                // 숨겨진 입력 필드에 국가 코드 업데이트 (LogValidator에서 요구)
                 const hiddenInput = this.modal.querySelector('#edit-country');
                 if (hiddenInput) {
-                    hiddenInput.value = selectedCountry.nameKo;
+                    hiddenInput.value = selectedCountry.code;
                 }
                 
                 // 도시 입력 필드 활성화
@@ -383,9 +383,9 @@ class LogEditModule {
             
             // 현재 국가가 있으면 CountrySelector에 설정
             if (currentCountry && this.countrySelector) {
-                // CountriesManager에서 국가 정보 조회
+                // CountriesManager에서 국가 정보 조회 (국가 코드로 조회)
                 const { countriesManager } = await import('../data/countries-manager.js');
-                const country = countriesManager.getCountryByName(currentCountry);
+                const country = countriesManager.getCountryByCode(currentCountry);
                 if (country) {
                     this.countrySelector.selectCountry(country);
                 }
