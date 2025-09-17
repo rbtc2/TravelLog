@@ -14,16 +14,14 @@ export const SORT_TYPES = {
     RELEVANCE: 'relevance',
     DATE_DESC: 'date-desc',
     DATE_ASC: 'date-asc',
-    RATING_DESC: 'rating-desc',
-    PURPOSE_ASC: 'purpose-asc'
+    RATING_DESC: 'rating-desc'
 };
 
 export const SORT_DISPLAY_NAMES = {
     [SORT_TYPES.RELEVANCE]: '관련성',
     [SORT_TYPES.DATE_DESC]: '최신순',
     [SORT_TYPES.DATE_ASC]: '오래된순',
-    [SORT_TYPES.RATING_DESC]: '별점순',
-    [SORT_TYPES.PURPOSE_ASC]: '목적순'
+    [SORT_TYPES.RATING_DESC]: '별점순'
 };
 
 export const PURPOSE_DISPLAY_NAMES = {

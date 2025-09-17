@@ -113,8 +113,20 @@
     }
     
     .sort-options {
-        flex-direction: column;
+        flex-direction: row;
         gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    
+    .sort-option {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 16px;
+    }
+    
+    .sort-icon {
+        font-size: 12px;
     }
     
     /* 모바일 로그 상세 화면 */

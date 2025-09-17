@@ -79,28 +79,17 @@ export class SearchTab {
             this.container = container;
             this.uiRenderer.setContainer(container);
             
-            // 검색 모드 리셋
-            this.isSearchMode = false;
-            
-            // 먼저 로그 데이터 로드
-            this.loadAllLogs();
-            
-            // SearchEngine 초기화
-            await this.searchEngine.initialize();
-            
-            // SearchUIRenderer 초기화
-            await this.uiRenderer.initializeCountries();
-            
-            this.validateState();
-            this.renderUI();
-            this.bindEvents();
-            
-            this.isInitialized = true;
-            
-            // 탭 렌더링 후 스크롤을 상단으로 이동
-            this.scrollToTop();
-            
-            // 검색 탭 초기화 완료
+        this.isSearchMode = false;
+        this.loadAllLogs();
+        
+        await this.searchEngine.initialize();
+        await this.uiRenderer.initializeCountries();
+        
+        this.validateState();
+        this.renderAndBind();
+        
+        this.isInitialized = true;
+        this.scrollToTop();
             
         } catch (error) {
             console.error('검색 탭 렌더링 오류:', error);
@@ -142,28 +131,24 @@ export class SearchTab {
                 this.showLogDetail(logId);
             } else {
                 this.stateManager.updateState('initial');
-                this.renderUI();
-                this.bindEvents();
+                this.renderAndBind();
             }
         } else if (this.stateManager.hasResults()) {
             const query = this.stateManager.getQuery();
             if (query) {
                 this.performSearch(query, { showValidationError: false });
             } else {
-                this.renderUI();
-                this.bindEvents();
+                this.renderAndBind();
             }
         } else if (this.stateManager.hasNoResults()) {
             const query = this.stateManager.getQuery();
             if (query) {
                 this.performSearch(query, { showValidationError: false });
             } else {
-                this.renderUI();
-                this.bindEvents();
+                this.renderAndBind();
             }
         } else {
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
         }
     }
 
@@ -172,17 +157,9 @@ export class SearchTab {
      */
     addDemoData() {
         try {
-            // 데모 데이터 생성 시작
-            // DemoData 모듈을 사용하여 데모 데이터 가져오기
             const demoLogs = DemoData.getDefaultLogs();
-            
-            // StorageManager를 사용하여 저장
             this.storageManager.saveLogs(demoLogs);
-            
-            // StateManager에 데이터 설정
             this.stateManager.setAllLogs(demoLogs);
-            
-            // 데모 데이터 생성 완료
         } catch (error) {
             console.error('검색 탭 데모 데이터 생성 실패:', error);
         }
@@ -195,7 +172,6 @@ export class SearchTab {
         try {
             const allLogs = this.storageManager.loadLogs();
             this.stateManager.setAllLogs(allLogs);
-            // 로그 데이터 로드 완료
         } catch (error) {
             console.error('로그 데이터 로드 실패:', error);
             this.stateManager.setAllLogs([]);
@@ -219,7 +195,7 @@ export class SearchTab {
     }
 
     /**
-     * UI를 렌더링합니다
+     * UI를 렌더링하고 이벤트를 바인딩합니다
      */
     renderUI() {
         const state = {
@@ -247,7 +223,6 @@ export class SearchTab {
         // 필터 탭 이벤트 바인딩 (필터가 이미 펼쳐져 있는 경우)
         const filterContent = document.getElementById('filter-content');
         if (filterContent && filterContent.classList.contains('expanded')) {
-            // 필터가 이미 펼쳐져 있음 - 탭 이벤트 바인딩 실행
             this.eventHandler.bindFilterTabEvents(this.callbacks);
         }
         
@@ -257,37 +232,53 @@ export class SearchTab {
     }
 
     /**
+     * UI를 렌더링하고 이벤트를 바인딩합니다 (통합 메서드)
+     */
+    renderAndBind() {
+        this.renderUI();
+        this.bindEvents();
+    }
+
+    /**
      * 검색 입력 이벤트를 직접 바인딩합니다
      */
     bindSearchInputEvents() {
         const searchInput = document.getElementById('search-input');
-        if (searchInput) {
-            // 기존 이벤트 리스너 제거
+        if (!searchInput) return;
+
+        // 기존 이벤트 리스너 제거 (안전하게)
+        if (this.searchInputHandler) {
             searchInput.removeEventListener('input', this.searchInputHandler);
-            searchInput.removeEventListener('keypress', this.searchKeypressHandler);
-            searchInput.removeEventListener('focus', this.searchFocusHandler);
-            searchInput.removeEventListener('blur', this.searchBlurHandler);
-            
-            // 새로운 핸들러 함수들 생성
-            this.searchInputHandler = (event) => {
-                this.handleSearchInput(event.target.value);
-            };
-            this.searchKeypressHandler = (event) => {
-                this.handleSearchKeypress(event);
-            };
-            this.searchFocusHandler = (event) => {
-                this.handleSearchFocus(event);
-            };
-            this.searchBlurHandler = (event) => {
-                this.handleSearchBlur(event);
-            };
-            
-            // 이벤트 리스너 추가
-            searchInput.addEventListener('input', this.searchInputHandler);
-            searchInput.addEventListener('keypress', this.searchKeypressHandler);
-            searchInput.addEventListener('focus', this.searchFocusHandler);
-            searchInput.addEventListener('blur', this.searchBlurHandler);
         }
+        if (this.searchKeypressHandler) {
+            searchInput.removeEventListener('keypress', this.searchKeypressHandler);
+        }
+        if (this.searchFocusHandler) {
+            searchInput.removeEventListener('focus', this.searchFocusHandler);
+        }
+        if (this.searchBlurHandler) {
+            searchInput.removeEventListener('blur', this.searchBlurHandler);
+        }
+        
+        // 새로운 핸들러 함수들 생성
+        this.searchInputHandler = (event) => {
+            this.handleSearchInput(event.target.value);
+        };
+        this.searchKeypressHandler = (event) => {
+            this.handleSearchKeypress(event);
+        };
+        this.searchFocusHandler = (event) => {
+            this.handleSearchFocus(event);
+        };
+        this.searchBlurHandler = (event) => {
+            this.handleSearchBlur(event);
+        };
+        
+        // 이벤트 리스너 추가
+        searchInput.addEventListener('input', this.searchInputHandler);
+        searchInput.addEventListener('keypress', this.searchKeypressHandler);
+        searchInput.addEventListener('focus', this.searchFocusHandler);
+        searchInput.addEventListener('blur', this.searchBlurHandler);
     }
 
     /**
@@ -307,14 +298,12 @@ export class SearchTab {
             // 검색 중 상태로 변경
             this.stateManager.updateState('searching', { query });
             this.stateManager.setSearching(true);
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
 
             // 동일한 검색어로 재검색 방지
             if (this.stateManager.getLastSearchQuery() === query && this.resultManager.hasResults()) {
                 this.stateManager.updateState('hasResults');
-                this.renderUI();
-                this.bindEvents();
+                this.renderAndBind();
                 return;
             }
 
@@ -327,8 +316,7 @@ export class SearchTab {
                     this.showToast(searchResult.error);
                 }
                 this.stateManager.updateState('initial');
-                this.renderUI();
-                this.bindEvents();
+                this.renderAndBind();
                 return;
             }
 
@@ -354,15 +342,13 @@ export class SearchTab {
                 });
             }
             
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
             
         } catch (error) {
             console.error('검색 수행 오류:', error);
             this.showToast('검색 중 오류가 발생했습니다.');
             this.stateManager.updateState('initial');
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
         } finally {
             this.stateManager.setSearching(false);
         }
@@ -444,8 +430,7 @@ export class SearchTab {
             console.error('로그 상세 화면 표시 오류:', error);
             this.showToast('일정 상세 정보를 불러오는 중 오류가 발생했습니다.');
             this.stateManager.updateState('initial');
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
         }
     }
 
@@ -461,38 +446,27 @@ export class SearchTab {
             clearTimeout(this.searchTimeout);
         }
         
-        // 검색 모드가 아닌 경우 (검색창을 아직 클릭하지 않은 경우)
         if (!this.isSearchMode) {
-            // 검색어가 비어있으면 초기 상태 유지
-        if (!safeQuery.trim()) {
+            if (!safeQuery.trim()) {
                 this.stateManager.updateState('initial', { query: safeQuery });
-                this.renderUI();
-                this.bindEvents();
+                this.renderAndBind();
                 return;
             }
-            // 검색어가 있으면 검색 모드로 전환하지만 검색은 실행하지 않음
             this.isSearchMode = true;
             this.stateManager.updateState('initial', { query: safeQuery });
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
             return;
         }
-        
-        // 검색 모드인 경우 - 검색어만 업데이트하고 상태는 변경하지 않음
-        // 검색어가 비어있어도 검색 모드 유지 (UI 재렌더링 없이 쿼리만 업데이트)
-        // UI를 다시 렌더링하지 않음 - 검색 모드 유지
     }
 
     handleSearchKeypress(event) {
         if (event.key === 'Enter') {
-            // 검색 모드로 전환하고 검색 실행
             this.isSearchMode = true;
             this.handleSearch();
         }
     }
 
     handleSearchFocus(event) {
-        // 검색창 포커스 시 검색 모드로 전환
         this.isSearchMode = true;
         this.eventHandler.handleSearchFocus(event);
     }
@@ -514,16 +488,13 @@ export class SearchTab {
             return;
         }
         
-        // 검색 모드로 전환하고 검색 실행
         this.isSearchMode = true;
         this.performSearch(query.trim(), { showValidationError: true });
     }
 
     handleRetrySearch() {
-        // 재검색 시에도 검색 모드 유지
         this.stateManager.updateState('searching', { query: this.stateManager.getQuery() });
-        this.renderUI();
-        this.bindEvents();
+        this.renderAndBind();
         
         const searchInput = document.getElementById('search-input');
         if (searchInput) {
@@ -548,8 +519,7 @@ export class SearchTab {
 
     handleBackFromDetail() {
         this.stateManager.exitDetailMode();
-        this.renderUI();
-        this.bindEvents();
+        this.renderAndBind();
     }
 
     handleLogEdit(event) {
@@ -559,7 +529,6 @@ export class SearchTab {
                 console.error('로그 ID가 없습니다.');
                 return;
             }
-            // 로그 편집 기능 (간단한 구현)
             this.refresh();
         } catch (error) {
             console.error('로그 편집 처리 오류:', error);
@@ -584,8 +553,7 @@ export class SearchTab {
                 this.stateManager.updateState('noResults');
             }
             
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
             this.showToast('일정이 삭제되었습니다.');
         } catch (error) {
             console.error('로그 삭제 처리 오류:', error);
@@ -615,9 +583,7 @@ export class SearchTab {
 
     switchFilterTab(targetTab) {
         if (!targetTab || typeof targetTab !== 'string') {
-            console.error('switchFilterTab: 유효하지 않은 targetTab:', targetTab);
-            console.error('targetTab 타입:', typeof targetTab);
-            console.error('targetTab 값:', targetTab);
+            console.warn('switchFilterTab: 유효하지 않은 targetTab:', targetTab);
             return;
         }
         
@@ -637,7 +603,7 @@ export class SearchTab {
             clickedTab.classList.add('active');
             // 탭 활성화 성공
         } else {
-            console.error(`탭을 찾을 수 없음: [data-tab="${targetTab}"]`);
+            console.warn(`탭을 찾을 수 없음: [data-tab="${targetTab}"]`);
         }
         
         // 해당 패널 표시
@@ -646,7 +612,7 @@ export class SearchTab {
             targetPanel.classList.add('active');
             // 패널 활성화 성공
         } else {
-            console.error(`패널을 찾을 수 없음: [data-panel="${targetTab}"]`);
+            console.warn(`패널을 찾을 수 없음: [data-panel="${targetTab}"]`);
         }
     }
 
@@ -703,8 +669,7 @@ export class SearchTab {
             // 검색 중 상태로 변경
             this.stateManager.updateState('searching', { query: '' });
             this.stateManager.setSearching(true);
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
 
             // SearchEngine이 초기화되지 않았다면 초기화
             if (!this.searchEngine.isInitialized) {
@@ -718,8 +683,7 @@ export class SearchTab {
             if (searchResult.error) {
                 this.showToast(searchResult.error);
                 this.stateManager.updateState('initial');
-                this.renderUI();
-                this.bindEvents();
+                this.renderAndBind();
                 return;
             }
 
@@ -732,14 +696,9 @@ export class SearchTab {
                 });
                 this.stateManager.setLastSearchQuery('');
                 
-                // 성능 정보 로깅
-                if (searchResult.performance) {
-                    const { searchTime, isOptimal } = searchResult.performance;
-                    // 필터 검색 완료
-                    
-                    if (!isOptimal) {
-                        console.warn(`⚠️ 필터 검색 성능 경고: ${searchTime.toFixed(2)}ms`);
-                    }
+                // 성능 정보 로깅 (개발 모드에서만)
+                if (searchResult.performance && !searchResult.performance.isOptimal) {
+                    console.warn(`필터 검색 성능 경고: ${searchResult.performance.searchTime.toFixed(2)}ms`);
                 }
                 
                 // 필터 조건 요약 메시지 생성
@@ -751,15 +710,13 @@ export class SearchTab {
                 this.showToast(`필터 조건에 맞는 결과가 없습니다. ${filterSummary}`);
             }
             
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
             
         } catch (error) {
             console.error('필터 검색 수행 오류:', error);
             this.showToast('필터 검색 중 오류가 발생했습니다.');
             this.stateManager.updateState('initial');
-            this.renderUI();
-            this.bindEvents();
+            this.renderAndBind();
         } finally {
             this.stateManager.setSearching(false);
         }
@@ -829,8 +786,7 @@ export class SearchTab {
 
         const sortedResults = this.resultManager.sortResults(sortType);
         this.stateManager.updateState('hasResults', { results: sortedResults });
-        this.renderUI();
-        this.bindEvents();
+        this.renderAndBind();
         
         const displayName = this.resultManager.getSortDisplayName(sortType);
         this.showToast(`${displayName}으로 정렬되었습니다.`);
@@ -888,9 +844,6 @@ export class SearchTab {
 
     async cleanup() {
         try {
-            // 검색 탭 cleanup 시작
-            
-            // 타이머 정리
             if (this.searchTimeout) {
                 clearTimeout(this.searchTimeout);
                 this.searchTimeout = null;
@@ -901,13 +854,9 @@ export class SearchTab {
             this.resultManager.clearResults();
             this.filterManager.resetFilters();
             
-            // 검색 모드 리셋
             this.isSearchMode = false;
-            
             this.isInitialized = false;
             this.container = null;
-            
-            // 검색 탭 cleanup 완료
         } catch (error) {
             console.error('검색 탭 정리 오류:', error);
         }

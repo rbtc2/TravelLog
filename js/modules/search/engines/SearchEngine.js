@@ -373,14 +373,6 @@ export class SearchEngine {
                 sortedResults.sort((a, b) => (b.log.rating || 0) - (a.log.rating || 0));
                 break;
                 
-            case SORT_TYPES.PURPOSE_ASC:
-                sortedResults.sort((a, b) => {
-                    const purposeA = (a.log.purpose || '').toLowerCase();
-                    const purposeB = (b.log.purpose || '').toLowerCase();
-                    return purposeA.localeCompare(purposeB);
-                });
-                break;
-                
             default:
                 console.warn(`알 수 없는 정렬 타입: ${sortType}`);
         }

@@ -342,9 +342,18 @@ export class SearchUIRenderer {
     renderSortSection(state) {
         const { currentSortType = SORT_TYPES.RELEVANCE } = state;
         
+        // 정렬 옵션 아이콘 매핑
+        const sortIcons = {
+            [SORT_TYPES.RELEVANCE]: '🎯',
+            [SORT_TYPES.DATE_DESC]: '📅',
+            [SORT_TYPES.DATE_ASC]: '📆',
+            [SORT_TYPES.RATING_DESC]: '⭐'
+        };
+        
         const sortOptions = Object.values(SORT_TYPES).map(sortType => `
             <label class="sort-option" for="sort-${sortType}">
                 <input type="radio" name="sort" value="${sortType}" id="sort-${sortType}" ${currentSortType === sortType ? 'checked' : ''} autocomplete="off">
+                <span class="sort-icon">${sortIcons[sortType]}</span>
                 <span class="sort-text">${SORT_DISPLAY_NAMES[sortType]}</span>
             </label>
         `).join('');
