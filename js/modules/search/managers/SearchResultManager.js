@@ -75,22 +75,56 @@ export class SearchResultManager {
                 
             case SORT_TYPES.DATE_DESC:
                 sortedResults.sort((a, b) => {
-                    const dateA = new Date(a.log.startDate || a.log.date || 0);
-                    const dateB = new Date(b.log.startDate || b.log.date || 0);
-                    return dateB - dateA;
+                    // 안전한 로그 객체 접근
+                    const logA = a?.log || a;
+                    const logB = b?.log || b;
+                    
+                    if (!logA || !logB) {
+                        console.warn('정렬 중 잘못된 로그 객체 발견:', { a, b });
+                        return 0;
+                    }
+                    
+                    const dateA = this.getValidDate(logA);
+                    const dateB = this.getValidDate(logB);
+                    
+                    return dateB - dateA; // 최신순 (내림차순)
                 });
                 break;
                 
             case SORT_TYPES.DATE_ASC:
                 sortedResults.sort((a, b) => {
-                    const dateA = new Date(a.log.startDate || a.log.date || 0);
-                    const dateB = new Date(b.log.startDate || b.log.date || 0);
-                    return dateA - dateB;
+                    // 안전한 로그 객체 접근
+                    const logA = a?.log || a;
+                    const logB = b?.log || b;
+                    
+                    if (!logA || !logB) {
+                        console.warn('정렬 중 잘못된 로그 객체 발견:', { a, b });
+                        return 0;
+                    }
+                    
+                    const dateA = this.getValidDate(logA);
+                    const dateB = this.getValidDate(logB);
+                    
+                    return dateA - dateB; // 오래된순 (오름차순)
                 });
                 break;
                 
             case SORT_TYPES.RATING_DESC:
-                sortedResults.sort((a, b) => (b.log.rating || 0) - (a.log.rating || 0));
+                sortedResults.sort((a, b) => {
+                    // 안전한 로그 객체 접근
+                    const logA = a?.log || a;
+                    const logB = b?.log || b;
+                    
+                    if (!logA || !logB) {
+                        console.warn('정렬 중 잘못된 로그 객체 발견:', { a, b });
+                        return 0;
+                    }
+                    
+                    const ratingA = parseFloat(logA.rating) || 0;
+                    const ratingB = parseFloat(logB.rating) || 0;
+                    
+                    return ratingB - ratingA; // 별점 높은순 (내림차순)
+                });
                 break;
                 
             default:
@@ -99,6 +133,40 @@ export class SearchResultManager {
 
         this.results = sortedResults;
         return sortedResults;
+    }
+
+    /**
+     * 로그 객체에서 유효한 날짜를 추출합니다
+     * @param {Object} log - 로그 객체
+     * @returns {number} 유효한 날짜의 타임스탬프 (유효하지 않으면 0)
+     */
+    getValidDate(log) {
+        if (!log || typeof log !== 'object') return 0;
+        
+        // 날짜 필드 우선순위: startDate > date > createdDate > updatedDate
+        const dateFields = ['startDate', 'date', 'createdDate', 'updatedDate'];
+        
+        for (const field of dateFields) {
+            const dateValue = log[field];
+            if (dateValue) {
+                // 다양한 날짜 형식 지원
+                let date;
+                
+                // YYYY-MM-DD 형식인 경우
+                if (typeof dateValue === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+                    date = new Date(dateValue + 'T00:00:00');
+                } else {
+                    date = new Date(dateValue);
+                }
+                
+                if (!isNaN(date.getTime()) && date.getTime() > 0) {
+                    return date.getTime();
+                }
+            }
+        }
+        
+        // 유효한 날짜가 없으면 0 반환 (정렬 시 맨 뒤로)
+        return 0;
     }
 
     /**
