@@ -256,7 +256,6 @@ class TravelReportView {
             <div class="hub-section heatmap-section">
                 <div class="section-header">
                     <h2 class="section-title">🔥 여행 히트맵</h2>
-                    <p class="section-description">월별 여행 활동을 한눈에 확인하세요</p>
                 </div>
                 
                 <div class="heatmap-content">
