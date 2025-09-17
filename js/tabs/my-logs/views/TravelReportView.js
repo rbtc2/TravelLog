@@ -409,6 +409,7 @@ class TravelReportView {
         try {
             // 컨트롤러에서 전세계 탐험 현황 데이터 가져오기
             const explorationStats = this.controller.getWorldExplorationStats();
+            console.log('TravelReportView: 전세계 탐험 현황 데이터:', explorationStats);
             container.innerHTML = this.getWorldExplorationHTML(explorationStats);
         } catch (error) {
             console.error('TravelReportView: 전세계 탐험 현황 렌더링 오류:', error);

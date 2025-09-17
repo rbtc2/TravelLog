@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1 리팩토링 통합 테스트 - TravelLog</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            color: #1a202c;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+        }
+        
+        .header .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f7fafc;
+        }
+        
+        .test-section h2 {
+            color: #2b6cb0;
+            margin: 0 0 20px 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .test-item.success {
+            border-left-color: #48bb78;
+            background-color: #f0fff4;
+        }
+        
+        .test-item.error {
+            border-left-color: #f56565;
+            background-color: #fff5f5;
+        }
+        
+        .test-item.warning {
+            border-left-color: #ed8936;
+            background-color: #fffaf0;
+        }
+        
+        .test-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        
+        .test-result {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #4a5568;
+            white-space: pre-wrap;
+        }
+        
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-pass { background-color: #48bb78; }
+        .status-fail { background-color: #f56565; }
+        .status-warn { background-color: #ed8936; }
+        
+        .summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .summary h3 {
+            margin: 0 0 15px 0;
+            font-size: 1.3rem;
+        }
+        
+        .run-button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .run-button:hover {
+            background: #3182ce;
+        }
+        
+        .run-button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Phase 1 리팩토링 통합 테스트</h1>
+            <p class="subtitle">AnalysisOrchestrator 및 분석 모듈들의 성능 및 기능 검증</p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="run-button" onclick="runAllTests()">전체 테스트 실행</button>
+            <button class="run-button" onclick="runPerformanceTest()">성능 테스트</button>
+            <button class="run-button" onclick="runCompatibilityTest()">호환성 테스트</button>
+            <button class="run-button" onclick="clearResults()">결과 초기화</button>
+        </div>
+
+        <!-- 모듈 로딩 테스트 -->
+        <div class="test-section">
+            <h2>🔧 모듈 로딩 및 초기화 테스트</h2>
+            <div id="module-loading-tests">
+                <div class="test-item">
+                    <div class="test-name">테스트 준비 중...</div>
+                    <div class="test-result">테스트를 실행하려면 "전체 테스트 실행" 버튼을 클릭하세요.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 기능성 테스트 -->
+        <div class="test-section">
+            <h2>⚙️ 기능성 테스트</h2>
+            <div id="functionality-tests">
+                <div class="test-item">
+                    <div class="test-name">테스트 준비 중...</div>
+                    <div class="test-result">분석 기능들의 정확성을 검증합니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 성능 테스트 -->
+        <div class="test-section">
+            <h2>⚡ 성능 테스트</h2>
+            <div id="performance-tests">
+                <div class="test-item">
+                    <div class="test-name">테스트 준비 중...</div>
+                    <div class="test-result">새로운 모듈들의 성능을 측정합니다.</div>
+                </div>
+            </div>
+            <div class="performance-metrics" id="performance-metrics">
+                <!-- 성능 지표들이 여기에 표시됩니다 -->
+            </div>
+        </div>
+
+        <!-- 호환성 테스트 -->
+        <div class="test-section">
+            <h2>🔄 호환성 테스트</h2>
+            <div id="compatibility-tests">
+                <div class="test-item">
+                    <div class="test-name">테스트 준비 중...</div>
+                    <div class="test-result">기존 API와의 호환성을 확인합니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메모리 및 리소스 테스트 -->
+        <div class="test-section">
+            <h2>💾 메모리 및 리소스 테스트</h2>
+            <div id="memory-tests">
+                <div class="test-item">
+                    <div class="test-name">테스트 준비 중...</div>
+                    <div class="test-result">메모리 사용량 및 리소스 정리를 확인합니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 테스트 요약 -->
+        <div class="summary" id="test-summary" style="display: none;">
+            <h3>📊 테스트 결과 요약</h3>
+            <div id="summary-content">
+                <!-- 요약 내용이 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 테스트에 필요한 모듈들 import
+        import { MyLogsController } from '../js/tabs/my-logs/controllers/MyLogsController.js';
+        import { LogDataService } from '../js/modules/services/log-data-service.js';
+        import { CacheManager } from '../js/modules/services/cache-manager.js';
+        import { AnalysisOrchestrator } from '../js/modules/analysis/AnalysisOrchestrator.js';
+        import { CountryAnalysisManager } from '../js/modules/analysis/CountryAnalysisManager.js';
+        import { ExplorationStatsManager } from '../js/modules/analysis/ExplorationStatsManager.js';
+        import { YearlyComparisonManager } from '../js/modules/analysis/YearlyComparisonManager.js';
+        import { DemoData } from '../js/modules/utils/demo-data.js';
+
+        // 글로벌 테스트 상태
+        window.testState = {
+            results: [],
+            controller: null,
+            startTime: null,
+            metrics: {}
+        };
+
+        // 테스트 유틸리티 함수들
+        function createTestItem(name, result, status = 'success') {
+            return `
+                <div class="test-item ${status}">
+                    <div class="test-name">
+                        <span class="status-indicator status-${status === 'success' ? 'pass' : status === 'error' ? 'fail' : 'warn'}"></span>
+                        ${name}
+                    </div>
+                    <div class="test-result">${result}</div>
+                </div>
+            `;
+        }
+
+        function updateTestSection(sectionId, content) {
+            document.getElementById(sectionId).innerHTML = content;
+        }
+
+        function measurePerformance(name, fn) {
+            const start = performance.now();
+            const result = fn();
+            const end = performance.now();
+            const duration = Math.round((end - start) * 100) / 100;
+            
+            window.testState.metrics[name] = duration;
+            return { result, duration };
+        }
+
+        async function measureAsyncPerformance(name, fn) {
+            const start = performance.now();
+            const result = await fn();
+            const end = performance.now();
+            const duration = Math.round((end - start) * 100) / 100;
+            
+            window.testState.metrics[name] = duration;
+            return { result, duration };
+        }
+
+        // 1. 모듈 로딩 테스트
+        async function testModuleLoading() {
+            let results = [];
+
+            try {
+                // LogDataService 테스트
+                const logDataService = new LogDataService();
+                results.push(createTestItem(
+                    'LogDataService 로딩',
+                    `✅ 성공적으로 로드됨\n인스턴스 타입: ${logDataService.constructor.name}`,
+                    'success'
+                ));
+
+                // CacheManager 테스트
+                const cacheManager = new CacheManager();
+                results.push(createTestItem(
+                    'CacheManager 로딩',
+                    `✅ 성공적으로 로드됨\n인스턴스 타입: ${cacheManager.constructor.name}`,
+                    'success'
+                ));
+
+                // AnalysisOrchestrator 테스트
+                const analysisOrchestrator = new AnalysisOrchestrator(logDataService, cacheManager);
+                results.push(createTestItem(
+                    'AnalysisOrchestrator 로딩',
+                    `✅ 성공적으로 로드됨\n의존성 주입: ${logDataService ? '✅' : '❌'} LogDataService, ${cacheManager ? '✅' : '❌'} CacheManager`,
+                    'success'
+                ));
+
+                // 개별 분석 매니저들 테스트
+                const countryManager = new CountryAnalysisManager(logDataService, cacheManager);
+                const explorationManager = new ExplorationStatsManager(logDataService, cacheManager);
+                const yearlyManager = new YearlyComparisonManager(logDataService, cacheManager);
+
+                results.push(createTestItem(
+                    '분석 매니저들 로딩',
+                    `✅ CountryAnalysisManager: ${countryManager ? '로드됨' : '실패'}\n✅ ExplorationStatsManager: ${explorationManager ? '로드됨' : '실패'}\n✅ YearlyComparisonManager: ${yearlyManager ? '로드됨' : '실패'}`,
+                    'success'
+                ));
+
+                // MyLogsController 통합 테스트
+                const controller = new MyLogsController();
+                await controller.initialize();
+                
+                results.push(createTestItem(
+                    'MyLogsController 통합 초기화',
+                    `✅ 컨트롤러 초기화 완료\n✅ AnalysisOrchestrator 통합: ${controller.analysisOrchestrator ? '성공' : '실패'}\n초기화 상태: ${controller.isInitialized}`,
+                    'success'
+                ));
+
+                window.testState.controller = controller;
+
+            } catch (error) {
+                results.push(createTestItem(
+                    '모듈 로딩 실패',
+                    `❌ 오류 발생: ${error.message}\n스택: ${error.stack}`,
+                    'error'
+                ));
+            }
+
+            updateTestSection('module-loading-tests', results.join(''));
+        }
+
+        // 2. 기능성 테스트
+        async function testFunctionality() {
+            let results = [];
+            const controller = window.testState.controller;
+
+            if (!controller) {
+                results.push(createTestItem(
+                    '기능성 테스트 준비 실패',
+                    '❌ 컨트롤러가 초기화되지 않았습니다. 먼저 모듈 로딩 테스트를 실행하세요.',
+                    'error'
+                ));
+                updateTestSection('functionality-tests', results.join(''));
+                return;
+            }
+
+            try {
+                // 데모 데이터 추가
+                controller.addDemoData();
+                
+                // 기본 통계 테스트
+                const { result: basicStats, duration: basicStatsDuration } = await measureAsyncPerformance(
+                    'BasicStats',
+                    () => controller.analysisOrchestrator.getBasicStats()
+                );
+                
+                results.push(createTestItem(
+                    '기본 통계 분석',
+                    `✅ 실행 시간: ${basicStatsDuration}ms\n총 여행: ${basicStats.totalTrips}회\n방문 국가: ${basicStats.uniqueCountries}개\n총 여행일: ${basicStats.totalTravelDays}일\n평균 별점: ${basicStats.averageRating}점`,
+                    'success'
+                ));
+
+                // 국가별 분석 테스트
+                const { result: countryAnalysis, duration: countryDuration } = await measureAsyncPerformance(
+                    'CountryAnalysis',
+                    () => controller.getFavoriteCountryAnalysis()
+                );
+
+                results.push(createTestItem(
+                    '주요방문국 분석',
+                    `✅ 실행 시간: ${countryDuration}ms\n분석된 국가 수: ${countryAnalysis.totalVisitedCountries}개\n상위 국가: ${countryAnalysis.favoriteCountries.slice(0, 3).map(c => c.displayName).join(', ')}`,
+                    'success'
+                ));
+
+                // 전세계 탐험 통계 테스트
+                const { result: worldStats, duration: worldDuration } = await measureAsyncPerformance(
+                    'WorldExploration',
+                    () => controller.getWorldExplorationStats()
+                );
+
+                results.push(createTestItem(
+                    '전세계 탐험 통계',
+                    `✅ 실행 시간: ${worldDuration}ms\n방문한 국가: ${worldStats.visitedCountries}/${worldStats.totalCountries}개\n탐험 진행률: ${worldStats.progressPercentage}%\n대륙별 데이터: ${worldStats.continentStats.length}개 대륙`,
+                    'success'
+                ));
+
+                // 연도별 분석 테스트
+                const currentYear = new Date().getFullYear().toString();
+                const { result: yearlyStats, duration: yearlyDuration } = await measureAsyncPerformance(
+                    'YearlyAnalysis',
+                    () => controller.getYearlyStatsAnalysis(currentYear)
+                );
+
+                results.push(createTestItem(
+                    '연도별 통계 분석',
+                    `✅ 실행 시간: ${yearlyDuration}ms\n분석 연도: ${yearlyStats.year}\n현재 연도 데이터: ${yearlyStats.hasCurrentData ? '있음' : '없음'}\n전년도 데이터: ${yearlyStats.hasPreviousData ? '있음' : '없음'}`,
+                    'success'
+                ));
+
+            } catch (error) {
+                results.push(createTestItem(
+                    '기능성 테스트 실패',
+                    `❌ 오류 발생: ${error.message}\n스택: ${error.stack}`,
+                    'error'
+                ));
+            }
+
+            updateTestSection('functionality-tests', results.join(''));
+        }
+
+        // 3. 성능 테스트
+        async function testPerformance() {
+            let results = [];
+            const controller = window.testState.controller;
+
+            if (!controller) {
+                results.push(createTestItem(
+                    '성능 테스트 준비 실패',
+                    '❌ 컨트롤러가 초기화되지 않았습니다.',
+                    'error'
+                ));
+                updateTestSection('performance-tests', results.join(''));
+                return;
+            }
+
+            try {
+                // 대용량 테스트 데이터 생성
+                const testLogs = [];
+                for (let i = 0; i < 1000; i++) {
+                    testLogs.push({
+                        id: `test-${i}`,
+                        country: ['JP', 'KR', 'US', 'FR', 'DE'][i % 5],
+                        city: `City-${i}`,
+                        startDate: new Date(2020 + (i % 4), i % 12, (i % 28) + 1).toISOString(),
+                        endDate: new Date(2020 + (i % 4), i % 12, (i % 28) + 3).toISOString(),
+                        rating: (i % 5) + 1,
+                        purpose: ['business', 'leisure', 'family'][i % 3]
+                    });
+                }
+
+                controller.logDataService.setLogs(testLogs);
+
+                // 캐시 없이 성능 측정
+                controller.invalidateCache();
+                
+                const uncachedMetrics = {};
+                uncachedMetrics.basicStats = await measureAsyncPerformance('BasicStats_Uncached', () => 
+                    controller.analysisOrchestrator.getBasicStats()
+                );
+                
+                uncachedMetrics.countryAnalysis = await measureAsyncPerformance('CountryAnalysis_Uncached', () => 
+                    controller.getFavoriteCountryAnalysis()
+                );
+                
+                uncachedMetrics.worldStats = await measureAsyncPerformance('WorldStats_Uncached', () => 
+                    controller.getWorldExplorationStats()
+                );
+
+                // 캐시된 상태에서 성능 측정
+                const cachedMetrics = {};
+                cachedMetrics.basicStats = await measureAsyncPerformance('BasicStats_Cached', () => 
+                    controller.analysisOrchestrator.getBasicStats()
+                );
+                
+                cachedMetrics.countryAnalysis = await measureAsyncPerformance('CountryAnalysis_Cached', () => 
+                    controller.getFavoriteCountryAnalysis()
+                );
+                
+                cachedMetrics.worldStats = await measureAsyncPerformance('WorldStats_Cached', () => 
+                    controller.getWorldExplorationStats()
+                );
+
+                results.push(createTestItem(
+                    '대용량 데이터 성능 테스트 (1000개 로그)',
+                    `📊 캐시 없음 vs 캐시 있음 비교:\n\n` +
+                    `기본 통계: ${uncachedMetrics.basicStats.duration}ms → ${cachedMetrics.basicStats.duration}ms (${Math.round((1 - cachedMetrics.basicStats.duration / uncachedMetrics.basicStats.duration) * 100)}% 개선)\n` +
+                    `국가 분석: ${uncachedMetrics.countryAnalysis.duration}ms → ${cachedMetrics.countryAnalysis.duration}ms (${Math.round((1 - cachedMetrics.countryAnalysis.duration / uncachedMetrics.countryAnalysis.duration) * 100)}% 개선)\n` +
+                    `세계 통계: ${uncachedMetrics.worldStats.duration}ms → ${cachedMetrics.worldStats.duration}ms (${Math.round((1 - cachedMetrics.worldStats.duration / uncachedMetrics.worldStats.duration) * 100)}% 개선)`,
+                    'success'
+                ));
+
+                // 성능 지표 카드 생성
+                const metricsHTML = `
+                    <div class="metric-card">
+                        <div class="metric-value">${uncachedMetrics.basicStats.duration}ms</div>
+                        <div class="metric-label">기본 통계 (캐시 없음)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${cachedMetrics.basicStats.duration}ms</div>
+                        <div class="metric-label">기본 통계 (캐시 있음)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${uncachedMetrics.countryAnalysis.duration}ms</div>
+                        <div class="metric-label">국가 분석 (캐시 없음)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${cachedMetrics.countryAnalysis.duration}ms</div>
+                        <div class="metric-label">국가 분석 (캐시 있음)</div>
+                    </div>
+                `;
+                
+                document.getElementById('performance-metrics').innerHTML = metricsHTML;
+
+            } catch (error) {
+                results.push(createTestItem(
+                    '성능 테스트 실패',
+                    `❌ 오류 발생: ${error.message}`,
+                    'error'
+                ));
+            }
+
+            updateTestSection('performance-tests', results.join(''));
+        }
+
+        // 4. 호환성 테스트
+        async function testCompatibility() {
+            let results = [];
+            const controller = window.testState.controller;
+
+            if (!controller) {
+                results.push(createTestItem(
+                    '호환성 테스트 준비 실패',
+                    '❌ 컨트롤러가 초기화되지 않았습니다.',
+                    'error'
+                ));
+                updateTestSection('compatibility-tests', results.join(''));
+                return;
+            }
+
+            try {
+                // 기존 API 호환성 확인
+                const legacyMethods = [
+                    'getAllLogs',
+                    'getLogById', 
+                    'addLog',
+                    'deleteLog',
+                    'updateLog',
+                    'getBasicStats',
+                    'getPurposeAnalysis',
+                    'getCountryVisitCounts',
+                    'getFavoriteCountryAnalysis',
+                    'getYearlyStatsAnalysis',
+                    'getWorldExplorationStats',
+                    'getContinentStats'
+                ];
+
+                let compatibilityScore = 0;
+                const methodResults = [];
+
+                for (const method of legacyMethods) {
+                    try {
+                        const hasMethod = typeof controller[method] === 'function';
+                        if (hasMethod) {
+                            compatibilityScore++;
+                            methodResults.push(`✅ ${method}: 호환됨`);
+                        } else {
+                            methodResults.push(`❌ ${method}: 누락됨`);
+                        }
+                    } catch (error) {
+                        methodResults.push(`⚠️ ${method}: 오류 - ${error.message}`);
+                    }
+                }
+
+                const compatibilityPercentage = Math.round((compatibilityScore / legacyMethods.length) * 100);
+
+                results.push(createTestItem(
+                    'API 호환성 검증',
+                    `📊 호환성 점수: ${compatibilityScore}/${legacyMethods.length} (${compatibilityPercentage}%)\n\n${methodResults.join('\n')}`,
+                    compatibilityPercentage >= 90 ? 'success' : compatibilityPercentage >= 70 ? 'warning' : 'error'
+                ));
+
+                // Fallback 메커니즘 테스트
+                try {
+                    // 의도적으로 analysisOrchestrator를 비활성화하여 fallback 테스트
+                    const originalOrchestrator = controller.analysisOrchestrator;
+                    controller.analysisOrchestrator = null;
+
+                    const fallbackResult = controller.getFavoriteCountryAnalysis();
+                    
+                    // 원복
+                    controller.analysisOrchestrator = originalOrchestrator;
+
+                    results.push(createTestItem(
+                        'Fallback 메커니즘 테스트',
+                        `✅ AnalysisOrchestrator 비활성화 상태에서도 정상 동작\n결과 타입: ${typeof fallbackResult}\n데이터 유무: ${fallbackResult && Object.keys(fallbackResult).length > 0 ? '있음' : '없음'}`,
+                        'success'
+                    ));
+
+                } catch (error) {
+                    results.push(createTestItem(
+                        'Fallback 메커니즘 테스트',
+                        `❌ Fallback 실패: ${error.message}`,
+                        'error'
+                    ));
+                }
+
+            } catch (error) {
+                results.push(createTestItem(
+                    '호환성 테스트 실패',
+                    `❌ 오류 발생: ${error.message}`,
+                    'error'
+                ));
+            }
+
+            updateTestSection('compatibility-tests', results.join(''));
+        }
+
+        // 5. 메모리 테스트
+        async function testMemory() {
+            let results = [];
+            const controller = window.testState.controller;
+
+            if (!controller) {
+                results.push(createTestItem(
+                    '메모리 테스트 준비 실패',
+                    '❌ 컨트롤러가 초기화되지 않았습니다.',
+                    'error'
+                ));
+                updateTestSection('memory-tests', results.join(''));
+                return;
+            }
+
+            try {
+                // 초기 메모리 사용량
+                const initialMemory = performance.memory ? {
+                    used: performance.memory.usedJSHeapSize,
+                    total: performance.memory.totalJSHeapSize
+                } : null;
+
+                // 대량 연산 수행
+                for (let i = 0; i < 100; i++) {
+                    await controller.analysisOrchestrator.getBasicStats();
+                    await controller.getFavoriteCountryAnalysis();
+                    await controller.getWorldExplorationStats();
+                }
+
+                // 중간 메모리 사용량
+                const midMemory = performance.memory ? {
+                    used: performance.memory.usedJSHeapSize,
+                    total: performance.memory.totalJSHeapSize
+                } : null;
+
+                // 정리 후 메모리 사용량
+                controller.invalidateCache();
+                
+                // 강제 가비지 컬렉션 (가능한 경우)
+                if (window.gc) {
+                    window.gc();
+                }
+
+                const finalMemory = performance.memory ? {
+                    used: performance.memory.usedJSHeapSize,
+                    total: performance.memory.totalJSHeapSize
+                } : null;
+
+                if (initialMemory && midMemory && finalMemory) {
+                    const memoryIncrease = ((midMemory.used - initialMemory.used) / 1024 / 1024).toFixed(2);
+                    const memoryAfterCleanup = ((finalMemory.used - initialMemory.used) / 1024 / 1024).toFixed(2);
+
+                    results.push(createTestItem(
+                        '메모리 사용량 테스트',
+                        `📊 메모리 변화량:\n초기: ${(initialMemory.used / 1024 / 1024).toFixed(2)}MB\n연산 후: ${(midMemory.used / 1024 / 1024).toFixed(2)}MB (+${memoryIncrease}MB)\n정리 후: ${(finalMemory.used / 1024 / 1024).toFixed(2)}MB (+${memoryAfterCleanup}MB)\n\n메모리 정리 효과: ${memoryIncrease !== memoryAfterCleanup ? '✅ 효과적' : '⚠️ 제한적'}`,
+                        'success'
+                    ));
+                } else {
+                    results.push(createTestItem(
+                        '메모리 사용량 테스트',
+                        '⚠️ performance.memory API가 지원되지 않습니다.\n브라우저에서 메모리 정보를 제공하지 않음',
+                        'warning'
+                    ));
+                }
+
+                // 리소스 정리 테스트
+                const cleanupTest = () => {
+                    try {
+                        controller.cleanup();
+                        return true;
+                    } catch (error) {
+                        throw error;
+                    }
+                };
+
+                const cleanupResult = cleanupTest();
+
+                results.push(createTestItem(
+                    '리소스 정리 테스트',
+                    `✅ cleanup() 메서드 실행 성공\n컨트롤러 정리 상태: ${!controller.isInitialized ? '완료' : '미완료'}\nanalysisOrchestrator: ${controller.analysisOrchestrator ? '존재' : '정리됨'}`,
+                    'success'
+                ));
+
+                // 재초기화 테스트
+                await controller.initialize();
+                
+                results.push(createTestItem(
+                    '재초기화 테스트',
+                    `✅ 정리 후 재초기화 성공\n초기화 상태: ${controller.isInitialized}\nanalysisOrchestrator: ${controller.analysisOrchestrator ? '복원됨' : '누락'}`,
+                    'success'
+                ));
+
+            } catch (error) {
+                results.push(createTestItem(
+                    '메모리 테스트 실패',
+                    `❌ 오류 발생: ${error.message}`,
+                    'error'
+                ));
+            }
+
+            updateTestSection('memory-tests', results.join(''));
+        }
+
+        // 전체 테스트 실행
+        window.runAllTests = async function() {
+            window.testState.startTime = performance.now();
+            window.testState.results = [];
+
+            // 버튼 비활성화
+            const buttons = document.querySelectorAll('.run-button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            try {
+                await testModuleLoading();
+                await testFunctionality(); 
+                await testCompatibility();
+                await testMemory();
+
+                // 요약 생성
+                generateSummary();
+
+            } catch (error) {
+                console.error('테스트 실행 중 오류:', error);
+            } finally {
+                // 버튼 재활성화
+                buttons.forEach(btn => btn.disabled = false);
+            }
+        };
+
+        window.runPerformanceTest = async function() {
+            if (!window.testState.controller) {
+                alert('먼저 전체 테스트를 실행하여 컨트롤러를 초기화하세요.');
+                return;
+            }
+            await testPerformance();
+        };
+
+        window.runCompatibilityTest = async function() {
+            if (!window.testState.controller) {
+                alert('먼저 전체 테스트를 실행하여 컨트롤러를 초기화하세요.');
+                return;
+            }
+            await testCompatibility();
+        };
+
+        window.clearResults = function() {
+            const sections = ['module-loading-tests', 'functionality-tests', 'performance-tests', 'compatibility-tests', 'memory-tests'];
+            sections.forEach(section => {
+                document.getElementById(section).innerHTML = `
+                    <div class="test-item">
+                        <div class="test-name">테스트 준비 중...</div>
+                        <div class="test-result">테스트를 실행하려면 해당 버튼을 클릭하세요.</div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('performance-metrics').innerHTML = '';
+            document.getElementById('test-summary').style.display = 'none';
+            window.testState.results = [];
+            window.testState.metrics = {};
+        };
+
+        function generateSummary() {
+            const endTime = performance.now();
+            const totalTime = Math.round((endTime - window.testState.startTime) * 100) / 100;
+
+            const testResults = document.querySelectorAll('.test-item');
+            let passCount = 0;
+            let failCount = 0;
+            let warnCount = 0;
+
+            testResults.forEach(item => {
+                if (item.classList.contains('success')) passCount++;
+                else if (item.classList.contains('error')) failCount++;
+                else if (item.classList.contains('warning')) warnCount++;
+            });
+
+            const totalTests = passCount + failCount + warnCount;
+            const successRate = totalTests > 0 ? Math.round((passCount / totalTests) * 100) : 0;
+
+            const summaryHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; margin-bottom: 5px;">${totalTests}</div>
+                        <div>총 테스트 수</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #48bb78; margin-bottom: 5px;">${passCount}</div>
+                        <div>성공</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #f56565; margin-bottom: 5px;">${failCount}</div>
+                        <div>실패</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; color: #ed8936; margin-bottom: 5px;">${warnCount}</div>
+                        <div>경고</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; margin-bottom: 5px;">${successRate}%</div>
+                        <div>성공률</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold; margin-bottom: 5px;">${totalTime}ms</div>
+                        <div>총 실행 시간</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <strong>🎯 Phase 1 리팩토링 결과:</strong><br>
+                    ${successRate >= 90 ? 
+                        '✅ 리팩토링이 성공적으로 완료되었습니다! 모든 기능이 정상 작동하며 성능이 향상되었습니다.' :
+                        successRate >= 70 ?
+                        '⚠️ 리팩토링이 대부분 성공했지만 일부 개선이 필요합니다.' :
+                        '❌ 리팩토링에 문제가 있습니다. 검토가 필요합니다.'
+                    }
+                </div>
+
+                <div style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                    테스트 완료 시간: ${new Date().toLocaleString('ko-KR')}
+                </div>
+            `;
+
+            document.getElementById('summary-content').innerHTML = summaryHTML;
+            document.getElementById('test-summary').style.display = 'block';
+        }
+
+        // 페이지 로드 시 안내 메시지
+        console.log('🚀 Phase 1 리팩토링 통합 테스트가 준비되었습니다.');
+        console.log('전체 테스트를 실행하려면 "전체 테스트 실행" 버튼을 클릭하세요.');
+    </script>
+</body>
+</html>

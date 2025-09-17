@@ -33,6 +33,7 @@ class BasicStatsRenderer {
             }
 
             const stats = this.controller.getBasicStats();
+            console.log('BasicStatsRenderer: 기본 통계 데이터:', stats);
             container.innerHTML = this.getBasicStatsHTML(stats);
             
             console.log('BasicStatsRenderer: 기본 통계 렌더링 완료');
@@ -56,28 +57,28 @@ class BasicStatsRenderer {
             <div class="stats-card">
                 <div class="stats-icon">🌍</div>
                 <div class="stats-content">
-                    <div class="stats-value">${stats.visitedCountries}개국</div>
+                    <div class="stats-value">${stats.visitedCountries || stats.uniqueCountries || 0}개국</div>
                     <div class="stats-label">방문 국가</div>
                 </div>
             </div>
             <div class="stats-card">
                 <div class="stats-icon">🏙️</div>
                 <div class="stats-content">
-                    <div class="stats-value">${stats.visitedCities}개 도시</div>
+                    <div class="stats-value">${stats.visitedCities || stats.uniqueCities || 0}개 도시</div>
                     <div class="stats-label">방문 도시</div>
                 </div>
             </div>
             <div class="stats-card">
                 <div class="stats-icon">📅</div>
                 <div class="stats-content">
-                    <div class="stats-value">${stats.totalTravelDays}일</div>
+                    <div class="stats-value">${stats.totalTravelDays || 0}일</div>
                     <div class="stats-label">총 여행일</div>
                 </div>
             </div>
             <div class="stats-card">
                 <div class="stats-icon">⭐</div>
                 <div class="stats-content">
-                    <div class="stats-value">${stats.averageRating}/5.0</div>
+                    <div class="stats-value">${stats.averageRating || 0}/5.0</div>
                     <div class="stats-label">평균 만족도</div>
                 </div>
             </div>

@@ -74,12 +74,21 @@ class TravelDNARenderer {
 
         try {
             const favoriteCountryAnalysis = this.controller.getFavoriteCountryAnalysis();
+            console.log('TravelDNARenderer: 주요방문국 분석 데이터:', favoriteCountryAnalysis);
             const favoriteCountryValue = favoriteCountryItem.querySelector('.dna-value');
             
             if (favoriteCountryValue) {
-                if (favoriteCountryAnalysis.hasData && favoriteCountryAnalysis.top3Countries) {
+                // 🚀 Phase 1 리팩토링 호환성: 새로운 데이터 구조 지원
+                const top3Countries = favoriteCountryAnalysis.top3Countries || 
+                    (favoriteCountryAnalysis.favoriteCountries && favoriteCountryAnalysis.favoriteCountries.slice(0, 3)) || 
+                    [];
+                const hasData = favoriteCountryAnalysis.hasData || 
+                    (favoriteCountryAnalysis.totalVisitedCountries > 0) || 
+                    top3Countries.length > 0;
+                
+                if (hasData && top3Countries.length > 0) {
                     // TOP 3 랭킹 HTML 생성
-                    favoriteCountryValue.innerHTML = this.generateTop3RankingHTML(favoriteCountryAnalysis.top3Countries);
+                    favoriteCountryValue.innerHTML = this.generateTop3RankingHTML(top3Countries);
                 } else {
                     favoriteCountryValue.innerHTML = '<div class="no-data-message">아직 여행 기록이 없습니다</div>';
                 }
@@ -139,9 +148,19 @@ class TravelDNARenderer {
             const baseCampValue = baseCampItem.querySelector('.dna-value');
             
             if (baseCampValue) {
-                if (favoriteCountryAnalysis.hasData && favoriteCountryAnalysis.top3Countries && favoriteCountryAnalysis.top3Countries.length > 0) {
-                    const topCountry = favoriteCountryAnalysis.top3Countries[0];
-                    const countryName = this.controller._getCountryDisplayName(topCountry.country);
+                // 🚀 Phase 1 리팩토링 호환성: 새로운 데이터 구조 지원
+                const top3Countries = favoriteCountryAnalysis.top3Countries || 
+                    (favoriteCountryAnalysis.favoriteCountries && favoriteCountryAnalysis.favoriteCountries.slice(0, 3)) || 
+                    [];
+                const hasData = favoriteCountryAnalysis.hasData || 
+                    (favoriteCountryAnalysis.totalVisitedCountries > 0) || 
+                    top3Countries.length > 0;
+                
+                if (hasData && top3Countries.length > 0) {
+                    const topCountry = top3Countries[0];
+                    const countryName = this.controller._getCountryDisplayName ? 
+                        this.controller._getCountryDisplayName(topCountry.country) : 
+                        topCountry.displayName || topCountry.country;
                     baseCampValue.textContent = `${countryName} (${topCountry.visitCount}회, 총 ${topCountry.totalStayDays}일)`;
                 } else {
                     baseCampValue.textContent = '아직 여행 기록이 없습니다';

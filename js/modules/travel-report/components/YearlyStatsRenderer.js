@@ -61,6 +61,7 @@ class YearlyStatsRenderer {
         
         const yearlyStats = this.controller.getYearlyStatsAnalysis(this.currentYear);
         console.log('YearlyStatsRenderer: 연도별 통계 데이터:', yearlyStats);
+        console.log('YearlyStatsRenderer: 데이터 구조 확인 - stats:', yearlyStats.stats, 'changes:', yearlyStats.changes);
         
         this.container.innerHTML = this.generateYearlyStatsHTML(yearlyStats);
         
@@ -109,8 +110,9 @@ class YearlyStatsRenderer {
      * @returns {string} HTML 문자열
      */
     generateYearlyStatsHTML(yearlyStats) {
-        const stats = yearlyStats.currentStats;
-        const changes = yearlyStats.changes;
+        // 🚀 Phase 1 리팩토링 호환성: 새로운 데이터 구조 지원
+        const stats = yearlyStats.stats || yearlyStats.currentStats || {};
+        const changes = yearlyStats.changes || {};
         
         return `
             <div class="yearly-stats-grid">
@@ -118,9 +120,9 @@ class YearlyStatsRenderer {
                     <div class="stat-icon">✈️</div>
                     <div class="stat-content">
                         <div class="stat-label">총 여행 횟수</div>
-                        <div class="stat-value" data-target="${stats.totalTrips}">0</div>
-                        <div class="stat-change ${changes.totalTrips.type}">
-                            ${this.getChangeIcon(changes.totalTrips.type)} ${changes.totalTrips.display}
+                        <div class="stat-value" data-target="${stats.totalTrips || 0}">0</div>
+                        <div class="stat-change ${changes.totalTrips?.type || 'neutral'}">
+                            ${this.getChangeIcon(changes.totalTrips?.type || 'neutral')} ${changes.totalTrips?.display || '데이터 없음'}
                         </div>
                     </div>
                 </div>
@@ -129,9 +131,9 @@ class YearlyStatsRenderer {
                     <div class="stat-icon">🌍</div>
                     <div class="stat-content">
                         <div class="stat-label">방문한 국가</div>
-                        <div class="stat-value" data-target="${stats.uniqueCountries}">0</div>
-                        <div class="stat-change ${changes.uniqueCountries.type}">
-                            ${this.getChangeIcon(changes.uniqueCountries.type)} ${changes.uniqueCountries.display}
+                        <div class="stat-value" data-target="${stats.uniqueCountries || 0}">0</div>
+                        <div class="stat-change ${changes.uniqueCountries?.type || 'neutral'}">
+                            ${this.getChangeIcon(changes.uniqueCountries?.type || 'neutral')} ${changes.uniqueCountries?.display || '데이터 없음'}
                         </div>
                     </div>
                 </div>
@@ -140,9 +142,9 @@ class YearlyStatsRenderer {
                     <div class="stat-icon">🏙️</div>
                     <div class="stat-content">
                         <div class="stat-label">방문한 도시</div>
-                        <div class="stat-value" data-target="${stats.uniqueCities}">0</div>
-                        <div class="stat-change ${changes.uniqueCities.type}">
-                            ${this.getChangeIcon(changes.uniqueCities.type)} ${changes.uniqueCities.display}
+                        <div class="stat-value" data-target="${stats.uniqueCities || 0}">0</div>
+                        <div class="stat-change ${changes.uniqueCities?.type || 'neutral'}">
+                            ${this.getChangeIcon(changes.uniqueCities?.type || 'neutral')} ${changes.uniqueCities?.display || '데이터 없음'}
                         </div>
                     </div>
                 </div>
@@ -151,9 +153,9 @@ class YearlyStatsRenderer {
                     <div class="stat-icon">📅</div>
                     <div class="stat-content">
                         <div class="stat-label">총 여행 일수</div>
-                        <div class="stat-value" data-target="${stats.totalTravelDays}">0</div>
-                        <div class="stat-change ${changes.totalTravelDays.type}">
-                            ${this.getChangeIcon(changes.totalTravelDays.type)} ${changes.totalTravelDays.display}
+                        <div class="stat-value" data-target="${stats.totalTravelDays || 0}">0</div>
+                        <div class="stat-change ${changes.totalTravelDays?.type || 'neutral'}">
+                            ${this.getChangeIcon(changes.totalTravelDays?.type || 'neutral')} ${changes.totalTravelDays?.display || '데이터 없음'}
                         </div>
                     </div>
                 </div>
@@ -162,9 +164,9 @@ class YearlyStatsRenderer {
                     <div class="stat-icon">⏱️</div>
                     <div class="stat-content">
                         <div class="stat-label">평균 여행 일수</div>
-                        <div class="stat-value" data-target="${stats.averageTravelDays}">0</div>
-                        <div class="stat-change ${changes.averageTravelDays.type}">
-                            ${this.getChangeIcon(changes.averageTravelDays.type)} ${changes.averageTravelDays.display}
+                        <div class="stat-value" data-target="${stats.averageTravelDays || 0}">0</div>
+                        <div class="stat-change ${changes.averageTravelDays?.type || 'neutral'}">
+                            ${this.getChangeIcon(changes.averageTravelDays?.type || 'neutral')} ${changes.averageTravelDays?.display || '데이터 없음'}
                         </div>
                     </div>
                 </div>
@@ -173,9 +175,9 @@ class YearlyStatsRenderer {
                     <div class="stat-icon">⭐</div>
                     <div class="stat-content">
                         <div class="stat-label">평균 별점</div>
-                        <div class="stat-value" data-target="${stats.averageRating}">0</div>
-                        <div class="stat-change ${changes.averageRating.type}">
-                            ${this.getChangeIcon(changes.averageRating.type)} ${changes.averageRating.display}
+                        <div class="stat-value" data-target="${stats.averageRating || 0}">0</div>
+                        <div class="stat-change ${changes.averageRating?.type || 'neutral'}">
+                            ${this.getChangeIcon(changes.averageRating?.type || 'neutral')} ${changes.averageRating?.display || '데이터 없음'}
                         </div>
                     </div>
                 </div>

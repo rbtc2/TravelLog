@@ -22,6 +22,9 @@ import { DemoData } from '../../../modules/utils/demo-data.js';
 import { countriesManager } from '../../../data/countries-manager.js';
 import { TravelCollectionView } from '../views/index.js';
 
+// 🚀 새로운 분석 모듈들 (Phase 1 리팩토링)
+// import { AnalysisOrchestrator } from '../../../modules/analysis/AnalysisOrchestrator.js';
+
 class MyLogsController {
     constructor() {
         // 새로운 서비스들 초기화
@@ -34,6 +37,9 @@ class MyLogsController {
         this.purposeAnalysisService = new PurposeAnalysisService(this.logDataService, this.cacheManager);
         this.countryAnalysisService = new CountryAnalysisService(this.logDataService, this.cacheManager);
         this.yearlyStatsService = new YearlyStatsService(this.logDataService, this.cacheManager);
+        
+        // 🚀 새로운 분석 오케스트레이터 초기화 (Phase 1)
+        // this.analysisOrchestrator = new AnalysisOrchestrator(this.logDataService, this.cacheManager);
         
         // 뷰 인스턴스들 초기화
         this.travelCollectionView = new TravelCollectionView(this);
@@ -113,7 +119,40 @@ class MyLogsController {
      */
     addDemoData() {
         const demoLogs = DemoData.getDefaultLogs();
+        console.log('MyLogsController: 데모 데이터 추가 중, 로그 수:', demoLogs.length);
         this.logDataService.setLogs(demoLogs);
+        
+        // 데이터 추가 후 확인
+        const allLogs = this.logDataService.getAllLogs();
+        console.log('MyLogsController: 데이터 추가 완료, 총 로그 수:', allLogs.length);
+        
+        // 분석 데이터 테스트
+        // try {
+        //     const basicStats = this.analysisOrchestrator.getBasicStats();
+        //     console.log('MyLogsController: 기본 통계 테스트:', basicStats);
+        //     
+        //     const countryAnalysis = this.analysisOrchestrator.getFavoriteCountryAnalysis();
+        //     console.log('MyLogsController: 국가 분석 테스트:', countryAnalysis);
+        //     
+        //     const worldStats = this.analysisOrchestrator.getWorldExplorationStats();
+        //     console.log('MyLogsController: 세계 탐험 통계 테스트:', worldStats);
+        // } catch (error) {
+        //     console.error('MyLogsController: 분석 데이터 테스트 실패:', error);
+        // }
+        
+        // 임시로 기존 서비스 테스트
+        try {
+            const basicStats = this.getBasicStats();
+            console.log('MyLogsController: 기본 통계 테스트:', basicStats);
+            
+            const countryAnalysis = this.getFavoriteCountryAnalysis();
+            console.log('MyLogsController: 국가 분석 테스트:', countryAnalysis);
+            
+            const worldStats = this.getWorldExplorationStats();
+            console.log('MyLogsController: 세계 탐험 통계 테스트:', worldStats);
+        } catch (error) {
+            console.error('MyLogsController: 분석 데이터 테스트 실패:', error);
+        }
     }
 
     /**
@@ -285,6 +324,11 @@ class MyLogsController {
      * 캐시를 무효화합니다
      */
     invalidateCache() {
+        // 🚀 Phase 1: 새로운 분석 오케스트레이터 캐시 무효화
+        if (this.analysisOrchestrator && this.analysisOrchestrator.invalidateCache) {
+            this.analysisOrchestrator.invalidateCache();
+        }
+        
         // 새로운 CacheManager를 사용하여 캐시 무효화
         this.cacheManager.invalidatePattern('.*'); // 모든 캐시 무효화
         
@@ -306,6 +350,16 @@ class MyLogsController {
      * @returns {Object} 주요방문국 순위 분석 결과
      */
     getFavoriteCountryAnalysis() {
+        // 🚀 Phase 1: 새로운 AnalysisOrchestrator로 위임 (안전한 교체)
+        // try {
+        //     return this.analysisOrchestrator.getFavoriteCountryAnalysis();
+        // } catch (error) {
+        //     console.error('MyLogsController: AnalysisOrchestrator 실패, fallback 사용:', error);
+        //     // 안전장치: 기존 서비스로 fallback
+        //     return this.countryAnalysisService.getFavoriteCountryAnalysis();
+        // }
+        
+        // 임시로 기존 서비스 사용
         return this.countryAnalysisService.getFavoriteCountryAnalysis();
     }
 
@@ -314,6 +368,29 @@ class MyLogsController {
      * @returns {Map} 국가 코드를 키로 하는 방문 횟수 Map
      */
     getCountryVisitCounts() {
+        // 🚀 Phase 1: 새로운 AnalysisOrchestrator로 위임 (안전한 교체)
+        // try {
+        //     return this.analysisOrchestrator.getCountryVisitCounts();
+        // } catch (error) {
+        //     console.error('MyLogsController: AnalysisOrchestrator 실패, fallback 사용:', error);
+        //     // 안전장치: 기존 로직으로 fallback
+        //     try {
+        //         const logs = this.logDataService.getAllLogs();
+        //         const countryStats = this._calculateCountryStats(logs);
+        //         
+        //         const visitCountMap = new Map();
+        //         countryStats.forEach(stat => {
+        //             visitCountMap.set(stat.country, stat.visitCount);
+        //         });
+        //         
+        //         return visitCountMap;
+        //     } catch (fallbackError) {
+        //         console.error('MyLogsController: fallback도 실패:', fallbackError);
+        //         return new Map();
+        //     }
+        // }
+        
+        // 임시로 기존 로직 사용
         try {
             const logs = this.logDataService.getAllLogs();
             const countryStats = this._calculateCountryStats(logs);
@@ -325,7 +402,7 @@ class MyLogsController {
             
             return visitCountMap;
         } catch (error) {
-            console.error('국가별 방문 횟수 조회 실패:', error);
+            console.error('MyLogsController: getCountryVisitCounts 실패:', error);
             return new Map();
         }
     }
@@ -465,6 +542,16 @@ class MyLogsController {
      * @returns {Object} 연도별 통계 분석 결과
      */
     getYearlyStatsAnalysis(year) {
+        // 🚀 Phase 1: 새로운 AnalysisOrchestrator로 위임 (안전한 교체)
+        // try {
+        //     return this.analysisOrchestrator.getYearlyStatsAnalysis(year);
+        // } catch (error) {
+        //     console.error('MyLogsController: AnalysisOrchestrator 실패, fallback 사용:', error);
+        //     // 안전장치: 기존 서비스로 fallback
+        //     return this.yearlyStatsService.getYearlyStatsAnalysis(year);
+        // }
+        
+        // 임시로 기존 서비스 사용
         return this.yearlyStatsService.getYearlyStatsAnalysis(year);
     }
 
@@ -660,6 +747,11 @@ class MyLogsController {
     cleanup() {
         this.isInitialized = false;
         
+        // 🚀 Phase 1: 새로운 분석 오케스트레이터 정리
+        if (this.analysisOrchestrator && this.analysisOrchestrator.cleanup) {
+            this.analysisOrchestrator.cleanup();
+        }
+        
         // 새로운 서비스들 정리
         this.logDataService.cleanup();
         this.cacheManager.destroy();
@@ -832,6 +924,50 @@ class MyLogsController {
      * @returns {Object} 전세계 탐험 현황 통계
      */
     getWorldExplorationStats() {
+        // 🚀 Phase 1: 새로운 AnalysisOrchestrator로 위임 (안전한 교체)
+        // try {
+        //     return this.analysisOrchestrator.getWorldExplorationStats();
+        // } catch (error) {
+        //     console.error('MyLogsController: AnalysisOrchestrator 실패, fallback 사용:', error);
+        //     // 안전장치: 기존 로직으로 fallback
+        //     try {
+        //         const logs = this.getAllLogs();
+        //         const visitedCountrySet = new Set();
+        //         
+        //         // 방문한 국가들 수집
+        //         logs.forEach(log => {
+        //             if (log.country) {
+        //                 visitedCountrySet.add(log.country);
+        //             }
+        //         });
+        //         
+        //         const totalCountries = 195; // 전 세계 총 국가 수
+        //         const visitedCountries = visitedCountrySet.size;
+        //         const progressPercentage = Math.round((visitedCountries / totalCountries) * 100);
+        //         
+        //         // 대륙별 통계 계산
+        //         const continentStats = this.getContinentStats();
+        //         
+        //         return {
+        //             totalCountries: totalCountries,
+        //             visitedCountries: visitedCountries,
+        //             progressPercentage: progressPercentage,
+        //             continentStats: continentStats,
+        //             hasData: visitedCountries > 0
+        //         };
+        //     } catch (fallbackError) {
+        //         console.error('MyLogsController: fallback도 실패:', fallbackError);
+        //         return {
+        //             totalCountries: 195,
+        //             visitedCountries: 0,
+        //             progressPercentage: 0,
+        //             continentStats: this.getDefaultContinentStats(),
+        //             hasData: false
+        //         };
+        //     }
+        // }
+        
+        // 임시로 기존 로직 사용
         try {
             const logs = this.getAllLogs();
             const visitedCountrySet = new Set();
@@ -858,7 +994,7 @@ class MyLogsController {
                 hasData: visitedCountries > 0
             };
         } catch (error) {
-            console.error('MyLogsController: 전세계 탐험 현황 통계 계산 오류:', error);
+            console.error('MyLogsController: getWorldExplorationStats 실패:', error);
             return {
                 totalCountries: 195,
                 visitedCountries: 0,
@@ -874,6 +1010,60 @@ class MyLogsController {
      * @returns {Array} 대륙별 통계 배열
      */
     getContinentStats() {
+        // 🚀 Phase 1: 새로운 AnalysisOrchestrator로 위임 (안전한 교체)
+        // try {
+        //     return this.analysisOrchestrator.getContinentStats();
+        // } catch (error) {
+        //     console.error('MyLogsController: AnalysisOrchestrator 실패, fallback 사용:', error);
+        //     // 안전장치: 기존 로직으로 fallback
+        //     try {
+        //         const logs = this.getAllLogs();
+        //         const visitedCountriesByContinent = {};
+        //         
+        //         // 방문한 국가들을 대륙별로 분류
+        //         logs.forEach(log => {
+        //             if (log.country) {
+        //                 const continent = this.getCountryContinent(log.country);
+        //                 if (continent) {
+        //                     if (!visitedCountriesByContinent[continent]) {
+        //                         visitedCountriesByContinent[continent] = new Set();
+        //                     }
+        //                     visitedCountriesByContinent[continent].add(log.country);
+        //                 }
+        //             }
+        //         });
+        //         
+        //         // 대륙별 정보 정의 (실제 국가 수 기준)
+        //         const continentInfo = {
+        //             'Asia': { nameKo: '아시아', emoji: '🌏', total: 48 },
+        //             'Europe': { nameKo: '유럽', emoji: '🇪🇺', total: 44 },
+        //             'North America': { nameKo: '북미', emoji: '🇺🇸', total: 23 },
+        //             'South America': { nameKo: '남미', emoji: '🌎', total: 12 },
+        //             'Africa': { nameKo: '아프리카', emoji: '🌍', total: 54 },
+        //             'Oceania': { nameKo: '오세아니아', emoji: '🇦🇺', total: 14 }
+        //         };
+        //         
+        //         // 대륙별 통계 생성
+        //         return Object.entries(continentInfo).map(([continent, info]) => {
+        //             const visited = visitedCountriesByContinent[continent] ? visitedCountriesByContinent[continent].size : 0;
+        //             const percentage = Math.round((visited / info.total) * 100);
+        //             
+        //             return {
+        //                 continent: continent,
+        //                 nameKo: info.nameKo,
+        //                 emoji: info.emoji,
+        //                 visited: visited,
+        //                 total: info.total,
+        //                 percentage: percentage
+        //             };
+        //         });
+        //     } catch (fallbackError) {
+        //         console.error('MyLogsController: fallback도 실패:', fallbackError);
+        //         return this.getDefaultContinentStats();
+        //     }
+        // }
+        
+        // 임시로 기존 로직 사용
         try {
             const logs = this.getAllLogs();
             const visitedCountriesByContinent = {};
@@ -916,7 +1106,7 @@ class MyLogsController {
                 };
             });
         } catch (error) {
-            console.error('MyLogsController: 대륙별 통계 계산 오류:', error);
+            console.error('MyLogsController: getContinentStats 실패:', error);
             return this.getDefaultContinentStats();
         }
     }
