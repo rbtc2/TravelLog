@@ -1,7 +1,7 @@
 /**
  * MyLogsController - 나의 로그 탭의 비즈니스 로직을 담당하는 컨트롤러
  * 
- * 🎯 책임:
+ * 책임:
  * - 서비스들 간의 조정 및 통합
  * - 상태 관리
  * - 이벤트 처리
@@ -23,12 +23,12 @@ import { countriesManager } from '../../../data/countries-manager.js';
 import { TravelCollectionView } from '../views/index.js';
 
 
-// 🚀 Phase 2: 새로운 컬렉션 모듈들
+// 컬렉션 모듈들
 import { TravelCollectionController } from './TravelCollectionController.js';
 import { CollectionDataManager } from './CollectionDataManager.js';
 import { CollectionRenderer } from './CollectionRenderer.js';
 
-// 🚀 Phase 3: 새로운 로그 관리 모듈들
+// 로그 관리 모듈들
 import { TravelLogController } from './TravelLogController.js';
 import { LogValidator } from './LogValidator.js';
 import { LogDataManager } from './LogDataManager.js';
@@ -47,15 +47,12 @@ class MyLogsController {
         this.countryAnalysisService = new CountryAnalysisService(this.logDataService, this.cacheManager);
         this.yearlyStatsService = new YearlyStatsService(this.logDataService, this.cacheManager);
         
-        // 🚀 새로운 분석 오케스트레이터 초기화 (Phase 1)
-        // this.analysisOrchestrator = new AnalysisOrchestrator(this.logDataService, this.cacheManager);
-        
-        // 🚀 Phase 2: 새로운 컬렉션 모듈들 초기화
+        // 컬렉션 모듈들 초기화
         this.travelCollectionController = new TravelCollectionController(this.logDataService, this.cacheManager);
         this.collectionDataManager = new CollectionDataManager();
         this.collectionRenderer = new CollectionRenderer();
         
-        // 🚀 Phase 3: 새로운 로그 관리 모듈들 초기화
+        // 로그 관리 모듈들 초기화
         this.travelLogController = new TravelLogController(this.logDataService, this.cacheManager);
         this.logValidator = new LogValidator();
         this.logDataManager = new LogDataManager();
@@ -86,10 +83,10 @@ class MyLogsController {
             // 데이터 로드 및 마이그레이션
             await this.loadLogs();
             
-            // 🚀 Phase 2: 컬렉션 컨트롤러 초기화
+            // 컬렉션 컨트롤러 초기화
             await this.travelCollectionController.initialize();
             
-            // 🚀 Phase 3: 로그 관리 모듈들 초기화
+            // 로그 관리 모듈들 초기화
             await this.travelLogController.initialize();
             await this.logValidator.initialize();
             await this.logDataManager.initialize();
@@ -230,7 +227,7 @@ class MyLogsController {
     }
 
     /**
-     * 로그를 검색합니다 (Phase 3: 새로운 기능)
+     * 로그를 검색합니다
      * @param {Object} searchCriteria - 검색 조건
      * @returns {Array} 검색 결과
      */
@@ -239,7 +236,7 @@ class MyLogsController {
     }
 
     /**
-     * 국가별 로그를 조회합니다 (Phase 3: 새로운 기능)
+     * 국가별 로그를 조회합니다
      * @param {string} countryCode - 국가 코드
      * @returns {Array} 해당 국가의 로그 배열
      */
@@ -248,7 +245,7 @@ class MyLogsController {
     }
 
     /**
-     * 연도별 로그를 조회합니다 (Phase 3: 새로운 기능)
+     * 연도별 로그를 조회합니다
      * @param {number} year - 연도
      * @returns {Array} 해당 연도의 로그 배열
      */
@@ -257,7 +254,7 @@ class MyLogsController {
     }
 
     /**
-     * 로그 통계를 계산합니다 (Phase 3: 새로운 기능)
+     * 로그 통계를 계산합니다
      * @param {Object} options - 통계 옵션
      * @returns {Object} 로그 통계
      */
@@ -266,7 +263,7 @@ class MyLogsController {
     }
 
     /**
-     * 로그 목록을 렌더링합니다 (Phase 3: 새로운 기능)
+     * 로그 목록을 렌더링합니다
      * @param {HTMLElement} container - 렌더링할 컨테이너
      * @param {Object} options - 렌더링 옵션
      */
@@ -275,7 +272,7 @@ class MyLogsController {
     }
 
     /**
-     * 로그 상세 정보를 렌더링합니다 (Phase 3: 새로운 기능)
+     * 로그 상세 정보를 렌더링합니다
      * @param {HTMLElement} container - 렌더링할 컨테이너
      * @param {string} logId - 로그 ID
      */
@@ -465,7 +462,7 @@ class MyLogsController {
         this.countryAnalysisService.cleanup();
         this.yearlyStatsService.cleanup();
         
-        // 🚀 Phase 2: 새로운 컬렉션 모듈들 정리
+        // 컬렉션 모듈들 정리
         if (this.travelCollectionController && this.travelCollectionController.cleanup) {
             this.travelCollectionController.cleanup();
         }
@@ -476,7 +473,7 @@ class MyLogsController {
             this.collectionRenderer.cleanup();
         }
         
-        // 🚀 Phase 3: 새로운 로그 관리 모듈들 정리
+        // 로그 관리 모듈들 정리
         if (this.travelLogController && this.travelLogController.cleanup) {
             this.travelLogController.cleanup();
         }
@@ -508,7 +505,7 @@ class MyLogsController {
                 await this.initialize();
             }
             
-            // 🚀 Phase 2: 새로운 컬렉션 시스템 사용
+            // 새로운 컬렉션 시스템 사용
             const collectionStats = this.travelCollectionController.getTravelCollectionStats();
             const extendedStats = this.collectionDataManager.calculateExtendedCollectionStats(collectionStats);
             
@@ -524,7 +521,7 @@ class MyLogsController {
     }
 
     /**
-     * 방문한 국가 목록을 반환합니다 (Phase 2: 새로운 컬렉션 컨트롤러로 위임)
+     * 방문한 국가 목록을 반환합니다
      * @returns {Object} 방문한 국가 정보
      */
     getVisitedCountriesForCollection() {
