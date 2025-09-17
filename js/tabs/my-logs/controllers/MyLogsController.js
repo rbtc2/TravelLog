@@ -20,7 +20,7 @@ import { CountryAnalysisService } from '../../../modules/services/country-analys
 import { YearlyStatsService } from '../../../modules/services/yearly-stats-service.js';
 import { DemoData } from '../../../modules/utils/demo-data.js';
 import { countriesManager } from '../../../data/countries-manager.js';
-import TravelCollectionView from '../views/TravelCollectionView.js';
+import { TravelCollectionView } from '../views/collections/index.js';
 
 class MyLogsController {
     constructor() {

@@ -37,12 +37,14 @@ import { ModalManager } from '../modules/ui-components/modal-manager.js';
 
 // 새로운 모듈들 import
 import { MyLogsController } from './my-logs/controllers/MyLogsController.js';
-import { HubView } from './my-logs/views/HubView.js';
-import { ProfileView } from './my-logs/views/ProfileView.js';
-import { SettingsView } from './my-logs/views/SettingsView.js';
-import { TravelReportView } from './my-logs/views/TravelReportView.js';
-import TravelCollectionView from './my-logs/views/TravelCollectionView.js';
-import { LogsListView } from './my-logs/views/LogsListView.js';
+import { 
+    HubView, 
+    ProfileView, 
+    SettingsView, 
+    TravelReportView, 
+    LogsListView,
+    TravelCollectionView 
+} from './my-logs/views/index.js';
 
 // 전역에서 접근할 수 있도록 window 객체에 등록 (디버깅용)
 if (typeof window !== 'undefined') {

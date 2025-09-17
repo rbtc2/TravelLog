@@ -12,7 +12,7 @@
  * @since 2024-12-29
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
-import { CollectionTabManager } from './collections/CollectionTabManager.js';
+import { CollectionTabManager } from './collections/index.js';
 
 class TravelCollectionView {
     constructor(controller) {
@@ -50,7 +50,7 @@ class TravelCollectionView {
             title: '국가',
             description: '방문한 국가들을 모아보세요'
         }, async () => {
-            const { CountriesCollectionView } = await import('./collections/CountriesCollectionView.js');
+            const { CountriesCollectionView } = await import('./collections/index.js');
             return CountriesCollectionView;
         });
         
