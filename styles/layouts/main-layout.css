@@ -5,11 +5,14 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    width: 100%;
     background-color: var(--bg-primary);
     /* 스크롤 성능 최적화 - 중복 스크롤바 완전 방지 */
     -webkit-overflow-scrolling: touch;
     overflow: hidden;
     position: relative;
+    /* 데스크톱에서 전체 화면 활용을 위한 기본 설정 */
+    margin: 0;
 }
 
 /* 다크모드 메인 앱 */

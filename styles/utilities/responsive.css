@@ -12,9 +12,10 @@
     }
     
     .main-app {
-        max-width: var(--container-tablet);
-        border-left: 1px solid #e9ecef;
-        border-right: 1px solid #e9ecef;
+        /* 태블릿에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 모바일 앱 스타일의 border 제거 */
     }
     
     #main-content {
@@ -35,9 +36,10 @@
 /* 소형 데스크톱 (1024px - 1280px) */
 @media (min-width: 1024px) and (max-width: 1279px) {
     .main-app {
-        max-width: var(--container-desktop-sm);
-        border-left: 1px solid #e9ecef;
-        border-right: 1px solid #e9ecef;
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
     }
     
     #main-content {
@@ -58,9 +60,10 @@
 /* 중형 데스크톱 (1280px - 1440px) */
 @media (min-width: 1280px) and (max-width: 1439px) {
     .main-app {
-        max-width: var(--container-desktop-md);
-        border-left: 1px solid #e9ecef;
-        border-right: 1px solid #e9ecef;
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
     }
     
     #main-content {
@@ -81,9 +84,10 @@
 /* 대형 데스크톱 (1440px - 1600px) */
 @media (min-width: 1440px) and (max-width: 1599px) {
     .main-app {
-        max-width: var(--container-desktop-lg);
-        border-left: 1px solid #e9ecef;
-        border-right: 1px solid #e9ecef;
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
     }
     
     #main-content {
@@ -104,9 +108,10 @@
 /* 초대형 데스크톱 (1600px+) */
 @media (min-width: 1600px) {
     .main-app {
-        max-width: var(--container-desktop-xl);
-        border-left: 1px solid #e9ecef;
-        border-right: 1px solid #e9ecef;
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
     }
     
     #main-content {

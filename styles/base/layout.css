@@ -7,7 +7,7 @@
 /* 기본 컨테이너 */
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: var(--container-desktop-lg); /* 기본값을 1400px로 확장 */
     margin: 0 auto;
     padding: 0 var(--spacing-lg);
 }
@@ -17,15 +17,48 @@
 }
 
 .container-md {
-    max-width: 768px;
+    max-width: var(--container-desktop-sm); /* 1000px */
 }
 
 .container-lg {
-    max-width: 1024px;
+    max-width: var(--container-desktop-md); /* 1200px */
 }
 
 .container-xl {
-    max-width: 1280px;
+    max-width: var(--container-desktop-lg); /* 1400px */
+}
+
+.container-2xl {
+    max-width: var(--container-desktop-xl); /* 1600px */
+}
+
+/* 반응형 컨테이너 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .container {
+        max-width: var(--container-desktop-sm);
+        padding: 0 var(--spacing-xl);
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .container {
+        max-width: var(--container-desktop-md);
+        padding: 0 var(--spacing-xl);
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .container {
+        max-width: var(--container-desktop-lg);
+        padding: 0 var(--spacing-2xl);
+    }
+}
+
+@media (min-width: 1600px) {
+    .container {
+        max-width: var(--container-desktop-xl);
+        padding: 0 var(--spacing-3xl);
+    }
 }
 
 /* 그리드 시스템 */
