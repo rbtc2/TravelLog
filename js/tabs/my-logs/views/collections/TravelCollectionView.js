@@ -96,7 +96,7 @@ class TravelCollectionView {
             }
             
             this.isInitialized = true;
-            console.log('TravelCollectionView: 서브탭 시스템 렌더링 완료');
+            // 서브탭 시스템 렌더링 완료
         } catch (error) {
             console.error('TravelCollectionView: 렌더링 실패:', error);
             this.renderError(error);
@@ -257,7 +257,7 @@ class TravelCollectionView {
         this.container = null;
         this.isInitialized = false;
         
-        console.log('TravelCollectionView: 리소스 정리 완료');
+        // 리소스 정리 완료
     }
 }
 

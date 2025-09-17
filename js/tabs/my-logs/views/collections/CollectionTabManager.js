@@ -44,7 +44,7 @@ export class CollectionTabManager {
             isLoaded: false
         });
         
-        console.log(`CollectionTabManager: ${type} 컬렉션 등록됨`);
+        // 컬렉션 등록 완료
     }
     
     /**
@@ -62,7 +62,7 @@ export class CollectionTabManager {
             // 기본 컬렉션 로드
             await this.switchToCollection(this.defaultCollection);
             
-            console.log('CollectionTabManager: 렌더링 완료');
+            // 렌더링 완료
         } catch (error) {
             console.error('CollectionTabManager: 렌더링 실패:', error);
             this.renderError(error);
@@ -212,7 +212,7 @@ export class CollectionTabManager {
                     collection: collection
                 });
                 
-                console.log(`CollectionTabManager: ${type} 컬렉션으로 전환 완료`);
+                // 컬렉션 전환 완료
             }
         } catch (error) {
             console.error(`CollectionTabManager: ${type} 컬렉션 전환 실패:`, error);
@@ -246,7 +246,7 @@ export class CollectionTabManager {
         this.loadedCollections.set(type, collection);
         collectionInfo.isLoaded = true;
         
-        console.log(`CollectionTabManager: ${type} 컬렉션 로드 완료`);
+        // 컬렉션 로드 완료
         return collection;
     }
     
@@ -444,6 +444,6 @@ export class CollectionTabManager {
         this.currentCollection = null;
         this.container = null;
         
-        console.log('CollectionTabManager: 리소스 정리 완료');
+        // 리소스 정리 완료
     }
 }

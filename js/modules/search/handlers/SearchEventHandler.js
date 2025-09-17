@@ -77,7 +77,10 @@ export class SearchEventHandler {
             if (searchState === SEARCH_STATES.HAS_RESULTS) {
                 const sortOptions = document.querySelectorAll('input[name="sort"]');
                 sortOptions.forEach(option => {
-                    this.addEventListener(option, 'change', callbacks.handleSortChange.bind(callbacks));
+                    this.addEventListener(option, 'change', (event) => {
+                        const sortType = event.target.value;
+                        callbacks.handleSortChange(sortType);
+                    });
                 });
             }
 

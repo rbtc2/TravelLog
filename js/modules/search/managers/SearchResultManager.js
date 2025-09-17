@@ -59,6 +59,12 @@ export class SearchResultManager {
     sortResults(sortType) {
         if (!this.results || this.results.length === 0) return [];
 
+        // sortType 유효성 검사
+        if (!sortType || typeof sortType !== 'string') {
+            console.warn(`유효하지 않은 정렬 타입: ${sortType}`);
+            return this.results;
+        }
+
         this.currentSortType = sortType;
         const sortedResults = [...this.results];
 

@@ -52,7 +52,7 @@ class TravelLogController {
      */
     async initialize() {
         try {
-            console.log('TravelLogController: 초기화 시작');
+            // 초기화 시작
             
             // 하위 모듈들 초기화
             await this.validator.initialize();
@@ -60,7 +60,7 @@ class TravelLogController {
             await this.renderer.initialize();
             
             this.isInitialized = true;
-            console.log('TravelLogController: 초기화 완료');
+            // 초기화 완료
         } catch (error) {
             console.error('TravelLogController: 초기화 실패:', error);
             throw error;
@@ -90,7 +90,7 @@ class TravelLogController {
             if (newLog) {
                 // 캐시 무효화
                 this.invalidateLogCache();
-                console.log('TravelLogController: 로그 추가 성공:', newLog.id);
+                // 로그 추가 성공
             }
             
             return newLog;
@@ -130,7 +130,7 @@ class TravelLogController {
             if (updatedLog) {
                 // 캐시 무효화
                 this.invalidateLogCache();
-                console.log('TravelLogController: 로그 업데이트 성공:', logId);
+                // 로그 업데이트 성공
             }
             
             return updatedLog;
@@ -152,7 +152,7 @@ class TravelLogController {
             if (deleted) {
                 // 캐시 무효화
                 this.invalidateLogCache();
-                console.log('TravelLogController: 로그 삭제 성공:', logId);
+                // 로그 삭제 성공
             }
             
             return deleted;
@@ -373,7 +373,7 @@ class TravelLogController {
             });
             this.logCache.clear();
             this.searchCache.clear();
-            console.log('TravelLogController: 로그 캐시 무효화 완료');
+            // 로그 캐시 무효화 완료
         } catch (error) {
             console.error('TravelLogController: 캐시 무효화 실패:', error);
         }
@@ -436,7 +436,7 @@ class TravelLogController {
             }
             
             this.isInitialized = false;
-            console.log('TravelLogController: 정리 완료');
+            // 정리 완료
         } catch (error) {
             console.error('TravelLogController: 정리 실패:', error);
         }

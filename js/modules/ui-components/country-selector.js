@@ -218,7 +218,7 @@ export class CountrySelector {
     handleInputBlur() {
         // 약간의 지연을 두어 클릭 이벤트가 처리될 수 있도록 함
         setTimeout(() => {
-            if (!this.container.contains(document.activeElement)) {
+            if (this.container && !this.container.contains(document.activeElement)) {
                 this.close();
             }
         }, 150);
@@ -263,7 +263,7 @@ export class CountrySelector {
      * @private
      */
     handleDocumentClick(event) {
-        if (!this.container.contains(event.target)) {
+        if (this.container && !this.container.contains(event.target)) {
             this.close();
         }
     }
@@ -302,7 +302,7 @@ export class CountrySelector {
      * @public
      */
     open() {
-        if (this.isOpen) return;
+        if (this.isOpen || !this.container) return;
 
         this.isOpen = true;
         this.dropdown.style.display = 'block';
@@ -329,7 +329,7 @@ export class CountrySelector {
      * @public
      */
     close() {
-        if (!this.isOpen) return;
+        if (!this.isOpen || !this.container) return;
 
         this.isOpen = false;
         this.dropdown.classList.remove('open');
@@ -539,7 +539,9 @@ export class CountrySelector {
             bubbles: true
         });
 
-        this.container.dispatchEvent(event);
+        if (this.container) {
+            this.container.dispatchEvent(event);
+        }
     }
 
     /**

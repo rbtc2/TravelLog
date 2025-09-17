@@ -53,14 +53,14 @@ class TravelReportView {
         this.renderInsights();
         this.bindEvents();
         
-        console.log('TravelReportView: 렌더링 완료');
+        // 렌더링 완료
     }
 
     /**
      * 의존성을 검증합니다 (Phase 1)
      */
     validateDependencies() {
-        console.log('🔍 TravelReport 의존성 검증 시작...');
+        // TravelReport 의존성 검증 시작
         
         // 1. 기능 활성화 상태 검증
         const requiredFeatures = ['travelDNA', 'yearlyStats', 'basicStats', 'heatmap', 'charts', 'insights'];
@@ -69,7 +69,7 @@ class TravelReportView {
         );
         
         if (inactiveFeatures.length > 0) {
-            console.warn('⚠️ 비활성화된 기능들:', inactiveFeatures);
+            // 비활성화된 기능들 발견
         }
         
         // 2. HTML 요소 존재 여부 검증
@@ -106,9 +106,7 @@ class TravelReportView {
         // 4. 전체 검증 결과 요약
         const allValid = inactiveFeatures.length === 0 && elementValidation.success && missingRenderers.length === 0;
         
-        if (allValid) {
-            console.log('✅ TravelReport 의존성 검증 완료: 모든 요소가 올바릅니다.');
-        } else {
+        if (!allValid) {
             console.error('❌ TravelReport 의존성 검증 실패: 일부 요소에 문제가 있습니다.');
         }
         
@@ -409,7 +407,7 @@ class TravelReportView {
         try {
             // 컨트롤러에서 전세계 탐험 현황 데이터 가져오기
             const explorationStats = this.controller.getWorldExplorationStats();
-            console.log('TravelReportView: 전세계 탐험 현황 데이터:', explorationStats);
+            // 전세계 탐험 현황 데이터 로드
             container.innerHTML = this.getWorldExplorationHTML(explorationStats);
         } catch (error) {
             console.error('TravelReportView: 전세계 탐험 현황 렌더링 오류:', error);
@@ -557,7 +555,7 @@ class TravelReportView {
     renderYearlyStats() {
         const yearlyStatsContent = document.querySelector('.yearly-stats-content');
         if (yearlyStatsContent) {
-            console.log('YearlyStatsRenderer: 연도별 통계 컨텐츠를 찾았습니다.');
+            // 연도별 통계 컨텐츠 렌더링
             this.yearlyStatsRenderer.render(yearlyStatsContent);
         } else {
             console.warn('연도별 통계 컨텐츠를 찾을 수 없습니다.');

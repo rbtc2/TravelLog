@@ -198,7 +198,7 @@ class HubView {
      * 여행 도감으로 이동
      */
     onNavigateToMyMap() {
-        console.log('HubView: 여행 도감으로 이동');
+        // 여행 도감으로 이동
         this.dispatchEvent('navigate', { view: 'collection' });
     }
 
@@ -206,7 +206,7 @@ class HubView {
      * 트래블 레포트로 이동
      */
     onNavigateToTravelReport() {
-        console.log('HubView: onNavigateToTravelReport 호출됨');
+        // 트래블 레포트로 이동
         this.dispatchEvent('navigate', { view: 'travelReport' });
     }
 

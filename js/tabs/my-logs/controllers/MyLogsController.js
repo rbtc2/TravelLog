@@ -145,37 +145,13 @@ class MyLogsController {
      */
     addDemoData() {
         const demoLogs = DemoData.getDefaultLogs();
-        console.log('MyLogsController: 데모 데이터 추가 중, 로그 수:', demoLogs.length);
         this.logDataService.setLogs(demoLogs);
         
-        // 데이터 추가 후 확인
-        const allLogs = this.logDataService.getAllLogs();
-        console.log('MyLogsController: 데이터 추가 완료, 총 로그 수:', allLogs.length);
-        
-        // 분석 데이터 테스트
-        // try {
-        //     const basicStats = this.analysisOrchestrator.getBasicStats();
-        //     console.log('MyLogsController: 기본 통계 테스트:', basicStats);
-        //     
-        //     const countryAnalysis = this.analysisOrchestrator.getFavoriteCountryAnalysis();
-        //     console.log('MyLogsController: 국가 분석 테스트:', countryAnalysis);
-        //     
-        //     const worldStats = this.analysisOrchestrator.getWorldExplorationStats();
-        //     console.log('MyLogsController: 세계 탐험 통계 테스트:', worldStats);
-        // } catch (error) {
-        //     console.error('MyLogsController: 분석 데이터 테스트 실패:', error);
-        // }
-        
-        // 임시로 기존 서비스 테스트
+        // 분석 데이터 테스트 (오류만 로깅)
         try {
-            const basicStats = this.getBasicStats();
-            console.log('MyLogsController: 기본 통계 테스트:', basicStats);
-            
-            const countryAnalysis = this.getFavoriteCountryAnalysis();
-            console.log('MyLogsController: 국가 분석 테스트:', countryAnalysis);
-            
-            const worldStats = this.getWorldExplorationStats();
-            console.log('MyLogsController: 세계 탐험 통계 테스트:', worldStats);
+            this.getBasicStats();
+            this.getFavoriteCountryAnalysis();
+            this.getWorldExplorationStats();
         } catch (error) {
             console.error('MyLogsController: 분석 데이터 테스트 실패:', error);
         }
