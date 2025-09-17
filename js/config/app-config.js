@@ -37,6 +37,29 @@ export const APP_CONFIG = {
         defaultLanguage: 'ko'
     },
     
+    // 기능 상태 관리 (Phase 1: 즉시 적용)
+    featureStatus: {
+        // TravelReport 관련 기능들
+        travelDNA: 'active',
+        yearlyStats: 'active',
+        basicStats: 'active',
+        heatmap: 'active',
+        charts: 'active',
+        insights: 'active',
+        
+        // 기타 기능들
+        search: 'active',
+        calendar: 'active',
+        addLog: 'active',
+        myLogs: 'active',
+        travelCollection: 'active',
+        
+        // 개발 중인 기능들
+        bucketList: 'development', // 버킷리스트 기능
+        socialSharing: 'planned',  // 소셜 공유 기능
+        exportData: 'planned'      // 데이터 내보내기 기능
+    },
+    
     // 앱 성능 설정
     performance: {
         maxMemoryUsage: '50MB',
@@ -117,6 +140,85 @@ export const AppInfo = {
             <meta name="build-number" content="${versionInfo.buildNumber}">
             <meta name="build-date" content="${versionInfo.buildDate}">
         `.trim();
+    }
+};
+
+/**
+ * 기능 상태 관리 시스템 (Phase 1)
+ */
+export const FeatureManager = {
+    /**
+     * 기능 상태 상수
+     */
+    STATUS: {
+        ACTIVE: 'active',
+        DEVELOPMENT: 'development', 
+        PLANNED: 'planned',
+        DISABLED: 'disabled',
+        DEPRECATED: 'deprecated'
+    },
+    
+    /**
+     * 특정 기능의 상태를 확인합니다
+     * @param {string} featureName - 기능 이름
+     * @returns {string} 기능 상태
+     */
+    getFeatureStatus: (featureName) => {
+        return APP_CONFIG.featureStatus[featureName] || 'unknown';
+    },
+    
+    /**
+     * 기능이 활성화되어 있는지 확인합니다
+     * @param {string} featureName - 기능 이름
+     * @returns {boolean} 활성화 여부
+     */
+    isFeatureActive: (featureName) => {
+        return APP_CONFIG.featureStatus[featureName] === FeatureManager.STATUS.ACTIVE;
+    },
+    
+    /**
+     * 기능이 개발 중인지 확인합니다
+     * @param {string} featureName - 기능 이름
+     * @returns {boolean} 개발 중 여부
+     */
+    isFeatureInDevelopment: (featureName) => {
+        return APP_CONFIG.featureStatus[featureName] === FeatureManager.STATUS.DEVELOPMENT;
+    },
+    
+    /**
+     * 모든 활성화된 기능 목록을 반환합니다
+     * @returns {Array} 활성화된 기능 목록
+     */
+    getActiveFeatures: () => {
+        return Object.keys(APP_CONFIG.featureStatus)
+            .filter(feature => APP_CONFIG.featureStatus[feature] === FeatureManager.STATUS.ACTIVE);
+    },
+    
+    /**
+     * 기능 상태를 업데이트합니다
+     * @param {string} featureName - 기능 이름
+     * @param {string} status - 새로운 상태
+     */
+    updateFeatureStatus: (featureName, status) => {
+        if (Object.values(FeatureManager.STATUS).includes(status)) {
+            APP_CONFIG.featureStatus[featureName] = status;
+            console.log(`기능 상태 업데이트: ${featureName} -> ${status}`);
+        } else {
+            console.error(`유효하지 않은 기능 상태: ${status}`);
+        }
+    },
+    
+    /**
+     * 기능 상태 리포트를 생성합니다
+     * @returns {Object} 기능 상태 리포트
+     */
+    generateFeatureReport: () => {
+        const report = {};
+        Object.keys(FeatureManager.STATUS).forEach(status => {
+            report[status] = Object.keys(APP_CONFIG.featureStatus)
+                .filter(feature => APP_CONFIG.featureStatus[feature] === FeatureManager.STATUS[status]);
+        });
+        return report;
     }
 };
 

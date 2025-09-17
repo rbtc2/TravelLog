@@ -15,6 +15,8 @@ import { HeatmapRenderer } from '../../../modules/travel-report/components/Heatm
 import { ChartRenderer } from '../../../modules/travel-report/components/ChartRenderer.js';
 import { InsightsRenderer } from '../../../modules/travel-report/components/InsightsRenderer.js';
 import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js';
+import { QuickValidator } from '../../../modules/utils/dependency-validator.js';
+import { FeatureManager } from '../../../config/app-config.js';
 
 class TravelReportView {
     constructor(controller) {
@@ -38,6 +40,10 @@ class TravelReportView {
     render(container) {
         this.container = container;
         this.container.innerHTML = this.getTravelReportHTML();
+        
+        // Phase 1: 의존성 검증 추가
+        this.validateDependencies();
+        
         this.renderWorldExploration();
         this.renderBasicStats();
         this.renderTravelDNA();
@@ -48,6 +54,65 @@ class TravelReportView {
         this.bindEvents();
         
         console.log('TravelReportView: 렌더링 완료');
+    }
+
+    /**
+     * 의존성을 검증합니다 (Phase 1)
+     */
+    validateDependencies() {
+        console.log('🔍 TravelReport 의존성 검증 시작...');
+        
+        // 1. 기능 활성화 상태 검증
+        const requiredFeatures = ['travelDNA', 'yearlyStats', 'basicStats', 'heatmap', 'charts', 'insights'];
+        const inactiveFeatures = requiredFeatures.filter(feature => 
+            !FeatureManager.isFeatureActive(feature)
+        );
+        
+        if (inactiveFeatures.length > 0) {
+            console.warn('⚠️ 비활성화된 기능들:', inactiveFeatures);
+        }
+        
+        // 2. HTML 요소 존재 여부 검증
+        const requiredElements = [
+            '.travel-dna-section',
+            '.yearly-stats-section', 
+            '.basic-stats-section',
+            '.heatmap-section',
+            '.charts-section',
+            '.insights-section'
+        ];
+        
+        const elementValidation = QuickValidator.checkMultipleElements(requiredElements);
+        
+        if (!elementValidation.success) {
+            console.error('❌ 필수 HTML 요소가 누락되었습니다:', elementValidation.missing);
+        }
+        
+        // 3. 렌더러 인스턴스 검증
+        const renderers = [
+            { name: 'travelDNARenderer', instance: this.travelDNARenderer },
+            { name: 'yearlyStatsRenderer', instance: this.yearlyStatsRenderer },
+            { name: 'basicStatsRenderer', instance: this.basicStatsRenderer },
+            { name: 'heatmapRenderer', instance: this.heatmapRenderer },
+            { name: 'chartRenderer', instance: this.chartRenderer },
+            { name: 'insightsRenderer', instance: this.insightsRenderer }
+        ];
+        
+        const missingRenderers = renderers.filter(r => !r.instance);
+        if (missingRenderers.length > 0) {
+            console.error('❌ 누락된 렌더러들:', missingRenderers.map(r => r.name));
+        }
+        
+        // 4. 전체 검증 결과 요약
+        const allValid = inactiveFeatures.length === 0 && elementValidation.success && missingRenderers.length === 0;
+        
+        if (allValid) {
+            console.log('✅ TravelReport 의존성 검증 완료: 모든 요소가 올바릅니다.');
+        } else {
+            console.error('❌ TravelReport 의존성 검증 실패: 일부 요소에 문제가 있습니다.');
+        }
+        
+        return allValid;
     }
 
     /**

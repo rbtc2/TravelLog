@@ -409,6 +409,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // 전역에서 테마 매니저 접근 가능하도록 설정
     window.themeManager = themeManager;
     
+    // Phase 1: 개발자 도구용 전역 함수들 추가
+    window.TravelLogDev = {
+        // 기능 상태 확인
+        checkFeatureStatus: (featureName) => {
+            const { FeatureManager } = await import('./config/app-config.js');
+            return FeatureManager.getFeatureStatus(featureName);
+        },
+        
+        // 모든 기능 상태 확인
+        getAllFeatureStatus: async () => {
+            const { FeatureManager } = await import('./config/app-config.js');
+            return FeatureManager.generateFeatureReport();
+        },
+        
+        // 의존성 검증
+        validateDependencies: async () => {
+            const { QuickValidator } = await import('./modules/utils/dependency-validator.js');
+            return QuickValidator.validateTravelReport();
+        },
+        
+        // 기능 활성화/비활성화
+        toggleFeature: async (featureName, status) => {
+            const { FeatureManager } = await import('./config/app-config.js');
+            FeatureManager.updateFeatureStatus(featureName, status);
+            console.log(`기능 ${featureName}이 ${status}로 변경되었습니다.`);
+        }
+    };
+    
+    console.log('🛠️ TravelLog 개발자 도구가 로드되었습니다.');
+    console.log('사용법: TravelLogDev.checkFeatureStatus("travelDNA")');
+    console.log('사용법: TravelLogDev.validateDependencies()');
+    
     // 앱 매니저 초기화
     new AppManager();
 });
