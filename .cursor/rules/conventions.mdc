@@ -571,9 +571,16 @@ describe('TravelLogManager', () => {
 - Use early returns to reduce complexity
 
 ### **File Size Guidelines**
-- JavaScript files: Under 500 lines
-- CSS files: Under 300 lines
-- HTML files: Under 200 lines
+- **JavaScript files**: Under 500 lines
+- **CSS files**: Under 300 lines (REQUIRED for module separation)
+- **HTML files**: Under 200 lines
+
+### **CSS Module Separation Rules**
+- **300+ lines**: Module separation MANDATORY
+- **200-300 lines**: Module separation RECOMMENDED
+- **<200 lines**: Single file acceptable
+- **Module naming**: Feature-based or component-based
+- **Module structure**: `styles/pages/[page-name]/[feature].css`
 
 ### **Comment Guidelines**
 - Comment complex business logic

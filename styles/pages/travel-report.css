@@ -1,4 +1,16 @@
-/* ===== 트래블 레포트 페이지 스타일 ===== */
+/* ===== 트래블 레포트 페이지 스타일 (DEPRECATED - 모듈화됨) ===== */
+/* 
+ * 이 파일은 2024-12-29에 모듈화되었습니다.
+ * 새로운 구조: styles/pages/travel-report/
+ * - heatmap.css
+ * - world-exploration.css  
+ * - basic-stats.css
+ * - yearly-stats.css
+ * - ranking.css
+ * - travel-report-section.css
+ * 
+ * 이 파일은 참조용으로만 유지되며, 실제 사용은 모듈화된 파일들을 사용합니다.
+ */
 
 /* 히트맵 섹션 스타일 */
 .my-logs-container .hub-section.heatmap-section {

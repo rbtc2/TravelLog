@@ -359,6 +359,67 @@ Always start with mobile styles and use media queries for larger screens:
 - **Utilities**: ~10KB (utility styles)
 - **Total size**: ~80KB (compressed to ~20KB)
 
+## 🧩 CSS Module Guidelines
+
+### **Module Size Standards**
+- **300+ lines**: Module separation REQUIRED
+- **200-300 lines**: Module separation RECOMMENDED
+- **<200 lines**: Single file acceptable
+
+### **Module Structure Pattern**
+```
+styles/pages/[page-name]/
+├── [feature-1].css
+├── [feature-2].css
+├── [feature-3].css
+└── [common].css
+```
+
+### **Module Naming Conventions**
+- **Feature-based**: `heatmap.css`, `world-exploration.css`
+- **Component-based**: `basic-stats.css`, `yearly-stats.css`
+- **Common**: `[page-name]-section.css`
+
+### **Module Implementation Example**
+```css
+/* Before: travel-report.css (1336 lines) */
+.heatmap-section { }
+.world-exploration-section { }
+.basic-stats-section { }
+.yearly-stats-section { }
+.ranking-section { }
+.travel-report-section { }
+
+/* After: Modularized structure */
+/* styles/pages/travel-report/heatmap.css (200 lines) */
+.heatmap-section { }
+.heatmap-grid { }
+.month-activity { }
+
+/* styles/pages/travel-report/world-exploration.css (150 lines) */
+.world-exploration-card { }
+.exploration-progress { }
+.continent-summary { }
+```
+
+### **Module Import Pattern**
+```css
+/* main.css - Module imports */
+/* Page styles with modules */
+@import url('./pages/travel-report/heatmap.css');
+@import url('./pages/travel-report/world-exploration.css');
+@import url('./pages/travel-report/basic-stats.css');
+@import url('./pages/travel-report/yearly-stats.css');
+@import url('./pages/travel-report/ranking.css');
+@import url('./pages/travel-report/travel-report-section.css');
+```
+
+### **Module Benefits**
+- ✅ **Performance**: Smaller file sizes, faster loading
+- ✅ **Maintainability**: Independent feature management
+- ✅ **Collaboration**: Reduced merge conflicts
+- ✅ **Scalability**: Easy feature addition
+
 ## 🔧 CSS Naming Conventions
 
 ### **BEM Methodology**

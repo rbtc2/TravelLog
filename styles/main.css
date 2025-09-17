@@ -58,7 +58,13 @@
 @import url('./pages/my-logs/charts.css');
 @import url('./pages/log-detail.css');
 @import url('./pages/settings.css');
-@import url('./pages/travel-report.css');
+/* 트래블 레포트 모듈화된 스타일 */
+@import url('./pages/travel-report/heatmap.css');
+@import url('./pages/travel-report/world-exploration.css');
+@import url('./pages/travel-report/basic-stats.css');
+@import url('./pages/travel-report/yearly-stats.css');
+@import url('./pages/travel-report/ranking.css');
+@import url('./pages/travel-report/travel-report-section.css');
 @import url('./pages/travel-collection.css');
 
 /* 컬렉션 탭 컴포넌트 */
