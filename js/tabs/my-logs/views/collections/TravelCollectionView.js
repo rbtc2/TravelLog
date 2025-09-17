@@ -11,8 +11,8 @@
  * @version 2.0.0 (서브탭 시스템 적용)
  * @since 2024-12-29
  */
-import { EventManager } from '../../../modules/utils/event-manager.js';
-import { CollectionTabManager } from './collections/index.js';
+import { EventManager } from '../../../../modules/utils/event-manager.js';
+import { CollectionTabManager } from './index.js';
 
 class TravelCollectionView {
     constructor(controller) {
@@ -50,7 +50,7 @@ class TravelCollectionView {
             title: '국가',
             description: '방문한 국가들을 모아보세요'
         }, async () => {
-            const { CountriesCollectionView } = await import('./collections/index.js');
+            const { CountriesCollectionView } = await import('./index.js');
             return CountriesCollectionView;
         });
         

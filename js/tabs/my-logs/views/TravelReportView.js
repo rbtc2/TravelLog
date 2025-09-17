@@ -127,6 +127,7 @@ class TravelReportView {
                 ${this.getBasicStatsSectionHTML()}
                 ${this.getTravelDNASectionHTML()}
                 ${this.getYearlyStatsSectionHTML()}
+                ${this.getHeatmapSectionHTML()}
                 ${this.getChartsSectionHTML()}
                 ${this.getInsightsSectionHTML()}
             </div>
@@ -247,6 +248,39 @@ class TravelReportView {
     }
 
     /**
+     * 히트맵 섹션 HTML을 생성합니다
+     * @returns {string} HTML 문자열
+     */
+    getHeatmapSectionHTML() {
+        return `
+            <div class="hub-section heatmap-section">
+                <div class="section-header">
+                    <h2 class="section-title">🔥 여행 히트맵</h2>
+                    <p class="section-description">월별 여행 활동을 한눈에 확인하세요</p>
+                </div>
+                
+                <div class="heatmap-content">
+                    <div class="heatmap-controls">
+                        <select class="year-selector" id="heatmap-year-selector">
+                            <!-- 연도 선택기는 HeatmapRenderer에서 동적으로 생성됩니다 -->
+                        </select>
+                    </div>
+                    <div class="heatmap-container">
+                        <div class="heatmap-grid">
+                            ${Array.from({length: 12}, (_, i) => `
+                                <div class="heatmap-month">
+                                    <div class="month-label">${i + 1}월</div>
+                                    <div class="month-activity placeholder-box"></div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
      * 차트 섹션 HTML을 생성합니다
      * @returns {string} HTML 문자열
      */
@@ -259,7 +293,6 @@ class TravelReportView {
                 
                 ${this.getCountryRankingChartHTML()}
                 ${this.getCityRankingChartHTML()}
-                ${this.getHeatmapChartHTML()}
             </div>
         `;
     }

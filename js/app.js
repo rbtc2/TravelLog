@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Phase 1: 개발자 도구용 전역 함수들 추가
     window.TravelLogDev = {
         // 기능 상태 확인
-        checkFeatureStatus: (featureName) => {
+        checkFeatureStatus: async (featureName) => {
             const { FeatureManager } = await import('./config/app-config.js');
             return FeatureManager.getFeatureStatus(featureName);
         },
