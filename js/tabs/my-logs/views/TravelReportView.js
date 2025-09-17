@@ -156,10 +156,8 @@ class TravelReportView {
      */
     getWorldExplorationSectionHTML() {
         return `
-            <div class="hub-section world-exploration-section">
-                <div class="world-exploration-card" id="world-exploration-card">
-                    <!-- 전세계 탐험 현황이 여기에 동적으로 렌더링됩니다 -->
-                </div>
+            <div class="world-exploration-section" id="world-exploration-section">
+                <!-- 전세계 탐험 현황이 여기에 동적으로 렌더링됩니다 -->
             </div>
         `;
     }
@@ -398,9 +396,9 @@ class TravelReportView {
      * 전세계 탐험 현황을 렌더링합니다
      */
     renderWorldExploration() {
-        const container = this.container.querySelector('#world-exploration-card');
+        const container = this.container.querySelector('#world-exploration-section');
         if (!container) {
-            console.error('TravelReportView: world-exploration-card 컨테이너를 찾을 수 없습니다');
+            console.error('TravelReportView: world-exploration-section 컨테이너를 찾을 수 없습니다');
             return;
         }
 
@@ -422,25 +420,23 @@ class TravelReportView {
      */
     getWorldExplorationHTML(stats) {
         return `
-            <div class="world-exploration-content">
-                <div class="exploration-header">
-                    <div class="exploration-icon">🌍</div>
-                    <div class="exploration-info">
-                        <h3 class="exploration-title">전 세계 탐험 현황</h3>
-                        <p class="exploration-subtitle">전 세계 ${stats.totalCountries}개국 중 ${stats.visitedCountries}개국 방문</p>
-                    </div>
-                    <div class="exploration-percentage">${stats.progressPercentage}%</div>
+            <div class="exploration-header">
+                <div class="exploration-icon">🌍</div>
+                <div class="exploration-info">
+                    <h3 class="exploration-title">전 세계 탐험 현황</h3>
+                    <p class="exploration-subtitle">전 세계 ${stats.totalCountries}개국 중 ${stats.visitedCountries}개국 방문</p>
                 </div>
-                
-                <!-- 대륙별 컴팩트 요약 -->
-                <div class="continent-summary">
-                    ${this.generateContinentSummaryHTML(stats.continentStats)}
-                </div>
-                
-                <div class="exploration-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${stats.progressPercentage}%"></div>
-                    </div>
+                <div class="exploration-percentage">${stats.progressPercentage}%</div>
+            </div>
+            
+            <!-- 대륙별 컴팩트 요약 -->
+            <div class="continent-summary">
+                ${this.generateContinentSummaryHTML(stats.continentStats)}
+            </div>
+            
+            <div class="exploration-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${stats.progressPercentage}%"></div>
                 </div>
             </div>
         `;
@@ -471,19 +467,17 @@ class TravelReportView {
      */
     getWorldExplorationErrorHTML() {
         return `
-            <div class="world-exploration-content error">
-                <div class="exploration-header">
-                    <div class="exploration-icon">🌍</div>
-                    <div class="exploration-info">
-                        <h3 class="exploration-title">전 세계 탐험 현황</h3>
-                        <p class="exploration-subtitle">데이터를 불러올 수 없습니다</p>
-                    </div>
-                    <div class="exploration-percentage">--%</div>
+            <div class="exploration-header error">
+                <div class="exploration-icon">🌍</div>
+                <div class="exploration-info">
+                    <h3 class="exploration-title">전 세계 탐험 현황</h3>
+                    <p class="exploration-subtitle">데이터를 불러올 수 없습니다</p>
                 </div>
-                <div class="exploration-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 0%"></div>
-                    </div>
+                <div class="exploration-percentage">--%</div>
+            </div>
+            <div class="exploration-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
                 </div>
             </div>
         `;
