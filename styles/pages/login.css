@@ -63,7 +63,7 @@
 .app-build {
     font-size: var(--font-xs);
     color: var(--text-muted);
-    font-family: 'Courier New', monospace;
+    font-family: var(--font-family-mono);
 }
 
 .app-developer {

@@ -107,21 +107,28 @@
 
 /* ===== 폰트 로딩 최적화 ===== */
 
-/* 폰트 디스플레이 최적화 */
-@font-face {
-    font-family: 'Inter';
-    font-display: swap; /* 폰트 로딩 중에도 텍스트 표시 */
-    src: url('fonts/Inter-Regular.woff2') format('woff2');
-}
-
-/* 폰트 로딩 상태 */
+/* 폰트 디스플레이 최적화 - Pretendard */
 .font-loading {
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-display: swap;
 }
 
 .font-loaded {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-family-base);
+    font-display: swap;
+}
+
+/* Pretendard 폰트 최적화 */
+@supports (font-variation-settings: normal) {
+    body {
+        font-family: var(--font-family-base);
+        font-variation-settings: 'wght' 400;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-family-heading);
+        font-variation-settings: 'wght' 700;
+    }
 }
 
 /* ===== 이미지 최적화 ===== */
@@ -190,7 +197,7 @@
     padding: var(--space-2);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
-    font-family: monospace;
+    font-family: var(--font-family-mono);
     z-index: var(--z-tooltip);
     display: none;
 }
@@ -341,7 +348,7 @@
     padding: var(--space-2);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
-    font-family: monospace;
+    font-family: var(--font-family-mono);
     z-index: var(--z-tooltip);
     display: none;
 }
