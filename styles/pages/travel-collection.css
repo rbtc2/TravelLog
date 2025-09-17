@@ -800,6 +800,10 @@
     background: transparent;
 }
 
+/* ===============================
+   다크모드 스타일 (통합)
+   =============================== */
+
 .dark .visited-country-card {
     background: var(--gray-800) !important;
     border: 1px solid var(--gray-700) !important;
@@ -811,6 +815,12 @@
     background: var(--gray-700) !important;
     border-color: var(--primary-color) !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .visited-country-card {
+    @media (max-width: 768px) {
+        margin-bottom: var(--spacing-sm);
+    }
 }
 
 .dark .country-flag-section {
@@ -866,59 +876,29 @@
     border: 1px solid var(--red-500) !important;
     color: var(--red-300) !important;
 }
-    
+
 /* 다크모드 반응형 스타일 */
 .dark .collection-header {
-    /* 모바일 다크모드 */
     @media (max-width: 768px) {
         padding: var(--spacing-md);
         margin-bottom: var(--spacing-md);
     }
     
-    /* 태블릿 다크모드 */
     @media (min-width: 769px) and (max-width: 1023px) {
         padding: var(--spacing-lg);
     }
     
-    /* 데스크톱 다크모드 */
     @media (min-width: 1024px) {
         padding: var(--spacing-xl);
     }
 }
 
 .dark .collection-title h2 {
-    /* 모바일 다크모드 */
     @media (max-width: 768px) {
         font-size: var(--font-size-lg);
     }
 }
 
-.dark .visited-country-card {
-    /* 모바일 다크모드 */
-    @media (max-width: 768px) {
-        margin-bottom: var(--spacing-sm);
-    }
-}
-
-.dark .modern-collection-controls {
-    /* 모바일 다크모드 */
-    @media (max-width: 768px) {
-        background: var(--gray-800) !important;
-        border-color: var(--gray-700) !important;
-    }
-}
-
-.dark .countries-grid {
-    /* 태블릿 다크모드 */
-    @media (min-width: 769px) and (max-width: 1023px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    /* 데스크톱 다크모드 */
-    @media (min-width: 1024px) {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
 
 /* ===============================
    국가 컬렉션 그리드

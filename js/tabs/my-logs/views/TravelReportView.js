@@ -14,7 +14,7 @@ import { TravelDNARenderer } from '../../../modules/travel-report/components/Tra
 import { HeatmapRenderer } from '../../../modules/travel-report/components/HeatmapRenderer.js';
 import { ChartRenderer } from '../../../modules/travel-report/components/ChartRenderer.js';
 import { InsightsRenderer } from '../../../modules/travel-report/components/InsightsRenderer.js';
-// import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js'; // 미구현
+import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js';
 
 class TravelReportView {
     constructor(controller) {
@@ -28,7 +28,7 @@ class TravelReportView {
         this.heatmapRenderer = new HeatmapRenderer(controller);
         this.chartRenderer = new ChartRenderer(controller);
         this.insightsRenderer = new InsightsRenderer(controller);
-        // this.yearlyStatsRenderer = new YearlyStatsRenderer(controller); // 미구현
+        this.yearlyStatsRenderer = new YearlyStatsRenderer(controller);
     }
 
     /**
@@ -41,10 +41,10 @@ class TravelReportView {
         this.renderWorldExploration();
         this.renderBasicStats();
         this.renderTravelDNA();
+        this.renderYearlyStats();
         this.renderInitialHeatmap();
         this.renderCharts();
         this.renderInsights();
-        // this.renderYearlyStats(); // 미구현
         this.bindEvents();
         
         console.log('TravelReportView: 렌더링 완료');
@@ -115,7 +115,7 @@ class TravelReportView {
     }
 
     /**
-     * 여행 DNA 섹션 HTML을 생성합니다 (하드코딩된 데모 데이터)
+     * 여행 DNA 섹션 HTML을 생성합니다 (기본 DNA 아이템들 포함)
      * @returns {string} HTML 문자열
      */
     getTravelDNASectionHTML() {
@@ -125,7 +125,37 @@ class TravelReportView {
                     <h2 class="section-title">🧬 나의 여행 DNA</h2>
                 </div>
                 <div class="dna-content">
-                    <!-- 여행 DNA 컨텐츠가 여기에 동적으로 렌더링됩니다 -->
+                    <div class="dna-item">
+                        <div class="dna-icon">🏆</div>
+                        <div class="dna-details">
+                            <div class="dna-label">최애 국가</div>
+                            <div class="dna-value">데이터 분석 중...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dna-item">
+                        <div class="dna-icon">🏙️</div>
+                        <div class="dna-details">
+                            <div class="dna-label">베이스캠프</div>
+                            <div class="dna-value">데이터 분석 중...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dna-item">
+                        <div class="dna-icon">⏱️</div>
+                        <div class="dna-details">
+                            <div class="dna-label">여행 스타일</div>
+                            <div class="dna-value">데이터 분석 중...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dna-item">
+                        <div class="dna-icon">🎯</div>
+                        <div class="dna-details">
+                            <div class="dna-label">주요 목적</div>
+                            <div class="dna-value">데이터 분석 중...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -429,6 +459,7 @@ class TravelReportView {
     renderYearlyStats() {
         const yearlyStatsContent = document.querySelector('.yearly-stats-content');
         if (yearlyStatsContent) {
+            console.log('YearlyStatsRenderer: 연도별 통계 컨텐츠를 찾았습니다.');
             this.yearlyStatsRenderer.render(yearlyStatsContent);
         } else {
             console.warn('연도별 통계 컨텐츠를 찾을 수 없습니다.');

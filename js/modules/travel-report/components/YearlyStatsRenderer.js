@@ -49,12 +49,19 @@ class YearlyStatsRenderer {
      * 연도별 통계를 렌더링합니다
      */
     renderYearlyStats() {
-        if (!this.container) return;
+        if (!this.container) {
+            console.warn('YearlyStatsRenderer: 컨테이너가 없습니다.');
+            return;
+        }
+
+        console.log('YearlyStatsRenderer: 연도별 통계 렌더링 시작, 연도:', this.currentYear);
 
         // 연도 선택기 먼저 렌더링
         this.renderYearSelector();
         
         const yearlyStats = this.controller.getYearlyStatsAnalysis(this.currentYear);
+        console.log('YearlyStatsRenderer: 연도별 통계 데이터:', yearlyStats);
+        
         this.container.innerHTML = this.generateYearlyStatsHTML(yearlyStats);
         
         // 카운트업 애니메이션 실행

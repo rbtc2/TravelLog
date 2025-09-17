@@ -22,10 +22,6 @@ export class CountriesCollectionView extends BaseCollectionView {
         // 국가별 특수 속성
         this.currentContinent = 'all';
         this.visitedCountries = {};
-        
-        // 메서드 바인딩
-        this.handleContinentFilter = this.handleContinentFilter.bind(this);
-        this.handleCountryClick = this.handleCountryClick.bind(this);
     }
     
     
@@ -45,18 +41,12 @@ export class CountriesCollectionView extends BaseCollectionView {
             if (visitedData && visitedData.visitedCountryCodes && visitedData.visitedCountryCodes.length > 0) {
                 this.data = visitedData.visitedCountryCodes;
                 this.visitedCountries = visitedData.countries || {};
-                console.log('CountriesCollectionView: 실제 데이터 로드 완료', {
-                    dataCount: this.data.length,
-                    countries: Object.keys(this.visitedCountries).length
-                });
             } else {
                 // 실제 데이터가 없으면 빈 배열 사용
                 this.data = [];
                 this.visitedCountries = {};
-                console.log('CountriesCollectionView: 방문한 국가가 없습니다');
             }
         } catch (error) {
-            console.error('CountriesCollectionView: 데이터 로드 실패:', error);
             // 에러 발생 시 빈 배열 사용
             this.data = [];
             this.visitedCountries = {};
@@ -202,7 +192,6 @@ export class CountriesCollectionView extends BaseCollectionView {
             
             return filteredCountries;
         } catch (error) {
-            console.error('CountriesCollectionView: 필터링/정렬 실패:', error);
             return [];
         }
     }
@@ -236,7 +225,6 @@ export class CountriesCollectionView extends BaseCollectionView {
             
             return options;
         } catch (error) {
-            console.error('CountriesCollectionView: 대륙 필터 옵션 생성 오류:', error);
             // 기본 옵션 반환
             return `
                 <option value="all">모든 대륙</option>
@@ -256,36 +244,23 @@ export class CountriesCollectionView extends BaseCollectionView {
         // 대륙 필터 이벤트
         const continentFilter = this.container.querySelector('#continent-filter');
         if (continentFilter) {
-            this.eventManager.add(continentFilter, 'change', this.handleContinentFilter);
+            this.eventManager.add(continentFilter, 'change', (e) => {
+                this.currentContinent = e.target.value;
+                this.updateItems();
+            });
         }
         
         // 국가 카드 클릭 이벤트
         const countryCards = this.container.querySelectorAll('.visited-country-card');
         countryCards.forEach(card => {
-            this.eventManager.add(card, 'click', this.handleCountryClick);
+            this.eventManager.add(card, 'click', (e) => {
+                const countryCard = e.target.closest('.visited-country-card');
+                if (countryCard) {
+                    const countryCode = countryCard.dataset.country;
+                    this.showCountryDetail(countryCode);
+                }
+            });
         });
-    }
-    
-    /**
-     * 대륙 필터 변경을 처리합니다
-     * @param {Event} e - 변경 이벤트
-     */
-    handleContinentFilter(e) {
-        this.currentContinent = e.target.value;
-        this.updateItems();
-    }
-    
-    /**
-     * 국가 카드 클릭을 처리합니다
-     * @param {Event} e - 클릭 이벤트
-     */
-    handleCountryClick(e) {
-        const countryCard = e.target.closest('.visited-country-card');
-        
-        if (countryCard) {
-            const countryCode = countryCard.dataset.country;
-            this.showCountryDetail(countryCode);
-        }
     }
     
     /**
@@ -297,10 +272,6 @@ export class CountriesCollectionView extends BaseCollectionView {
         if (!country) return;
         
         // 향후 모달로 개선 예정
-        console.log('국가 상세 정보:', country.nameKo);
         alert(`${country.flag} ${country.nameKo}\n방문 완료`);
     }
-    
-    
-    
 }

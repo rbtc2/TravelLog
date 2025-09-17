@@ -372,6 +372,18 @@
     text-align: right;
 }
 
+/* ===== 여행 DNA 섹션 ===== */
+.travel-dna-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.dna-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
 /* ===== 여행 DNA 아이템 카드 ===== */
 .dna-item {
     display: flex;
@@ -807,7 +819,115 @@
     }
 }
 
+/* ===== 다크모드 지원 ===== */
+@media (prefers-color-scheme: dark) {
+    .travel-dna-section {
+        background: transparent;
+    }
+    
+    .dna-content {
+        background: transparent;
+    }
+    
+    .dna-item {
+        background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
+        border-color: var(--gray-600);
+        color: var(--gray-100);
+    }
+    
+    .dna-item:hover {
+        background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-600) 100%);
+        border-color: var(--primary-color);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dna-icon {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: var(--white);
+    }
+    
+    .dna-label {
+        color: var(--gray-300);
+    }
+    
+    .dna-value {
+        color: var(--gray-100);
+    }
+}
+
+/* 강제 다크모드 (.dark 클래스) */
+.dark .travel-dna-section {
+    background: transparent;
+}
+
+.dark .dna-content {
+    background: transparent;
+}
+
+.dark .dna-item {
+    background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-700) 100%);
+    border-color: var(--gray-600);
+    color: var(--gray-100);
+}
+
+.dark .dna-item:hover {
+    background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-600) 100%);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.dark .dna-icon {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--white);
+}
+
+.dark .dna-label {
+    color: var(--gray-300);
+}
+
+.dark .dna-value {
+    color: var(--gray-100);
+}
+
+/* ===== 반응형 스타일 ===== */
+@media (max-width: 768px) {
+    .dna-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .dna-item {
+        padding: var(--spacing-md);
+        gap: var(--spacing-md);
+    }
+    
+    .dna-icon {
+        width: 40px;
+        height: 40px;
+        font-size: var(--font-lg);
+    }
+    
+    .dna-label {
+        font-size: var(--font-xs);
+    }
+    
+    .dna-value {
+        font-size: var(--font-sm);
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+    .dna-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }
+}
+
 @media (min-width: 1024px) {
+    .dna-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }
     
     .dna-item {
         padding: var(--spacing-lg);

@@ -55,6 +55,12 @@ class TravelDNARenderer {
         // 최애 국가 아이템 업데이트 (1번째 아이템)
         this.updateFavoriteCountry(dnaItems[0]);
         
+        // 베이스캠프 아이템 업데이트 (2번째 아이템)
+        this.updateBaseCamp(dnaItems[1]);
+        
+        // 여행 스타일 아이템 업데이트 (3번째 아이템)
+        this.updateTravelStyle(dnaItems[2]);
+        
         // 주요 목적 아이템 업데이트 (4번째 아이템)
         this.updateMainPurpose(dnaItems[3], purposeAnalysis);
     }
@@ -119,6 +125,92 @@ class TravelDNARenderer {
                 </div>
             `;
         }).join('');
+    }
+
+    /**
+     * 베이스캠프 아이템을 업데이트합니다
+     * @param {HTMLElement} baseCampItem - 베이스캠프 아이템
+     */
+    updateBaseCamp(baseCampItem) {
+        if (!baseCampItem) return;
+
+        try {
+            const favoriteCountryAnalysis = this.controller.getFavoriteCountryAnalysis();
+            const baseCampValue = baseCampItem.querySelector('.dna-value');
+            
+            if (baseCampValue) {
+                if (favoriteCountryAnalysis.hasData && favoriteCountryAnalysis.top3Countries && favoriteCountryAnalysis.top3Countries.length > 0) {
+                    const topCountry = favoriteCountryAnalysis.top3Countries[0];
+                    const countryName = this.controller._getCountryDisplayName(topCountry.country);
+                    baseCampValue.textContent = `${countryName} (${topCountry.visitCount}회, 총 ${topCountry.totalStayDays}일)`;
+                } else {
+                    baseCampValue.textContent = '아직 여행 기록이 없습니다';
+                }
+            }
+        } catch (error) {
+            console.error('베이스캠프 업데이트 중 오류:', error);
+            const baseCampValue = baseCampItem.querySelector('.dna-value');
+            if (baseCampValue) {
+                baseCampValue.textContent = '데이터 분석 중 오류가 발생했습니다';
+            }
+        }
+    }
+
+    /**
+     * 여행 스타일 아이템을 업데이트합니다
+     * @param {HTMLElement} travelStyleItem - 여행 스타일 아이템
+     */
+    updateTravelStyle(travelStyleItem) {
+        if (!travelStyleItem) return;
+
+        try {
+            const logs = this.controller.getAllLogs();
+            const travelStyleValue = travelStyleItem.querySelector('.dna-value');
+            
+            if (travelStyleValue) {
+                if (logs.length > 0) {
+                    // 평균 체류일수 계산
+                    let totalDays = 0;
+                    let validLogs = 0;
+                    
+                    logs.forEach(log => {
+                        if (log.startDate && log.endDate) {
+                            const start = new Date(log.startDate);
+                            const end = new Date(log.endDate);
+                            const diffTime = Math.abs(end - start);
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                            totalDays += diffDays;
+                            validLogs++;
+                        }
+                    });
+                    
+                    if (validLogs > 0) {
+                        const avgDays = Math.round((totalDays / validLogs) * 10) / 10;
+                        let style = '';
+                        
+                        if (avgDays >= 7) {
+                            style = '장기체류형';
+                        } else if (avgDays >= 3) {
+                            style = '중기체류형';
+                        } else {
+                            style = '단기체류형';
+                        }
+                        
+                        travelStyleValue.textContent = `${style} (평균 ${avgDays}일)`;
+                    } else {
+                        travelStyleValue.textContent = '아직 여행 기록이 없습니다';
+                    }
+                } else {
+                    travelStyleValue.textContent = '아직 여행 기록이 없습니다';
+                }
+            }
+        } catch (error) {
+            console.error('여행 스타일 업데이트 중 오류:', error);
+            const travelStyleValue = travelStyleItem.querySelector('.dna-value');
+            if (travelStyleValue) {
+                travelStyleValue.textContent = '데이터 분석 중 오류가 발생했습니다';
+            }
+        }
     }
 
     /**

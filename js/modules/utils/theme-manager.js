@@ -26,8 +26,8 @@ export class ThemeManager {
         // 시스템 다크모드 감지 설정
         this.initializeSystemThemeDetection();
         
-        // 초기 테마 적용
-        this.applyTheme(this.currentTheme);
+        // 초기 테마 적용 (이미 적용된 경우 중복 적용 방지)
+        this.applyThemeIfNeeded(this.currentTheme);
     }
     
     /**
@@ -322,6 +322,25 @@ export class ThemeManager {
         return true;
     }
     
+    /**
+     * 필요한 경우에만 테마를 적용합니다 (중복 적용 방지)
+     * @param {string} theme - 적용할 테마
+     * @private
+     */
+    applyThemeIfNeeded(theme) {
+        const body = document.body;
+        const isDark = body.classList.contains('dark');
+        const isLight = body.classList.contains('light');
+        
+        // 이미 올바른 테마가 적용되어 있으면 중복 적용하지 않음
+        if ((theme === 'dark' && isDark) || (theme === 'light' && isLight)) {
+            return;
+        }
+        
+        // 테마 적용 (애니메이션 없이)
+        this.applyTheme(theme, false);
+    }
+
     /**
      * 테마를 적용합니다
      * @param {string} theme - 적용할 테마
