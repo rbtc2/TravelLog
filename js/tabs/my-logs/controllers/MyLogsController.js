@@ -30,6 +30,12 @@ import { TravelCollectionController } from './TravelCollectionController.js';
 import { CollectionDataManager } from './CollectionDataManager.js';
 import { CollectionRenderer } from './CollectionRenderer.js';
 
+// 🚀 Phase 3: 새로운 로그 관리 모듈들
+import { TravelLogController } from './TravelLogController.js';
+import { LogValidator } from './LogValidator.js';
+import { LogDataManager } from './LogDataManager.js';
+import { LogRenderer } from './LogRenderer.js';
+
 class MyLogsController {
     constructor() {
         // 새로운 서비스들 초기화
@@ -50,6 +56,12 @@ class MyLogsController {
         this.travelCollectionController = new TravelCollectionController(this.logDataService, this.cacheManager);
         this.collectionDataManager = new CollectionDataManager();
         this.collectionRenderer = new CollectionRenderer();
+        
+        // 🚀 Phase 3: 새로운 로그 관리 모듈들 초기화
+        this.travelLogController = new TravelLogController(this.logDataService, this.cacheManager);
+        this.logValidator = new LogValidator();
+        this.logDataManager = new LogDataManager();
+        this.logRenderer = new LogRenderer();
         
         // 뷰 인스턴스들 초기화
         this.travelCollectionView = new TravelCollectionView(this);
@@ -78,6 +90,12 @@ class MyLogsController {
             
             // 🚀 Phase 2: 컬렉션 컨트롤러 초기화
             await this.travelCollectionController.initialize();
+            
+            // 🚀 Phase 3: 로그 관리 모듈들 초기화
+            await this.travelLogController.initialize();
+            await this.logValidator.initialize();
+            await this.logDataManager.initialize();
+            await this.logRenderer.initialize();
             
             this.isInitialized = true;
         } catch (error) {
@@ -174,9 +192,16 @@ class MyLogsController {
      * @returns {Object} 생성된 로그
      */
     addLog(logData) {
-        const newLog = this.logDataService.addLog(logData);
-        this.invalidateCache(); // 캐시 무효화
-        return newLog;
+        try {
+            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
+            return this.travelLogController.addLog(logData);
+        } catch (error) {
+            console.error('MyLogsController: addLog 실패, fallback 사용:', error);
+            // 안전장치: 기존 로직으로 fallback
+            const newLog = this.logDataService.addLog(logData);
+            this.invalidateCache();
+            return newLog;
+        }
     }
 
     /**
@@ -185,13 +210,18 @@ class MyLogsController {
      * @returns {boolean} 삭제 성공 여부
      */
     deleteLog(logId) {
-        const deleted = this.logDataService.deleteLog(logId);
-        
-        if (deleted) {
-            this.invalidateCache(); // 캐시 무효화
+        try {
+            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
+            return this.travelLogController.deleteLog(logId);
+        } catch (error) {
+            console.error('MyLogsController: deleteLog 실패, fallback 사용:', error);
+            // 안전장치: 기존 로직으로 fallback
+            const deleted = this.logDataService.deleteLog(logId);
+            if (deleted) {
+                this.invalidateCache();
+            }
+            return deleted;
         }
-        
-        return deleted;
     }
 
     /**
@@ -201,13 +231,18 @@ class MyLogsController {
      * @returns {Object|null} 업데이트된 로그 또는 null
      */
     updateLog(logId, updatedData) {
-        const updatedLog = this.logDataService.updateLog(logId, updatedData);
-        
-        if (updatedLog) {
-            this.invalidateCache(); // 캐시 무효화
+        try {
+            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
+            return this.travelLogController.updateLog(logId, updatedData);
+        } catch (error) {
+            console.error('MyLogsController: updateLog 실패, fallback 사용:', error);
+            // 안전장치: 기존 로직으로 fallback
+            const updatedLog = this.logDataService.updateLog(logId, updatedData);
+            if (updatedLog) {
+                this.invalidateCache();
+            }
+            return updatedLog;
         }
-        
-        return updatedLog;
     }
 
     /**
@@ -216,15 +251,113 @@ class MyLogsController {
      * @returns {Object|null} 로그 객체 또는 null
      */
     getLogById(logId) {
-        return this.logDataService.getLogById(logId);
+        try {
+            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
+            return this.travelLogController.getLogById(logId);
+        } catch (error) {
+            console.error('MyLogsController: getLogById 실패, fallback 사용:', error);
+            // 안전장치: 기존 로직으로 fallback
+            return this.logDataService.getLogById(logId);
+        }
     }
 
     /**
      * 모든 로그를 조회합니다
      * @returns {Array} 로그 배열
      */
-    getAllLogs() {
-        return this.logDataService.getAllLogs();
+    getAllLogs(options = {}) {
+        try {
+            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
+            return this.travelLogController.getAllLogs(options);
+        } catch (error) {
+            console.error('MyLogsController: getAllLogs 실패, fallback 사용:', error);
+            // 안전장치: 기존 로직으로 fallback
+            return this.logDataService.getAllLogs();
+        }
+    }
+
+    /**
+     * 로그를 검색합니다 (Phase 3: 새로운 기능)
+     * @param {Object} searchCriteria - 검색 조건
+     * @returns {Array} 검색 결과
+     */
+    searchLogs(searchCriteria) {
+        try {
+            return this.travelLogController.searchLogs(searchCriteria);
+        } catch (error) {
+            console.error('MyLogsController: searchLogs 실패:', error);
+            return [];
+        }
+    }
+
+    /**
+     * 국가별 로그를 조회합니다 (Phase 3: 새로운 기능)
+     * @param {string} countryCode - 국가 코드
+     * @returns {Array} 해당 국가의 로그 배열
+     */
+    getLogsByCountry(countryCode) {
+        try {
+            return this.travelLogController.getLogsByCountry(countryCode);
+        } catch (error) {
+            console.error('MyLogsController: getLogsByCountry 실패:', error);
+            return [];
+        }
+    }
+
+    /**
+     * 연도별 로그를 조회합니다 (Phase 3: 새로운 기능)
+     * @param {number} year - 연도
+     * @returns {Array} 해당 연도의 로그 배열
+     */
+    getLogsByYear(year) {
+        try {
+            return this.travelLogController.getLogsByYear(year);
+        } catch (error) {
+            console.error('MyLogsController: getLogsByYear 실패:', error);
+            return [];
+        }
+    }
+
+    /**
+     * 로그 통계를 계산합니다 (Phase 3: 새로운 기능)
+     * @param {Object} options - 통계 옵션
+     * @returns {Object} 로그 통계
+     */
+    getLogStatistics(options = {}) {
+        try {
+            return this.travelLogController.getLogStatistics(options);
+        } catch (error) {
+            console.error('MyLogsController: getLogStatistics 실패:', error);
+            return {};
+        }
+    }
+
+    /**
+     * 로그 목록을 렌더링합니다 (Phase 3: 새로운 기능)
+     * @param {HTMLElement} container - 렌더링할 컨테이너
+     * @param {Object} options - 렌더링 옵션
+     */
+    renderLogList(container, options = {}) {
+        try {
+            this.travelLogController.renderLogList(container, options);
+        } catch (error) {
+            console.error('MyLogsController: renderLogList 실패:', error);
+            container.innerHTML = this.logRenderer.renderError('로그 목록을 불러올 수 없습니다.');
+        }
+    }
+
+    /**
+     * 로그 상세 정보를 렌더링합니다 (Phase 3: 새로운 기능)
+     * @param {HTMLElement} container - 렌더링할 컨테이너
+     * @param {string} logId - 로그 ID
+     */
+    renderLogDetail(container, logId) {
+        try {
+            this.travelLogController.renderLogDetail(container, logId);
+        } catch (error) {
+            console.error('MyLogsController: renderLogDetail 실패:', error);
+            container.innerHTML = this.logRenderer.renderError('로그 상세 정보를 불러올 수 없습니다.');
+        }
     }
 
     /**
@@ -785,6 +918,20 @@ class MyLogsController {
         }
         if (this.collectionRenderer && this.collectionRenderer.cleanup) {
             this.collectionRenderer.cleanup();
+        }
+        
+        // 🚀 Phase 3: 새로운 로그 관리 모듈들 정리
+        if (this.travelLogController && this.travelLogController.cleanup) {
+            this.travelLogController.cleanup();
+        }
+        if (this.logValidator && this.logValidator.cleanup) {
+            this.logValidator.cleanup();
+        }
+        if (this.logDataManager && this.logDataManager.cleanup) {
+            this.logDataManager.cleanup();
+        }
+        if (this.logRenderer && this.logRenderer.cleanup) {
+            this.logRenderer.cleanup();
         }
         
         // 기존 호환성을 위한 정리
