@@ -374,6 +374,48 @@ class TravelCollectionController {
     }
 
     /**
+     * 전세계 탐험 현황 통계를 계산합니다
+     * @returns {Object} 전세계 탐험 현황 통계
+     */
+    getWorldExplorationStats() {
+        try {
+            const logs = this.logDataService.getAllLogs();
+            const visitedCountrySet = new Set();
+            
+            // 방문한 국가들 수집
+            logs.forEach(log => {
+                if (log.country) {
+                    visitedCountrySet.add(log.country);
+                }
+            });
+            
+            const totalCountries = 195; // 전 세계 총 국가 수
+            const visitedCountries = visitedCountrySet.size;
+            const progressPercentage = Math.round((visitedCountries / totalCountries) * 100);
+            
+            // 대륙별 통계 계산
+            const continentStats = this.getContinentStats();
+            
+            return {
+                totalCountries: totalCountries,
+                visitedCountries: visitedCountries,
+                progressPercentage: progressPercentage,
+                continentStats: continentStats,
+                hasData: visitedCountries > 0
+            };
+        } catch (error) {
+            console.error('TravelCollectionController: getWorldExplorationStats 실패:', error);
+            return {
+                totalCountries: 195,
+                visitedCountries: 0,
+                progressPercentage: 0,
+                continentStats: [],
+                hasData: false
+            };
+        }
+    }
+
+    /**
      * 컨트롤러 정리
      */
     cleanup() {

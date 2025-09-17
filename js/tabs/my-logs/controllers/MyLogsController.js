@@ -22,8 +22,6 @@ import { DemoData } from '../../../modules/utils/demo-data.js';
 import { countriesManager } from '../../../data/countries-manager.js';
 import { TravelCollectionView } from '../views/index.js';
 
-// 🚀 새로운 분석 모듈들 (Phase 1 리팩토링)
-// import { AnalysisOrchestrator } from '../../../modules/analysis/AnalysisOrchestrator.js';
 
 // 🚀 Phase 2: 새로운 컬렉션 모듈들
 import { TravelCollectionController } from './TravelCollectionController.js';
@@ -192,16 +190,7 @@ class MyLogsController {
      * @returns {Object} 생성된 로그
      */
     addLog(logData) {
-        try {
-            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
-            return this.travelLogController.addLog(logData);
-        } catch (error) {
-            console.error('MyLogsController: addLog 실패, fallback 사용:', error);
-            // 안전장치: 기존 로직으로 fallback
-            const newLog = this.logDataService.addLog(logData);
-            this.invalidateCache();
-            return newLog;
-        }
+        return this.travelLogController.addLog(logData);
     }
 
     /**
@@ -210,18 +199,7 @@ class MyLogsController {
      * @returns {boolean} 삭제 성공 여부
      */
     deleteLog(logId) {
-        try {
-            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
-            return this.travelLogController.deleteLog(logId);
-        } catch (error) {
-            console.error('MyLogsController: deleteLog 실패, fallback 사용:', error);
-            // 안전장치: 기존 로직으로 fallback
-            const deleted = this.logDataService.deleteLog(logId);
-            if (deleted) {
-                this.invalidateCache();
-            }
-            return deleted;
-        }
+        return this.travelLogController.deleteLog(logId);
     }
 
     /**
@@ -231,18 +209,7 @@ class MyLogsController {
      * @returns {Object|null} 업데이트된 로그 또는 null
      */
     updateLog(logId, updatedData) {
-        try {
-            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
-            return this.travelLogController.updateLog(logId, updatedData);
-        } catch (error) {
-            console.error('MyLogsController: updateLog 실패, fallback 사용:', error);
-            // 안전장치: 기존 로직으로 fallback
-            const updatedLog = this.logDataService.updateLog(logId, updatedData);
-            if (updatedLog) {
-                this.invalidateCache();
-            }
-            return updatedLog;
-        }
+        return this.travelLogController.updateLog(logId, updatedData);
     }
 
     /**
@@ -251,14 +218,7 @@ class MyLogsController {
      * @returns {Object|null} 로그 객체 또는 null
      */
     getLogById(logId) {
-        try {
-            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
-            return this.travelLogController.getLogById(logId);
-        } catch (error) {
-            console.error('MyLogsController: getLogById 실패, fallback 사용:', error);
-            // 안전장치: 기존 로직으로 fallback
-            return this.logDataService.getLogById(logId);
-        }
+        return this.travelLogController.getLogById(logId);
     }
 
     /**
@@ -266,14 +226,7 @@ class MyLogsController {
      * @returns {Array} 로그 배열
      */
     getAllLogs(options = {}) {
-        try {
-            // 🚀 Phase 3: 새로운 로그 컨트롤러로 위임
-            return this.travelLogController.getAllLogs(options);
-        } catch (error) {
-            console.error('MyLogsController: getAllLogs 실패, fallback 사용:', error);
-            // 안전장치: 기존 로직으로 fallback
-            return this.logDataService.getAllLogs();
-        }
+        return this.travelLogController.getAllLogs(options);
     }
 
     /**
@@ -282,12 +235,7 @@ class MyLogsController {
      * @returns {Array} 검색 결과
      */
     searchLogs(searchCriteria) {
-        try {
-            return this.travelLogController.searchLogs(searchCriteria);
-        } catch (error) {
-            console.error('MyLogsController: searchLogs 실패:', error);
-            return [];
-        }
+        return this.travelLogController.searchLogs(searchCriteria);
     }
 
     /**
@@ -296,12 +244,7 @@ class MyLogsController {
      * @returns {Array} 해당 국가의 로그 배열
      */
     getLogsByCountry(countryCode) {
-        try {
-            return this.travelLogController.getLogsByCountry(countryCode);
-        } catch (error) {
-            console.error('MyLogsController: getLogsByCountry 실패:', error);
-            return [];
-        }
+        return this.travelLogController.getLogsByCountry(countryCode);
     }
 
     /**
@@ -310,12 +253,7 @@ class MyLogsController {
      * @returns {Array} 해당 연도의 로그 배열
      */
     getLogsByYear(year) {
-        try {
-            return this.travelLogController.getLogsByYear(year);
-        } catch (error) {
-            console.error('MyLogsController: getLogsByYear 실패:', error);
-            return [];
-        }
+        return this.travelLogController.getLogsByYear(year);
     }
 
     /**
@@ -324,12 +262,7 @@ class MyLogsController {
      * @returns {Object} 로그 통계
      */
     getLogStatistics(options = {}) {
-        try {
-            return this.travelLogController.getLogStatistics(options);
-        } catch (error) {
-            console.error('MyLogsController: getLogStatistics 실패:', error);
-            return {};
-        }
+        return this.travelLogController.getLogStatistics(options);
     }
 
     /**
@@ -338,12 +271,7 @@ class MyLogsController {
      * @param {Object} options - 렌더링 옵션
      */
     renderLogList(container, options = {}) {
-        try {
-            this.travelLogController.renderLogList(container, options);
-        } catch (error) {
-            console.error('MyLogsController: renderLogList 실패:', error);
-            container.innerHTML = this.logRenderer.renderError('로그 목록을 불러올 수 없습니다.');
-        }
+        this.travelLogController.renderLogList(container, options);
     }
 
     /**
@@ -352,12 +280,7 @@ class MyLogsController {
      * @param {string} logId - 로그 ID
      */
     renderLogDetail(container, logId) {
-        try {
-            this.travelLogController.renderLogDetail(container, logId);
-        } catch (error) {
-            console.error('MyLogsController: renderLogDetail 실패:', error);
-            container.innerHTML = this.logRenderer.renderError('로그 상세 정보를 불러올 수 없습니다.');
-        }
+        this.travelLogController.renderLogDetail(container, logId);
     }
 
     /**
@@ -492,16 +415,7 @@ class MyLogsController {
      * @returns {Object} 주요방문국 순위 분석 결과
      */
     getFavoriteCountryAnalysis() {
-        try {
-            return this.countryAnalysisService.getFavoriteCountryAnalysis();
-        } catch (error) {
-            console.error('MyLogsController: getFavoriteCountryAnalysis 실패:', error);
-            return {
-                top3Countries: [],
-                hasData: false,
-                totalVisitedCountries: 0
-            };
-        }
+        return this.countryAnalysisService.getFavoriteCountryAnalysis();
     }
 
     /**
@@ -509,16 +423,8 @@ class MyLogsController {
      * @returns {Map} 국가 코드를 키로 하는 방문 횟수 Map
      */
     getCountryVisitCounts() {
-        try {
-            return this.travelCollectionController.getCountryVisitCounts();
-        } catch (error) {
-            console.error('MyLogsController: getCountryVisitCounts 실패:', error);
-            return new Map();
-        }
+        return this.travelCollectionController.getCountryVisitCounts();
     }
-
-
-
 
     /**
      * 연도별 통계 분석을 수행합니다
@@ -526,23 +432,7 @@ class MyLogsController {
      * @returns {Object} 연도별 통계 분석 결과
      */
     getYearlyStatsAnalysis(year) {
-        try {
-            return this.yearlyStatsService.getYearlyStatsAnalysis(year);
-        } catch (error) {
-            console.error('MyLogsController: getYearlyStatsAnalysis 실패:', error);
-            return {
-                stats: {
-                    totalTrips: 0,
-                    uniqueCountries: 0,
-                    uniqueCities: 0,
-                    totalTravelDays: 0,
-                    averageTravelDays: 0,
-                    averageRating: 0
-                },
-                changes: {},
-                hasData: false
-            };
-        }
+        return this.yearlyStatsService.getYearlyStatsAnalysis(year);
     }
 
 
@@ -651,12 +541,7 @@ class MyLogsController {
      * @returns {Object} 방문한 국가 정보
      */
     getVisitedCountries() {
-        try {
-            return this.travelCollectionController.getVisitedCountries();
-        } catch (error) {
-            console.error('MyLogsController: getVisitedCountries 실패:', error);
-            return { visitedCountryCodes: [], countries: {} };
-        }
+        return this.travelCollectionController.getVisitedCountries();
     }
 
     /**
@@ -664,12 +549,7 @@ class MyLogsController {
      * @returns {Object} 대륙별 통계
      */
     getContinentStats() {
-        try {
-            return this.travelCollectionController.getContinentStats();
-        } catch (error) {
-            console.error('MyLogsController: getContinentStats 실패:', error);
-            return [];
-        }
+        return this.travelCollectionController.getContinentStats();
     }
 
     /**
@@ -677,18 +557,7 @@ class MyLogsController {
      * @returns {Object} 여행 도감 통계
      */
     getTravelCollectionStats() {
-        try {
-            return this.travelCollectionController.getTravelCollectionStats();
-        } catch (error) {
-            console.error('MyLogsController: getTravelCollectionStats 실패:', error);
-            return {
-                total: 195,
-                visited: 0,
-                percentage: 0,
-                continents: [],
-                visitedCountries: { visitedCountryCodes: [], countries: {} }
-            };
-        }
+        return this.travelCollectionController.getTravelCollectionStats();
     }
 
 
@@ -715,56 +584,9 @@ class MyLogsController {
      * @returns {Object} 전세계 탐험 현황 통계
      */
     getWorldExplorationStats() {
-        try {
-            // 기존 로직을 직접 구현
-            const logs = this.getAllLogs();
-            const visitedCountrySet = new Set();
-            
-            // 방문한 국가들 수집
-            logs.forEach(log => {
-                if (log.country) {
-                    visitedCountrySet.add(log.country);
-                }
-            });
-            
-            const totalCountries = 195; // 전 세계 총 국가 수
-            const visitedCountries = visitedCountrySet.size;
-            const progressPercentage = Math.round((visitedCountries / totalCountries) * 100);
-            
-            // 대륙별 통계 계산
-            const continentStats = this.getContinentStats();
-            
-            return {
-                totalCountries: totalCountries,
-                visitedCountries: visitedCountries,
-                progressPercentage: progressPercentage,
-                continentStats: continentStats,
-                hasData: visitedCountries > 0
-            };
-        } catch (error) {
-            console.error('MyLogsController: getWorldExplorationStats 실패:', error);
-            return {
-                totalCountries: 195,
-                visitedCountries: 0,
-                progressPercentage: 0,
-                continentStats: [],
-                hasData: false
-            };
-        }
+        return this.travelCollectionController.getWorldExplorationStats();
     }
 
-    /**
-     * 대륙별 통계를 계산합니다
-     * @returns {Array} 대륙별 통계 배열
-     */
-    getContinentStats() {
-        try {
-            return this.travelCollectionController.getContinentStats();
-        } catch (error) {
-            console.error('MyLogsController: getContinentStats 실패:', error);
-            return [];
-        }
-    }
 
     /**
      * 국가 코드를 표시명으로 변환합니다
