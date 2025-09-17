@@ -169,34 +169,21 @@ class LogEditModule {
         const overlay = this.modal.querySelector('.modal-overlay');
         const form = this.modal.querySelector('#edit-log-form');
         
-        const closeModal = () => {
-            if (this.modal) {
-                this.modal.remove();
-                this.modal = null;
-            }
-            this.currentLog = null;
-            document.body.style.overflow = ''; // 배경 스크롤 복원
-        };
-        
-        cancelBtn.addEventListener('click', closeModal);
-        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', () => this.closeModal());
+        closeBtn.addEventListener('click', () => this.closeModal());
         confirmBtn.addEventListener('click', () => {
             if (this.validateForm(form)) {
                 const updatedData = this.getFormData(form);
-                console.log('LogEditModule: 편집 완료, 콜백 호출', {
-                    logId: this.currentLog.id,
-                    updatedData: updatedData
-                });
                 onSave(this.currentLog.id, updatedData);
-                closeModal();
+                this.closeModal();
             }
         });
-        overlay.addEventListener('click', closeModal);
+        overlay.addEventListener('click', () => this.closeModal());
         
         // ESC 키로 모달 닫기
         const handleEscKey = (e) => {
             if (e.key === 'Escape' && this.modal) {
-                closeModal();
+                this.closeModal();
                 document.removeEventListener('keydown', handleEscKey);
             }
         };
@@ -237,18 +224,18 @@ class LogEditModule {
                 const currentLength = memoTextarea.value.length;
                 memoCharDisplay.textContent = currentLength;
                 
-                // 글자 수에 따른 색상 변경
+                // 글자 수에 따른 색상 변경 (CSS 변수 사용)
                 if (currentLength >= 280) {
-                    memoCharDisplay.style.color = '#e53e3e'; // 빨간색
+                    memoCharDisplay.style.color = 'var(--error-color, #e53e3e)';
                 } else if (currentLength >= 250) {
-                    memoCharDisplay.style.color = '#dd6b20'; // 주황색
+                    memoCharDisplay.style.color = 'var(--warning-color, #dd6b20)';
                 } else {
-                    memoCharDisplay.style.color = 'var(--text-muted)'; // 기본색
+                    memoCharDisplay.style.color = 'var(--text-muted)';
                 }
             };
             
+            // input 이벤트만 사용 (keyup은 불필요)
             memoTextarea.addEventListener('input', updateCharCount);
-            memoTextarea.addEventListener('keyup', updateCharCount);
         }
         
         // CountrySelector 초기화 및 이벤트 바인딩
@@ -334,6 +321,13 @@ class LogEditModule {
             this.modal.remove();
             this.modal = null;
         }
+        
+        // CountrySelector 정리
+        if (this.countrySelector) {
+            this.countrySelector.destroy();
+            this.countrySelector = null;
+        }
+        
         this.currentLog = null;
         document.body.style.overflow = ''; // 배경 스크롤 복원
     }
@@ -353,7 +347,7 @@ class LogEditModule {
             // CountrySelector 생성
             this.countrySelector = await createCountrySelector(container, {
                 placeholder: '국가를 검색하세요',
-                selectedCountry: currentCountry ? { nameKo: currentCountry } : null,
+                selectedCountry: null, // 초기값은 null로 설정
                 showFlags: true,
                 showEnglishNames: true,
                 inputId: 'edit-country-selector-input'
@@ -362,9 +356,8 @@ class LogEditModule {
             // 국가 선택 이벤트 리스너
             container.addEventListener('country-selected', (event) => {
                 const selectedCountry = event.detail;
-                console.log('LogEditModule: 국가 선택됨', selectedCountry);
                 
-                // 숨겨진 입력 필드에 국가 코드 업데이트 (LogValidator에서 요구)
+                // 숨겨진 입력 필드에 국가 코드 업데이트
                 const hiddenInput = this.modal.querySelector('#edit-country');
                 if (hiddenInput) {
                     hiddenInput.value = selectedCountry.code;
@@ -411,16 +404,7 @@ class LogEditModule {
      * 모듈을 정리합니다
      */
     cleanup() {
-        // CountrySelector 정리
-        if (this.countrySelector) {
-            this.countrySelector.destroy();
-            this.countrySelector = null;
-        }
-        
         this.closeModal();
-        this.currentLog = null;
-        // 배경 스크롤 복원
-        document.body.style.overflow = '';
     }
 }
 
