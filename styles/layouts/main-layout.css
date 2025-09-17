@@ -32,7 +32,7 @@
     padding: var(--spacing-lg);
     background-color: var(--bg-primary);
     /* Phase 4: 네비게이션 여백 적용 - 콘텐츠가 가려지지 않도록 */
-    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 20px);
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 40px);
     /* 스크롤 성능 최적화 - 중복 스크롤바 완전 방지 */
     -webkit-overflow-scrolling: touch;
     overflow: hidden;
@@ -95,7 +95,7 @@
 @media (max-width: 768px) {
     #main-content {
         padding: var(--spacing-md);
-        /* Phase 4: 모바일에서도 네비게이션 여백 적용 */
+        /* Phase 4: 모바일에서는 기본 네비게이션 여백 */
         padding-bottom: calc(var(--spacing-md) + var(--navigation-height, 80px) + 20px);
         /* 모바일 스크롤 최적화 */
         -webkit-overflow-scrolling: touch;
@@ -145,5 +145,13 @@
     .page-container {
         max-width: var(--container-desktop-xl);
         padding: 0 var(--spacing-3xl);
+    }
+}
+
+/* 데스크톱에서 네비게이션 여백 추가 최적화 */
+@media (min-width: 1024px) {
+    #main-content {
+        /* 데스크톱에서는 더 많은 하단 여백 확보 */
+        padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 60px);
     }
 }

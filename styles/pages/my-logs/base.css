@@ -6,7 +6,7 @@
     margin: 0 auto;
     padding: var(--spacing-lg);
     /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
-    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 20px);
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 40px);
 }
 
 /* 반응형 나의 로그 컨테이너 최적화 */
@@ -35,6 +35,16 @@
     .my-logs-container {
         max-width: var(--container-desktop-xl);
         padding: var(--spacing-3xl);
+        /* 초대형 데스크톱에서 충분한 하단 여백 */
+        padding-bottom: calc(var(--spacing-3xl) + var(--navigation-height, 80px) + 80px);
+    }
+}
+
+/* 데스크톱에서 나의 로그 페이지 여백 최적화 */
+@media (min-width: 1024px) {
+    .my-logs-container {
+        /* 데스크톱에서 더 많은 하단 여백 확보 */
+        padding-bottom: calc(var(--spacing-xl) + var(--navigation-height, 80px) + 80px);
     }
 }
 

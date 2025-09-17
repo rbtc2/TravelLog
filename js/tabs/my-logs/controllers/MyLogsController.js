@@ -310,6 +310,27 @@ class MyLogsController {
     }
 
     /**
+     * 국가별 방문 횟수를 가져옵니다
+     * @returns {Map} 국가 코드를 키로 하는 방문 횟수 Map
+     */
+    getCountryVisitCounts() {
+        try {
+            const logs = this.logDataService.getAllLogs();
+            const countryStats = this._calculateCountryStats(logs);
+            
+            const visitCountMap = new Map();
+            countryStats.forEach(stat => {
+                visitCountMap.set(stat.country, stat.visitCount);
+            });
+            
+            return visitCountMap;
+        } catch (error) {
+            console.error('국가별 방문 횟수 조회 실패:', error);
+            return new Map();
+        }
+    }
+
+    /**
      * 국가별 통계를 계산합니다
      * @param {Array} logs - 여행 로그 배열
      * @returns {Array} 국가별 통계 배열

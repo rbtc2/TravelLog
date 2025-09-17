@@ -6,7 +6,7 @@
     margin: 0 auto;
     padding: var(--spacing-lg);
     /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
-    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px));
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 120px);
 }
 
 /* 반응형 일지 추가 컨테이너 최적화 */
@@ -35,6 +35,23 @@
     .add-log-container {
         max-width: var(--container-desktop-xl);
         padding: var(--spacing-3xl);
+        /* 초대형 데스크톱에서 충분한 하단 여백 */
+        padding-bottom: calc(var(--spacing-3xl) + var(--navigation-height, 80px) + 80px);
+    }
+}
+
+/* 모바일에서는 기본 여백 유지 */
+@media (max-width: 768px) {
+    .add-log-container {
+        padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 40px);
+    }
+}
+
+/* 데스크톱에서 일지 추가 페이지 여백 최적화 */
+@media (min-width: 1024px) {
+    .add-log-container {
+        /* 데스크톱에서 더 많은 하단 여백 확보 - 버튼이 가려지지 않도록 */
+        padding-bottom: calc(var(--spacing-xl) + var(--navigation-height, 80px) + 150px);
     }
 }
 
@@ -74,6 +91,16 @@
     margin-top: 32px;
     padding-top: 24px;
     border-top: 2px solid #f1f3f4;
+    /* 데스크톱에서 추가 하단 여백으로 탭에 가려지지 않도록 */
+    margin-bottom: 0;
+}
+
+/* 데스크톱에서 폼 액션 버튼 여백 추가 */
+@media (min-width: 1024px) {
+    .form-actions {
+        margin-bottom: 60px;
+        padding-bottom: 20px;
+    }
 }
 
 .submit-btn, .reset-btn {

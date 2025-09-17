@@ -22,6 +22,7 @@ export class CountriesCollectionView extends BaseCollectionView {
         // 국가별 특수 속성
         this.currentContinent = 'all';
         this.visitedCountries = {};
+        this.countryVisitCounts = new Map();
     }
     
     
@@ -46,10 +47,14 @@ export class CountriesCollectionView extends BaseCollectionView {
                 this.data = [];
                 this.visitedCountries = {};
             }
+            
+            // 국가별 방문 횟수 데이터 로드
+            this.countryVisitCounts = this.controller.getCountryVisitCounts();
         } catch (error) {
             // 에러 발생 시 빈 배열 사용
             this.data = [];
             this.visitedCountries = {};
+            this.countryVisitCounts = new Map();
         }
     }
     
@@ -137,6 +142,10 @@ export class CountriesCollectionView extends BaseCollectionView {
      * @returns {string} HTML 문자열
      */
     renderCountryCard(country) {
+        // 국가별 방문 횟수 가져오기
+        const visitCount = this.countryVisitCounts.get(country.code) || 1;
+        const visitText = visitCount === 1 ? '1회 방문' : `${visitCount}회 방문`;
+        
         return `
             <div class="visited-country-card" data-country="${country.code}">
                 <div class="country-flag-section">
@@ -147,7 +156,7 @@ export class CountriesCollectionView extends BaseCollectionView {
                     <p class="country-name-en">${country.nameEn}</p>
                 </div>
                 <div class="country-visit-stats">
-                    <div class="visit-count-badge">방문 완료</div>
+                    <div class="visit-count-badge">${visitText}</div>
                 </div>
             </div>
         `;
@@ -174,14 +183,19 @@ export class CountriesCollectionView extends BaseCollectionView {
                 );
             }
             
-            // 정렬 (실제 데이터만 사용)
+            // 정렬 (실제 방문 횟수 데이터 사용)
             filteredCountries.sort((a, b) => {
                 switch (this.sortBy) {
                     case 'visitCount':
-                        // 방문 횟수로 정렬 (실제 데이터가 없으므로 알파벳 순으로 대체)
-                        return a.nameKo.localeCompare(b.nameKo);
+                        // 실제 방문 횟수로 정렬
+                        const aVisitCount = this.countryVisitCounts.get(a.code) || 0;
+                        const bVisitCount = this.countryVisitCounts.get(b.code) || 0;
+                        if (bVisitCount !== aVisitCount) {
+                            return bVisitCount - aVisitCount; // 내림차순
+                        }
+                        return a.nameKo.localeCompare(b.nameKo); // 방문 횟수가 같으면 알파벳 순
                     case 'lastVisit':
-                        // 최근 방문일로 정렬 (실제 데이터가 없으므로 알파벳 순으로 대체)
+                        // 최근 방문일로 정렬 (현재는 알파벳 순으로 대체)
                         return a.nameKo.localeCompare(b.nameKo);
                     case 'alphabet':
                         return a.nameKo.localeCompare(b.nameKo);
@@ -271,7 +285,10 @@ export class CountriesCollectionView extends BaseCollectionView {
         const country = countriesManager.getCountryByCode(countryCode);
         if (!country) return;
         
+        const visitCount = this.countryVisitCounts.get(countryCode) || 1;
+        const visitText = visitCount === 1 ? '1회 방문' : `${visitCount}회 방문`;
+        
         // 향후 모달로 개선 예정
-        alert(`${country.flag} ${country.nameKo}\n방문 완료`);
+        alert(`${country.flag} ${country.nameKo}\n${visitText}`);
     }
 }

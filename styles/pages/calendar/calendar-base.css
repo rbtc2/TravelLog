@@ -6,7 +6,7 @@
     margin: 0 auto;
     padding: 20px;
     /* 네비게이션 여백 적용 */
-    padding-bottom: calc(20px + var(--navigation-height, 80px));
+    padding-bottom: calc(20px + var(--navigation-height, 80px) + 40px);
     /* 스크롤 완전 제거 - 상위 컨테이너에서만 스크롤 */
     overflow: visible !important;
     /* 하드웨어 가속 */
@@ -40,6 +40,16 @@
     .calendar-container {
         max-width: var(--container-desktop-xl);
         padding: 60px;
+        /* 초대형 데스크톱에서 충분한 하단 여백 */
+        padding-bottom: calc(60px + var(--navigation-height, 80px) + 80px);
+    }
+}
+
+/* 데스크톱에서 캘린더 페이지 여백 최적화 */
+@media (min-width: 1024px) {
+    .calendar-container {
+        /* 데스크톱에서 더 많은 하단 여백 확보 */
+        padding-bottom: calc(30px + var(--navigation-height, 80px) + 80px);
     }
 }
 
