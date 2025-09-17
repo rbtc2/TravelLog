@@ -25,6 +25,11 @@ import { TravelCollectionView } from '../views/index.js';
 // 🚀 새로운 분석 모듈들 (Phase 1 리팩토링)
 // import { AnalysisOrchestrator } from '../../../modules/analysis/AnalysisOrchestrator.js';
 
+// 🚀 Phase 2: 새로운 컬렉션 모듈들
+import { TravelCollectionController } from './TravelCollectionController.js';
+import { CollectionDataManager } from './CollectionDataManager.js';
+import { CollectionRenderer } from './CollectionRenderer.js';
+
 class MyLogsController {
     constructor() {
         // 새로운 서비스들 초기화
@@ -40,6 +45,11 @@ class MyLogsController {
         
         // 🚀 새로운 분석 오케스트레이터 초기화 (Phase 1)
         // this.analysisOrchestrator = new AnalysisOrchestrator(this.logDataService, this.cacheManager);
+        
+        // 🚀 Phase 2: 새로운 컬렉션 모듈들 초기화
+        this.travelCollectionController = new TravelCollectionController(this.logDataService, this.cacheManager);
+        this.collectionDataManager = new CollectionDataManager();
+        this.collectionRenderer = new CollectionRenderer();
         
         // 뷰 인스턴스들 초기화
         this.travelCollectionView = new TravelCollectionView(this);
@@ -65,6 +75,9 @@ class MyLogsController {
             
             // 데이터 로드 및 마이그레이션
             await this.loadLogs();
+            
+            // 🚀 Phase 2: 컬렉션 컨트롤러 초기화
+            await this.travelCollectionController.initialize();
             
             this.isInitialized = true;
         } catch (error) {
@@ -763,6 +776,17 @@ class MyLogsController {
         this.countryAnalysisService.cleanup();
         this.yearlyStatsService.cleanup();
         
+        // 🚀 Phase 2: 새로운 컬렉션 모듈들 정리
+        if (this.travelCollectionController && this.travelCollectionController.cleanup) {
+            this.travelCollectionController.cleanup();
+        }
+        if (this.collectionDataManager && this.collectionDataManager.cleanup) {
+            this.collectionDataManager.cleanup();
+        }
+        if (this.collectionRenderer && this.collectionRenderer.cleanup) {
+            this.collectionRenderer.cleanup();
+        }
+        
         // 기존 호환성을 위한 정리
         this.invalidateCache();
     }
@@ -781,15 +805,36 @@ class MyLogsController {
                 await this.initialize();
             }
             
+            // 🚀 Phase 2: 새로운 컬렉션 시스템 사용
+            const collectionStats = this.travelCollectionController.getTravelCollectionStats();
+            const extendedStats = this.collectionDataManager.calculateExtendedCollectionStats(collectionStats);
+            
+            // 메인 화면 렌더링
+            container.innerHTML = this.collectionRenderer.renderCollectionMain(extendedStats);
+            
+            // 기존 뷰 시스템과의 호환성을 위해 뷰도 렌더링
             await this.travelCollectionView.render(container);
         } catch (error) {
             console.error('여행 도감 렌더링 실패:', error);
-            throw error;
+            container.innerHTML = this.collectionRenderer.renderError('여행 도감을 불러올 수 없습니다.');
         }
     }
 
     /**
-     * 방문한 국가 목록을 반환합니다
+     * 방문한 국가 목록을 반환합니다 (Phase 2: 새로운 컬렉션 컨트롤러로 위임)
+     * @returns {Object} 방문한 국가 정보
+     */
+    getVisitedCountriesForCollection() {
+        try {
+            return this.travelCollectionController.getVisitedCountries();
+        } catch (error) {
+            console.error('MyLogsController: getVisitedCountriesForCollection 실패, fallback 사용:', error);
+            return this.getVisitedCountries();
+        }
+    }
+
+    /**
+     * 방문한 국가 목록을 반환합니다 (기존 호환성 유지)
      * @returns {Object} 방문한 국가 정보
      */
     getVisitedCountries() {
@@ -886,18 +931,24 @@ class MyLogsController {
      * @returns {Object} 여행 도감 통계
      */
     getTravelCollectionStats() {
-        const visitedCountries = this.getVisitedCountries();
-        const continentStats = this.getContinentStats();
-        const totalCountries = 195; // 전 세계 총 국가 수
-        const visitedTotal = Object.keys(visitedCountries).length;
-        
-        return {
-            total: totalCountries,
-            visited: visitedTotal,
-            percentage: Math.round((visitedTotal / totalCountries) * 100),
-            continents: continentStats,
-            visitedCountries: visitedCountries
-        };
+        try {
+            return this.travelCollectionController.getTravelCollectionStats();
+        } catch (error) {
+            console.error('MyLogsController: getTravelCollectionStats 실패, fallback 사용:', error);
+            // 안전장치: 기존 로직으로 fallback
+            const visitedCountries = this.getVisitedCountries();
+            const continentStats = this.getContinentStats();
+            const totalCountries = 195; // 전 세계 총 국가 수
+            const visitedTotal = Object.keys(visitedCountries).length;
+            
+            return {
+                total: totalCountries,
+                visited: visitedTotal,
+                percentage: Math.round((visitedTotal / totalCountries) * 100),
+                continents: continentStats,
+                visitedCountries: visitedCountries
+            };
+        }
     }
 
 
