@@ -304,13 +304,22 @@ class LogEditModule {
      */
     getFormData(form) {
         const formData = new FormData(form);
+        
+        // rating을 숫자로 변환 (빈 문자열이면 null)
+        const ratingValue = formData.get('rating');
+        const rating = ratingValue && ratingValue.trim() !== '' ? parseFloat(ratingValue) : null;
+        
+        // purpose를 문자열로 변환 (빈 문자열이면 null)
+        const purposeValue = formData.get('purpose');
+        const purpose = purposeValue && purposeValue.trim() !== '' ? purposeValue : null;
+        
         return {
             country: formData.get('country'),
             city: formData.get('city'),
             startDate: formData.get('startDate'),
             endDate: formData.get('endDate'),
-            purpose: formData.get('purpose'),
-            rating: formData.get('rating'),
+            purpose: purpose,
+            rating: rating,
             travelStyle: formData.get('travelStyle') || null,
             memo: formData.get('memo') || null,
             updatedAt: new Date().toISOString()

@@ -262,13 +262,18 @@ class LogValidator {
             errors.push('여행 목적은 100자를 초과할 수 없습니다.');
         }
 
-        // 유효한 목적 값 검증
+        // 유효한 목적 값 검증 (한국어와 영어 모두 허용)
         const validPurposes = [
-            '관광', '비즈니스', '방문', '학습', '휴양', '의료', '기타'
+            // 한국어 값 (form-config.js의 label과 일치)
+            '관광/여행', '업무/출장', '가족/지인 방문', '학업', '취업/근로', '파견/연수',
+            '행사/컨퍼런스', '봉사활동', '의료', '경유/환승', '연구/학술', '이주/정착', '기타',
+            // 영어 값 (form-config.js의 value와 일치)
+            'tourism', 'business', 'family', 'study', 'work', 'training', 
+            'event', 'volunteer', 'medical', 'transit', 'research', 'immigration', 'other'
         ];
 
         if (!validPurposes.includes(purpose)) {
-            errors.push(`여행 목적은 다음 중 하나여야 합니다: ${validPurposes.join(', ')}`);
+            errors.push(`여행 목적은 다음 중 하나여야 합니다: 관광/여행, 업무/출장, 가족/지인 방문, 학업, 취업/근로, 파견/연수, 행사/컨퍼런스, 봉사활동, 의료, 경유/환승, 연구/학술, 이주/정착, 기타`);
         }
 
         return errors;

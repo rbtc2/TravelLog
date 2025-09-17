@@ -99,6 +99,14 @@ class CacheManager {
     }
 
     /**
+     * 특정 키의 캐시를 삭제합니다 (invalidate의 별칭)
+     * @param {string} key - 캐시 키
+     */
+    delete(key) {
+        this.invalidate(key);
+    }
+
+    /**
      * 특정 패턴과 일치하는 캐시들을 무효화합니다
      * @param {string} pattern - 정규식 패턴 또는 문자열
      */
