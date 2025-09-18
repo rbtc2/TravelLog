@@ -48,13 +48,9 @@ class LogDetailModule {
         
         return `
             <div class="${containerClass}">
-                <!-- 헤더 -->
-                <div class="${headerClass}">
+                <!-- 상단 액션 버튼들 -->
+                <div class="top-actions">
                     <button class="back-btn" id="back-to-logs">◀ 뒤로</button>
-                    <div class="header-content">
-                        <h1 class="${titleClass}">${log.country} - ${log.city}</h1>
-                        <p class="detail-subtitle">여행 상세 정보</p>
-                    </div>
                     <div class="header-actions">
                         <button class="action-btn edit-btn" id="edit-log-btn" title="편집">
                             ✏️

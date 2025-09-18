@@ -210,22 +210,18 @@
     font-weight: 600;
 }
 
-/* 헤더 스타일 */
-.detail-header {
+/* 상단 액션 버튼들 스타일 */
+.top-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-    padding: 15px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 16px;
-    color: white;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    padding: 0;
     position: relative;
 }
 
-.detail-header .back-btn {
-    background: rgba(255, 255, 255, 0.2);
+.top-actions .back-btn {
+    background: var(--primary-color);
     border: none;
     color: white;
     padding: 12px 20px;
@@ -233,45 +229,26 @@
     cursor: pointer;
     font-size: 16px;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-sm);
 }
 
-.detail-header .back-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+.top-actions .back-btn:hover {
+    background: var(--primary-dark);
     transform: translateX(-5px);
+    box-shadow: var(--shadow-md);
 }
 
-.header-content {
-    text-align: center;
-    flex: 1;
-}
 
-.detail-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin: 0 0 5px 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.detail-subtitle {
-    font-size: 0.9rem;
-    margin: 0;
-    opacity: 0.9;
-    font-weight: 300;
-}
-
-.header-actions {
+.top-actions .header-actions {
     display: flex;
     gap: 12px;
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    position: static;
 }
 
 .action-btn {
     background: none;
     border: none;
-    color: white;
+    color: var(--text-primary);
     padding: 8px;
     border-radius: 0;
     cursor: pointer;
@@ -288,7 +265,7 @@
 }
 
 .action-btn:hover {
-    background: none;
+    background: var(--gray-100);
     transform: scale(1.2);
     opacity: 0.8;
 }
@@ -785,29 +762,18 @@
         padding-bottom: calc(10px + 80px);
     }
     
-    /* 컴팩트한 헤더 모바일 스타일 */
-    .log-detail-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-        padding: 12px 15px;
+    /* 상단 액션 버튼들 모바일 스타일 */
+    .top-actions {
         margin-bottom: 15px;
+        padding: 0 10px;
     }
     
-    .log-detail-country {
-        flex-direction: column;
-        gap: 8px;
+    .top-actions .back-btn {
+        padding: 10px 16px;
+        font-size: 14px;
     }
     
-    .country-flag {
-        font-size: 1.5rem;
-    }
-    
-    .country-name {
-        font-size: 1.2rem;
-    }
-    
-    .log-detail-actions {
+    .top-actions .header-actions {
         gap: 8px;
     }
     
@@ -911,29 +877,6 @@
     
     .meta-item {
         font-size: 0.85rem;
-    }
-    
-    .detail-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-        padding: 12px 15px;
-        margin-bottom: 15px;
-    }
-    
-    .detail-title {
-        font-size: 1.5rem;
-        margin: 0 0 3px 0;
-    }
-    
-    .detail-subtitle {
-        font-size: 0.85rem;
-    }
-    
-    .header-actions {
-        gap: 8px;
-        top: 15px;
-        right: 15px;
     }
     
     .action-btn {
@@ -1101,19 +1044,14 @@
         justify-content: center;
     }
     
-    .detail-header {
-        padding: 10px 12px;
+    .top-actions {
         margin-bottom: 12px;
-        gap: 12px;
+        padding: 0 8px;
     }
     
-    .detail-title {
-        font-size: 1.3rem;
-        margin: 0 0 2px 0;
-    }
-    
-    .detail-subtitle {
-        font-size: 0.8rem;
+    .top-actions .back-btn {
+        padding: 8px 14px;
+        font-size: 13px;
     }
     
     .action-btn {
