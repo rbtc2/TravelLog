@@ -136,7 +136,9 @@ export class TravelReportHTMLRenderer {
             <div class="hub-section yearly-stats-section">
                 <div class="section-header">
                     <h2 class="section-title">📈 연도별 여행 통계</h2>
-                    <p class="section-subtitle">연도별 여행 패턴과 트렌드 분석</p>
+                    <div class="year-selector-container">
+                        <!-- 연도 선택기가 여기에 동적으로 렌더링됩니다 -->
+                    </div>
                 </div>
                 <div class="yearly-stats-content" id="yearly-stats-content">
                     <!-- 연도별 통계가 여기에 동적으로 렌더링됩니다 -->
@@ -154,6 +156,11 @@ export class TravelReportHTMLRenderer {
             <div class="hub-section heatmap-section">
                 <div class="section-header">
                     <h2 class="section-title">🗺️ 여행 히트맵</h2>
+                    <div class="heatmap-controls">
+                        <select id="heatmap-year-selector" class="year-selector">
+                            <!-- 연도 선택 옵션이 여기에 동적으로 렌더링됩니다 -->
+                        </select>
+                    </div>
                 </div>
                 <div class="heatmap-content">
                     <div class="heatmap-grid" id="heatmap-grid">

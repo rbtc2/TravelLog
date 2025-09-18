@@ -10,9 +10,10 @@
 }
 
 .yearly-stats-section .section-header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     margin-bottom: var(--spacing-sm);
     gap: var(--spacing-sm);
 }
@@ -20,7 +21,35 @@
 .year-selector-container {
     display: flex;
     align-items: center;
-    align-self: flex-end;
+    flex-shrink: 0;
+    margin-left: auto;
+    order: 2;
+}
+
+.yearly-stats-section .section-title {
+    order: 1;
+    flex: 1;
+}
+
+/* 모바일에서도 연도 선택기 오른쪽 정렬 유지 */
+@media (max-width: 767px) {
+    .yearly-stats-section .section-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+    }
+    
+    .year-selector-container {
+        flex-shrink: 0;
+        margin-left: auto;
+        order: 2;
+    }
+    
+    .yearly-stats-section .section-title {
+        order: 1;
+        flex: 1;
+    }
 }
 
 .yearly-stats-section .section-title {

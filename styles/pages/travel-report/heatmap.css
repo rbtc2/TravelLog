@@ -5,7 +5,12 @@
 }
 
 .heatmap-section .section-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
     margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-sm);
 }
 
 .heatmap-section .section-title {
@@ -17,6 +22,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+    order: 1;
+    flex: 1;
 }
 
 .heatmap-content {
@@ -24,9 +31,11 @@
 }
 
 .heatmap-controls {
-    margin-bottom: var(--spacing-md);
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    flex-shrink: 0;
+    margin-left: auto;
+    order: 2;
 }
 
 .year-selector {

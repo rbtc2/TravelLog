@@ -48,7 +48,8 @@
 .archive-section .section-header {
     margin-bottom: var(--spacing-lg);
     padding-bottom: var(--spacing-sm);
-    border-bottom: 2px solid var(--gray-200);
+    /* 보관함 타이틀 하단의 불필요한 구분선 제거 */
+    /* border-bottom: 2px solid var(--gray-200); */
 }
 
 /* 다크모드 보관함 섹션 */
@@ -57,7 +58,8 @@
 }
 
 .dark .archive-section .section-header {
-    border-bottom-color: var(--gray-400, #718096);
+    /* 다크모드에서도 보관함 타이틀 하단의 불필요한 구분선 제거 */
+    /* border-bottom-color: var(--gray-400, #718096); */
 }
 
 /* ===== 기타 카드 컴포넌트 ===== */
