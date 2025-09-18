@@ -474,18 +474,14 @@
         justify-content: center;
     }
     
-    /* 모바일에서 여행 도감 버튼은 아이콘만 표시 */
+    /* 모바일에서 여행 도감 버튼은 아이콘+텍스트 표시 */
     .profile-action-btn.primary-btn .btn-text {
-        display: none;
+        display: block;
     }
     
     .profile-action-btn.primary-btn {
-        flex: 0 0 auto;
-        min-width: 48px;
-        max-width: 48px;
-        width: 48px;
-        height: 48px;
-        border-radius: var(--border-radius-lg);
+        flex: 1;
+        min-height: 48px;
         background: var(--gray-200);
         color: var(--text-primary);
         border: 2px solid var(--gray-300);
@@ -578,18 +574,14 @@
         padding: var(--spacing-sm);
     }
     
-    /* 작은 모바일에서도 여행 도감 버튼은 아이콘만 표시 */
+    /* 작은 모바일에서도 여행 도감 버튼은 아이콘+텍스트 표시 */
     .profile-action-btn.primary-btn .btn-text {
-        display: none;
+        display: block;
     }
     
     .profile-action-btn.primary-btn {
-        flex: 0 0 auto;
-        min-width: 44px;
-        max-width: 44px;
-        width: 44px;
-        height: 44px;
-        border-radius: var(--border-radius-md);
+        flex: 1;
+        min-height: 44px;
         background: var(--gray-200);
         color: var(--text-primary);
         border: 2px solid var(--gray-300);
