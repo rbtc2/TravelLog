@@ -122,14 +122,13 @@ class LogsListView {
         
         return `
             <div class="log-item log-item-card clickable" data-log-id="${log.id}">
-                <!-- 1행: 헤더 (국가명 + 도시명 + 편집/삭제 버튼) -->
+                <!-- 1행: 헤더 (국가명 + 편집/삭제 버튼) -->
                 <div class="log-header">
                     <div class="log-header-left">
                         <div class="log-country-info">
                             <div class="log-country">${countryDisplayName}</div>
                             <div class="log-country-badge" title="국가 코드">${countryFlag}</div>
                         </div>
-                        <div class="log-city">${log.city}</div>
                     </div>
                     
                     <div class="log-header-right">
@@ -142,6 +141,11 @@ class LogsListView {
                             </button>
                         </div>
                     </div>
+                </div>
+                
+                <!-- 2행: 도시명 -->
+                <div class="log-city-row">
+                    <div class="log-city">${log.city}</div>
                 </div>
                 
                 <!-- 2행: 기간/목적 칩 -->
