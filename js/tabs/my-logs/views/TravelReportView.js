@@ -407,9 +407,14 @@ class TravelReportView {
             const explorationStats = this.controller.getWorldExplorationStats();
             // 전세계 탐험 현황 데이터 로드
             container.innerHTML = this.getWorldExplorationHTML(explorationStats);
+            
+            // 인디케이터 위치 계산 및 설정
+            this.updateProgressIndicator(explorationStats.progressPercentage);
         } catch (error) {
             console.error('TravelReportView: 전세계 탐험 현황 렌더링 오류:', error);
             container.innerHTML = this.getWorldExplorationErrorHTML();
+            // 에러 상태에서도 인디케이터 위치 설정
+            this.updateProgressIndicator(0);
         }
     }
 
@@ -430,8 +435,16 @@ class TravelReportView {
             </div>
             
             <div class="exploration-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${stats.progressPercentage}%"></div>
+                <div class="progress" 
+                     role="progressbar" 
+                     aria-valuenow="${stats.progressPercentage}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100"
+                     aria-label="전 세계 탐험 진행률">
+                    <div class="progress__track">
+                        <div class="progress__fill" style="width: ${stats.progressPercentage}%"></div>
+                    </div>
+                    <div class="progress__label" aria-live="polite">${stats.progressPercentage}%</div>
                 </div>
             </div>
             
@@ -476,8 +489,16 @@ class TravelReportView {
                 <div class="exploration-percentage">--%</div>
             </div>
             <div class="exploration-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 0%"></div>
+                <div class="progress" 
+                     role="progressbar" 
+                     aria-valuenow="0" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100"
+                     aria-label="전 세계 탐험 진행률">
+                    <div class="progress__track">
+                        <div class="progress__fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress__label" aria-live="polite">0%</div>
                 </div>
             </div>
         `;
@@ -587,6 +608,9 @@ class TravelReportView {
         this.container.addEventListener('insightClick', (e) => {
             this.onInsightClick(e.detail.index, e.detail.message);
         });
+        
+        // 진행바 인디케이터 리사이즈 대응
+        this.bindProgressIndicatorEvents();
     }
 
     /**
@@ -641,6 +665,133 @@ class TravelReportView {
             type: 'info', 
             message: message 
         });
+    }
+
+    /**
+     * 진행바 인디케이터 이벤트를 바인딩합니다
+     */
+    bindProgressIndicatorEvents() {
+        // 리사이즈 이벤트 바인딩 (디바운스 적용)
+        let resizeTimeout;
+        const handleResize = () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                this.updateProgressIndicatorFromCurrentValue();
+            }, 100);
+        };
+
+        this.eventManager.add(window, 'resize', handleResize);
+        
+        // 폰트 로드 완료 시 재계산
+        if (document.fonts) {
+            document.fonts.ready.then(() => {
+                this.updateProgressIndicatorFromCurrentValue();
+            });
+        }
+    }
+
+    /**
+     * 현재 값으로부터 진행바 인디케이터를 업데이트합니다
+     */
+    updateProgressIndicatorFromCurrentValue() {
+        const progressElement = this.container?.querySelector('.progress');
+        if (!progressElement) return;
+
+        const currentValue = parseInt(progressElement.getAttribute('aria-valuenow') || '0');
+        this.updateProgressIndicator(currentValue);
+    }
+
+    /**
+     * 진행바 인디케이터 위치를 계산하고 업데이트합니다
+     * @param {number} percent - 진행률 (0-100)
+     */
+    updateProgressIndicator(percent) {
+        const progressElement = this.container?.querySelector('.progress');
+        const trackElement = this.container?.querySelector('.progress__track');
+        const labelElement = this.container?.querySelector('.progress__label');
+        
+        if (!progressElement || !trackElement || !labelElement) {
+            return;
+        }
+
+        // requestAnimationFrame으로 부드러운 애니메이션 보장
+        requestAnimationFrame(() => {
+            this.calculateAndSetIndicatorPosition(trackElement, labelElement, percent);
+        });
+    }
+
+    /**
+     * 인디케이터 위치를 계산하고 설정합니다
+     * @param {HTMLElement} trackElement - 트랙 요소
+     * @param {HTMLElement} labelElement - 라벨 요소
+     * @param {number} percent - 진행률
+     */
+    calculateAndSetIndicatorPosition(trackElement, labelElement, percent) {
+        try {
+            console.log('🔍 Progress indicator 계산 시작:', { percent, trackElement, labelElement });
+            
+            // 트랙의 실제 가로폭 측정
+            const trackRect = trackElement.getBoundingClientRect();
+            const trackWidth = trackRect.width;
+            
+            console.log('📏 트랙 크기:', { trackWidth, trackRect });
+            
+            if (trackWidth <= 0) {
+                console.warn('Progress indicator: 트랙 너비가 0입니다');
+                return;
+            }
+
+            // 기본 위치 계산 (퍼센트 기반)
+            const rawPosition = (percent / 100) * trackWidth;
+            
+            // 라벨 너비 측정
+            const labelRect = labelElement.getBoundingClientRect();
+            const labelWidth = labelRect.width;
+            
+            console.log('🏷️ 라벨 크기:', { labelWidth, labelRect });
+            
+            // 세이프티 마진 (8px)
+            const safetyMargin = 8;
+            
+            // 중앙 정렬을 위한 위치 계산
+            const minPosition = safetyMargin + (labelWidth / 2);
+            const maxPosition = trackWidth - safetyMargin - (labelWidth / 2);
+            const finalPosition = Math.max(minPosition, Math.min(maxPosition, rawPosition));
+            
+            console.log('📍 위치 계산:', { 
+                rawPosition, 
+                minPosition, 
+                maxPosition, 
+                finalPosition,
+                translateX: finalPosition - (labelWidth / 2)
+            });
+            
+            // 라벨을 중앙 기준으로 배치
+            labelElement.style.left = '0';
+            labelElement.style.transform = `translateX(${finalPosition - (labelWidth / 2)}px)`;
+            
+            // 라벨이 보이도록 강제 설정
+            labelElement.style.display = 'block';
+            labelElement.style.visibility = 'visible';
+            labelElement.style.opacity = '1';
+            
+            console.log('✅ 라벨 스타일 적용 완료:', {
+                left: labelElement.style.left,
+                transform: labelElement.style.transform,
+                display: labelElement.style.display,
+                visibility: labelElement.style.visibility,
+                opacity: labelElement.style.opacity
+            });
+            
+            // ARIA 값 업데이트
+            const progressElement = trackElement.closest('.progress');
+            if (progressElement) {
+                progressElement.setAttribute('aria-valuenow', percent.toString());
+            }
+            
+        } catch (error) {
+            console.error('Progress indicator 위치 계산 오류:', error);
+        }
     }
 
     /**

@@ -255,6 +255,80 @@
     width: 100%;
 }
 
+/* 새로운 진행바 구조 - 사각형 인디케이터 포함 */
+.progress {
+    position: relative;
+    width: 100%;
+    height: 10px; /* --bar-h: 10px */
+    background: var(--gray-200); /* --c-track */
+    border-radius: var(--border-radius-sm);
+    overflow: visible; /* 인디케이터가 바 밖으로 나갈 수 있도록 */
+}
+
+.progress__track {
+    width: 100%;
+    height: 100%;
+    background: var(--gray-200); /* --c-track */
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    position: relative;
+}
+
+.progress__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark)); /* --c-accent */
+    border-radius: var(--border-radius-sm);
+    transition: width var(--transition-normal); /* --t-quick: 250ms ease-out */
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    position: relative;
+}
+
+/* 사각형 인디케이터 라벨 */
+.progress__label {
+    position: absolute;
+    bottom: calc(100% + 8px); /* 바 위 8px 간격 */
+    left: 0;
+    background: var(--gray-800); /* --c-label-bg (진한 회색) */
+    color: var(--white); /* --c-label-text (흰색) */
+    padding: var(--spacing-sm) var(--spacing-md); /* --sp-8 */
+    border-radius: var(--border-radius-sm); /* --radius-8 */
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    white-space: nowrap;
+    box-shadow: var(--shadow-sm); /* --shadow-soft */
+    transition: transform var(--transition-normal); /* --t-quick: 250ms ease-out */
+    z-index: 10;
+    pointer-events: none; /* 클릭 방지 */
+    user-select: none; /* 텍스트 선택 방지 */
+}
+
+/* 인디케이터 중앙 정렬을 위한 transform 기준점 */
+.progress__label::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid var(--gray-800);
+}
+
+/* 호버 효과 */
+.progress:hover .progress__label {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* 애니메이션 최적화 */
+.progress__fill,
+.progress__label {
+    will-change: transform, width;
+}
+
+/* 기존 호환성을 위한 레거시 스타일 */
 .exploration-progress .progress-bar {
     width: 100%;
     height: 8px;
@@ -362,6 +436,23 @@
         font-size: var(--font-xs);
     }
     
+    /* 모바일 진행바 인디케이터 */
+    .progress {
+        height: 8px; /* 모바일에서 더 얇게 */
+    }
+    
+    .progress__label {
+        font-size: var(--font-xs);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        bottom: calc(100% + 6px); /* 간격 조정 */
+    }
+    
+    .progress__label::before {
+        border-left-width: 3px;
+        border-right-width: 3px;
+        border-top-width: 3px;
+    }
+    
     /* 모바일에서 대륙별 요약 */
     .continent-summary {
         grid-template-columns: repeat(2, 1fr);
@@ -400,6 +491,16 @@
         font-size: var(--font-3xl);
     }
     
+    /* 태블릿 진행바 인디케이터 */
+    .progress {
+        height: 10px;
+    }
+    
+    .progress__label {
+        font-size: var(--font-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
     /* 태블릿에서 대륙별 요약 */
     .continent-summary {
         grid-template-columns: repeat(3, 1fr);
@@ -407,6 +508,30 @@
     
     .continent-mini {
         min-height: 55px;
+    }
+}
+
+/* 데스크톱 반응형 스타일 */
+@media (min-width: 1024px) {
+    /* 데스크톱 진행바 인디케이터 */
+    .progress {
+        height: 12px; /* 데스크톱에서 더 두껍게 */
+    }
+    
+    .progress__label {
+        font-size: var(--font-base);
+        padding: var(--spacing-md) var(--spacing-lg);
+        bottom: calc(100% + 10px); /* 더 넓은 간격 */
+    }
+    
+    .progress__label::before {
+        border-left-width: 5px;
+        border-right-width: 5px;
+        border-top-width: 5px;
+    }
+    
+    .progress:hover .progress__label {
+        transform: translateY(-3px); /* 더 강한 호버 효과 */
     }
 }
 
@@ -1372,6 +1497,34 @@
 
 .dark .exploration-percentage {
     color: var(--primary-color);
+}
+
+/* 다크모드 진행바 스타일 */
+.dark .progress {
+    background: var(--gray-700);
+}
+
+.dark .progress__track {
+    background: var(--gray-700);
+}
+
+.dark .progress__fill {
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+}
+
+/* 다크모드 인디케이터 라벨 */
+.dark .progress__label {
+    background: var(--gray-900); /* 더 진한 배경 */
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dark .progress__label::before {
+    border-top-color: var(--gray-900);
+}
+
+.dark .progress:hover .progress__label {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
 }
 
 .dark .exploration-progress .progress-bar {
