@@ -21,6 +21,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
 }
 
 .exploration-icon {
@@ -51,6 +52,7 @@
 /* 진행바 영역 */
 .exploration-progress {
     width: 100%;
+    margin-top: 9px;
     --knob-size: 14px;
     --knob-color: var(--primary-color);
     --total-label-color: var(--accent-primary);
@@ -237,6 +239,7 @@
         flex-direction: column;
         text-align: center;
         gap: var(--spacing-sm);
+        margin-bottom: var(--spacing-lg);
     }
     
     .exploration-info {
