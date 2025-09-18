@@ -1,8 +1,8 @@
-/* ===== CSS 모듈 임포트 ===== */
+/* ===== CSS 모듈 임포트 (정리된 버전) ===== */
 
 /* 기본 스타일 */
 @import url('./base/variables.css');
-@import url('./base/design-tokens.css'); /* Phase 2: 디자인 토큰 시스템 추가 */
+@import url('./base/design-tokens.css');
 @import url('./base/reset.css');
 @import url('./base/typography.css');
 @import url('./base/forms.css');
@@ -14,312 +14,72 @@
 @import url('./utilities/animations.css');
 @import url('./utilities/accessibility.css');
 @import url('./utilities/dark-mode.css');
-@import url('./utilities/theme-transitions.css'); /* Phase 2: 테마 전환 애니메이션 추가 */
+@import url('./utilities/theme-transitions.css');
 @import url('./utilities/responsive.css');
-@import url('./utilities/navigation-utils.css'); /* Phase 1: 네비게이션 유틸리티 추가 */
-@import url('./utilities/scroll-optimization.css'); /* 스크롤 최적화 유틸리티 추가 */
-@import url('./utilities/performance.css'); /* Phase 2: 성능 최적화 유틸리티 추가 */
-@import url('./utilities/responsive-optimized.css'); /* Phase 2: 반응형 최적화 추가 */
+@import url('./utilities/navigation-utils.css');
+@import url('./utilities/scroll-optimization.css');
+@import url('./utilities/performance.css');
+@import url('./utilities/responsive-optimized.css');
 
-/* 컴포넌트 스타일 */
+/* 공통 컴포넌트 스타일 */
 @import url('./components/buttons.css');
 @import url('./components/forms.css');
 @import url('./components/modals.css');
 @import url('./components/cards.css');
-@import url('./components/navigation.css'); /* Phase 1: 네비게이션 컴포넌트 추가 */
-@import url('./components/country-selector.css'); /* 국가 선택기 컴포넌트 추가 */
-@import url('./components/common-components.css'); /* Phase 2: 공통 컴포넌트 라이브러리 추가 */
+@import url('./components/navigation.css');
+@import url('./components/country-selector.css');
+@import url('./components/common-components.css');
+@import url('./components/collection-tabs.css');
 
 /* 레이아웃 스타일 */
 @import url('./layouts/main-layout.css');
 @import url('./layouts/tab-navigation.css');
 @import url('./layouts/tab-content.css');
 
-/* 페이지별 스타일 */
+/* 페이지별 스타일 - 각 탭별 독립적 관리 */
 @import url('./pages/login.css');
 @import url('./pages/home.css');
-@import url('./pages/search.css');
 @import url('./pages/add-log.css');
-/* 캘린더 모듈화된 스타일 */
+@import url('./pages/log-detail.css');
+@import url('./pages/settings.css');
+@import url('./pages/error.css');
+
+/* 검색 탭 스타일 - 모듈화된 버전 */
+@import url('./pages/search/search-base.css');
+@import url('./pages/search/search-bar.css');
+@import url('./pages/search/search-filters.css');
+@import url('./pages/search/search-states.css');
+@import url('./pages/search/search-results.css');
+@import url('./pages/search/search-detail.css');
+@import url('./pages/search/search-responsive.css');
+@import url('./pages/search/search-dark-mode.css');
+
+/* 캘린더 탭 스타일 */
 @import url('./pages/calendar/calendar-base.css');
 @import url('./pages/calendar/calendar-grid.css');
-@import url('./pages/calendar/calendar-bars.css'); /* 바 형태 일정 표시 스타일 */
+@import url('./pages/calendar/calendar-bars.css');
 @import url('./pages/calendar/calendar-navigation.css');
 @import url('./pages/calendar/calendar-modal.css');
 @import url('./pages/calendar/calendar-responsive.css');
 @import url('./pages/calendar/calendar-dark-mode.css');
 @import url('./pages/calendar/calendar-animations.css');
-/* 나의 로그 페이지 모듈화된 스타일 */
+
+/* 나의 로그 탭 스타일 */
 @import url('./pages/my-logs/base.css');
 @import url('./pages/my-logs/profile-section.css');
 @import url('./pages/my-logs/hamburger-menu.css');
 @import url('./pages/my-logs/log-views.css');
 @import url('./pages/my-logs/settings.css');
 @import url('./pages/my-logs/charts.css');
-@import url('./pages/log-detail.css');
-@import url('./pages/settings.css');
-/* 트래블 레포트 모듈화된 스타일 */
-@import url('./pages/travel-report/heatmap.css');
+
+/* 트래블 레포트 탭 스타일 - 모듈화된 버전 */
 @import url('./pages/travel-report/world-exploration.css');
+@import url('./pages/travel-report/heatmap.css');
 @import url('./pages/travel-report/basic-stats.css');
 @import url('./pages/travel-report/yearly-stats.css');
 @import url('./pages/travel-report/ranking.css');
 @import url('./pages/travel-report/travel-report-section.css');
+
+/* 컬렉션 탭 스타일 */
 @import url('./pages/travel-collection.css');
 
-/* 컬렉션 탭 컴포넌트 */
-@import url('./components/collection-tabs.css');
-@import url('./pages/error.css');
-
-/* ===== 스크롤 최적화 스타일 ===== */
-html {
-    scroll-behavior: smooth;
-    scroll-padding-top: 0;
-}
-
-body {
-    scroll-behavior: smooth;
-    overflow-x: hidden;
-}
-
-/* 탭 전환 시 스크롤 위치 초기화 */
-.tab-content {
-    scroll-behavior: smooth;
-    overflow-x: hidden;
-}
-
-/* 스크롤 성능 최적화 */
-* {
-    scroll-behavior: smooth;
-}
-
-/* 모바일에서 스크롤 최적화 */
-@media (max-width: 768px) {
-    html {
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-    }
-    
-    body {
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-    }
-}
-
-/* ===== 공통 검색 하이라이트 스타일 ===== */
-.search-highlight {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s ease;
-}
-
-.search-highlight:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
-}
-
-/* 검색바 */
-.search-bar-container {
-    margin-bottom: 30px;
-}
-
-.search-input-wrapper {
-    display: flex;
-    align-items: center;
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.search-input-wrapper:focus-within {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.search-icon {
-    font-size: 18px;
-    color: #a0aec0;
-    margin: 0 12px;
-}
-
-.search-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 12px 0;
-    font-size: 16px;
-    background: transparent;
-}
-
-.search-input::placeholder {
-    color: #a0aec0;
-}
-
-.search-btn {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.search-btn:hover {
-    background: #5a67d8;
-    transform: translateY(-1px);
-}
-
-.search-hint {
-    text-align: center;
-    margin-top: 12px;
-    font-size: 14px;
-    color: #718096;
-    font-style: italic;
-}
-
-/* 체크박스 필터 */
-.filter-checkboxes {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-}
-
-/* 필터 탭 스타일 */
-.filter-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e2e8f0;
-    padding-bottom: 16px;
-}
-
-.filter-tab {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: white;
-    color: #4a5568;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.filter-tab:hover {
-    background: #f7fafc;
-    border-color: #cbd5e1;
-}
-
-.filter-tab.active {
-    background: #667eea;
-    color: white;
-    border-color: #667eea;
-}
-
-.filter-tab .tab-icon {
-    font-size: 16px;
-}
-
-.filter-tab .tab-label {
-    font-weight: 600;
-}
-
-/* 필터 패널 스타일 */
-.filter-panel {
-    display: none;
-    animation: fadeIn 0.3s ease;
-}
-
-.filter-panel.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    .filter-tabs {
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
-    }
-    
-    .filter-tab {
-        padding: 8px 12px;
-        font-size: 13px;
-        flex: 1;
-        min-width: 0;
-        justify-content: center;
-    }
-    
-    .filter-tab .tab-icon {
-        font-size: 14px;
-    }
-    
-    .filter-tab .tab-label {
-        font-size: 12px;
-    }
-}
-
-/* 검색 탭 별점 스타일 - forms.css의 star-rating 스타일 활용 */
-#search-star-rating {
-    justify-content: center;
-    margin-top: 16px;
-}
-
-#search-star-rating .star {
-    font-size: 36px;
-    color: #d1d5db;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    user-select: none;
-    line-height: 1;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-}
-
-#search-star-rating .star:hover {
-    transform: scale(1.15);
-    filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2));
-}
-
-#search-star-rating .star.filled {
-    color: #fbbf24;
-    filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.3));
-}
-
-#search-star-rating .star.filled:hover {
-    color: #f59e0b;
-    filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.4));
-}
-
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    #search-star-rating .star {
-        font-size: 32px;
-    }
-}

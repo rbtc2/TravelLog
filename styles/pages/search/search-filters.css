@@ -114,3 +114,138 @@
 .filter-apply-btn:hover {
     background: #5a67d8;
 }
+
+/* ===== 상세 필터 스타일 ===== */
+
+/* 체크박스 필터 */
+.filter-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+/* 필터 탭 스타일 */
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 16px;
+}
+
+.filter-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.filter-tab:hover {
+    background: #f7fafc;
+    border-color: #cbd5e1;
+}
+
+.filter-tab.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.filter-tab .tab-icon {
+    font-size: 16px;
+}
+
+.filter-tab .tab-label {
+    font-weight: 600;
+}
+
+/* 필터 패널 스타일 */
+.filter-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.filter-panel.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 검색 탭 별점 스타일 */
+#search-star-rating {
+    justify-content: center;
+    margin-top: 16px;
+}
+
+#search-star-rating .star {
+    font-size: 36px;
+    color: #d1d5db;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+#search-star-rating .star:hover {
+    transform: scale(1.15);
+    filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.2));
+}
+
+#search-star-rating .star.filled {
+    color: #fbbf24;
+    filter: drop-shadow(0 2px 4px rgba(251, 191, 36, 0.3));
+}
+
+#search-star-rating .star.filled:hover {
+    color: #f59e0b;
+    filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.4));
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .filter-tabs {
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+    }
+    
+    .filter-tab {
+        padding: 8px 12px;
+        font-size: 13px;
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+    }
+    
+    .filter-tab .tab-icon {
+        font-size: 14px;
+    }
+    
+    .filter-tab .tab-label {
+        font-size: 12px;
+    }
+    
+    #search-star-rating .star {
+        font-size: 32px;
+    }
+}
