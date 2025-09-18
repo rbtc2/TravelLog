@@ -609,6 +609,166 @@ class TravelReportView {
         
         // 진행바 인디케이터 리사이즈 대응
         this.bindProgressIndicatorEvents();
+        
+        // 대륙별 카드 클릭 이벤트
+        this.bindContinentCardEvents();
+    }
+
+    /**
+     * 대륙별 카드 이벤트 바인딩
+     */
+    bindContinentCardEvents() {
+        const continentCards = this.container.querySelectorAll('.continent-mini');
+        continentCards.forEach(card => {
+            this.eventManager.add(card, 'click', (e) => {
+                this.onContinentCardClick(e.currentTarget);
+            });
+        });
+    }
+
+    /**
+     * 대륙별 카드 클릭 처리
+     * @param {HTMLElement} cardElement - 클릭된 카드 요소
+     */
+    onContinentCardClick(cardElement) {
+        const continent = cardElement.dataset.continent;
+        if (!continent) return;
+
+        // 이미 선택된 카드를 클릭한 경우 (토글)
+        if (cardElement.classList.contains('active')) {
+            // 모든 카드에서 active 클래스 제거
+            const allCards = this.container.querySelectorAll('.continent-mini');
+            allCards.forEach(card => card.classList.remove('active'));
+
+            // 전 세계 통계로 복원
+            this.restoreWorldExplorationStats();
+            return;
+        }
+
+        // 다른 카드 선택
+        const allCards = this.container.querySelectorAll('.continent-mini');
+        allCards.forEach(card => card.classList.remove('active'));
+
+        // 클릭된 카드에 active 클래스 추가
+        cardElement.classList.add('active');
+
+        // 진행바 업데이트
+        this.updateProgressBarForContinent(continent);
+    }
+
+    /**
+     * 대륙별 진행바 업데이트
+     * @param {string} continent - 선택된 대륙
+     */
+    updateProgressBarForContinent(continent) {
+        const explorationStats = this.controller.getWorldExplorationStats();
+        const continentStats = explorationStats.continentStats.find(c => c.continent === continent);
+        
+        if (!continentStats) return;
+
+        // 헤더 정보 업데이트
+        this.updateExplorationHeader(explorationStats, continent);
+        
+        // 진행바 업데이트
+        this.updateProgressBar(continentStats);
+    }
+
+
+    /**
+     * 진행바 업데이트
+     * @param {Object} stats - 통계 객체 (대륙별 또는 전 세계)
+     */
+    updateProgressBar(stats) {
+        const progressFill = this.container.querySelector('.progress__fill');
+        const progressLabel = this.container.querySelector('.progress__label');
+        const progressElement = this.container.querySelector('.progress');
+
+        if (!progressFill || !progressLabel || !progressElement) return;
+
+        // 통계 객체 구조에 따라 진행률 계산
+        let visited, total;
+        if (stats.visited !== undefined && stats.total !== undefined) {
+            // 대륙별 통계 구조
+            visited = stats.visited;
+            total = stats.total;
+        } else if (stats.visitedCountries !== undefined && stats.totalCountries !== undefined) {
+            // 전 세계 통계 구조
+            visited = stats.visitedCountries;
+            total = stats.totalCountries;
+        } else {
+            console.error('updateProgressBar: 잘못된 통계 객체 구조', stats);
+            return;
+        }
+
+        // 진행률 계산
+        const progressPercentage = Math.round((visited / total) * 100);
+
+        // 진행바 채움 업데이트
+        progressFill.style.width = `${progressPercentage}%`;
+
+        // 말풍선 텍스트 업데이트
+        progressLabel.textContent = `${progressPercentage}%`;
+
+        // ARIA 속성 업데이트
+        progressElement.setAttribute('aria-valuenow', progressPercentage.toString());
+
+        // 인디케이터 위치 재계산
+        this.updateProgressIndicator(progressPercentage);
+    }
+
+    /**
+     * 전 세계 탐험 현황으로 복원
+     */
+    restoreWorldExplorationStats() {
+        const explorationStats = this.controller.getWorldExplorationStats();
+        
+        // 헤더 정보 복원
+        this.updateExplorationHeader(explorationStats, 'world');
+        
+        // 진행바 복원
+        this.updateProgressBar(explorationStats);
+    }
+
+    /**
+     * 탐험 현황 헤더 업데이트 (전 세계용)
+     * @param {Object} explorationStats - 전 세계 탐험 통계
+     * @param {string} type - 'world' 또는 대륙명
+     */
+    updateExplorationHeader(explorationStats, type) {
+        const titleElement = this.container.querySelector('.exploration-title');
+        const subtitleElement = this.container.querySelector('.exploration-subtitle');
+        const trackElement = this.container.querySelector('.progress__track');
+
+        if (type === 'world') {
+            // 전 세계 통계로 복원
+            if (titleElement) {
+                titleElement.textContent = '전 세계 탐험 현황';
+            }
+
+            if (subtitleElement) {
+                subtitleElement.textContent = `전 세계 ${explorationStats.totalCountries}개국 중 ${explorationStats.visitedCountries}개국 방문`;
+            }
+
+            if (trackElement) {
+                trackElement.setAttribute('data-total-label', `${explorationStats.totalCountries}개국`);
+            }
+        } else {
+            // 대륙별 통계 (기존 로직)
+            const continentStats = explorationStats.continentStats.find(c => c.continent === type);
+            if (!continentStats) return;
+
+            if (titleElement) {
+                titleElement.textContent = `${continentStats.nameKo} 탐험 현황`;
+            }
+
+            if (subtitleElement) {
+                subtitleElement.textContent = `${continentStats.nameKo} ${continentStats.total}개국 중 ${continentStats.visited}개국 방문`;
+            }
+
+            if (trackElement) {
+                trackElement.setAttribute('data-total-label', `${continentStats.total}개국`);
+            }
+        }
     }
 
     /**

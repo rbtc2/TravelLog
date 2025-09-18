@@ -106,7 +106,7 @@ class AddLogTab {
         this.formData.country = selectedCountry.code;
         
         // hidden input 업데이트
-        const countryInput = document.getElementById('country');
+        const countryInput = this.safeGetElementById('country', '국가 선택');
         if (countryInput) {
             countryInput.value = selectedCountry.code;
             
@@ -115,7 +115,7 @@ class AddLogTab {
         }
 
         // 도시 입력 필드 활성화
-        const cityInput = document.getElementById('city');
+        const cityInput = this.safeGetElementById('city', '국가 선택');
         if (cityInput) {
             cityInput.disabled = false;
             cityInput.placeholder = `${selectedCountry.nameKo}의 도시를 입력하세요`;
@@ -334,14 +334,14 @@ class AddLogTab {
      */
     bindEvents() {
         // DOM 요소 존재 여부 확인
-        const form = document.getElementById('add-log-form');
-        const countryInput = document.getElementById('country');
-        const cityInput = document.getElementById('city');
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
-        const memoTextarea = document.getElementById('memo');
-        const submitBtn = document.getElementById('submit-btn');
-        const resetBtn = document.getElementById('reset-btn');
+        const form = this.safeGetElementById('add-log-form', '이벤트 바인딩');
+        const countryInput = this.safeGetElementById('country', '이벤트 바인딩');
+        const cityInput = this.safeGetElementById('city', '이벤트 바인딩');
+        const startDateInput = this.safeGetElementById('startDate', '이벤트 바인딩');
+        const endDateInput = this.safeGetElementById('endDate', '이벤트 바인딩');
+        const memoTextarea = this.safeGetElementById('memo', '이벤트 바인딩');
+        const submitBtn = this.safeGetElementById('submit-btn', '이벤트 바인딩');
+        const resetBtn = this.safeGetElementById('reset-btn', '이벤트 바인딩');
         
         // 필수 DOM 요소가 없으면 이벤트 바인딩 건너뛰기
         if (!form || !countryInput || !cityInput || !startDateInput || !endDateInput || !memoTextarea || !submitBtn || !resetBtn) {
@@ -406,7 +406,10 @@ class AddLogTab {
         // 메모 글자 수 카운터
         this.addEventListener(memoTextarea, 'input', (e) => {
             const length = e.target.value.length;
-            document.getElementById('char-count').textContent = length;
+            const charCount = this.safeGetElementById('char-count', '글자 수 카운터');
+            if (charCount) {
+                charCount.textContent = length;
+            }
         });
         
         // 별점 이벤트
@@ -438,9 +441,18 @@ class AddLogTab {
      * @description 클릭, 호버 이벤트와 별점 표시 업데이트를 관리합니다
      */
     bindStarRating() {
-        const starRating = document.getElementById('star-rating');
+        const starRating = this.safeGetElementById('star-rating', '별점 바인딩');
+        if (!starRating) {
+            console.warn('AddLogTab: 별점 컨테이너를 찾을 수 없어 별점 이벤트를 건너뜁니다.');
+            return;
+        }
+
         const stars = starRating.querySelectorAll('.star');
-        const ratingInput = document.getElementById('rating-input');
+        const ratingInput = this.safeGetElementById('rating-input', '별점 바인딩');
+        if (!ratingInput) {
+            console.warn('AddLogTab: 별점 입력 필드를 찾을 수 없어 별점 이벤트를 건너뜁니다.');
+            return;
+        }
         
         /** @type {number} 현재 선택된 별점 */
         let currentRating = 0;
@@ -556,7 +568,7 @@ class AddLogTab {
      * @param {string} message - 표시할 에러 메시지 (빈 문자열이면 에러 숨김)
      */
     showFieldError(fieldName, message) {
-        const errorElement = document.getElementById(`${fieldName}-error`);
+        const errorElement = this.safeGetElementById(`${fieldName}-error`, '에러 메시지 표시');
         if (errorElement) {
             errorElement.textContent = message;
             errorElement.style.display = message ? 'block' : 'none';
@@ -569,20 +581,25 @@ class AddLogTab {
      * @description 모든 필수 필드와 제약 조건을 검증합니다
      */
     validateForm() {
-        const form = document.getElementById('add-log-form');
+        const form = this.safeGetElementById('add-log-form', '폼 검증');
+        if (!form) {
+            console.warn('AddLogTab: 폼을 찾을 수 없어 검증을 건너뜁니다.');
+            return false;
+        }
+
         const formData = new FormData(form);
         
         // 모든 필수 필드 검증
         let isValid = true;
         
         // 국가 검증
-        const country = formData.get('country').trim();
+        const country = formData.get('country')?.trim() || '';
         if (!this.validateField('country', country)) {
             isValid = false;
         }
         
         // 도시 검증
-        const city = formData.get('city').trim();
+        const city = formData.get('city')?.trim() || '';
         if (!this.validateField('city', city)) {
             isValid = false;
         }
@@ -634,34 +651,61 @@ class AddLogTab {
     }
     
     /**
+     * 안전한 DOM 요소 접근을 위한 헬퍼 메서드
+     * @param {string} id - 요소의 ID
+     * @param {string} context - 오류 발생 시 표시할 컨텍스트
+     * @returns {HTMLElement|null} 찾은 요소 또는 null
+     */
+    safeGetElementById(id, context = '') {
+        const element = document.getElementById(id);
+        if (!element) {
+            console.warn(`AddLogTab: ${context}에서 요소를 찾을 수 없습니다: ${id}`);
+        }
+        return element;
+    }
+
+    /**
      * 폼 제출을 처리합니다
      * @description 폼 검증, 데이터 수집, 저장, 피드백을 순차적으로 처리합니다
      */
     async handleSubmit() {
+        // 탭이 정리되었는지 확인
+        if (!this.isInitialized || !this.container) {
+            console.warn('AddLogTab: 탭이 초기화되지 않았거나 정리되었습니다.');
+            return;
+        }
+
         if (!this.validateForm()) {
             return;
         }
         
-        const form = document.getElementById('add-log-form');
+        const form = this.safeGetElementById('add-log-form', '폼 제출');
+        if (!form) {
+            console.error('AddLogTab: 폼을 찾을 수 없어 제출을 중단합니다.');
+            return;
+        }
+
         const formData = new FormData(form);
         
         // 폼 데이터 수집
         this.formData = {
-            country: formData.get('country').trim(),
-            city: formData.get('city').trim(),
-            startDate: formData.get('startDate'),
-            endDate: formData.get('endDate'),
-            purpose: formData.get('purpose'),
-            rating: formData.get('rating'),
-            travelStyle: formData.get('travelStyle'),
-            memo: formData.get('memo').trim()
+            country: formData.get('country')?.trim() || '',
+            city: formData.get('city')?.trim() || '',
+            startDate: formData.get('startDate') || '',
+            endDate: formData.get('endDate') || '',
+            purpose: formData.get('purpose') || '',
+            rating: formData.get('rating') || '',
+            travelStyle: formData.get('travelStyle') || '',
+            memo: formData.get('memo')?.trim() || ''
         };
         
         try {
             // 제출 버튼 비활성화
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = FORM_CONFIG.messages.saving;
+            const submitBtn = this.safeGetElementById('submit-btn', '제출 버튼 비활성화');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = FORM_CONFIG.messages.saving;
+            }
             
             // 실제 저장 로직은 향후 구현 예정
             await this.saveLog();
@@ -677,9 +721,11 @@ class AddLogTab {
             this.showErrorMessage('일지 저장에 실패했습니다. 다시 시도해주세요.');
         } finally {
             // 제출 버튼 활성화
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = false;
-            submitBtn.textContent = FORM_CONFIG.messages.submit;
+            const submitBtn = this.safeGetElementById('submit-btn', '제출 버튼 활성화');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = FORM_CONFIG.messages.submit;
+            }
         }
     }
     
@@ -721,6 +767,12 @@ class AddLogTab {
      * @description 설정 파일의 지속 시간을 사용하여 메시지를 표시합니다
      */
     showSuccessMessage() {
+        // 컨테이너가 유효한지 확인
+        if (!this.container) {
+            console.warn('AddLogTab: 컨테이너가 없어 성공 메시지를 표시할 수 없습니다.');
+            return;
+        }
+
         const message = document.createElement('div');
         message.className = 'success-message';
         message.innerHTML = `
@@ -746,6 +798,12 @@ class AddLogTab {
      * @description 설정 파일의 지속 시간을 사용하여 메시지를 표시합니다
      */
     showErrorMessage(errorText) {
+        // 컨테이너가 유효한지 확인
+        if (!this.container) {
+            console.warn('AddLogTab: 컨테이너가 없어 에러 메시지를 표시할 수 없습니다.');
+            return;
+        }
+
         const message = document.createElement('div');
         message.className = 'error-message';
         message.innerHTML = `
@@ -770,36 +828,55 @@ class AddLogTab {
      * @description 모든 입력 필드, 에러 메시지, 상태를 초기화합니다
      */
     resetForm() {
-        const form = document.getElementById('add-log-form');
+        const form = this.safeGetElementById('add-log-form', '폼 리셋');
+        if (!form) {
+            console.warn('AddLogTab: 폼을 찾을 수 없어 리셋을 건너뜁니다.');
+            return;
+        }
+
         form.reset();
         
         // CountrySelector 초기화
         if (this.countrySelector) {
-            this.countrySelector.close();
-            // CountrySelector의 입력 필드 초기화
-            const selectorInput = this.countrySelector.input;
-            if (selectorInput) {
-                selectorInput.value = '';
+            try {
+                this.countrySelector.close();
+                // CountrySelector의 입력 필드 초기화
+                const selectorInput = this.countrySelector.input;
+                if (selectorInput) {
+                    selectorInput.value = '';
+                }
+            } catch (error) {
+                console.warn('AddLogTab: CountrySelector 초기화 중 오류:', error);
             }
         }
         
         // 도시 입력 필드 비활성화
-        const cityInput = document.getElementById('city');
-        cityInput.disabled = true;
-        cityInput.placeholder = '국가를 먼저 선택해주세요';
+        const cityInput = this.safeGetElementById('city', '도시 입력 필드');
+        if (cityInput) {
+            cityInput.disabled = true;
+            cityInput.placeholder = '국가를 먼저 선택해주세요';
+        }
         
         // 종료일 입력 필드 비활성화 및 제한 해제
-        const endDateInput = document.getElementById('endDate');
-        endDateInput.disabled = true;
-        endDateInput.min = '';
+        const endDateInput = this.safeGetElementById('endDate', '종료일 입력 필드');
+        if (endDateInput) {
+            endDateInput.disabled = true;
+            endDateInput.min = '';
+        }
         
         // 글자 수 카운터 초기화
-        document.getElementById('char-count').textContent = '0';
+        const charCount = this.safeGetElementById('char-count', '글자 수 카운터');
+        if (charCount) {
+            charCount.textContent = '0';
+        }
         
         // 별점 초기화
         const stars = document.querySelectorAll('.star');
         stars.forEach(star => star.classList.remove('filled'));
-        document.getElementById('rating-input').value = '';
+        const ratingInput = this.safeGetElementById('rating-input', '별점 입력');
+        if (ratingInput) {
+            ratingInput.value = '';
+        }
         
         // 모든 에러 메시지 숨기기
         const errorElements = document.querySelectorAll('.form-error');
