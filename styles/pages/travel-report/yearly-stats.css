@@ -11,14 +11,20 @@
 
 .yearly-stats-section .section-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-lg);
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-sm);
 }
 
 .year-selector-container {
     display: flex;
     align-items: center;
+    align-self: flex-end;
+}
+
+.yearly-stats-section .section-title {
+    margin: 0;
 }
 
 .yearly-stats-section .section-title {
