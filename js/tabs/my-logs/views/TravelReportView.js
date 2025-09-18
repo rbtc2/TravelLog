@@ -41,7 +41,6 @@ class TravelReportView {
         this.container = container;
         this.container.innerHTML = this.getTravelReportHTML();
         
-        // Phase 1: 의존성 검증 추가
         this.validateDependencies();
         
         this.renderWorldExploration();
@@ -52,16 +51,12 @@ class TravelReportView {
         this.renderCharts();
         this.renderInsights();
         this.bindEvents();
-        
-        // 렌더링 완료
     }
 
     /**
-     * 의존성을 검증합니다 (Phase 1)
+     * 의존성을 검증합니다
      */
     validateDependencies() {
-        // TravelReport 의존성 검증 시작
-        
         // 1. 기능 활성화 상태 검증
         const requiredFeatures = ['travelDNA', 'yearlyStats', 'basicStats', 'heatmap', 'charts', 'insights'];
         const inactiveFeatures = requiredFeatures.filter(feature => 
@@ -69,7 +64,7 @@ class TravelReportView {
         );
         
         if (inactiveFeatures.length > 0) {
-            // 비활성화된 기능들 발견
+            console.warn('비활성화된 기능들:', inactiveFeatures);
         }
         
         // 2. HTML 요소 존재 여부 검증
@@ -620,17 +615,16 @@ class TravelReportView {
     bindContinentCardEvents() {
         const continentCards = this.container.querySelectorAll('.continent-mini');
         continentCards.forEach(card => {
-            this.eventManager.add(card, 'click', (e) => {
-                this.onContinentCardClick(e.currentTarget);
-            });
+            this.eventManager.add(card, 'click', this.onContinentCardClick.bind(this));
         });
     }
 
     /**
      * 대륙별 카드 클릭 처리
-     * @param {HTMLElement} cardElement - 클릭된 카드 요소
+     * @param {Event} e - 클릭 이벤트
      */
-    onContinentCardClick(cardElement) {
+    onContinentCardClick(e) {
+        const cardElement = e.currentTarget;
         const continent = cardElement.dataset.continent;
         if (!continent) return;
 
@@ -672,7 +666,6 @@ class TravelReportView {
         // 진행바 업데이트
         this.updateProgressBar(continentStats);
     }
-
 
     /**
      * 진행바 업데이트
@@ -730,8 +723,8 @@ class TravelReportView {
     }
 
     /**
-     * 탐험 현황 헤더 업데이트 (전 세계용)
-     * @param {Object} explorationStats - 전 세계 탐험 통계
+     * 탐험 현황 헤더 업데이트
+     * @param {Object} explorationStats - 탐험 통계
      * @param {string} type - 'world' 또는 대륙명
      */
     updateExplorationHeader(explorationStats, type) {
@@ -739,35 +732,21 @@ class TravelReportView {
         const subtitleElement = this.container.querySelector('.exploration-subtitle');
         const trackElement = this.container.querySelector('.progress__track');
 
+        if (!titleElement || !subtitleElement || !trackElement) return;
+
         if (type === 'world') {
             // 전 세계 통계로 복원
-            if (titleElement) {
-                titleElement.textContent = '전 세계 탐험 현황';
-            }
-
-            if (subtitleElement) {
-                subtitleElement.textContent = `전 세계 ${explorationStats.totalCountries}개국 중 ${explorationStats.visitedCountries}개국 방문`;
-            }
-
-            if (trackElement) {
-                trackElement.setAttribute('data-total-label', `${explorationStats.totalCountries}개국`);
-            }
+            titleElement.textContent = '전 세계 탐험 현황';
+            subtitleElement.textContent = `전 세계 ${explorationStats.totalCountries}개국 중 ${explorationStats.visitedCountries}개국 방문`;
+            trackElement.setAttribute('data-total-label', `${explorationStats.totalCountries}개국`);
         } else {
-            // 대륙별 통계 (기존 로직)
+            // 대륙별 통계
             const continentStats = explorationStats.continentStats.find(c => c.continent === type);
             if (!continentStats) return;
 
-            if (titleElement) {
-                titleElement.textContent = `${continentStats.nameKo} 탐험 현황`;
-            }
-
-            if (subtitleElement) {
-                subtitleElement.textContent = `${continentStats.nameKo} ${continentStats.total}개국 중 ${continentStats.visited}개국 방문`;
-            }
-
-            if (trackElement) {
-                trackElement.setAttribute('data-total-label', `${continentStats.total}개국`);
-            }
+            titleElement.textContent = `${continentStats.nameKo} 탐험 현황`;
+            subtitleElement.textContent = `${continentStats.nameKo} ${continentStats.total}개국 중 ${continentStats.visited}개국 방문`;
+            trackElement.setAttribute('data-total-label', `${continentStats.total}개국`);
         }
     }
 
@@ -886,16 +865,11 @@ class TravelReportView {
      */
     calculateAndSetIndicatorPosition(trackElement, labelElement, percent) {
         try {
-            console.log('🔍 Progress indicator 계산 시작:', { percent, trackElement, labelElement });
-            
             // 트랙의 실제 가로폭 측정
             const trackRect = trackElement.getBoundingClientRect();
             const trackWidth = trackRect.width;
             
-            console.log('📏 트랙 크기:', { trackWidth, trackRect });
-            
             if (trackWidth <= 0) {
-                console.warn('Progress indicator: 트랙 너비가 0입니다');
                 return;
             }
 
@@ -906,27 +880,17 @@ class TravelReportView {
             const labelRect = labelElement.getBoundingClientRect();
             const labelWidth = labelRect.width;
             
-            console.log('🏷️ 라벨 크기:', { labelWidth, labelRect });
-            
             // 세이프티 마진 (마감점과 겹치지 않도록 증가)
             const safetyMargin = 12;
             // 모바일 감지 및 knob 크기 조정
             const isMobile = window.innerWidth <= 767;
-            const knobSize = isMobile ? 12 : 14; // 모바일에서는 12px
-            const rightMargin = safetyMargin + knobSize + 8; // 마감점 + 여유 공간
+            const knobSize = isMobile ? 12 : 14;
+            const rightMargin = safetyMargin + knobSize + 8;
             
             // 중앙 정렬을 위한 위치 계산
             const minPosition = safetyMargin + (labelWidth / 2);
             const maxPosition = trackWidth - rightMargin - (labelWidth / 2);
             const finalPosition = Math.max(minPosition, Math.min(maxPosition, rawPosition));
-            
-            console.log('📍 위치 계산:', { 
-                rawPosition, 
-                minPosition, 
-                maxPosition, 
-                finalPosition,
-                translateX: finalPosition - (labelWidth / 2)
-            });
             
             // 라벨을 중앙 기준으로 배치
             labelElement.style.left = '0';
@@ -936,14 +900,6 @@ class TravelReportView {
             labelElement.style.display = 'block';
             labelElement.style.visibility = 'visible';
             labelElement.style.opacity = '1';
-            
-            console.log('✅ 라벨 스타일 적용 완료:', {
-                left: labelElement.style.left,
-                transform: labelElement.style.transform,
-                display: labelElement.style.display,
-                visibility: labelElement.style.visibility,
-                opacity: labelElement.style.opacity
-            });
             
             // ARIA 값 업데이트
             const progressElement = trackElement.closest('.progress');
