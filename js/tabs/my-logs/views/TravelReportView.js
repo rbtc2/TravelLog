@@ -440,7 +440,7 @@ class TravelReportView {
                      aria-valuemin="0" 
                      aria-valuemax="100"
                      aria-label="전 세계 탐험 진행률">
-                    <div class="progress__track">
+                    <div class="progress__track" data-total-label="${stats.totalCountries}개국">
                         <div class="progress__fill" style="width: ${stats.progressPercentage}%"></div>
                     </div>
                     <div class="progress__label" aria-live="polite">${stats.progressPercentage}%</div>
@@ -493,7 +493,7 @@ class TravelReportView {
                      aria-valuemin="0" 
                      aria-valuemax="100"
                      aria-label="전 세계 탐험 진행률">
-                    <div class="progress__track">
+                    <div class="progress__track" data-total-label="195개국">
                         <div class="progress__fill" style="width: 0%"></div>
                     </div>
                     <div class="progress__label" aria-live="polite">0%</div>
@@ -748,12 +748,16 @@ class TravelReportView {
             
             console.log('🏷️ 라벨 크기:', { labelWidth, labelRect });
             
-            // 세이프티 마진 (8px)
-            const safetyMargin = 8;
+            // 세이프티 마진 (마감점과 겹치지 않도록 증가)
+            const safetyMargin = 12;
+            // 모바일 감지 및 knob 크기 조정
+            const isMobile = window.innerWidth <= 767;
+            const knobSize = isMobile ? 12 : 14; // 모바일에서는 12px
+            const rightMargin = safetyMargin + knobSize + 8; // 마감점 + 여유 공간
             
             // 중앙 정렬을 위한 위치 계산
             const minPosition = safetyMargin + (labelWidth / 2);
-            const maxPosition = trackWidth - safetyMargin - (labelWidth / 2);
+            const maxPosition = trackWidth - rightMargin - (labelWidth / 2);
             const finalPosition = Math.max(minPosition, Math.min(maxPosition, rawPosition));
             
             console.log('📍 위치 계산:', { 

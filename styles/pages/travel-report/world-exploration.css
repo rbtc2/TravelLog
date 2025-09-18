@@ -51,6 +51,10 @@
 /* 진행바 영역 */
 .exploration-progress {
     width: 100%;
+    --knob-size: 14px;
+    --knob-color: var(--primary-color);
+    --total-label-color: var(--accent-primary);
+    --total-label-offset-y: 10px;
 }
 
 /* 진행바 구조 - 사각형 인디케이터 포함 */
@@ -68,8 +72,39 @@
     height: 100%;
     background: var(--gray-200);
     border-radius: var(--border-radius-sm);
-    overflow: hidden;
+    overflow: visible; /* 마감점이 바 밖으로 나갈 수 있도록 */
     position: relative;
+}
+
+/* 원형 마감점 (::after) */
+.progress__track::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+    width: var(--knob-size);
+    height: var(--knob-size);
+    background: var(--knob-color);
+    border-radius: 9999px;
+    box-shadow: var(--shadow-sm);
+    z-index: 2;
+}
+
+/* 총 국가 수 라벨 (::before) */
+.progress__track::before {
+    content: attr(data-total-label);
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + var(--total-label-offset-y));
+    transform: translateX(50%);
+    color: var(--total-label-color);
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .progress__fill {
@@ -232,6 +267,16 @@
         bottom: calc(100% + 8px);
         min-width: 80px;
     }
+    
+    /* 모바일 마감점 및 라벨 */
+    .exploration-progress {
+        --knob-size: 12px;
+        --total-label-offset-y: 8px;
+    }
+    
+    .progress__track::before {
+        font-size: var(--font-xs);
+    }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -311,4 +356,10 @@
 
 .dark .exploration-header.error .exploration-progress .progress-fill {
     background: var(--gray-500);
+}
+
+/* 다크모드 마감점 및 라벨 */
+.dark .exploration-progress {
+    --total-label-color: var(--accent-light);
+    --knob-color: var(--primary-color);
 }
