@@ -122,31 +122,27 @@ class LogsListView {
         
         return `
             <div class="log-item log-item-card clickable" data-log-id="${log.id}">
-                <!-- 1행: 헤더 (국가명 + 편집/삭제 버튼) -->
-                <div class="log-header">
-                    <div class="log-header-left">
-                        <div class="log-country-info">
-                            <div class="log-country">${countryDisplayName}</div>
-                            <div class="log-country-badge" title="국가 코드">${countryFlag}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="log-header-right">
-                        <div class="log-action-buttons">
-                            <button class="log-action-btn edit-btn" data-log-id="${log.id}" title="편집" aria-label="일지 편집">
-                                ✏️
-                            </button>
-                            <button class="log-action-btn delete-btn" data-log-id="${log.id}" title="삭제" aria-label="일지 삭제">
-                                🗑️
-                            </button>
-                        </div>
+            <!-- 1행: 헤더 (국가명 + 국가코드 + 도시명 + 편집/삭제 버튼) -->
+            <div class="log-header">
+                <div class="log-header-left">
+                    <div class="log-location-info">
+                        <span class="log-country">${countryDisplayName}</span>
+                        <span class="log-country-badge" title="국가 코드">${countryFlag}</span>
+                        <span class="log-city">${log.city}</span>
                     </div>
                 </div>
                 
-                <!-- 2행: 도시명 -->
-                <div class="log-city-row">
-                    <div class="log-city">${log.city}</div>
+                <div class="log-header-right">
+                    <div class="log-action-buttons">
+                        <button class="log-action-btn edit-btn" data-log-id="${log.id}" title="편집" aria-label="일지 편집">
+                            ✏️
+                        </button>
+                        <button class="log-action-btn delete-btn" data-log-id="${log.id}" title="삭제" aria-label="일지 삭제">
+                            🗑️
+                        </button>
+                    </div>
                 </div>
+            </div>
                 
                 <!-- 2행: 기간/목적 칩 -->
                 <div class="log-chips-row">

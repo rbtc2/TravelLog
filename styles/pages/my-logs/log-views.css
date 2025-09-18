@@ -32,10 +32,12 @@
     min-width: 0;
 }
 
-.log-country-info {
+.log-location-info {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
+    flex: 1;
+    min-width: 0;
 }
 
 .log-country {
@@ -43,8 +45,6 @@
     font-size: var(--font-lg);
     color: var(--text-primary);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* 다크모드 로그 아이템 텍스트 */
@@ -54,19 +54,19 @@
 
 .log-country-badge {
     font-size: var(--font-sm);
+    padding: 2px 6px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--border-radius-sm);
+    font-weight: var(--font-medium);
     flex-shrink: 0;
-}
-
-.log-city-row {
-    margin-bottom: var(--spacing-sm);
 }
 
 .log-city {
     font-size: var(--font-sm);
     color: var(--text-secondary);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    flex-shrink: 0;
 }
 
 .log-header-right {
@@ -255,6 +255,10 @@
     
     .log-header-left {
         flex: 1;
+    }
+    
+    .log-location-info {
+        gap: var(--spacing-xs);
     }
     
     .log-country {
