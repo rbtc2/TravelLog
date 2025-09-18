@@ -221,21 +221,41 @@
 }
 
 .top-actions .back-btn {
-    background: var(--primary-color);
-    border: none;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 25px;
+    background: var(--white);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--border-radius-lg);
+    padding: 8px 16px;
+    font-size: var(--font-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
     cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    min-width: fit-content;
+    flex-shrink: 0;
 }
 
 .top-actions .back-btn:hover {
-    background: var(--primary-dark);
-    transform: translateX(-5px);
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+}
+
+.top-actions .back-btn:active {
+    transform: translateY(0);
+}
+
+/* 다크모드 뒤로 가기 버튼 */
+.dark .top-actions .back-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
 }
 
 
@@ -769,8 +789,8 @@
     }
     
     .top-actions .back-btn {
-        padding: 10px 16px;
-        font-size: 14px;
+        position: relative;
+        align-self: flex-start;
     }
     
     .top-actions .header-actions {
@@ -1050,8 +1070,8 @@
     }
     
     .top-actions .back-btn {
-        padding: 8px 14px;
-        font-size: 13px;
+        padding: 6px 12px;
+        font-size: var(--font-xs);
     }
     
     .action-btn {
