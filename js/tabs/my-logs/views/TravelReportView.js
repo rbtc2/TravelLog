@@ -431,7 +431,6 @@ class TravelReportView {
                     <h3 class="exploration-title">전 세계 탐험 현황</h3>
                     <p class="exploration-subtitle">전 세계 ${stats.totalCountries}개국 중 ${stats.visitedCountries}개국 방문</p>
                 </div>
-                <div class="exploration-percentage">${stats.progressPercentage}%</div>
             </div>
             
             <div class="exploration-progress">
@@ -486,7 +485,6 @@ class TravelReportView {
                     <h3 class="exploration-title">전 세계 탐험 현황</h3>
                     <p class="exploration-subtitle">데이터를 불러올 수 없습니다</p>
                 </div>
-                <div class="exploration-percentage">--%</div>
             </div>
             <div class="exploration-progress">
                 <div class="progress" 

@@ -47,12 +47,6 @@
     line-height: 1.4;
 }
 
-.exploration-percentage {
-    font-size: var(--font-2xl);
-    font-weight: var(--font-bold);
-    color: var(--primary-color);
-    flex-shrink: 0;
-}
 
 /* 진행바 영역 */
 .exploration-progress {
@@ -197,10 +191,6 @@
 }
 
 /* 에러 상태 */
-.exploration-header.error .exploration-percentage {
-    color: var(--text-muted);
-}
-
 .exploration-header.error .exploration-progress .progress-fill {
     background: var(--gray-400);
     box-shadow: none;
@@ -222,10 +212,6 @@
         order: 0;
     }
     
-    .exploration-percentage {
-        order: 2;
-        font-size: var(--font-xl);
-    }
     
     .exploration-title {
         font-size: var(--font-base);
@@ -321,10 +307,6 @@
 
 .dark .continent-count {
     color: var(--text-secondary);
-}
-
-.dark .exploration-header.error .exploration-percentage {
-    color: var(--text-muted);
 }
 
 .dark .exploration-header.error .exploration-progress .progress-fill {
