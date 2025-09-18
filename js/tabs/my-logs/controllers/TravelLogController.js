@@ -95,7 +95,6 @@ class TravelLogController {
             
             return newLog;
         } catch (error) {
-            console.error('TravelLogController: addLog 실패:', error);
             throw error;
         }
     }
@@ -135,7 +134,6 @@ class TravelLogController {
             
             return updatedLog;
         } catch (error) {
-            console.error('TravelLogController: updateLog 실패:', error);
             throw error;
         }
     }
@@ -157,7 +155,6 @@ class TravelLogController {
             
             return deleted;
         } catch (error) {
-            console.error('TravelLogController: deleteLog 실패:', error);
             throw error;
         }
     }

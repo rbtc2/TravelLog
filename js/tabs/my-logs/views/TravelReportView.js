@@ -62,10 +62,7 @@ class TravelReportView {
             await this.renderAllSections();
             
             // 3. 의존성 검증 (HTML 렌더링 후)
-            const isValid = this.stateManager.validateDependencies();
-            if (!isValid) {
-                console.warn('일부 의존성 검증 실패, 하지만 계속 진행합니다.');
-            }
+            this.stateManager.validateDependencies();
             
             // 4. 이벤트 바인딩
             this.eventHandler.bindEvents(this.container);

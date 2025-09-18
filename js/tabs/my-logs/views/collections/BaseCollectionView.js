@@ -60,7 +60,6 @@ export class BaseCollectionView {
             this.bindEvents();
             this.isInitialized = true;
             
-            console.log(`${this.config.type}CollectionView: 렌더링 완료`);
         } catch (error) {
             console.error(`${this.config.type}CollectionView: 렌더링 실패:`, error);
             this.isLoading = false; // 에러 발생 시에도 로딩 상태 해제

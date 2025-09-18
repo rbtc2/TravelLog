@@ -29,9 +29,7 @@ class LogValidator {
      */
     async initialize() {
         try {
-            console.log('LogValidator: 초기화 시작');
             this.isInitialized = true;
-            console.log('LogValidator: 초기화 완료');
         } catch (error) {
             console.error('LogValidator: 초기화 실패:', error);
             throw error;

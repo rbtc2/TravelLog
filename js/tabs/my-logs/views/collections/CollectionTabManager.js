@@ -308,7 +308,6 @@ export class CollectionTabManager {
                     return 0;
             }
         } catch (error) {
-            console.warn(`CollectionTabManager: ${type} 컬렉션 개수 조회 실패:`, error);
             return 0;
         }
     }

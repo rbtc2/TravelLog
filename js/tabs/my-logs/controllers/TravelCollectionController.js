@@ -44,15 +44,12 @@ class TravelCollectionController {
      */
     async initialize() {
         try {
-            console.log('TravelCollectionController: 초기화 시작');
-            
             // 국가 데이터 초기화 확인
             if (!this.countriesManager.isInitialized) {
                 await this.countriesManager.initialize();
             }
             
             this.isInitialized = true;
-            console.log('TravelCollectionController: 초기화 완료');
         } catch (error) {
             console.error('TravelCollectionController: 초기화 실패:', error);
             throw error;
@@ -422,7 +419,6 @@ class TravelCollectionController {
         try {
             this.invalidateCache();
             this.isInitialized = false;
-            console.log('TravelCollectionController: 정리 완료');
         } catch (error) {
             console.error('TravelCollectionController: 정리 실패:', error);
         }

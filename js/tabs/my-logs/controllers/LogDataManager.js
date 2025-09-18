@@ -31,9 +31,7 @@ class LogDataManager {
      */
     async initialize() {
         try {
-            console.log('LogDataManager: 초기화 시작');
             this.isInitialized = true;
-            console.log('LogDataManager: 초기화 완료');
         } catch (error) {
             console.error('LogDataManager: 초기화 실패:', error);
             throw error;
