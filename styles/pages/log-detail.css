@@ -8,6 +8,208 @@
     min-height: calc(100vh - 100px); /* 최소 높이 보장 */
 }
 
+/* 새로운 컴팩트한 로그 상세 헤더 */
+.log-detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.log-detail-country {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.country-flag {
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.country-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.log-detail-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* 컴팩트한 섹션 스타일 */
+.detail-section-compact {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-main-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.detail-city {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.detail-rating {
+    font-size: 1.2rem;
+}
+
+/* 세로 배치된 날짜 정보 */
+.detail-dates-vertical {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 16px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.date-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.date-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.date-arrow {
+    font-size: 1.5rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.duration-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.detail-purpose {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+/* 메모 섹션 */
+.detail-notes {
+    background: #fef5e7;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #f6ad55;
+}
+
+.notes-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #744210;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notes-content {
+    color: #744210;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* 사진 섹션 */
+.detail-photos {
+    background: #f0f9ff;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #0ea5e9;
+}
+
+.photos-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0c4a6e;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.log-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.log-photo {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.log-photo:hover {
+    transform: scale(1.05);
+}
+
+/* 메타 정보 */
+.detail-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.meta-label {
+    color: #718096;
+    font-weight: 500;
+}
+
+.meta-value {
+    color: #4a5568;
+    font-weight: 600;
+}
+
 /* 헤더 스타일 */
 .detail-header {
     display: flex;
@@ -576,6 +778,134 @@
         padding-bottom: calc(10px + 80px);
     }
     
+    /* 컴팩트한 헤더 모바일 스타일 */
+    .log-detail-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+    }
+    
+    .log-detail-country {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .country-flag {
+        font-size: 1.5rem;
+    }
+    
+    .country-name {
+        font-size: 1.2rem;
+    }
+    
+    .log-detail-actions {
+        gap: 8px;
+    }
+    
+    /* 컴팩트한 섹션 모바일 스타일 */
+    .detail-section-compact {
+        padding: 15px;
+        margin-bottom: 12px;
+    }
+    
+    .detail-main-info {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+    
+    .detail-city {
+        font-size: 1.5rem;
+    }
+    
+    .detail-rating {
+        font-size: 1.1rem;
+    }
+    
+     /* 세로 배치된 날짜 정보 모바일 스타일 - 가로 배치 유지 */
+     .detail-dates-vertical {
+         flex-direction: row !important;
+         gap: 15px;
+         padding: 15px;
+         margin-bottom: 15px;
+         justify-content: center;
+     }
+     
+     .date-item {
+         gap: 6px;
+     }
+     
+     .date-label {
+         font-size: 0.85rem;
+     }
+     
+     .date-value {
+         font-size: 1.1rem;
+     }
+     
+     .date-arrow {
+         font-size: 1.2rem;
+         /* transform: rotate(90deg); 제거 - 가로 배치 유지 */
+     }
+    
+    .duration-badge {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .detail-purpose {
+        font-size: 1rem;
+    }
+    
+    /* 메모 섹션 모바일 스타일 */
+    .detail-notes {
+        padding: 15px;
+    }
+    
+    .notes-label {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .notes-content {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    /* 사진 섹션 모바일 스타일 */
+    .detail-photos {
+        padding: 15px;
+    }
+    
+    .photos-label {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+    
+    .log-photos {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 12px;
+    }
+    
+    .log-photo {
+        height: 100px;
+    }
+    
+    /* 메타 정보 모바일 스타일 */
+    .detail-meta {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 12px 0;
+    }
+    
+    .meta-item {
+        font-size: 0.85rem;
+    }
+    
     .detail-header {
         flex-direction: column;
         gap: 15px;
@@ -749,6 +1079,15 @@
     .log-detail-container {
         padding: 8px;
         padding-bottom: calc(8px + 80px);
+    }
+    
+    /* 480px 이하에서도 가로 배치 유지 */
+    .detail-dates-vertical {
+        flex-direction: row !important;
+        gap: 12px;
+        padding: 12px;
+        margin-bottom: 12px;
+        justify-content: center;
     }
     
     .detail-header {

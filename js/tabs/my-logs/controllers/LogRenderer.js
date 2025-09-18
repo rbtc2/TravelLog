@@ -178,56 +178,61 @@ class LogRenderer {
                     </div>
                     
                     <div class="log-detail-content">
-                        <div class="detail-section">
-                            <h3>기본 정보</h3>
-                            <div class="detail-grid">
-                                <div class="detail-item">
-                                    <label>도시</label>
-                                    <span>${log.city || '미입력'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>여행 기간</label>
-                                    <span>${startDate} ~ ${endDate} (${duration}일)</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>여행 목적</label>
-                                    <span>${log.purpose || '미입력'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <label>별점</label>
-                                    <span>${rating}</span>
-                                </div>
+                        <!-- 컴팩트한 기본 정보 섹션 -->
+                        <div class="detail-section-compact">
+                            <div class="detail-main-info">
+                                <div class="detail-city">${log.city || '미입력'}</div>
+                                <div class="detail-rating">${rating}</div>
                             </div>
+                            
+                            <!-- 세로 배치된 날짜 정보 -->
+                            <div class="detail-dates-vertical">
+                                <div class="date-item">
+                                    <div class="date-label">출발</div>
+                                    <div class="date-value">${startDate}</div>
+                                </div>
+                                <div class="date-arrow">→</div>
+                                <div class="date-item">
+                                    <div class="date-label">도착</div>
+                                    <div class="date-value">${endDate}</div>
+                                </div>
+                                <div class="duration-badge">${duration}일</div>
+                            </div>
+                            
+                            <div class="detail-purpose">${log.purpose || '미입력'}</div>
                         </div>
                         
                         ${log.notes ? `
-                            <div class="detail-section">
-                                <h3>메모</h3>
-                                <div class="log-notes-detail">${log.notes}</div>
+                            <div class="detail-section-compact">
+                                <div class="detail-notes">
+                                    <div class="notes-label">💭 메모</div>
+                                    <div class="notes-content">${log.notes}</div>
+                                </div>
                             </div>
                         ` : ''}
                         
                         ${log.photos && log.photos.length > 0 ? `
-                            <div class="detail-section">
-                                <h3>사진</h3>
-                                <div class="log-photos">
-                                    ${log.photos.map(photo => `
-                                        <img src="${photo}" alt="여행 사진" class="log-photo" onclick="openPhotoModal('${photo}')">
-                                    `).join('')}
+                            <div class="detail-section-compact">
+                                <div class="detail-photos">
+                                    <div class="photos-label">📸 사진</div>
+                                    <div class="log-photos">
+                                        ${log.photos.map(photo => `
+                                            <img src="${photo}" alt="여행 사진" class="log-photo" onclick="openPhotoModal('${photo}')">
+                                        `).join('')}
+                                    </div>
                                 </div>
                             </div>
                         ` : ''}
                         
-                        <div class="detail-section">
-                            <h3>기타 정보</h3>
-                            <div class="detail-grid">
-                                <div class="detail-item">
-                                    <label>생성일</label>
-                                    <span>${createdAt}</span>
+                        <div class="detail-section-compact">
+                            <div class="detail-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">작성일:</span>
+                                    <span class="meta-value">${createdAt}</span>
                                 </div>
-                                <div class="detail-item">
-                                    <label>수정일</label>
-                                    <span>${updatedAt}</span>
+                                <div class="meta-item">
+                                    <span class="meta-label">수정일:</span>
+                                    <span class="meta-value">${updatedAt}</span>
                                 </div>
                             </div>
                         </div>
