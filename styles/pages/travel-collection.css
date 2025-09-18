@@ -61,9 +61,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.2);
+    background: transparent;
     border-radius: var(--border-radius-full);
-    backdrop-filter: blur(10px);
 }
 
 .stats-info {
@@ -608,10 +607,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    background: transparent;
     border-radius: var(--border-radius-lg);
     font-size: 24px;
-    box-shadow: 0 4px 16px rgba(var(--primary-color-rgb), 0.3);
     position: relative;
     z-index: 2;
 }
