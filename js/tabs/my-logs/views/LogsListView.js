@@ -22,12 +22,7 @@ class LogsListView {
         this.container = null;
         
         // 저장된 뷰 모드 불러오기 (기본값: 'card')
-        try {
-            this.viewMode = localStorage.getItem('travelLog_viewMode') || 'card';
-        } catch (error) {
-            console.warn('뷰 모드 상태 불러오기 실패:', error);
-            this.viewMode = 'card';
-        }
+        this.viewMode = localStorage.getItem('travelLog_viewMode') || 'card';
     }
 
     /**
@@ -73,6 +68,54 @@ class LogsListView {
     }
 
     /**
+     * 국가 정보를 조회하고 표시용 데이터를 반환합니다
+     * @param {Object} log - 로그 객체
+     * @returns {Object} 국가 표시 정보
+     */
+    getCountryDisplayInfo(log) {
+        let countryDisplayName = log.country;
+        let countryFlag = '🇰🇷'; // 기본값
+        
+        // 국가 코드인 경우 한국어 국가명으로 변환
+        if (log.country && log.country.length === 2) {
+            try {
+                const countryInfo = this.controller.getCountryByCode(log.country);
+                if (countryInfo) {
+                    countryDisplayName = countryInfo.nameKo;
+                    countryFlag = countryInfo.flag;
+                }
+            } catch (error) {
+                // 국가 정보 조회 실패 시 기본값 사용
+            }
+        }
+        
+        return { countryDisplayName, countryFlag };
+    }
+
+    /**
+     * ViewManager 메서드를 안전하게 호출합니다
+     * @param {Object} log - 로그 객체
+     * @returns {Object} ViewManager 결과
+     */
+    getViewManagerData(log) {
+        try {
+            return {
+                purposeIcon: this.viewManager.getPurposeIcon(log.purpose),
+                purposeText: this.viewManager.getPurposeText(log.purpose),
+                travelStyleText: log.travelStyle ? this.viewManager.getTravelStyleText(log.travelStyle) : '',
+                memoText: log.memo ? this.viewManager.truncateMemo(log.memo) : ''
+            };
+        } catch (error) {
+            return {
+                purposeIcon: '✈️',
+                purposeText: log.purpose || '기타',
+                travelStyleText: log.travelStyle || '',
+                memoText: log.memo ? (log.memo.length > 50 ? log.memo.substring(0, 50) + '...' : log.memo) : ''
+            };
+        }
+    }
+
+    /**
      * 카드 형태의 일지 아이템을 렌더링합니다
      * @param {Object} log - 로그 객체
      * @returns {string} HTML 문자열
@@ -82,43 +125,9 @@ class LogsListView {
         const endDate = new Date(log.endDate);
         const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
         
-        // ViewManager 메서드 호출 시 안전하게 처리
-        let purposeIcon, purposeText, travelStyleText, memoText;
-        
-        try {
-            purposeIcon = this.viewManager.getPurposeIcon(log.purpose);
-            purposeText = this.viewManager.getPurposeText(log.purpose);
-            travelStyleText = log.travelStyle ? this.viewManager.getTravelStyleText(log.travelStyle) : '';
-            memoText = log.memo ? this.viewManager.truncateMemo(log.memo) : '';
-        } catch (error) {
-            console.error('ViewManager 메서드 호출 중 오류:', error);
-            // 폴백 값 사용
-            purposeIcon = '✈️';
-            purposeText = log.purpose || '기타';
-            travelStyleText = log.travelStyle || '';
-            memoText = log.memo ? (log.memo.length > 50 ? log.memo.substring(0, 50) + '...' : log.memo) : '';
-        }
-        
+        const { purposeIcon, purposeText, travelStyleText, memoText } = this.getViewManagerData(log);
+        const { countryDisplayName, countryFlag } = this.getCountryDisplayInfo(log);
         const ratingStars = '★'.repeat(parseInt(log.rating)) + '☆'.repeat(5 - parseInt(log.rating));
-        
-        // 국가 표시 로직: 국가 코드를 한국어 국가명으로 변환
-        let countryDisplayName = log.country;
-        let countryFlag = '🇰🇷'; // 기본값
-        
-        // 국가 코드인 경우 한국어 국가명으로 변환
-        if (log.country && log.country.length === 2) {
-            try {
-                // CountriesManager를 사용하여 국가 정보 조회
-                const countryInfo = this.controller.getCountryByCode(log.country);
-                if (countryInfo) {
-                    countryDisplayName = countryInfo.nameKo;
-                    countryFlag = countryInfo.flag;
-                }
-            } catch (error) {
-                console.warn('국가 정보 조회 실패:', error);
-                // 폴백: 원본 값 사용
-            }
-        }
         
         return `
             <div class="log-item log-item-card clickable" data-log-id="${log.id}">
@@ -205,33 +214,8 @@ class LogsListView {
         const endDate = new Date(log.endDate);
         const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
         
-        // ViewManager 메서드 호출 시 안전하게 처리
-        let purposeIcon, purposeText;
-        
-        try {
-            purposeIcon = this.viewManager.getPurposeIcon(log.purpose);
-            purposeText = this.viewManager.getPurposeText(log.purpose);
-        } catch (error) {
-            console.error('ViewManager 메서드 호출 중 오류:', error);
-            purposeIcon = '✈️';
-            purposeText = log.purpose || '기타';
-        }
-        
-        // 국가 표시 로직
-        let countryDisplayName = log.country;
-        let countryFlag = '🇰🇷';
-        
-        if (log.country && log.country.length === 2) {
-            try {
-                const countryInfo = this.controller.getCountryByCode(log.country);
-                if (countryInfo) {
-                    countryDisplayName = countryInfo.nameKo;
-                    countryFlag = countryInfo.flag;
-                }
-            } catch (error) {
-                console.warn('국가 정보 조회 실패:', error);
-            }
-        }
+        const { purposeIcon, purposeText } = this.getViewManagerData(log);
+        const { countryDisplayName, countryFlag } = this.getCountryDisplayInfo(log);
         
         return `
             <div class="log-item log-item-list clickable" data-log-id="${log.id}">
@@ -278,66 +262,52 @@ class LogsListView {
      * 로그 목록 화면의 이벤트를 바인딩합니다
      */
     bindEvents() {
-        // 뒤로 가기 버튼
-        const backBtn = document.getElementById('back-to-hub');
-        if (backBtn) {
-            this.eventManager.add(backBtn, 'click', () => {
+        // 이벤트 위임을 사용하여 동적 요소들 처리
+        this.eventManager.add(this.container, 'click', (e) => {
+            // 뒤로 가기 버튼
+            if (e.target.id === 'back-to-hub') {
                 this.onNavigateBack();
-            });
-        }
-        
-        // 일지 편집 버튼들
-        const editBtns = document.querySelectorAll('.edit-btn');
-        editBtns.forEach((btn) => {
-            this.eventManager.add(btn, 'click', (e) => {
-                e.stopPropagation(); // 상세 화면 이동 방지
-                const logId = e.currentTarget.dataset.logId;
+                return;
+            }
+            
+            // 편집 버튼
+            if (e.target.classList.contains('edit-btn')) {
+                e.stopPropagation();
+                const logId = e.target.dataset.logId;
                 this.onEditLog(logId);
-            });
-        });
-        
-        // 일지 삭제 버튼들
-        const deleteBtns = document.querySelectorAll('.delete-btn');
-        deleteBtns.forEach((btn) => {
-            this.eventManager.add(btn, 'click', (e) => {
-                e.stopPropagation(); // 상세 화면 이동 방지
-                const logId = e.currentTarget.dataset.logId;
+                return;
+            }
+            
+            // 삭제 버튼
+            if (e.target.classList.contains('delete-btn')) {
+                e.stopPropagation();
+                const logId = e.target.dataset.logId;
                 this.onDeleteLog(logId);
-            });
-        });
-        
-        // 일지 아이템 클릭 (상세 화면으로 이동)
-        const logItems = document.querySelectorAll('.log-item.clickable');
-        logItems.forEach(item => {
-            this.eventManager.add(item, 'click', (e) => {
-                // 편집/삭제 버튼 클릭 시에는 상세 화면으로 이동하지 않음
-                if (e.target.closest('.log-action-btn')) {
-                    return;
-                }
-                
-                const logId = e.currentTarget.dataset.logId;
-                this.onShowLogDetail(logId);
-            });
-        });
-        
-        // 페이지네이션 버튼들
-        const pageBtns = document.querySelectorAll('.page-btn');
-        pageBtns.forEach(btn => {
-            this.eventManager.add(btn, 'click', (e) => {
-                const page = parseInt(e.currentTarget.dataset.page);
+                return;
+            }
+            
+            // 페이지네이션 버튼
+            if (e.target.classList.contains('page-btn')) {
+                const page = parseInt(e.target.dataset.page);
                 if (page && page !== this.controller.logService.currentPage) {
                     this.onPageChange(page);
                 }
-            });
-        });
-        
-        // 뷰 모드 토글 버튼들
-        const viewModeBtns = document.querySelectorAll('.view-mode-btn');
-        viewModeBtns.forEach(btn => {
-            this.eventManager.add(btn, 'click', (e) => {
-                const mode = e.currentTarget.dataset.mode;
+                return;
+            }
+            
+            // 뷰 모드 토글 버튼
+            if (e.target.classList.contains('view-mode-btn')) {
+                const mode = e.target.dataset.mode;
                 this.onViewModeChange(mode);
-            });
+                return;
+            }
+            
+            // 로그 아이템 클릭 (상세 화면으로 이동)
+            const logItem = e.target.closest('.log-item.clickable');
+            if (logItem && !e.target.closest('.log-action-btn')) {
+                const logId = logItem.dataset.logId;
+                this.onShowLogDetail(logId);
+            }
         });
     }
 
@@ -380,7 +350,7 @@ class LogsListView {
     onPageChange(page) {
         this.controller.setCurrentPage(page);
         this.renderLogsList();
-        this.bindEvents();
+        // 이벤트 위임을 사용하므로 bindEvents() 재호출 불필요
     }
 
     /**
@@ -392,14 +362,10 @@ class LogsListView {
         
         this.viewMode = mode;
         this.renderLogsList();
-        this.bindEvents();
+        // 이벤트 위임을 사용하므로 bindEvents() 재호출 불필요
         
         // 뷰 모드 상태를 로컬 스토리지에 저장
-        try {
-            localStorage.setItem('travelLog_viewMode', mode);
-        } catch (error) {
-            console.warn('뷰 모드 상태 저장 실패:', error);
-        }
+        localStorage.setItem('travelLog_viewMode', mode);
     }
 
     /**

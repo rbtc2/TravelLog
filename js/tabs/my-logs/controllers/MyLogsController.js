@@ -114,7 +114,6 @@ class MyLogsController {
                 // 마이그레이션된 데이터로 서비스 초기화
                 await this.logDataService.initialize(migrationResult.migratedLogs);
             } else {
-                console.warn('데이터 마이그레이션에 일부 오류가 발생했습니다:', migrationResult.errors);
                 await this.logDataService.initialize(storedLogs);
             }
             
@@ -130,15 +129,6 @@ class MyLogsController {
         }
     }
 
-    /**
-     * 목적 데이터 마이그레이션 (relocation -> immigration)
-     * @deprecated 이 메서드는 DataMigrationService로 이동되었습니다.
-     * @private
-     */
-    migratePurposeData() {
-        console.warn('migratePurposeData()는 더 이상 사용되지 않습니다. DataMigrationService를 사용하세요.');
-        // 기존 호환성을 위해 빈 구현 유지
-    }
 
     /**
      * 데모 데이터를 추가합니다
@@ -147,13 +137,13 @@ class MyLogsController {
         const demoLogs = DemoData.getDefaultLogs();
         this.logDataService.setLogs(demoLogs);
         
-        // 분석 데이터 테스트 (오류만 로깅)
+        // 분석 데이터 테스트
         try {
             this.getBasicStats();
             this.getFavoriteCountryAnalysis();
             this.getWorldExplorationStats();
         } catch (error) {
-            console.error('MyLogsController: 분석 데이터 테스트 실패:', error);
+            // 분석 데이터 테스트 실패 시 무시
         }
     }
 
@@ -290,12 +280,10 @@ class MyLogsController {
     getCountryByCode(countryCode) {
         try {
             if (!countriesManager.isInitialized) {
-                console.warn('CountriesManager가 초기화되지 않았습니다.');
                 return null;
             }
             return countriesManager.getCountryByCode(countryCode);
         } catch (error) {
-            console.error('국가 정보 조회 중 오류:', error);
             return null;
         }
     }
@@ -348,7 +336,6 @@ class MyLogsController {
             }
             return hash.toString();
         } catch (error) {
-            console.error('데이터 해시 계산 중 오류:', error);
             return Date.now().toString(); // 폴백으로 현재 시간 사용
         }
     }
@@ -504,7 +491,6 @@ class MyLogsController {
         try {
             return this.travelCollectionController.getVisitedCountries();
         } catch (error) {
-            console.error('MyLogsController: getVisitedCountriesForCollection 실패, fallback 사용:', error);
             return this.getVisitedCountries();
         }
     }
@@ -567,31 +553,8 @@ class MyLogsController {
      * @returns {string} 국가 표시명
      */
     _getCountryDisplayName(countryCode) {
-        // 국가 코드 매핑 (필요에 따라 확장)
-        const countryNames = {
-            'JP': '일본',
-            'KR': '한국',
-            'US': '미국',
-            'GB': '영국',
-            'FR': '프랑스',
-            'DE': '독일',
-            'IT': '이탈리아',
-            'ES': '스페인',
-            'CN': '중국',
-            'TH': '태국',
-            'SG': '싱가포르',
-            'AU': '호주',
-            'CA': '캐나다',
-            'BR': '브라질',
-            'IN': '인도',
-            'RU': '러시아',
-            'MX': '멕시코',
-            'ID': '인도네시아',
-            'TR': '터키',
-            'EG': '이집트'
-        };
-
-        return countryNames[countryCode] || countryCode;
+        const countryInfo = this.getCountryByCode(countryCode);
+        return countryInfo ? countryInfo.nameKo : countryCode;
     }
 }
 
