@@ -1,12 +1,14 @@
 /**
- * TravelReportView - 트래블 레포트 화면 렌더링 및 이벤트 처리
+ * TravelReportView - 트래블 레포트 오케스트레이터
  * 
  * 🎯 책임:
- * - 트래블 레포트 화면 UI 렌더링
- * - 트래블 레포트 화면 이벤트 바인딩
- * - 여행 데이터 분석 및 인사이트 표시
+ * - 트래블 레포트 컴포넌트들 조율
+ * - 모듈 간 통신 관리
+ * - 전체 렌더링 프로세스 오케스트레이션
  * 
  * @class TravelReportView
+ * @version 2.0.0
+ * @since 2024-12-29
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
 import { BasicStatsRenderer } from '../../../modules/travel-report/components/BasicStatsRenderer.js';
@@ -15,8 +17,10 @@ import { HeatmapRenderer } from '../../../modules/travel-report/components/Heatm
 import { ChartRenderer } from '../../../modules/travel-report/components/ChartRenderer.js';
 import { InsightsRenderer } from '../../../modules/travel-report/components/InsightsRenderer.js';
 import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js';
-import { QuickValidator } from '../../../modules/utils/dependency-validator.js';
-import { FeatureManager } from '../../../config/app-config.js';
+import { WorldExplorationRenderer } from '../../../modules/travel-report/components/WorldExplorationRenderer.js';
+import { TravelReportHTMLRenderer } from '../../../modules/travel-report/components/TravelReportHTMLRenderer.js';
+import { TravelReportEventHandler } from '../../../modules/travel-report/components/TravelReportEventHandler.js';
+import { TravelReportStateManager } from '../../../modules/travel-report/components/TravelReportStateManager.js';
 
 class TravelReportView {
     constructor(controller) {
@@ -24,321 +28,171 @@ class TravelReportView {
         this.eventManager = new EventManager();
         this.container = null;
         
-        // 모듈 인스턴스들
+        // 핵심 컴포넌트들
+        this.stateManager = new TravelReportStateManager();
+        this.htmlRenderer = new TravelReportHTMLRenderer();
+        this.eventHandler = new TravelReportEventHandler(controller, {
+            onNavigateBack: this.onNavigateBack.bind(this),
+            onChartTabChange: this.onChartTabChange.bind(this)
+        });
+        
+        // 렌더러 모듈들
         this.basicStatsRenderer = new BasicStatsRenderer(controller);
         this.travelDNARenderer = new TravelDNARenderer(controller);
         this.heatmapRenderer = new HeatmapRenderer(controller);
         this.chartRenderer = new ChartRenderer(controller);
         this.insightsRenderer = new InsightsRenderer(controller);
         this.yearlyStatsRenderer = new YearlyStatsRenderer(controller);
+        this.worldExplorationRenderer = new WorldExplorationRenderer(controller);
     }
 
     /**
      * 트래블 레포트 화면을 렌더링합니다
      * @param {HTMLElement} container - 렌더링할 컨테이너
      */
-    render(container) {
+    async render(container) {
         this.container = container;
-        this.container.innerHTML = this.getTravelReportHTML();
+        this.stateManager.setLoading(true);
         
-        this.validateDependencies();
-        
-        this.renderWorldExploration();
-        this.renderBasicStats();
-        this.renderTravelDNA();
-        this.renderYearlyStats();
-        this.renderInitialHeatmap();
-        this.renderCharts();
-        this.renderInsights();
-        this.bindEvents();
+        try {
+            // 1. 기본 HTML 구조 렌더링
+            this.container.innerHTML = this.htmlRenderer.getTravelReportHTML();
+            
+            // 2. 각 섹션 렌더링
+            await this.renderAllSections();
+            
+            // 3. 의존성 검증 (HTML 렌더링 후)
+            const isValid = this.stateManager.validateDependencies();
+            if (!isValid) {
+                console.warn('일부 의존성 검증 실패, 하지만 계속 진행합니다.');
+            }
+            
+            // 4. 이벤트 바인딩
+            this.eventHandler.bindEvents(this.container);
+            
+            // 5. 상태 업데이트
+            this.stateManager.setInitialized(true);
+            this.stateManager.setLoading(false);
+            
+        } catch (error) {
+            console.error('TravelReportView 렌더링 오류:', error);
+            this.stateManager.setError(error);
+            this.stateManager.setLoading(false);
+        }
     }
 
     /**
-     * 의존성을 검증합니다
+     * 모든 섹션을 렌더링합니다
      */
-    validateDependencies() {
-        // 1. 기능 활성화 상태 검증
-        const requiredFeatures = ['travelDNA', 'yearlyStats', 'basicStats', 'heatmap', 'charts', 'insights'];
-        const inactiveFeatures = requiredFeatures.filter(feature => 
-            !FeatureManager.isFeatureActive(feature)
-        );
-        
-        if (inactiveFeatures.length > 0) {
-            console.warn('비활성화된 기능들:', inactiveFeatures);
-        }
-        
-        // 2. HTML 요소 존재 여부 검증
-        const requiredElements = [
-            '.travel-dna-section',
-            '.yearly-stats-section', 
-            '.basic-stats-section',
-            '.heatmap-section',
-            '.charts-section',
-            '.insights-section'
+    async renderAllSections() {
+        const renderPromises = [
+            this.renderWorldExploration(),
+            this.renderBasicStats(),
+            this.renderTravelDNA(),
+            this.renderYearlyStats(),
+            this.renderInitialHeatmap(),
+            this.renderCharts(),
+            this.renderInsights()
         ];
         
-        const elementValidation = QuickValidator.checkMultipleElements(requiredElements);
-        
-        if (!elementValidation.success) {
-            console.error('❌ 필수 HTML 요소가 누락되었습니다:', elementValidation.missing);
+        await Promise.all(renderPromises);
+    }
+
+    /**
+     * 전세계 탐험 현황을 렌더링합니다
+     */
+    async renderWorldExploration() {
+        const container = this.container.querySelector('#world-exploration-section');
+        if (container) {
+            await this.worldExplorationRenderer.render(container);
         }
-        
-        // 3. 렌더러 인스턴스 검증
-        const renderers = [
-            { name: 'travelDNARenderer', instance: this.travelDNARenderer },
-            { name: 'yearlyStatsRenderer', instance: this.yearlyStatsRenderer },
-            { name: 'basicStatsRenderer', instance: this.basicStatsRenderer },
-            { name: 'heatmapRenderer', instance: this.heatmapRenderer },
-            { name: 'chartRenderer', instance: this.chartRenderer },
-            { name: 'insightsRenderer', instance: this.insightsRenderer }
-        ];
-        
-        const missingRenderers = renderers.filter(r => !r.instance);
-        if (missingRenderers.length > 0) {
-            console.error('❌ 누락된 렌더러들:', missingRenderers.map(r => r.name));
+    }
+
+    /**
+     * 기본 통계를 렌더링합니다
+     */
+    async renderBasicStats() {
+        const container = this.container.querySelector('#basic-stats-grid');
+        if (container) {
+            await this.basicStatsRenderer.render(container);
         }
-        
-        // 4. 전체 검증 결과 요약
-        const allValid = inactiveFeatures.length === 0 && elementValidation.success && missingRenderers.length === 0;
-        
-        if (!allValid) {
-            console.error('❌ TravelReport 의존성 검증 실패: 일부 요소에 문제가 있습니다.');
+    }
+
+    /**
+     * 여행 DNA를 렌더링합니다
+     */
+    async renderTravelDNA() {
+        const container = this.container.querySelector('.travel-dna-section .dna-content');
+        if (container) {
+            await this.travelDNARenderer.render(container);
         }
-        
-        return allValid;
     }
 
     /**
-     * 트래블 레포트 화면 HTML을 생성합니다
-     * @returns {string} HTML 문자열
+     * 연도별 통계를 렌더링합니다
      */
-    getTravelReportHTML() {
-        return `
-            <div class="my-logs-container">
-                ${this.getHeaderHTML()}
-                ${this.getWorldExplorationSectionHTML()}
-                ${this.getBasicStatsSectionHTML()}
-                ${this.getTravelDNASectionHTML()}
-                ${this.getYearlyStatsSectionHTML()}
-                ${this.getHeatmapSectionHTML()}
-                ${this.getChartsSectionHTML()}
-                ${this.getInsightsSectionHTML()}
-            </div>
-        `;
+    async renderYearlyStats() {
+        const container = this.container.querySelector('#yearly-stats-content');
+        if (container) {
+            await this.yearlyStatsRenderer.render(container);
+        }
     }
 
     /**
-     * 헤더 HTML을 생성합니다
-     * @returns {string} HTML 문자열
+     * 히트맵을 렌더링합니다
      */
-    getHeaderHTML() {
-        return `
-            <div class="my-logs-header">
-                <div class="header-with-back">
-                    <button class="back-btn" id="back-to-hub-from-report">◀ 뒤로</button>
-                    <div class="header-content">
-                        <h1 class="my-logs-title">📊 트래블 레포트</h1>
-                        <p class="my-logs-subtitle">여행 데이터 분석 및 인사이트</p>
-                    </div>
-                </div>
-            </div>
-        `;
+    async renderInitialHeatmap() {
+        const container = this.container.querySelector('#heatmap-grid');
+        if (container) {
+            await this.heatmapRenderer.render(container);
+        }
     }
 
     /**
-     * 전세계 탐험 현황 섹션 HTML을 생성합니다
-     * @returns {string} HTML 문자열
+     * 차트를 렌더링합니다
      */
-    getWorldExplorationSectionHTML() {
-        return `
-            <div class="world-exploration-section" id="world-exploration-section">
-                <!-- 전세계 탐험 현황이 여기에 동적으로 렌더링됩니다 -->
-            </div>
-        `;
+    async renderCharts() {
+        const container = this.container.querySelector('#chart-content');
+        if (container) {
+            await this.chartRenderer.render(container);
+        }
     }
 
     /**
-     * 기본 통계 섹션 HTML을 생성합니다
-     * @returns {string} HTML 문자열
+     * 인사이트를 렌더링합니다
      */
-    getBasicStatsSectionHTML() {
-        return `
-            <div class="hub-section basic-stats-section">
-                <div class="stats-grid" id="basic-stats-grid">
-                    <!-- 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
-                </div>
-            </div>
-        `;
+    async renderInsights() {
+        const container = this.container.querySelector('#insights-content');
+        if (container) {
+            await this.insightsRenderer.render(container);
+        }
     }
 
     /**
-     * 여행 DNA 섹션 HTML을 생성합니다 (기본 DNA 아이템들 포함)
-     * @returns {string} HTML 문자열
+     * 뒤로 가기 이벤트 처리
      */
-    getTravelDNASectionHTML() {
-        return `
-            <div class="hub-section travel-dna-section">
-                <div class="section-header">
-                    <h2 class="section-title">🧬 나의 여행 DNA</h2>
-                </div>
-                <div class="dna-content">
-                    <div class="dna-item">
-                        <div class="dna-icon">🏆</div>
-                        <div class="dna-details">
-                            <div class="dna-label">최애 국가</div>
-                            <div class="dna-value">데이터 분석 중...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="dna-item">
-                        <div class="dna-icon">🏙️</div>
-                        <div class="dna-details">
-                            <div class="dna-label">베이스캠프</div>
-                            <div class="dna-value">데이터 분석 중...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="dna-item">
-                        <div class="dna-icon">⏱️</div>
-                        <div class="dna-details">
-                            <div class="dna-label">여행 스타일</div>
-                            <div class="dna-value">데이터 분석 중...</div>
-                        </div>
-                    </div>
-                    
-                    <div class="dna-item">
-                        <div class="dna-icon">🎯</div>
-                        <div class="dna-details">
-                            <div class="dna-label">주요 목적</div>
-                            <div class="dna-value">데이터 분석 중...</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+    onNavigateBack() {
+        this.dispatchEvent('navigate', { view: 'hub' });
     }
 
     /**
-     * 연도별 통계 섹션 HTML을 생성합니다
-     * @returns {string} HTML 문자열
+     * 차트 탭 변경 이벤트 처리
+     * @param {string} chartType - 차트 타입
      */
-    getYearlyStatsSectionHTML() {
-        return `
-            <div class="hub-section yearly-stats-section">
-                <div class="section-header">
-                    <h2 class="section-title">📅 연도별 통계</h2>
-                    <div class="year-selector-container">
-                        <!-- 연도 선택기가 여기에 동적으로 렌더링됩니다 -->
-                    </div>
-                </div>
-                <div class="yearly-stats-content">
-                    <!-- 연도별 통계 카드들이 여기에 동적으로 렌더링됩니다 -->
-                </div>
-            </div>
-        `;
+    onChartTabChange(chartType) {
+        this.stateManager.setCurrentChartTab(chartType);
     }
 
     /**
-     * 히트맵 섹션 HTML을 생성합니다
-     * @returns {string} HTML 문자열
+     * 커스텀 이벤트를 발생시킵니다
+     * @param {string} eventName - 이벤트 이름
+     * @param {Object} detail - 이벤트 상세 정보
      */
-    getHeatmapSectionHTML() {
-        return `
-            <div class="hub-section heatmap-section">
-                <div class="section-header">
-                    <h2 class="section-title">🔥 여행 히트맵</h2>
-                </div>
-                
-                <div class="heatmap-content">
-                    <div class="heatmap-controls">
-                        <select class="year-selector" id="heatmap-year-selector">
-                            <!-- 연도 선택기는 HeatmapRenderer에서 동적으로 생성됩니다 -->
-                        </select>
-                    </div>
-                    <div class="heatmap-container">
-                        <div class="heatmap-grid">
-                            ${Array.from({length: 12}, (_, i) => `
-                                <div class="heatmap-month">
-                                    <div class="month-label">${i + 1}월</div>
-                                    <div class="month-activity placeholder-box"></div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * 차트 섹션 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getChartsSectionHTML() {
-        return `
-            <div class="hub-section charts-section">
-                <div class="section-header">
-                    <h2 class="section-title">📈 순위/활동 차트</h2>
-                </div>
-                
-                ${this.getCountryRankingChartHTML()}
-                ${this.getCityRankingChartHTML()}
-            </div>
-        `;
-    }
-
-    /**
-     * 국가별 랭킹 차트 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getCountryRankingChartHTML() {
-        return `
-            <div class="chart-frame">
-                <div class="chart-header">
-                    <div class="chart-tabs">
-                        <button class="chart-tab disabled" data-tab="visits">방문 횟수</button>
-                        <button class="chart-tab disabled" data-tab="duration">체류일 수</button>
-                    </div>
-                </div>
-                <div class="chart-placeholder">
-                    <div class="placeholder-text">준비 중</div>
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * 도시별 랭킹 차트 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getCityRankingChartHTML() {
-        const cities = [
-            { name: '도쿄', visits: 3, days: 21 },
-            { name: '파리', visits: 2, days: 12 },
-            { name: '방콕', visits: 1, days: 6 },
-            { name: '런던', visits: 1, days: 5 },
-            { name: '뉴욕', visits: 1, days: 4 }
-        ];
-
-        return `
-            <div class="chart-frame">
-                <div class="chart-header">
-                    <h3 class="chart-title">도시별 랭킹 (Top 5)</h3>
-                </div>
-                <div class="city-ranking-list">
-                    ${cities.map((city, index) => `
-                        <div class="city-ranking-item" data-city="${city.name}">
-                            <div class="city-rank">${index + 1}</div>
-                            <div class="city-info">
-                                <div class="city-name">${city.name}</div>
-                                <div class="city-stats">${city.visits}회 방문, 총 ${city.days}일</div>
-                            </div>
-                            <div class="city-arrow">▶</div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
+    dispatchEvent(eventName, detail) {
+        if (this.container) {
+            const event = new CustomEvent(`travelReportView:${eventName}`, { detail });
+            this.container.dispatchEvent(event);
+        }
     }
 
     /**
@@ -928,29 +782,33 @@ class TravelReportView {
      * View 정리
      */
     cleanup() {
-        // 모듈들 정리
-        if (this.basicStatsRenderer) {
-            this.basicStatsRenderer.cleanup();
+        // 핵심 컴포넌트들 정리
+        if (this.stateManager) {
+            this.stateManager.cleanup();
         }
-        if (this.travelDNARenderer) {
-            this.travelDNARenderer.cleanup();
+        if (this.eventHandler) {
+            this.eventHandler.cleanup();
         }
-        if (this.heatmapRenderer) {
-            this.heatmapRenderer.cleanup();
+        if (this.worldExplorationRenderer) {
+            this.worldExplorationRenderer.cleanup();
         }
-        if (this.chartRenderer) {
-            this.chartRenderer.cleanup();
-        }
-        if (this.insightsRenderer) {
-            this.insightsRenderer.cleanup();
-        }
-        // if (this.yearlyStatsRenderer) {
-        //     this.yearlyStatsRenderer.cleanup();
-        // }
+        
+        // 렌더러 모듈들 정리
+        const renderers = [
+            'basicStatsRenderer', 'travelDNARenderer', 'heatmapRenderer', 
+            'chartRenderer', 'insightsRenderer', 'yearlyStatsRenderer'
+        ];
+        
+        renderers.forEach(rendererName => {
+            if (this[rendererName] && this[rendererName].cleanup) {
+                this[rendererName].cleanup();
+            }
+        });
         
         if (this.eventManager) {
             this.eventManager.cleanup();
         }
+        
         this.container = null;
     }
 }

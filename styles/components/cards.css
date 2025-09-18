@@ -19,20 +19,19 @@
 
 .section-header {
     margin-bottom: var(--spacing-lg);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
+    display: block;
 }
 
 .section-title {
     font-size: var(--font-xl);
     font-weight: var(--font-semibold);
     color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
+    display: block;
     line-height: 1.2;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 다크모드 섹션 제목 */
