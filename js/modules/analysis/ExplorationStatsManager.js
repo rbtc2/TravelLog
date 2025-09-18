@@ -33,11 +33,11 @@ class ExplorationStatsManager {
         // 대륙별 정보 정의 (실제 국가 수 기준)
         this.continentInfo = {
             'Asia': { nameKo: '아시아', emoji: '🌏', total: 48 },
-            'Europe': { nameKo: '유럽', emoji: '🇪🇺', total: 44 },
-            'North America': { nameKo: '북미', emoji: '🇺🇸', total: 23 },
+            'Europe': { nameKo: '유럽', emoji: '🌍', total: 44 },
+            'North America': { nameKo: '북미', emoji: '🌎', total: 23 },
             'South America': { nameKo: '남미', emoji: '🌎', total: 12 },
             'Africa': { nameKo: '아프리카', emoji: '🌍', total: 54 },
-            'Oceania': { nameKo: '오세아니아', emoji: '🇦🇺', total: 14 }
+            'Oceania': { nameKo: '오세아니아', emoji: '🌏', total: 14 }
         };
         
         // 국가-대륙 매핑 (확장 가능한 구조)

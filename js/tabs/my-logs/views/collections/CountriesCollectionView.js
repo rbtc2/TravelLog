@@ -232,8 +232,8 @@ export class CountriesCollectionView extends BaseCollectionView {
                 // 기본 옵션 추가
                 options += `
                     <option value="Asia">🌏 아시아</option>
-                    <option value="Europe">🇪🇺 유럽</option>
-                    <option value="North America">🇺🇸 북미</option>
+                    <option value="Europe">🌍 유럽</option>
+                    <option value="North America">🌎 북미</option>
                 `;
             }
             
@@ -243,8 +243,8 @@ export class CountriesCollectionView extends BaseCollectionView {
             return `
                 <option value="all">모든 대륙</option>
                 <option value="Asia">🌏 아시아</option>
-                <option value="Europe">🇪🇺 유럽</option>
-                <option value="North America">🇺🇸 북미</option>
+                <option value="Europe">🌍 유럽</option>
+                <option value="North America">🌎 북미</option>
             `;
         }
     }

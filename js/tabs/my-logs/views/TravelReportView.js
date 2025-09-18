@@ -429,15 +429,15 @@ class TravelReportView {
                 <div class="exploration-percentage">${stats.progressPercentage}%</div>
             </div>
             
-            <!-- 대륙별 컴팩트 요약 -->
-            <div class="continent-summary">
-                ${this.generateContinentSummaryHTML(stats.continentStats)}
-            </div>
-            
             <div class="exploration-progress">
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: ${stats.progressPercentage}%"></div>
                 </div>
+            </div>
+            
+            <!-- 대륙별 컴팩트 요약 -->
+            <div class="continent-summary">
+                ${this.generateContinentSummaryHTML(stats.continentStats)}
             </div>
         `;
     }
