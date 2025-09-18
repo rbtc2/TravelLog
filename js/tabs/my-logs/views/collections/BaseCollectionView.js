@@ -83,14 +83,6 @@ export class BaseCollectionView {
         
         this.container.innerHTML = `
             <div class="collection-content">
-                <!-- 헤더 -->
-                <div class="collection-header">
-                    <div class="collection-title">
-                        <span class="collection-icon">${this.config.icon}</span>
-                        <h2>${this.config.title}</h2>
-                    </div>
-                    <p class="collection-description">${this.config.description || ''}</p>
-                </div>
                 
                 <!-- 필터 및 정렬 컨트롤 (2025년 모던 디자인) -->
                 <div class="modern-collection-controls">

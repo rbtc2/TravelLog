@@ -754,41 +754,10 @@
     color: var(--gray-100) !important;
 }
     
-.dark .collection-header {
-    background: var(--gray-800) !important;
-    border: 1px solid var(--gray-700) !important;
-    color: var(--gray-100) !important;
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg);
-}
 
-.dark .collection-title {
-    color: var(--gray-100) !important;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
-}
 
-.dark .collection-title h2 {
-    color: var(--gray-100) !important;
-    margin: 0;
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-}
 
-.dark .collection-icon {
-    font-size: var(--font-size-lg);
-    filter: brightness(1.1);
-}
 
-.dark .collection-description {
-    color: var(--gray-300) !important;
-    margin: 0;
-    font-size: var(--font-size-sm);
-    line-height: 1.5;
-}
 
 .dark .collection-items {
     background: transparent;
@@ -875,27 +844,7 @@
     color: var(--red-300) !important;
 }
 
-/* 다크모드 반응형 스타일 */
-.dark .collection-header {
-    @media (max-width: 768px) {
-        padding: var(--spacing-md);
-        margin-bottom: var(--spacing-md);
-    }
-    
-    @media (min-width: 769px) and (max-width: 1023px) {
-        padding: var(--spacing-lg);
-    }
-    
-    @media (min-width: 1024px) {
-        padding: var(--spacing-xl);
-    }
-}
 
-.dark .collection-title h2 {
-    @media (max-width: 768px) {
-        font-size: var(--font-size-lg);
-    }
-}
 
 
 /* ===============================
