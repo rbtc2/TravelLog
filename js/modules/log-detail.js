@@ -40,11 +40,11 @@ class LogDetailModule {
         const purposeIcon = this.getPurposeIcon(log.purpose);
         const ratingStars = '★'.repeat(parseInt(log.rating)) + '☆'.repeat(5 - parseInt(log.rating));
         
-        // 컨텍스트에 따라 다른 컨테이너 클래스 사용
-        const containerClass = this.context === 'calendar' ? 'calendar-detail-container' : 'log-detail-container';
-        const headerClass = this.context === 'calendar' ? 'calendar-detail-header' : 'detail-header';
-        const titleClass = this.context === 'calendar' ? 'calendar-detail-title' : 'detail-title';
-        const contentClass = this.context === 'calendar' ? 'calendar-detail-content' : 'detail-content';
+        // 모든 컨텍스트에서 동일한 CSS 클래스 사용 (나의 로그 탭 기준)
+        const containerClass = 'log-detail-container';
+        const headerClass = 'detail-header';
+        const titleClass = 'detail-title';
+        const contentClass = 'detail-content';
         
         return `
             <div class="${containerClass}">

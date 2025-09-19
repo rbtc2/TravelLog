@@ -2,22 +2,9 @@
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
-    .calendar-detail-container {
+    .calendar-tab .log-detail-container {
         padding: 16px;
         padding-bottom: calc(16px + var(--navigation-height, 80px));
-    }
-    
-    .calendar-detail-header {
-        padding: 16px;
-        margin-bottom: 20px;
-    }
-    
-    .calendar-detail-title {
-        font-size: 1.5rem;
-    }
-    
-    .calendar-detail-content {
-        padding: 20px;
     }
     
     .calendar-tab .calendar-container {

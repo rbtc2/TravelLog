@@ -196,8 +196,8 @@ class CalendarTab {
             this.isDetailMode = true;
             this.currentLogId = logId;
             
-            // 로그 상세 화면 렌더링 (캘린더 컨텍스트)
-            this.logDetailModule.render(this.container, logData, { context: 'calendar' });
+            // 로그 상세 화면 렌더링 (통일된 UI 사용)
+            this.logDetailModule.render(this.container, logData, { context: 'mylogs' });
             
             // 뒤로가기 이벤트 바인딩
             this.bindDetailEvents();
