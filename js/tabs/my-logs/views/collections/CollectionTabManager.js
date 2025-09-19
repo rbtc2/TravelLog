@@ -96,7 +96,7 @@ export class CollectionTabManager {
      */
     renderTabButton(type, config) {
         try {
-            const isActive = type === this.defaultCollection;
+            const isActive = type === this.currentCollection || (this.currentCollection === null && type === this.defaultCollection);
             const count = this.getCollectionCount(type);
             
             const buttonStyle = isActive 
@@ -193,6 +193,11 @@ export class CollectionTabManager {
             // 현재 컬렉션 정리
             this.cleanupCurrentCollection();
             
+            // 상태 먼저 업데이트 (탭 하이라이트를 위해)
+            const previousCollection = this.currentCollection;
+            this.currentCollection = type;
+            this.updateTabStates(type);
+            
             // 새 컬렉션 로드
             const collection = await this.loadCollection(type);
             
@@ -201,13 +206,9 @@ export class CollectionTabManager {
             if (contentContainer && collection) {
                 await collection.render(contentContainer);
                 
-                // 상태 업데이트
-                this.currentCollection = type;
-                this.updateTabStates(type);
-                
                 // 이벤트 발생
                 this.dispatchEvent('collectionChanged', { 
-                    previousCollection: this.currentCollection,
+                    previousCollection: previousCollection,
                     currentCollection: type,
                     collection: collection
                 });
@@ -272,6 +273,17 @@ export class CollectionTabManager {
             const isActive = tab.dataset.collection === activeType;
             tab.classList.toggle('active', isActive);
             tab.setAttribute('aria-selected', isActive);
+            
+            // 스타일 업데이트
+            if (isActive) {
+                tab.style.background = '#667eea';
+                tab.style.color = 'white';
+                tab.style.boxShadow = '0 2px 12px rgba(59, 130, 246, 0.3)';
+            } else {
+                tab.style.background = 'transparent';
+                tab.style.color = '#718096';
+                tab.style.boxShadow = 'none';
+            }
         });
         
         // 패널 ARIA 속성 업데이트
