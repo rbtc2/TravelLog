@@ -183,7 +183,7 @@ export class CountriesCollectionView extends BaseCollectionView {
                 );
             }
             
-            // 정렬 (실제 방문 횟수 데이터 사용)
+            // 정렬 (실제 방문 횟수 및 최근 방문일 데이터 사용)
             filteredCountries.sort((a, b) => {
                 switch (this.sortBy) {
                     case 'visitCount':
@@ -195,8 +195,19 @@ export class CountriesCollectionView extends BaseCollectionView {
                         }
                         return a.nameKo.localeCompare(b.nameKo); // 방문 횟수가 같으면 알파벳 순
                     case 'lastVisit':
-                        // 최근 방문일로 정렬 (현재는 알파벳 순으로 대체)
-                        return a.nameKo.localeCompare(b.nameKo);
+                        // 최근 방문일로 정렬 (실제 데이터 사용)
+                        const aLastVisit = this.getLastVisitDate(a.code);
+                        const bLastVisit = this.getLastVisitDate(b.code);
+                        
+                        if (aLastVisit && bLastVisit) {
+                            return new Date(bLastVisit) - new Date(aLastVisit); // 최신순
+                        } else if (aLastVisit && !bLastVisit) {
+                            return -1; // a가 더 최근
+                        } else if (!aLastVisit && bLastVisit) {
+                            return 1; // b가 더 최근
+                        } else {
+                            return a.nameKo.localeCompare(b.nameKo); // 둘 다 없으면 알파벳 순
+                        }
                     case 'alphabet':
                         return a.nameKo.localeCompare(b.nameKo);
                     default:
@@ -206,6 +217,7 @@ export class CountriesCollectionView extends BaseCollectionView {
             
             return filteredCountries;
         } catch (error) {
+            console.error('CountriesCollectionView: getFilteredAndSortedData 실패:', error);
             return [];
         }
     }
@@ -275,6 +287,22 @@ export class CountriesCollectionView extends BaseCollectionView {
                 }
             });
         });
+    }
+    
+    /**
+     * 국가의 최근 방문일을 가져옵니다
+     * @param {string} countryCode - 국가 코드
+     * @returns {string|null} 최근 방문일 또는 null
+     */
+    getLastVisitDate(countryCode) {
+        try {
+            const visitedCountries = this.controller.getVisitedCountries();
+            const countryData = visitedCountries.countries[countryCode];
+            return countryData ? countryData.lastVisit : null;
+        } catch (error) {
+            console.error('CountriesCollectionView: getLastVisitDate 실패:', error);
+            return null;
+        }
     }
     
     /**

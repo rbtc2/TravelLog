@@ -178,8 +178,8 @@ export class BaseCollectionView {
             this.eventManager.add(control, 'change', this.handleFilterChange);
         });
         
-        // 정렬 변경 이벤트
-        const sortControls = this.container.querySelectorAll('.sort-control');
+        // 정렬 변경 이벤트 - 실제 사용되는 클래스명으로 수정
+        const sortControls = this.container.querySelectorAll('.sort-select');
         sortControls.forEach(control => {
             this.eventManager.add(control, 'change', this.handleSortChange);
         });

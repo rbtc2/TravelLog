@@ -504,6 +504,14 @@ class MyLogsController {
     }
 
     /**
+     * 국가별 방문 횟수를 반환합니다
+     * @returns {Map} 국가별 방문 횟수 Map
+     */
+    getCountryVisitCounts() {
+        return this.travelCollectionController.getCountryVisitCounts();
+    }
+
+    /**
      * 대륙별 방문 통계를 반환합니다
      * @returns {Object} 대륙별 통계
      */
