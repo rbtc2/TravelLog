@@ -1059,7 +1059,7 @@
     }
     
     .date-range {
-        flex-direction: column;
+        flex-direction: row;
         gap: 12px;
         padding: 15px;
     }
@@ -1174,6 +1174,12 @@
         padding: 12px;
         margin-bottom: 12px;
         justify-content: center;
+    }
+    
+    .date-range {
+        flex-direction: row !important;
+        gap: 8px;
+        padding: 12px;
     }
     
     .top-actions {
