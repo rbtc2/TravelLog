@@ -43,6 +43,17 @@ class TravelCollectionView {
      * 컬렉션들을 등록합니다
      */
     registerCollections() {
+        // 지도 컬렉션 등록 (맨 앞)
+        this.tabManager.registerCollection('map', {
+            type: 'map',
+            icon: '🗺️',
+            title: '지도',
+            description: '방문한 국가를 지도에서 확인하세요'
+        }, async () => {
+            const { MapCollectionView } = await import('./MapCollectionView.js');
+            return MapCollectionView;
+        });
+        
         // 국가 컬렉션 등록
         this.tabManager.registerCollection('countries', {
             type: 'countries',

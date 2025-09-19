@@ -25,7 +25,7 @@ export class CollectionTabManager {
         
         // 현재 상태
         this.currentCollection = null;
-        this.defaultCollection = 'countries';
+        this.defaultCollection = 'map';
         
         // 바인딩
         this.handleTabClick = this.handleTabClick.bind(this);
@@ -289,9 +289,13 @@ export class CollectionTabManager {
     getCollectionCount(type) {
         try {
             switch (type) {
-                case 'countries':
+                case 'map':
+                    // 지도 탭은 방문한 국가 수를 표시
                     const visitedData = this.controller.getVisitedCountries();
                     return visitedData?.visitedCountryCodes?.length || 0;
+                case 'countries':
+                    const visitedData2 = this.controller.getVisitedCountries();
+                    return visitedData2?.visitedCountryCodes?.length || 0;
                 case 'cities':
                     // 향후 구현될 메서드
                     if (typeof this.controller.getVisitedCities === 'function') {
