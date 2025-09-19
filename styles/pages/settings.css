@@ -26,14 +26,9 @@
 
 .setting-icon {
     font-size: 20px;
-    width: 40px;
-    height: 40px;
-    background: white;
-    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #e2e8f0;
 }
 
 .setting-details {
@@ -141,8 +136,7 @@ input:disabled + .toggle-slider {
 }
 
 .dark .setting-icon {
-    background: var(--bg-tertiary, #2d3748);
-    border-color: var(--gray-400, #718096);
+    /* 배경과 테두리 제거 - 이모티콘만 표시 */
 }
 
 .dark .setting-title {
