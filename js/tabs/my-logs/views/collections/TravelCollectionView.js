@@ -95,6 +95,8 @@ class TravelCollectionView {
      */
     async render(container) {
         this.container = container;
+        // 트래블 컬렉션 뷰 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('travel-collection-view');
         
         try {
             this.renderContent();

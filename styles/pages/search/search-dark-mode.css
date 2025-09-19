@@ -144,7 +144,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.dark .log-detail-header {
+.dark .search-tab .log-detail-header {
     background: var(--bg-tertiary, #2d3748);
     border-bottom-color: var(--gray-400, #718096);
 }
@@ -174,10 +174,10 @@
     color: var(--text-muted, #a0aec0);
 }
 
-.dark .log-detail-header .back-btn {
+.dark .search-tab .log-detail-header .back-btn {
     background: var(--primary-color, #4dabf7);
 }
 
-.dark .log-detail-header .back-btn:hover {
+.dark .search-tab .log-detail-header .back-btn:hover {
     background: var(--primary-dark, #339af0);
 }

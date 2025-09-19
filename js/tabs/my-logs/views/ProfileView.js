@@ -23,6 +23,8 @@ class ProfileView {
      */
     render(container) {
         this.container = container;
+        // 프로필 뷰 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('profile-view');
         this.container.innerHTML = this.getProfileHTML();
         this.bindEvents();
         this.loadProfileData();

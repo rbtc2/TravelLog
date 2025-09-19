@@ -48,6 +48,8 @@ class AddLogTab {
      */
     render(container) {
         this.container = container;
+        // 일지 추가 탭 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('add-log-tab');
         this.renderContent();
         
         // DOM 파싱 완료를 보장하는 방법으로 이벤트 바인딩

@@ -1,7 +1,7 @@
 /* ===== 캘린더 기본 구조 스타일 ===== */
 
-/* 캘린더 컨테이너 - 스크롤 완전 제거 */
-.calendar-container {
+/* 캘린더 탭 컨테이너 - 네임스페이스 격리 */
+.calendar-tab .calendar-container {
     max-width: var(--container-desktop-md);
     margin: 0 auto;
     padding: 20px;
@@ -16,28 +16,28 @@
 
 /* 반응형 캘린더 컨테이너 최적화 */
 @media (min-width: 1024px) and (max-width: 1279px) {
-    .calendar-container {
+    .calendar-tab .calendar-container {
         max-width: var(--container-desktop-sm);
         padding: 30px;
     }
 }
 
 @media (min-width: 1280px) and (max-width: 1439px) {
-    .calendar-container {
+    .calendar-tab .calendar-container {
         max-width: var(--container-desktop-md);
         padding: 40px;
     }
 }
 
 @media (min-width: 1440px) and (max-width: 1599px) {
-    .calendar-container {
+    .calendar-tab .calendar-container {
         max-width: var(--container-desktop-lg);
         padding: 50px;
     }
 }
 
 @media (min-width: 1600px) {
-    .calendar-container {
+    .calendar-tab .calendar-container {
         max-width: var(--container-desktop-xl);
         padding: 60px;
         /* 초대형 데스크톱에서 충분한 하단 여백 */
@@ -47,14 +47,14 @@
 
 /* 데스크톱에서 캘린더 페이지 여백 최적화 */
 @media (min-width: 1024px) {
-    .calendar-container {
+    .calendar-tab .calendar-container {
         /* 데스크톱에서 더 많은 하단 여백 확보 */
         padding-bottom: calc(30px + var(--navigation-height, 80px) + 80px);
     }
 }
 
 /* 다크모드 캘린더 컨테이너 */
-.dark .calendar-container {
+.dark .calendar-tab .calendar-container {
     background-color: var(--bg-primary, #1a1a1a);
     color: var(--text-primary, #f7fafc);
 }

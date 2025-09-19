@@ -1,7 +1,7 @@
 /* ===== 일지 추가 페이지 스타일 ===== */
 
-/* 일지 추가 컨테이너 */
-.add-log-container {
+/* 일지 추가 탭 컨테이너 - 네임스페이스 격리 */
+.add-log-tab .add-log-container {
     max-width: var(--container-desktop-md);
     margin: 0 auto;
     padding: var(--spacing-lg);
@@ -11,28 +11,28 @@
 
 /* 반응형 일지 추가 컨테이너 최적화 */
 @media (min-width: 1024px) and (max-width: 1279px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         max-width: var(--container-desktop-sm);
         padding: var(--spacing-xl);
     }
 }
 
 @media (min-width: 1280px) and (max-width: 1439px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         max-width: var(--container-desktop-md);
         padding: var(--spacing-2xl);
     }
 }
 
 @media (min-width: 1440px) and (max-width: 1599px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         max-width: var(--container-desktop-lg);
         padding: var(--spacing-3xl);
     }
 }
 
 @media (min-width: 1600px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         max-width: var(--container-desktop-xl);
         padding: var(--spacing-3xl);
         /* 초대형 데스크톱에서 충분한 하단 여백 */
@@ -42,14 +42,14 @@
 
 /* 모바일에서는 기본 여백 유지 */
 @media (max-width: 768px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 40px);
     }
 }
 
 /* 데스크톱에서 일지 추가 페이지 여백 최적화 */
 @media (min-width: 1024px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         /* 데스크톱에서 더 많은 하단 여백 확보 - 버튼이 가려지지 않도록 */
         padding-bottom: calc(var(--spacing-xl) + var(--navigation-height, 80px) + 150px);
     }
@@ -66,16 +66,38 @@
 }
 
 .add-log-title {
-    font-size: 28px;
+    font-size: var(--font-3xl);
     font-weight: 700;
     color: #2d3748;
     margin-bottom: 8px;
 }
 
 .add-log-subtitle {
-    font-size: 16px;
+    font-size: var(--font-base);
     color: #718096;
     font-weight: 400;
+}
+
+/* 데스크톱에서 제목과 부제목 크기 증가 */
+@media (min-width: 1024px) {
+    .add-log-title {
+        font-size: var(--font-3xl-desktop);
+    }
+    
+    .add-log-subtitle {
+        font-size: var(--font-base-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 제목과 부제목 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .add-log-title {
+        font-size: var(--font-3xl-large);
+    }
+    
+    .add-log-subtitle {
+        font-size: var(--font-base-large);
+    }
 }
 
 .add-log-form {
@@ -108,11 +130,29 @@
     padding: 16px 24px;
     border: none;
     border-radius: 10px;
-    font-size: 16px;
+    font-size: var(--font-base);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     min-height: 48px;
+}
+
+/* 데스크톱에서 버튼 폰트 크기 증가 */
+@media (min-width: 1024px) {
+    .submit-btn, .reset-btn {
+        font-size: var(--font-base-desktop);
+        padding: 18px 28px;
+        min-height: 52px;
+    }
+}
+
+/* 대형 데스크톱에서 버튼 폰트 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .submit-btn, .reset-btn {
+        font-size: var(--font-base-large);
+        padding: 20px 32px;
+        min-height: 56px;
+    }
 }
 
 .submit-btn {
@@ -161,6 +201,23 @@
     border-radius: 10px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     font-weight: 500;
+    font-size: var(--font-base);
+}
+
+/* 데스크톱에서 메시지 폰트 크기 증가 */
+@media (min-width: 1024px) {
+    .success-content, .error-content {
+        font-size: var(--font-base-desktop);
+        padding: 18px 24px;
+    }
+}
+
+/* 대형 데스크톱에서 메시지 폰트 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .success-content, .error-content {
+        font-size: var(--font-base-large);
+        padding: 20px 28px;
+    }
 }
 
 .success-content {
@@ -176,13 +233,27 @@
 }
 
 .success-icon, .error-icon {
-    font-size: 18px;
+    font-size: var(--font-lg);
     flex-shrink: 0;
+}
+
+/* 데스크톱에서 아이콘 크기 증가 */
+@media (min-width: 1024px) {
+    .success-icon, .error-icon {
+        font-size: var(--font-lg-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 아이콘 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .success-icon, .error-icon {
+        font-size: var(--font-lg-large);
+    }
 }
 
 /* ===== 일지 추가 페이지 반응형 스타일 ===== */
 @media (max-width: 768px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         padding: 16px;
         margin: 0;
     }
@@ -193,11 +264,11 @@
     }
     
     .add-log-title {
-        font-size: 24px;
+        font-size: var(--font-2xl);
     }
     
     .add-log-subtitle {
-        font-size: 14px;
+        font-size: var(--font-sm);
     }
     
     .add-log-form {
@@ -211,7 +282,7 @@
     
     .submit-btn, .reset-btn {
         min-height: 44px;
-        font-size: 16px;
+        font-size: var(--font-base);
     }
     
     .success-message, .error-message {
@@ -223,12 +294,12 @@
     
     .success-content, .error-content {
         padding: 14px 16px;
-        font-size: 14px;
+        font-size: var(--font-sm);
     }
 }
 
 @media (min-width: 1024px) {
-    .add-log-container {
+    .add-log-tab .add-log-container {
         max-width: 900px;
         padding: 32px;
     }

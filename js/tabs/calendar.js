@@ -68,6 +68,8 @@ class CalendarTab {
      */
     async render(container) {
         this.container = container;
+        // 캘린더 탭 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('calendar-tab');
         
         // 초기 렌더링 시 스크롤바 중복 방지
         this.container.style.overflow = 'hidden';

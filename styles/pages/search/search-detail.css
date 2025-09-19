@@ -8,16 +8,28 @@
     animation: fadeInUp 0.5s ease-out;
 }
 
-.log-detail-header {
+/* Search 탭용 로그 상세 헤더 - 네임스페이스 격리 */
+.search-tab .log-detail-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 16px;
     padding: 20px;
     background: #f8f9fa;
     border-bottom: 1px solid #e2e8f0;
+    min-height: 60px;
 }
 
-.log-detail-header .back-btn {
+/* 데스크톱에서 Search 탭 로그 상세 헤더 개선 */
+@media (min-width: 1024px) {
+    .search-tab .log-detail-header {
+        padding: 24px;
+        min-height: 70px;
+        gap: 20px;
+    }
+}
+
+.search-tab .log-detail-header .back-btn {
     background: #667eea;
     color: white;
     border: none;
@@ -29,16 +41,71 @@
     font-size: 14px;
 }
 
-.log-detail-header .back-btn:hover {
+.search-tab .log-detail-header .back-btn:hover {
     background: #5a67d8;
     transform: translateY(-1px);
 }
 
-.log-detail-title h2 {
+.search-tab .log-detail-title {
+    flex: 1;
+    text-align: center;
+    margin: 0 20px;
+}
+
+.search-tab .log-detail-title h2 {
     font-size: 24px;
     font-weight: 700;
     color: #2d3748;
     margin: 0;
+}
+
+/* 데스크톱에서 Search 탭 제목 크기 증가 */
+@media (min-width: 1024px) {
+    .search-tab .log-detail-title h2 {
+        font-size: 28px;
+    }
+}
+
+/* Search 탭 로그 상세 헤더 액션 버튼들 */
+.search-tab .log-detail-header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.search-tab .log-detail-header-actions .action-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #4a5568;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.search-tab .log-detail-header-actions .action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 데스크톱에서 Search 탭 액션 버튼 개선 */
+@media (min-width: 1024px) {
+    .search-tab .log-detail-header-actions {
+        gap: 16px;
+    }
+    
+    .search-tab .log-detail-header-actions .action-btn {
+        padding: 12px 16px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
 }
 
 .log-detail-content {

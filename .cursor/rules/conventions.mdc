@@ -254,91 +254,28 @@ class TravelLogManager {
 
 ## 🎨 CSS Conventions
 
-### **Class Naming (BEM Methodology)**
-```css
-/* Block */
-.travel-card { }
+> **Note**: Detailed CSS conventions are now managed in the dedicated [styling.mdc](mdc:.cursor/rules/styling.mdc) and [css-namespace.mdc](mdc:.cursor/rules/css-namespace.mdc) files. This section covers only JavaScript-specific styling considerations.
 
-/* Element */
-.travel-card__header { }
-.travel-card__content { }
-.travel-card__footer { }
+### **JavaScript CSS Class Management**
+```javascript
+// Use consistent class naming in JavaScript
+const className = 'travel-card';
+const modifierClass = 'travel-card--featured';
+const elementClass = 'travel-card__header';
 
-/* Modifier */
-.travel-card--featured { }
-.travel-card--compact { }
-.travel-card__header--large { }
+// Apply classes conditionally
+element.classList.toggle('active', isActive);
+element.classList.add('travel-card--featured');
 ```
 
-### **CSS Variable Usage**
-```css
-/* Always use CSS variables for consistent values */
-.component {
-    background-color: var(--primary-color);
-    color: var(--white);
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius-md);
-    font-size: var(--font-base);
-}
+### **CSS Variable Usage in JavaScript**
+```javascript
+// Access CSS variables in JavaScript
+const primaryColor = getComputedStyle(document.documentElement)
+    .getPropertyValue('--primary-color');
 
-/* Don't use hardcoded values */
-.component {
-    background-color: #667eea; /* ❌ Don't do this */
-    padding: 16px; /* ❌ Don't do this */
-}
-```
-
-### **CSS Organization**
-```css
-/* 1. Layout properties */
-.component {
-    display: flex;
-    position: relative;
-    width: 100%;
-    height: auto;
-}
-
-/* 2. Box model properties */
-.component {
-    margin: var(--spacing-md);
-    padding: var(--spacing-lg);
-    border: 1px solid var(--gray-300);
-}
-
-/* 3. Typography */
-.component {
-    font-family: var(--font-family-base);
-    font-size: var(--font-base);
-    font-weight: var(--font-medium);
-    line-height: 1.5;
-}
-
-/* 4. Visual properties */
-.component {
-    background-color: var(--white);
-    color: var(--text-primary);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-}
-
-/* 5. Animation and transitions */
-.component {
-    transition: all var(--transition-normal);
-    transform: translateY(0);
-}
-
-/* 6. Pseudo-elements and pseudo-classes */
-.component:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.component::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+// Set CSS variables dynamically
+document.documentElement.style.setProperty('--theme-color', '#667eea');
 ```
 
 ## 🌐 HTML Conventions
@@ -572,15 +509,9 @@ describe('TravelLogManager', () => {
 
 ### **File Size Guidelines**
 - **JavaScript files**: Under 500 lines
-- **CSS files**: Under 300 lines (REQUIRED for module separation)
 - **HTML files**: Under 200 lines
 
-### **CSS Module Separation Rules**
-- **300+ lines**: Module separation MANDATORY
-- **200-300 lines**: Module separation RECOMMENDED
-- **<200 lines**: Single file acceptable
-- **Module naming**: Feature-based or component-based
-- **Module structure**: `styles/pages/[page-name]/[feature].css`
+> **Note**: CSS file size guidelines and module separation rules are now managed in [styling.mdc](mdc:.cursor/rules/styling.mdc).
 
 ### **Comment Guidelines**
 - Comment complex business logic
@@ -594,8 +525,6 @@ describe('TravelLogManager', () => {
 ✅ Use consistent naming conventions
 ✅ Write self-documenting code
 ✅ Handle errors gracefully
-✅ Use CSS variables for styling
-✅ Follow mobile-first approach
 ✅ Add proper ARIA attributes
 ✅ Use semantic HTML elements
 ✅ Optimize for performance
@@ -603,13 +532,13 @@ describe('TravelLogManager', () => {
 ✅ Document public APIs
 
 ### **DON'Ts**
-❌ Don't use hardcoded values
 ❌ Don't ignore error handling
 ❌ Don't skip accessibility
-❌ Don't use inline styles
 ❌ Don't create overly complex functions
 ❌ Don't ignore mobile optimization
 ❌ Don't use non-semantic HTML
 ❌ Don't skip performance considerations
 ❌ Don't write untested code
 ❌ Don't skip documentation
+
+> **Note**: CSS-specific best practices are now managed in [styling.mdc](mdc:.cursor/rules/styling.mdc) and [css-namespace.mdc](mdc:.cursor/rules/css-namespace.mdc).

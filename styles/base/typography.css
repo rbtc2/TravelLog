@@ -37,11 +37,80 @@ h6 {
     font-size: var(--font-base);
 }
 
+/* 데스크톱에서 제목 크기 증가 (1024px 이상) */
+@media (min-width: 1024px) {
+    h1 {
+        font-size: var(--font-4xl-desktop);
+    }
+    
+    h2 {
+        font-size: var(--font-3xl-desktop);
+    }
+    
+    h3 {
+        font-size: var(--font-2xl-desktop);
+    }
+    
+    h4 {
+        font-size: var(--font-xl-desktop);
+    }
+    
+    h5 {
+        font-size: var(--font-lg-desktop);
+    }
+    
+    h6 {
+        font-size: var(--font-base-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 제목 크기 추가 증가 (1440px 이상) */
+@media (min-width: 1440px) {
+    h1 {
+        font-size: var(--font-4xl-large);
+    }
+    
+    h2 {
+        font-size: var(--font-3xl-large);
+    }
+    
+    h3 {
+        font-size: var(--font-2xl-large);
+    }
+    
+    h4 {
+        font-size: var(--font-xl-large);
+    }
+    
+    h5 {
+        font-size: var(--font-lg-large);
+    }
+    
+    h6 {
+        font-size: var(--font-base-large);
+    }
+}
+
 /* 단락 스타일 */
 p {
     margin-bottom: var(--spacing-md);
     line-height: 1.6;
     color: var(--text-secondary);
+    font-size: var(--font-base);
+}
+
+/* 데스크톱에서 단락 크기 증가 */
+@media (min-width: 1024px) {
+    p {
+        font-size: var(--font-base-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 단락 크기 추가 증가 */
+@media (min-width: 1440px) {
+    p {
+        font-size: var(--font-base-large);
+    }
 }
 
 /* 링크 스타일 */

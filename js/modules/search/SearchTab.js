@@ -77,6 +77,8 @@ export class SearchTab {
     async render(container) {
         try {
             this.container = container;
+            // Search 탭 CSS 네임스페이스 클래스 추가
+            this.container.classList.add('search-tab');
             this.uiRenderer.setContainer(container);
             
         this.isSearchMode = false;

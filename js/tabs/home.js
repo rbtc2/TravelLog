@@ -11,6 +11,8 @@ class HomeTab {
     
     render(container) {
         this.container = container;
+        // 홈 탭 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('home-tab');
         this.renderContent();
         this.bindEvents();
         this.isInitialized = true;

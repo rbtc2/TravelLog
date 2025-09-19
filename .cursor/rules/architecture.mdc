@@ -88,195 +88,50 @@ js/
         └── my-logs.js       # Main my-logs entry point
 ```
 
-### **CSS Structure & Architecture Rules**
+### **CSS Architecture Reference**
 
-#### **📁 CSS File Organization**
-```
-styles/
-├── main.css                  # ONLY imports - NO direct styles
-├── base/                     # Base styles (variables, reset, typography)
-│   ├── variables.css         # CSS variables and design tokens
-│   ├── design-tokens.css     # Design system tokens
-│   ├── reset.css            # CSS reset
-│   ├── typography.css       # Typography
-│   ├── layout.css           # Basic layout
-│   ├── buttons.css          # Basic button styles
-│   ├── forms.css            # Basic form styles
-│   └── messages.css         # Message styles
-├── components/               # Reusable component styles
-│   ├── buttons.css          # Button components
-│   ├── cards.css            # Card components
-│   ├── forms.css            # Form components
-│   ├── modals.css           # Modal components
-│   ├── navigation.css       # Navigation components
-│   ├── country-selector.css # Country selector
-│   ├── calendar-flag-dots.css # Calendar flag dots
-│   └── common-components.css # Common UI components
-├── layouts/                  # Layout-specific styles
-│   ├── main-layout.css      # Main layout
-│   ├── tab-content.css      # Tab content layout
-│   └── tab-navigation.css   # Tab navigation layout
-├── pages/                    # Page-specific styles (MODULAR)
-│   ├── home.css             # Home page
-│   ├── login.css            # Login page
-│   ├── add-log.css          # Add log page
-│   ├── search/              # Search page (MODULAR)
-│   │   ├── search.css       # Main search styles
-│   │   ├── search-filters.css # Filter-specific styles
-│   │   ├── search-results.css # Results-specific styles
-│   │   └── search-responsive.css # Search responsive styles
-│   ├── calendar/            # Calendar page (MODULAR)
-│   │   ├── calendar-base.css
-│   │   ├── calendar-grid.css
-│   │   ├── calendar-bars.css
-│   │   ├── calendar-navigation.css
-│   │   ├── calendar-modal.css
-│   │   ├── calendar-responsive.css
-│   │   ├── calendar-dark-mode.css
-│   │   └── calendar-animations.css
-│   ├── my-logs/             # My logs page (MODULAR)
-│   │   ├── base.css
-│   │   ├── profile-section.css
-│   │   ├── hamburger-menu.css
-│   │   ├── log-views.css
-│   │   ├── settings.css
-│   │   └── charts.css
-│   ├── travel-report/       # Travel report page (MODULAR)
-│   │   ├── world-exploration.css
-│   │   ├── heatmap.css
-│   │   ├── basic-stats.css
-│   │   ├── yearly-stats.css
-│   │   ├── ranking.css
-│   │   └── travel-report-section.css
-│   ├── log-detail.css       # Log detail page
-│   ├── settings.css         # Settings page
-│   ├── travel-collection.css # Travel collection page
-│   └── error.css            # Error page
-└── utilities/                # Utility styles
-    ├── accessibility.css    # Accessibility utilities
-    ├── animations.css       # Animation utilities
-    ├── dark-mode.css        # Dark mode utilities
-    ├── navigation-utils.css # Navigation utilities
-    ├── responsive.css       # Responsive utilities
-    ├── responsive-optimized.css # Optimized responsive utilities
-    ├── scroll-optimization.css # Scroll optimization
-    ├── performance.css      # Performance utilities
-    └── theme-transitions.css # Theme transition utilities
-```
+> **Note**: Detailed CSS structure and organization rules are now managed in [styling.mdc](mdc:.cursor/rules/styling.mdc) and [css-namespace.mdc](mdc:.cursor/rules/css-namespace.mdc). This section focuses on JavaScript architecture patterns.
 
-#### **🚫 CRITICAL CSS Architecture Rules**
+### **JavaScript Architecture Patterns**
 
-##### **1. main.css - Import Only Rule**
-```css
-/* ✅ CORRECT: main.css should ONLY contain imports */
-@import url('./base/variables.css');
-@import url('./base/design-tokens.css');
-@import url('./base/reset.css');
-/* ... other imports ... */
+#### **1. Module Lifecycle Management**
+- **Initialization**: Module instantiation and setup
+- **Rendering**: UI creation and DOM manipulation
+- **Event Binding**: User interaction handling
+- **Cleanup**: Resource cleanup and memory management
 
-/* ❌ FORBIDDEN: Never add direct styles to main.css */
-.some-class { color: red; } /* NEVER DO THIS */
-```
+#### **2. Namespace System Integration**
+- **Every tab MUST add its namespace class** in JavaScript
+- **CSS rules are automatically prefixed** with appropriate namespace
+- **Complete style isolation** between tabs
+- **Namespace validation** before any CSS changes
 
-##### **2. Modular Page Organization**
-- **Each page/tab gets its own directory** under `styles/pages/`
-- **Complex pages are split into multiple CSS files** by functionality
-- **Each CSS file has a single responsibility**
+> **Note**: Detailed CSS architecture rules are managed in [styling.mdc](mdc:.cursor/rules/styling.mdc) and [css-namespace.mdc](mdc:.cursor/rules/css-namespace.mdc).
 
-##### **3. CSS Import Hierarchy**
-```css
-/* main.css import order (STRICT) */
-1. Base styles (variables, reset, typography)
-2. Utilities (animations, accessibility, etc.)
-3. Components (reusable UI components)
-4. Layouts (main layout, tab layouts)
-5. Pages (page-specific styles in order of complexity)
-```
+#### **🔍 JavaScript Architecture Checklist**
 
-##### **4. Style Isolation Rules**
-- **Page-specific styles MUST be in their respective page directories**
-- **NO cross-page style dependencies** (except base/utilities)
-- **Each page manages its own responsive design**
-- **NO global overrides in main.css**
-
-##### **5. CSS Specificity Guidelines**
-- **Use BEM methodology** for component naming
-- **Avoid `!important`** unless absolutely necessary
-- **Prefer specific selectors** over generic ones
-- **Page-specific styles take precedence** over component styles
-
-##### **6. File Naming Conventions**
-```
-✅ CORRECT:
-- search-filters.css (kebab-case)
-- calendar-grid.css (kebab-case)
-- world-exploration.css (kebab-case)
-
-❌ FORBIDDEN:
-- searchFilters.css (camelCase)
-- calendar_grid.css (snake_case)
-- SearchFilters.css (PascalCase)
-```
-
-##### **7. CSS Content Rules**
-- **Each CSS file must have a clear purpose**
-- **Include comments for complex sections**
-- **Group related styles together**
-- **Use CSS custom properties (variables) consistently**
-
-##### **8. Responsive Design Organization**
-- **Mobile-first approach** in all page-specific CSS
-- **Responsive styles in the same file** as base styles
-- **Use utility classes** for common responsive patterns
-- **Avoid duplicate responsive code** across files
-
-##### **9. Dark Mode Implementation**
-- **Dark mode styles in the same file** as light mode
-- **Use CSS custom properties** for theme switching
-- **Consistent dark mode patterns** across all pages
-
-##### **10. Performance Considerations**
-- **Minimize CSS file size** by avoiding duplication
-- **Use efficient selectors** (avoid deep nesting)
-- **Leverage CSS custom properties** for theming
-- **Optimize for critical rendering path**
-
-#### **🔍 CSS Architecture Violation Checklist**
-
-##### **Before Adding ANY CSS:**
-1. **Is this style for a specific page/tab?** → Place in `styles/pages/[page-name]/`
-2. **Is this a reusable component?** → Place in `styles/components/`
-3. **Is this a utility class?** → Place in `styles/utilities/`
-4. **Is this a base style?** → Place in `styles/base/`
+##### **Before Adding ANY JavaScript Module:**
+1. **Is this a tab module?** → Add namespace class in render method
+2. **Is this a sub-tab module?** → Add both main and sub-tab namespace classes
+3. **Is this a component?** → No namespace required
+4. **Is this a utility?** → No namespace required
 
 ##### **NEVER DO:**
-- ❌ Add styles directly to `main.css`
-- ❌ Create duplicate CSS files
-- ❌ Mix page-specific styles in component files
-- ❌ Use `!important` without justification
-- ❌ Create overly specific selectors
-- ❌ Duplicate responsive code across files
+- ❌ Forget to add namespace classes to tab containers
+- ❌ Create modules without proper cleanup methods
+- ❌ Mix different concerns in single modules
+- ❌ Ignore event listener cleanup
+- ❌ Create memory leaks with timeouts/intervals
 
 ##### **ALWAYS DO:**
-- ✅ Follow the modular directory structure
-- ✅ Use BEM naming convention
-- ✅ Include comments for complex sections
-- ✅ Group related styles together
-- ✅ Use CSS custom properties for theming
-- ✅ Test responsive design on all breakpoints
+- ✅ Add namespace classes to tab containers
+- ✅ Implement proper cleanup methods
+- ✅ Use consistent module patterns
+- ✅ Handle errors gracefully
+- ✅ Follow established naming conventions
+- ✅ Validate namespace consistency
 
-##### **CSS File Size Limits:**
-- **main.css**: < 50 lines (imports only)
-- **Component files**: < 200 lines
-- **Page files**: < 300 lines
-- **Utility files**: < 150 lines
-
-##### **Emergency CSS Fix Protocol:**
-1. **Identify the correct file** based on functionality
-2. **Move styles** to appropriate location
-3. **Update imports** in main.css if needed
-4. **Test** on all affected pages
-5. **Document** the change in commit message
+> **Note**: CSS-specific architecture rules are managed in [styling.mdc](mdc:.cursor/rules/styling.mdc) and [css-namespace.mdc](mdc:.cursor/rules/css-namespace.mdc).
 
 ## 🔄 Data Flow Patterns
 

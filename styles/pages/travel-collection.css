@@ -923,6 +923,28 @@
     text-overflow: ellipsis;
 }
 
+/* 데스크톱에서 국가 정보 크기 증가 */
+@media (min-width: 1024px) {
+    .country-name {
+        font-size: var(--font-lg-desktop);
+    }
+    
+    .country-name-en {
+        font-size: var(--font-sm-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 국가 정보 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .country-name {
+        font-size: var(--font-lg-large);
+    }
+    
+    .country-name-en {
+        font-size: var(--font-sm-large);
+    }
+}
+
 /* 방문 통계 (새로운 스타일) */
 .country-visit-stats {
     display: flex;
@@ -944,6 +966,30 @@
 .last-visit-info {
     font-size: var(--font-xs);
     color: var(--text-secondary);
+}
+
+/* 데스크톱에서 방문 통계 크기 증가 */
+@media (min-width: 1024px) {
+    .visit-count-badge {
+        font-size: var(--font-sm-desktop);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .last-visit-info {
+        font-size: var(--font-sm-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 방문 통계 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .visit-count-badge {
+        font-size: var(--font-sm-large);
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    
+    .last-visit-info {
+        font-size: var(--font-sm-large);
+    }
 }
 
 
@@ -1481,6 +1527,24 @@
     color: #718096;
 }
 
+/* 데스크톱에서 컬렉션 탭 크기 증가 */
+@media (min-width: 1024px) {
+    .collection-tab {
+        font-size: var(--font-base-desktop);
+        padding: 16px 20px;
+        gap: 10px;
+    }
+}
+
+/* 대형 데스크톱에서 컬렉션 탭 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .collection-tab {
+        font-size: var(--font-base-large);
+        padding: 18px 24px;
+        gap: 12px;
+    }
+}
+
 .collection-tab:hover {
     background: rgba(102, 126, 234, 0.1);
     color: #667eea;
@@ -1516,6 +1580,26 @@
     font-weight: 600;
     min-width: 20px;
     text-align: center;
+}
+
+/* 데스크톱에서 탭 카운트 크기 증가 */
+@media (min-width: 1024px) {
+    .tab-count {
+        font-size: var(--font-sm-desktop);
+        padding: 4px 8px;
+        min-width: 24px;
+        border-radius: 10px;
+    }
+}
+
+/* 대형 데스크톱에서 탭 카운트 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .tab-count {
+        font-size: var(--font-sm-large);
+        padding: 6px 10px;
+        min-width: 28px;
+        border-radius: 12px;
+    }
 }
 
 .collection-tab:not(.active) .tab-count {

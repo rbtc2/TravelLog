@@ -31,6 +31,8 @@ class LogsListView {
      */
     render(container) {
         this.container = container;
+        // 로그 목록 뷰 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('logs-list-view');
         this.renderLogsList();
         this.bindEvents();
     }

@@ -24,6 +24,8 @@ class SettingsView {
      */
     render(container) {
         this.container = container;
+        // 설정 뷰 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('settings-view');
         this.container.innerHTML = this.getSettingsHTML();
         this.bindEvents();
     }

@@ -20,7 +20,7 @@
         padding: 20px;
     }
     
-    .calendar-container {
+    .calendar-tab .calendar-container {
         padding: 16px;
         padding-bottom: calc(16px + var(--navigation-height, 80px));
         /* 스크롤 완전 제거 - 상위 컨테이너에서만 스크롤 */
@@ -131,7 +131,7 @@
 
 /* 모바일 (480px 이하) */
 @media (max-width: 480px) {
-    .calendar-container {
+    .calendar-tab .calendar-container {
         padding: 12px;
         padding-bottom: calc(12px + var(--navigation-height, 80px));
         /* 스크롤 완전 제거 - 상위 컨테이너에서만 스크롤 */

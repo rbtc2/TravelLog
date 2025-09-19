@@ -88,6 +88,8 @@ class MyLogsTab {
      */
     async render(container) {
         this.container = container;
+        // My Logs 탭 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('my-logs-tab');
         await this.controller.initialize();
         this.bindViewEvents(); // View 렌더링 전에 이벤트 바인딩
         this.renderCurrentView();

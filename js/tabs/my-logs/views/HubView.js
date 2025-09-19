@@ -23,6 +23,8 @@ class HubView {
      */
     render(container) {
         this.container = container;
+        // 허브 뷰 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('hub-view');
         this.container.innerHTML = this.getHubHTML();
         this.bindEvents();
         this.loadProfileData();

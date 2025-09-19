@@ -224,7 +224,7 @@
     }
     
     /* 일지 추가 탭 다크 모드 */
-    .add-log-container {
+    .add-log-tab .add-log-container {
         background-color: var(--bg-tertiary);
         color: var(--text-secondary);
     }
@@ -353,7 +353,7 @@
     }
     
     /* 일지 추가 탭 */
-    .add-log-container {
+    .add-log-tab .add-log-container {
         background-color: var(--bg-tertiary);
         color: var(--text-secondary);
     }
@@ -482,7 +482,7 @@
     }
     
     /* 일지 추가 탭 */
-    .add-log-container {
+    .add-log-tab .add-log-container {
         background-color: var(--bg-tertiary);
         color: var(--text-secondary);
     }

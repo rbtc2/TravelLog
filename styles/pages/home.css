@@ -1,7 +1,7 @@
 /* ===== 홈 페이지 스타일 ===== */
 
-/* 홈 페이지 컨테이너 */
-.home-container {
+/* 홈 탭 페이지 컨테이너 - 네임스페이스 격리 */
+.home-tab .home-container {
     max-width: var(--container-desktop-md);
     margin: 0 auto;
     padding: 20px;
@@ -11,28 +11,28 @@
 
 /* 반응형 홈 컨테이너 최적화 */
 @media (min-width: 1024px) and (max-width: 1279px) {
-    .home-container {
+    .home-tab .home-container {
         max-width: var(--container-desktop-sm);
         padding: 30px;
     }
 }
 
 @media (min-width: 1280px) and (max-width: 1439px) {
-    .home-container {
+    .home-tab .home-container {
         max-width: var(--container-desktop-md);
         padding: 40px;
     }
 }
 
 @media (min-width: 1440px) and (max-width: 1599px) {
-    .home-container {
+    .home-tab .home-container {
         max-width: var(--container-desktop-lg);
         padding: 50px;
     }
 }
 
 @media (min-width: 1600px) {
-    .home-container {
+    .home-tab .home-container {
         max-width: var(--container-desktop-xl);
         padding: 60px;
         /* 초대형 데스크톱에서 충분한 하단 여백 */
@@ -42,14 +42,14 @@
 
 /* 데스크톱에서 홈 페이지 여백 최적화 */
 @media (min-width: 1024px) {
-    .home-container {
+    .home-tab .home-container {
         /* 데스크톱에서 더 많은 하단 여백 확보 */
         padding-bottom: calc(30px + var(--navigation-height, 80px) + 80px);
     }
 }
 
 /* 다크모드 홈 페이지 컨테이너 */
-.dark .home-container {
+.dark .home-tab .home-container {
     background-color: var(--bg-primary, #1a1a1a);
     color: var(--text-primary, #f7fafc);
 }
@@ -121,7 +121,7 @@
 
 /* 반응형 스타일 */
 @media (max-width: 768px) {
-    .home-container {
+    .home-tab .home-container {
         padding: 16px;
         /* Phase 4: 모바일에서도 네비게이션 여백 적용 */
         padding-bottom: calc(16px + var(--navigation-height, 80px));

@@ -1027,6 +1027,177 @@ TravelLog follows 2025 premium design standards with clean, modern aesthetics, s
 .animate-delay-1000 { animation-delay: 1000ms; }
 ```
 
+## 🏷️ **CSS NAMESPACE SYSTEM**
+
+### **Tab-Specific CSS Isolation**
+TravelLog uses a comprehensive CSS namespace system to prevent style conflicts between tabs and ensure complete style isolation.
+
+#### **Main Tab Namespaces**
+```css
+/* Main tabs get unique namespace classes */
+.home-tab { /* Home tab styles */ }
+.calendar-tab { /* Calendar tab styles */ }
+.add-log-tab { /* Add log tab styles */ }
+.search-tab { /* Search tab styles */ }
+.my-logs-tab { /* My logs tab styles */ }
+```
+
+#### **Sub-Tab Namespaces (My Logs)**
+```css
+/* My Logs sub-tabs get additional namespace classes */
+.hub-view { /* Hub view styles */ }
+.logs-list-view { /* Logs list view styles */ }
+.settings-view { /* Settings view styles */ }
+.travel-report-view { /* Travel report view styles */ }
+.profile-view { /* Profile view styles */ }
+.travel-collection-view { /* Travel collection view styles */ }
+```
+
+#### **CSS Namespace Implementation Rules**
+
+##### **1. JavaScript Container Class Addition**
+```javascript
+// Every tab module MUST add its namespace class
+class HomeTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('home-tab'); // REQUIRED
+        // ... rest of render logic
+    }
+}
+
+class CalendarTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('calendar-tab'); // REQUIRED
+        // ... rest of render logic
+    }
+}
+```
+
+##### **2. CSS Namespace Prefixing**
+```css
+/* ✅ CORRECT: All page-specific styles MUST be namespaced */
+.home-tab .home-container {
+    /* Home-specific styles */
+}
+
+.calendar-tab .calendar-container {
+    /* Calendar-specific styles */
+}
+
+.search-tab .log-detail-header {
+    /* Search-specific log detail styles */
+}
+
+.my-logs-tab .log-detail-container .log-detail-header {
+    /* My logs-specific log detail styles */
+}
+
+/* ❌ FORBIDDEN: Un-namespaced global styles */
+.home-container { /* NEVER DO THIS */ }
+.calendar-container { /* NEVER DO THIS */ }
+.log-detail-header { /* NEVER DO THIS */ }
+```
+
+##### **3. Namespace Hierarchy**
+```css
+/* Main tab namespace (highest priority) */
+.tab-name { }
+
+/* Sub-tab namespace (within main tab) */
+.tab-name .sub-tab-name { }
+
+/* Component namespace (within sub-tab) */
+.tab-name .sub-tab-name .component-name { }
+
+/* Element namespace (within component) */
+.tab-name .sub-tab-name .component-name .element-name { }
+```
+
+##### **4. Responsive Design with Namespaces**
+```css
+/* Mobile-first approach with namespaces */
+.tab-name .component {
+    /* Mobile styles */
+}
+
+@media (min-width: 768px) {
+    .tab-name .component {
+        /* Tablet styles */
+    }
+}
+
+@media (min-width: 1024px) {
+    .tab-name .component {
+        /* Desktop styles */
+    }
+}
+```
+
+##### **5. Dark Mode with Namespaces**
+```css
+/* Dark mode styles with namespaces */
+.tab-name .component {
+    /* Light mode styles */
+}
+
+@media (prefers-color-scheme: dark) {
+    .tab-name .component {
+        /* Dark mode styles */
+    }
+}
+
+.dark .tab-name .component {
+    /* Dark mode class override */
+}
+```
+
+#### **Namespace Enforcement Rules**
+
+##### **✅ MANDATORY REQUIREMENTS**
+1. **Every tab module MUST add its namespace class** in JavaScript
+2. **All page-specific CSS MUST be prefixed** with the appropriate namespace
+3. **No global styles** for page-specific components
+4. **Consistent namespace hierarchy** across all files
+5. **Namespace validation** before any CSS changes
+
+##### **❌ STRICTLY FORBIDDEN**
+1. **Un-namespaced page-specific styles**
+2. **Global overrides** in main.css
+3. **Cross-tab style dependencies**
+4. **Namespace class conflicts**
+5. **Inconsistent naming conventions**
+
+#### **Namespace Validation Checklist**
+
+##### **Before Adding ANY CSS:**
+1. **Is this for a specific tab?** → Add appropriate namespace prefix
+2. **Is this for a sub-tab?** → Add both main and sub-tab namespace
+3. **Is this a global component?** → Place in components/ directory
+4. **Is this a utility?** → Place in utilities/ directory
+
+##### **CSS File Organization with Namespaces:**
+```
+styles/pages/
+├── home.css                    # .home-tab namespace
+├── calendar/                   # .calendar-tab namespace
+│   ├── calendar-base.css
+│   ├── calendar-responsive.css
+│   └── calendar-dark-mode.css
+├── search/                     # .search-tab namespace
+│   ├── search.css
+│   ├── search-detail.css
+│   └── search-responsive.css
+├── my-logs/                    # .my-logs-tab namespace
+│   ├── base.css
+│   ├── log-views.css
+│   └── settings.css
+└── travel-report/              # .travel-report-view namespace
+    ├── world-exploration.css
+    └── heatmap.css
+```
+
 ## 🚫 **FORBIDDEN DESIGN PATTERNS**
 
 ### **❌ ABSOLUTELY PROHIBITED**
@@ -1047,6 +1218,9 @@ TravelLog follows 2025 premium design standards with clean, modern aesthetics, s
 - Auto-playing media
 - Popup windows
 - Fixed positioning abuse
+- Un-namespaced page-specific styles
+- Global CSS overrides in main.css
+- Cross-tab style dependencies
 ```
 
 ### **✅ ALWAYS USE**

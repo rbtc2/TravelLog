@@ -1,0 +1,507 @@
+---
+globs: *.css,*.js,*.html
+description: TravelLog CSS Namespace System - Complete Style Isolation Rules
+---
+
+# 🏷️ TravelLog CSS Namespace System
+
+## 📋 Overview
+TravelLog implements a comprehensive CSS namespace system to ensure complete style isolation between tabs and prevent CSS conflicts. This system guarantees that each tab's styles are completely independent and cannot interfere with other tabs.
+
+## 🎯 Core Principles
+
+### 1. **Complete Style Isolation**
+- Each tab has its own unique namespace
+- No cross-tab style dependencies
+- Zero CSS conflicts between tabs
+- Independent style management per tab
+
+### 2. **Automatic Namespace Application**
+- JavaScript automatically adds namespace classes
+- CSS rules are automatically prefixed
+- No manual namespace management required
+- Consistent namespace hierarchy
+
+### 3. **Scalable Architecture**
+- Easy addition of new tabs
+- Consistent namespace patterns
+- Future-proof design
+- Maintainable codebase
+
+## 🏗️ Namespace Structure
+
+### **Main Tab Namespaces**
+```css
+/* Primary tab namespaces */
+.home-tab { /* Home tab container */ }
+.calendar-tab { /* Calendar tab container */ }
+.add-log-tab { /* Add log tab container */ }
+.search-tab { /* Search tab container */ }
+.my-logs-tab { /* My logs tab container */ }
+```
+
+### **Sub-Tab Namespaces (My Logs)**
+```css
+/* My Logs sub-tab namespaces */
+.hub-view { /* Hub view container */ }
+.logs-list-view { /* Logs list view container */ }
+.settings-view { /* Settings view container */ }
+.travel-report-view { /* Travel report view container */ }
+.profile-view { /* Profile view container */ }
+.travel-collection-view { /* Travel collection view container */ }
+```
+
+## 🔧 Implementation Rules
+
+### **JavaScript Namespace Addition**
+
+#### **Main Tab Modules**
+```javascript
+// REQUIRED: Every main tab MUST add its namespace class
+class HomeTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('home-tab'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class CalendarTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('calendar-tab'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class AddLogTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('add-log-tab'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class SearchTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('search-tab'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class MyLogsTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('my-logs-tab'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+```
+
+#### **Sub-Tab Modules (My Logs)**
+```javascript
+// REQUIRED: Every sub-tab MUST add its namespace class
+class HubView {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('hub-view'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class LogsListView {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('logs-list-view'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class SettingsView {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('settings-view'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class TravelReportView {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('travel-report-view'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class ProfileView {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('profile-view'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+
+class TravelCollectionView {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('travel-collection-view'); // MANDATORY
+        // ... rest of render logic
+    }
+}
+```
+
+### **CSS Namespace Prefixing**
+
+#### **Main Tab Styles**
+```css
+/* ✅ CORRECT: All page-specific styles MUST be namespaced */
+.home-tab .home-container {
+    /* Home-specific styles */
+}
+
+.calendar-tab .calendar-container {
+    /* Calendar-specific styles */
+}
+
+.add-log-tab .add-log-container {
+    /* Add log-specific styles */
+}
+
+.search-tab .search-container {
+    /* Search-specific styles */
+}
+
+.my-logs-tab .my-logs-container {
+    /* My logs-specific styles */
+}
+
+/* ❌ FORBIDDEN: Un-namespaced global styles */
+.home-container { /* NEVER DO THIS */ }
+.calendar-container { /* NEVER DO THIS */ }
+.add-log-container { /* NEVER DO THIS */ }
+.search-container { /* NEVER DO THIS */ }
+.my-logs-container { /* NEVER DO THIS */ }
+```
+
+#### **Sub-Tab Styles (My Logs)**
+```css
+/* ✅ CORRECT: Sub-tab styles with double namespace */
+.my-logs-tab .hub-view .hub-container {
+    /* Hub view styles within My Logs tab */
+}
+
+.my-logs-tab .logs-list-view .logs-list-container {
+    /* Logs list view styles within My Logs tab */
+}
+
+.my-logs-tab .settings-view .settings-container {
+    /* Settings view styles within My Logs tab */
+}
+
+.my-logs-tab .travel-report-view .travel-report-container {
+    /* Travel report view styles within My Logs tab */
+}
+
+.my-logs-tab .profile-view .profile-container {
+    /* Profile view styles within My Logs tab */
+}
+
+.my-logs-tab .travel-collection-view .travel-collection-container {
+    /* Travel collection view styles within My Logs tab */
+}
+```
+
+#### **Component-Specific Styles**
+```css
+/* ✅ CORRECT: Component styles with proper namespace hierarchy */
+.search-tab .log-detail-header {
+    /* Search-specific log detail header */
+}
+
+.my-logs-tab .log-detail-container .log-detail-header {
+    /* My logs-specific log detail header */
+}
+
+.calendar-tab .calendar-grid {
+    /* Calendar-specific grid styles */
+}
+
+.home-tab .welcome-section {
+    /* Home-specific welcome section */
+}
+```
+
+## 📱 Responsive Design with Namespaces
+
+### **Mobile-First Approach**
+```css
+/* Mobile styles with namespace */
+.tab-name .component {
+    /* Mobile styles */
+    padding: var(--space-4);
+    font-size: var(--font-base);
+}
+
+/* Tablet styles with namespace */
+@media (min-width: 768px) {
+    .tab-name .component {
+        padding: var(--space-6);
+        font-size: var(--font-lg);
+    }
+}
+
+/* Desktop styles with namespace */
+@media (min-width: 1024px) {
+    .tab-name .component {
+        padding: var(--space-8);
+        font-size: var(--font-xl);
+    }
+}
+
+/* Large desktop styles with namespace */
+@media (min-width: 1440px) {
+    .tab-name .component {
+        padding: var(--space-10);
+        font-size: var(--font-2xl);
+    }
+}
+```
+
+### **Container System with Namespaces**
+```css
+/* Container system with namespace isolation */
+.tab-name .container {
+    width: var(--container-mobile);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+}
+
+@media (min-width: 768px) {
+    .tab-name .container { width: var(--container-tablet); }
+}
+
+@media (min-width: 1024px) {
+    .tab-name .container { width: var(--container-desktop-sm); }
+}
+
+@media (min-width: 1280px) {
+    .tab-name .container { width: var(--container-desktop-md); }
+}
+
+@media (min-width: 1440px) {
+    .tab-name .container { width: var(--container-desktop-lg); }
+}
+
+@media (min-width: 1600px) {
+    .tab-name .container { width: var(--container-desktop-xl); }
+}
+```
+
+## 🌙 Dark Mode with Namespaces
+
+### **Dark Mode Implementation**
+```css
+/* Light mode styles with namespace */
+.tab-name .component {
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    border: var(--border-light);
+}
+
+/* Dark mode media query with namespace */
+@media (prefers-color-scheme: dark) {
+    .tab-name .component {
+        background: var(--surface-secondary);
+        color: var(--text-secondary);
+        border: var(--border-medium);
+    }
+}
+
+/* Dark mode class override with namespace */
+.dark .tab-name .component {
+    background: var(--surface-secondary);
+    color: var(--text-secondary);
+    border: var(--border-medium);
+}
+```
+
+## 🚫 **FORBIDDEN PATTERNS**
+
+### **❌ STRICTLY PROHIBITED**
+```css
+/* ❌ NEVER: Un-namespaced page-specific styles */
+.home-container { /* FORBIDDEN */ }
+.calendar-container { /* FORBIDDEN */ }
+.log-detail-header { /* FORBIDDEN */ }
+
+/* ❌ NEVER: Global overrides in main.css */
+.some-global-class { /* FORBIDDEN in main.css */ }
+
+/* ❌ NEVER: Cross-tab style dependencies */
+.home-tab .calendar-container { /* FORBIDDEN */ }
+.search-tab .my-logs-container { /* FORBIDDEN */ }
+
+/* ❌ NEVER: Inconsistent namespace hierarchy */
+.tab-name .component .tab-name { /* FORBIDDEN */ }
+```
+
+### **❌ JavaScript Violations**
+```javascript
+// ❌ NEVER: Missing namespace class addition
+class HomeTab {
+    render(container) {
+        this.container = container;
+        // Missing: this.container.classList.add('home-tab');
+        // ... rest of render logic
+    }
+}
+
+// ❌ NEVER: Wrong namespace class
+class HomeTab {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('calendar-tab'); // WRONG!
+        // ... rest of render logic
+    }
+}
+```
+
+## ✅ **REQUIRED PATTERNS**
+
+### **✅ MANDATORY REQUIREMENTS**
+```css
+/* ✅ ALWAYS: Namespaced page-specific styles */
+.tab-name .component { /* REQUIRED */ }
+.tab-name .sub-tab-name .component { /* REQUIRED for sub-tabs */ }
+
+/* ✅ ALWAYS: Consistent namespace hierarchy */
+.tab-name .component .element { /* REQUIRED */ }
+```
+
+### **✅ JavaScript Requirements**
+```javascript
+// ✅ ALWAYS: Add namespace class in render method
+class TabName {
+    render(container) {
+        this.container = container;
+        this.container.classList.add('tab-name'); // REQUIRED
+        // ... rest of render logic
+    }
+}
+```
+
+## 🔍 **Validation Checklist**
+
+### **Before Adding ANY CSS:**
+1. **Is this for a specific tab?** → Add `.tab-name` prefix
+2. **Is this for a sub-tab?** → Add `.tab-name .sub-tab-name` prefix
+3. **Is this a global component?** → Place in `components/` directory
+4. **Is this a utility?** → Place in `utilities/` directory
+5. **Does this need isolation?** → Add appropriate namespace
+
+### **Before Adding ANY JavaScript:**
+1. **Is this a tab module?** → Add namespace class in render method
+2. **Is this a sub-tab module?** → Add both main and sub-tab namespace classes
+3. **Is this a component?** → No namespace required
+4. **Is this a utility?** → No namespace required
+
+## 📁 **File Organization with Namespaces**
+
+### **CSS File Structure**
+```
+styles/pages/
+├── home.css                    # .home-tab namespace
+├── add-log.css                 # .add-log-tab namespace
+├── calendar/                   # .calendar-tab namespace
+│   ├── calendar-base.css
+│   ├── calendar-responsive.css
+│   ├── calendar-dark-mode.css
+│   └── calendar-animations.css
+├── search/                     # .search-tab namespace
+│   ├── search.css
+│   ├── search-detail.css
+│   ├── search-responsive.css
+│   └── search-dark-mode.css
+├── my-logs/                    # .my-logs-tab namespace
+│   ├── base.css
+│   ├── log-views.css
+│   ├── settings.css
+│   └── charts.css
+└── travel-report/              # .travel-report-view namespace
+    ├── world-exploration.css
+    ├── heatmap.css
+    ├── basic-stats.css
+    ├── yearly-stats.css
+    ├── ranking.css
+    └── travel-report-section.css
+```
+
+### **JavaScript File Structure**
+```
+js/tabs/
+├── home.js                     # Adds 'home-tab' class
+├── add-log.js                  # Adds 'add-log-tab' class
+├── calendar.js                 # Adds 'calendar-tab' class
+├── search.js                   # Adds 'search-tab' class
+└── my-logs/                    # Adds 'my-logs-tab' class
+    ├── my-logs.js
+    └── views/
+        ├── HubView.js          # Adds 'hub-view' class
+        ├── LogsListView.js     # Adds 'logs-list-view' class
+        ├── SettingsView.js     # Adds 'settings-view' class
+        ├── TravelReportView.js # Adds 'travel-report-view' class
+        ├── ProfileView.js      # Adds 'profile-view' class
+        └── collections/
+            └── TravelCollectionView.js # Adds 'travel-collection-view' class
+```
+
+## 🚀 **Benefits of Namespace System**
+
+### **1. Complete Style Isolation**
+- Zero CSS conflicts between tabs
+- Independent style management
+- Safe parallel development
+- Easy debugging and maintenance
+
+### **2. Scalable Architecture**
+- Easy addition of new tabs
+- Consistent patterns
+- Future-proof design
+- Maintainable codebase
+
+### **3. Developer Experience**
+- Clear style boundaries
+- Predictable behavior
+- Easy to understand
+- Reduced cognitive load
+
+### **4. Performance Benefits**
+- Optimized CSS loading
+- Reduced specificity conflicts
+- Better browser performance
+- Improved rendering speed
+
+## 🔮 **Future Enhancements**
+
+### **Phase 1: Automated Validation**
+- CSS namespace linter rules
+- JavaScript namespace validation
+- Automated testing for namespace compliance
+- CI/CD integration
+
+### **Phase 2: Advanced Features**
+- Dynamic namespace generation
+- Namespace conflict detection
+- Automated namespace migration
+- Performance monitoring
+
+### **Phase 3: Developer Tools**
+- Namespace visualization
+- Style isolation testing
+- Automated documentation
+- Development debugging tools
+
+---
+
+**This namespace system ensures TravelLog maintains complete style isolation between tabs while providing a scalable and maintainable architecture for future development.**

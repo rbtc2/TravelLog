@@ -2,7 +2,7 @@
 
 /* 다크 모드 지원 (향후 확장) */
 @media (prefers-color-scheme: dark) {
-    .calendar-container {
+    .calendar-tab .calendar-container {
         background: #1a202c;
         color: #e2e8f0;
     }

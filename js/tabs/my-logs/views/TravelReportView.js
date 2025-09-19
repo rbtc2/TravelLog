@@ -52,6 +52,8 @@ class TravelReportView {
      */
     async render(container) {
         this.container = container;
+        // 트래블 리포트 뷰 CSS 네임스페이스 클래스 추가
+        this.container.classList.add('travel-report-view');
         this.stateManager.setLoading(true);
         
         try {

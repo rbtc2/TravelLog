@@ -129,8 +129,8 @@
         font-size: 12px;
     }
     
-    /* 모바일 로그 상세 화면 */
-    .log-detail-header {
+    /* 모바일 Search 탭 로그 상세 화면 */
+    .search-tab .log-detail-header {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
@@ -177,7 +177,7 @@
         font-size: 13px;
     }
     
-    .log-detail-header .back-btn {
+    .search-tab .log-detail-header .back-btn {
         padding: 10px 20px;
         font-size: 16px;
         width: 100%;
