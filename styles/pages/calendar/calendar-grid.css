@@ -137,9 +137,11 @@
 
 /* 오늘 날짜 */
 .calendar-day.today {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
     font-weight: var(--font-bold);
+    position: relative;
+    z-index: 2;
 }
 
 /* 다크모드 다른 달 날짜 */
@@ -155,12 +157,21 @@
 
 /* 다크모드 오늘 날짜 */
 .dark .calendar-day.today {
-    background: linear-gradient(135deg, #4dabf7 0%, #9775fa 100%);
-    color: white;
+    background: linear-gradient(135deg, #4dabf7 0%, #9775fa 100%) !important;
+    color: white !important;
+    position: relative;
+    z-index: 2;
+}
+
+.dark .calendar-day.today .day-number {
+    color: white !important;
+    font-weight: var(--font-bold);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .calendar-day.today:hover {
-    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%) !important;
+    color: white !important;
     transform: scale(1.05);
 }
 
@@ -217,8 +228,9 @@
 }
 
 .calendar-day.today .day-number {
-    color: white;
+    color: white !important;
     font-weight: var(--font-bold);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* 오늘 표시기 */
