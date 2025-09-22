@@ -14,7 +14,6 @@ import { EventManager } from '../../../modules/utils/event-manager.js';
 import { BasicStatsRenderer } from '../../../modules/travel-report/components/BasicStatsRenderer.js';
 import { TravelDNARenderer } from '../../../modules/travel-report/components/TravelDNARenderer.js';
 import { HeatmapRenderer } from '../../../modules/travel-report/components/HeatmapRenderer.js';
-import { ChartRenderer } from '../../../modules/travel-report/components/ChartRenderer.js';
 import { InsightsRenderer } from '../../../modules/travel-report/components/InsightsRenderer.js';
 import { YearlyStatsRenderer } from '../../../modules/travel-report/components/YearlyStatsRenderer.js';
 import { WorldExplorationRenderer } from '../../../modules/travel-report/components/WorldExplorationRenderer.js';
@@ -32,15 +31,13 @@ class TravelReportView {
         this.stateManager = new TravelReportStateManager();
         this.htmlRenderer = new TravelReportHTMLRenderer();
         this.eventHandler = new TravelReportEventHandler(controller, {
-            onNavigateBack: this.onNavigateBack.bind(this),
-            onChartTabChange: this.onChartTabChange.bind(this)
+            onNavigateBack: this.onNavigateBack.bind(this)
         });
         
         // 렌더러 모듈들
         this.basicStatsRenderer = new BasicStatsRenderer(controller);
         this.travelDNARenderer = new TravelDNARenderer(controller);
         this.heatmapRenderer = new HeatmapRenderer(controller);
-        this.chartRenderer = new ChartRenderer(controller);
         this.insightsRenderer = new InsightsRenderer(controller);
         this.yearlyStatsRenderer = new YearlyStatsRenderer(controller);
         this.worldExplorationRenderer = new WorldExplorationRenderer(controller);
@@ -94,7 +91,6 @@ class TravelReportView {
             await this.renderTravelDNA(sharedData);
             await this.renderYearlyStats(sharedData);
             await this.renderInitialHeatmap(sharedData);
-            await this.renderCharts(sharedData);
             await this.renderInsights(sharedData);
             
         } catch (error) {
@@ -286,16 +282,6 @@ class TravelReportView {
         }
     }
 
-    /**
-     * 차트를 렌더링합니다
-     * @param {Object} sharedData - 공유 데이터
-     */
-    async renderCharts(sharedData) {
-        const container = this.container.querySelector('#chart-content');
-        if (container) {
-            await this.chartRenderer.render(container, sharedData);
-        }
-    }
 
     /**
      * 인사이트를 렌더링합니다
@@ -315,13 +301,6 @@ class TravelReportView {
         this.dispatchEvent('navigate', { view: 'hub' });
     }
 
-    /**
-     * 차트 탭 변경 이벤트 처리
-     * @param {string} chartType - 차트 타입
-     */
-    onChartTabChange(chartType) {
-        this.stateManager.setCurrentChartTab(chartType);
-    }
 
     /**
      * 커스텀 이벤트를 발생시킵니다
@@ -373,7 +352,7 @@ class TravelReportView {
         // 렌더러 모듈들 정리
         const renderers = [
             'basicStatsRenderer', 'travelDNARenderer', 'heatmapRenderer', 
-            'chartRenderer', 'insightsRenderer', 'yearlyStatsRenderer'
+            'insightsRenderer', 'yearlyStatsRenderer'
         ];
         
         renderers.forEach(rendererName => {

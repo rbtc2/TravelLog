@@ -30,7 +30,6 @@ export class TravelReportHTMLRenderer {
                 ${this.getTravelDNASectionHTML()}
                 ${this.getYearlyStatsSectionHTML()}
                 ${this.getHeatmapSectionHTML()}
-                ${this.getChartsSectionHTML()}
                 ${this.getInsightsSectionHTML()}
             </div>
         `;
@@ -171,85 +170,6 @@ export class TravelReportHTMLRenderer {
         `;
     }
 
-    /**
-     * 차트 섹션 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getChartsSectionHTML() {
-        return `
-            <div class="hub-section charts-section">
-                <div class="section-header">
-                    <h2 class="section-title">📊 상세 분석 차트</h2>
-                </div>
-                <div class="charts-content">
-                    <div class="chart-tabs">
-                        <button class="chart-tab active" data-chart="country-ranking">국가 랭킹</button>
-                        <button class="chart-tab" data-chart="city-ranking">도시 랭킹</button>
-                        <button class="chart-tab" data-chart="heatmap">히트맵</button>
-                    </div>
-                    <div class="chart-container">
-                        <div class="chart-content" id="chart-content">
-                            ${this.getCountryRankingChartHTML()}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * 국가 랭킹 차트 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getCountryRankingChartHTML() {
-        return `
-            <div class="chart-item country-ranking-chart">
-                <h3 class="chart-title">🏆 방문 국가 랭킹</h3>
-                <div class="chart-description">
-                    <p>가장 많이 방문한 국가들의 순위입니다.</p>
-                </div>
-                <div class="chart-visualization" id="country-ranking-chart">
-                    <!-- 국가 랭킹 차트가 여기에 렌더링됩니다 -->
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * 도시 랭킹 차트 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getCityRankingChartHTML() {
-        return `
-            <div class="chart-item city-ranking-chart">
-                <h3 class="chart-title">🏙️ 방문 도시 랭킹</h3>
-                <div class="chart-description">
-                    <p>가장 많이 방문한 도시들의 순위입니다.</p>
-                </div>
-                <div class="chart-visualization" id="city-ranking-chart">
-                    <!-- 도시 랭킹 차트가 여기에 렌더링됩니다 -->
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * 히트맵 차트 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getHeatmapChartHTML() {
-        return `
-            <div class="chart-item heatmap-chart">
-                <h3 class="chart-title">🗺️ 여행 히트맵</h3>
-                <div class="chart-description">
-                    <p>방문한 국가들의 지리적 분포를 시각화합니다.</p>
-                </div>
-                <div class="chart-visualization" id="heatmap-chart">
-                    <!-- 히트맵 차트가 여기에 렌더링됩니다 -->
-                </div>
-            </div>
-        `;
-    }
 
     /**
      * 인사이트 섹션 HTML을 생성합니다

@@ -18,7 +18,6 @@ export class TravelReportStateManager {
     constructor() {
         this.state = {
             isInitialized: false,
-            currentChartTab: 'country-ranking',
             isLoading: false,
             error: null,
             activeFeatures: new Set()
@@ -34,7 +33,7 @@ export class TravelReportStateManager {
      */
     validateDependencies() {
         // 1. 기능 활성화 상태 검증
-        const requiredFeatures = ['travelDNA', 'yearlyStats', 'basicStats', 'heatmap', 'charts', 'insights'];
+        const requiredFeatures = ['travelDNA', 'yearlyStats', 'basicStats', 'heatmap', 'insights'];
         const inactiveFeatures = requiredFeatures.filter(feature => 
             !FeatureManager.isFeatureActive(feature)
         );
@@ -49,7 +48,6 @@ export class TravelReportStateManager {
             '.yearly-stats-section', 
             '.basic-stats-section',
             '.heatmap-section',
-            '.charts-section',
             '.insights-section'
         ];
         
@@ -120,13 +118,6 @@ export class TravelReportStateManager {
         this.setStateValue('error', error);
     }
 
-    /**
-     * 현재 차트 탭을 설정합니다
-     * @param {string} chartTab - 차트 탭 이름
-     */
-    setCurrentChartTab(chartTab) {
-        this.setStateValue('currentChartTab', chartTab);
-    }
 
     /**
      * 기능 활성화 상태를 설정합니다

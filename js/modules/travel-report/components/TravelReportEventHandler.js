@@ -4,7 +4,6 @@
  * 🎯 책임:
  * - 트래블 레포트 관련 모든 이벤트 처리
  * - 네비게이션 이벤트 처리
- * - 차트 탭 전환 이벤트 처리
  * - 이벤트 바인딩 및 정리
  * 
  * @class TravelReportEventHandler
@@ -22,7 +21,6 @@ export class TravelReportEventHandler {
         // 콜백 함수들
         this.callbacks = {
             onNavigateBack: callbacks.onNavigateBack || (() => {}),
-            onChartTabChange: callbacks.onChartTabChange || (() => {}),
             ...callbacks
         };
     }
@@ -35,7 +33,6 @@ export class TravelReportEventHandler {
         this.container = container;
         
         this.bindNavigationEvents();
-        this.bindChartTabEvents();
     }
 
     /**
@@ -48,15 +45,6 @@ export class TravelReportEventHandler {
         }
     }
 
-    /**
-     * 차트 탭 이벤트를 바인딩합니다
-     */
-    bindChartTabEvents() {
-        const chartTabs = this.container.querySelectorAll('.chart-tab');
-        chartTabs.forEach(tab => {
-            this.eventManager.add(tab, 'click', this.handleChartTabClick.bind(this));
-        });
-    }
 
     /**
      * 뒤로 가기 버튼 클릭 처리
@@ -67,59 +55,6 @@ export class TravelReportEventHandler {
         this.callbacks.onNavigateBack();
     }
 
-    /**
-     * 차트 탭 클릭 처리
-     * @param {Event} e - 클릭 이벤트
-     */
-    async handleChartTabClick(e) {
-        const clickedTab = e.currentTarget;
-        const chartType = clickedTab.dataset.chart;
-        
-        if (!chartType) return;
-
-        // 모든 탭에서 active 클래스 제거
-        const allTabs = this.container.querySelectorAll('.chart-tab');
-        allTabs.forEach(tab => tab.classList.remove('active'));
-        
-        // 클릭된 탭에 active 클래스 추가
-        clickedTab.classList.add('active');
-        
-        // 차트 콘텐츠 업데이트
-        await this.updateChartContent(chartType);
-        
-        // 콜백 호출
-        this.callbacks.onChartTabChange(chartType);
-    }
-
-    /**
-     * 차트 콘텐츠를 업데이트합니다
-     * @param {string} chartType - 차트 타입
-     */
-    async updateChartContent(chartType) {
-        const chartContent = this.container.querySelector('#chart-content');
-        if (!chartContent) return;
-
-        try {
-            const { TravelReportHTMLRenderer } = await import('./TravelReportHTMLRenderer.js');
-            const htmlRenderer = new TravelReportHTMLRenderer();
-            
-            switch (chartType) {
-                case 'country-ranking':
-                    chartContent.innerHTML = htmlRenderer.getCountryRankingChartHTML();
-                    break;
-                case 'city-ranking':
-                    chartContent.innerHTML = htmlRenderer.getCityRankingChartHTML();
-                    break;
-                case 'heatmap':
-                    chartContent.innerHTML = htmlRenderer.getHeatmapChartHTML();
-                    break;
-                default:
-                    console.warn('알 수 없는 차트 타입:', chartType);
-            }
-        } catch (error) {
-            console.error('차트 콘텐츠 업데이트 오류:', error);
-        }
-    }
 
     /**
      * 커스텀 이벤트를 발생시킵니다
