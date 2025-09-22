@@ -65,18 +65,13 @@ class InsightsRenderer {
 
 
     /**
-     * 실제 데이터 기반 인사이트를 생성합니다 (향후 구현)
+     * 실제 데이터 기반 인사이트를 생성합니다
      * @returns {Array} 실제 데이터 기반 인사이트
      */
     generateRealInsights() {
-        // TODO: 실제 여행 데이터를 분석하여 인사이트 생성
-        // - 여행 패턴 분석
-        // - 계절별 여행 빈도 분석
-        // - 목적별 여행 패턴 분석
-        // - 체류 기간 트렌드 분석
-        // - 국가/도시 선호도 분석
-        
         const logs = this.controller.getAllLogs();
+        
+        // 일정이 없는 경우
         if (!logs || logs.length === 0) {
             return [{
                 icon: '💡',
@@ -84,11 +79,88 @@ class InsightsRenderer {
             }];
         }
 
-        // 현재는 기본 스켈레톤 값만 반환 (향후 고도화 예정)
-        return [{
-            icon: '💡',
-            text: '일정이 추가되면 인사이트를 분석합니다.'
-        }];
+        // 일정이 있는 경우 - 기본 분석 수행
+        return this.generateBasicInsights(logs);
+    }
+
+    /**
+     * 기본 인사이트를 생성합니다 (Phase 1)
+     * 향후 확장 시 별도 파일로 분리 예정
+     * @param {Array} logs - 여행 로그 배열
+     * @returns {Array} 기본 인사이트 배열
+     */
+    generateBasicInsights(logs) {
+        const insights = [];
+        
+        // 1. 여행 시작 연도 분석
+        const startYear = this.getTravelStartYear(logs);
+        if (startYear) {
+            insights.push({
+                icon: '🚀',
+                text: `${startYear}년부터 여행을 시작하셨네요!`
+            });
+        }
+        
+        // 2. 총 여행 일수 분석
+        const totalDays = this.getTotalTravelDays(logs);
+        if (totalDays > 0) {
+            insights.push({
+                icon: '📅',
+                text: `총 ${totalDays}일간 여행하셨어요!`
+            });
+        }
+        
+        // 향후 확장을 위한 플레이스홀더
+        // TODO: Phase 2에서 추가될 분석들
+        // - 국가 수 분석
+        // - 가장 많이 방문한 국가
+        // - 계절별 여행 패턴
+        // - 연도별 트렌드
+        
+        return insights;
+    }
+
+    /**
+     * 여행 시작 연도를 분석합니다
+     * @param {Array} logs - 여행 로그 배열
+     * @returns {string|null} 시작 연도
+     */
+    getTravelStartYear(logs) {
+        if (!logs || logs.length === 0) return null;
+        
+        const years = logs
+            .map(log => new Date(log.startDate).getFullYear())
+            .filter(year => !isNaN(year))
+            .sort((a, b) => a - b);
+        
+        return years.length > 0 ? years[0] : null;
+    }
+
+    /**
+     * 총 여행 일수를 계산합니다
+     * @param {Array} logs - 여행 로그 배열
+     * @returns {number} 총 여행 일수
+     */
+    getTotalTravelDays(logs) {
+        if (!logs || logs.length === 0) return 0;
+        
+        return logs.reduce((total, log) => {
+            // days 필드가 있으면 사용, 없으면 계산
+            if (log.days && typeof log.days === 'number') {
+                return total + log.days;
+            }
+            
+            // startDate와 endDate로 계산
+            if (log.startDate && log.endDate) {
+                const start = new Date(log.startDate);
+                const end = new Date(log.endDate);
+                const diffTime = end - start;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return total + (diffDays > 0 ? diffDays : 1);
+            }
+            
+            return total;
+        }, 0);
     }
 
     /**
