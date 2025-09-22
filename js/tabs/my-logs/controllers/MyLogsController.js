@@ -20,7 +20,7 @@ import { CountryAnalysisService } from '../../../modules/services/country-analys
 import { YearlyStatsService } from '../../../modules/services/yearly-stats-service.js';
 import { DemoData } from '../../../modules/utils/demo-data.js';
 import { countriesManager } from '../../../data/countries-manager.js';
-import { TravelCollectionView } from '../views/index.js';
+import { TravelCollectionView, TravelReportView } from '../views/index.js';
 
 
 // 컬렉션 모듈들
@@ -60,6 +60,7 @@ class MyLogsController {
         
         // 뷰 인스턴스들 초기화
         this.travelCollectionView = new TravelCollectionView(this);
+        this.travelReportView = new TravelReportView(this);
         
         this.isInitialized = false;
         
@@ -543,6 +544,33 @@ class MyLogsController {
     cleanupTravelCollection() {
         if (this.travelCollectionView) {
             this.travelCollectionView.cleanup();
+        }
+    }
+
+    /**
+     * 트래블 레포트를 렌더링합니다
+     * @param {HTMLElement} container - 렌더링할 컨테이너
+     */
+    async renderTravelReport(container) {
+        try {
+            if (!this.isInitialized) {
+                await this.initialize();
+            }
+            
+            // 트래블 레포트 뷰 렌더링
+            await this.travelReportView.render(container);
+        } catch (error) {
+            console.error('트래블 레포트 렌더링 실패:', error);
+            container.innerHTML = '<div class="error-message">트래블 레포트를 불러올 수 없습니다.</div>';
+        }
+    }
+
+    /**
+     * 트래블 레포트 뷰 정리
+     */
+    cleanupTravelReport() {
+        if (this.travelReportView) {
+            this.travelReportView.cleanup();
         }
     }
 

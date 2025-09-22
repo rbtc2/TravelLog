@@ -656,7 +656,7 @@
 }
 
 /* ===== 인사이트 아이템 카드 ===== */
-.insight-item {
+.travel-report-view .insight-item {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-sm);
@@ -664,18 +664,18 @@
     border-bottom: 1px solid var(--gray-100);
 }
 
-.insight-item:last-child {
+.travel-report-view .insight-item:last-child {
     border-bottom: none;
 }
 
-.insight-icon {
+.travel-report-view .insight-icon {
     font-size: var(--font-base);
     color: var(--yellow-400);
     flex-shrink: 0;
     margin-top: 2px;
 }
 
-.insight-text {
+.travel-report-view .insight-text {
     font-size: var(--font-sm);
     color: var(--text-muted);
     line-height: 1.5;
@@ -804,12 +804,12 @@
         height: 20px;
     }
     
-    .insight-item {
+    .travel-report-view .insight-item {
         padding: var(--spacing-xs) 0;
         gap: var(--spacing-xs);
     }
     
-    .insight-text {
+    .travel-report-view .insight-text {
         font-size: 14px;
     }
     

@@ -46,20 +46,21 @@ class InsightsRenderer {
      * 인사이트를 렌더링합니다
      */
     renderInsights() {
-        if (!this.container) return;
+        if (!this.container) {
+            console.warn('InsightsRenderer: 컨테이너가 없습니다.');
+            return;
+        }
 
         // 실제 데이터 기반 인사이트 생성 (백오프로 하드코딩된 데이터)
         const insights = this.generateRealInsights();
         
-        const insightsContent = this.container.querySelector('.insights-content');
-        if (insightsContent) {
-            insightsContent.innerHTML = insights.map(insight => `
-                <div class="insight-item">
-                    <div class="insight-icon">${insight.icon}</div>
-                    <div class="insight-text">${insight.text}</div>
-                </div>
-            `).join('');
-        }
+        // 컨테이너 자체에 직접 렌더링 (ID 선택자 문제 해결)
+        this.container.innerHTML = insights.map(insight => `
+            <div class="insight-item">
+                <div class="insight-icon">${insight.icon}</div>
+                <div class="insight-text">${insight.text}</div>
+            </div>
+        `).join('');
     }
 
 
@@ -79,33 +80,15 @@ class InsightsRenderer {
         if (!logs || logs.length === 0) {
             return [{
                 icon: '💡',
-                text: '아직 여행 기록이 없어서 인사이트를 제공할 수 없습니다.'
+                text: '일정이 추가되면 인사이트를 분석합니다.'
             }];
         }
 
-        // 실제 분석 로직은 향후 구현, 현재는 하드코딩된 데이터 반환
-        return [
-            {
-                icon: '💡',
-                text: '주로 3–4월에 여행을 떠나시네요!'
-            },
-            {
-                icon: '💡',
-                text: '출장보다 여행을 위한 방문이 많아요'
-            },
-            {
-                icon: '💡',
-                text: '평균 체류기간이 늘어나고 있어요 📈'
-            },
-            {
-                icon: '💡',
-                text: '일본을 정말 좋아하시는군요! 🇯🇵'
-            },
-            {
-                icon: '💡',
-                text: '가을철 여행 빈도가 점점 증가하고 있어요'
-            }
-        ];
+        // 현재는 기본 스켈레톤 값만 반환 (향후 고도화 예정)
+        return [{
+            icon: '💡',
+            text: '일정이 추가되면 인사이트를 분석합니다.'
+        }];
     }
 
     /**
