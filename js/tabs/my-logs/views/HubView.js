@@ -305,6 +305,11 @@ class HubView {
                         
                         <div class="hamburger-menu-section">
                             <h3 class="hamburger-menu-section-title">지원</h3>
+                            <button class="hamburger-menu-item" id="menu-premium">
+                                <span class="hamburger-menu-item-icon">⭐</span>
+                                <span class="hamburger-menu-item-text">프리미엄 모드</span>
+                                <span class="hamburger-menu-item-arrow">▶</span>
+                            </button>
                             <button class="hamburger-menu-item" id="menu-support">
                                 <span class="hamburger-menu-item-icon">❓</span>
                                 <span class="hamburger-menu-item-text">서포트</span>
@@ -353,6 +358,7 @@ class HubView {
         // 메뉴 아이템들
         const profileBtn = document.getElementById('menu-profile');
         const settingsBtn = document.getElementById('menu-settings');
+        const premiumBtn = document.getElementById('menu-premium');
         const supportBtn = document.getElementById('menu-support');
         const logoutBtn = document.getElementById('menu-logout');
         
@@ -367,6 +373,13 @@ class HubView {
             this.eventManager.add(settingsBtn, 'click', () => {
                 this.hideHamburgerMenu();
                 this.onNavigateToSettings();
+            });
+        }
+        
+        if (premiumBtn) {
+            this.eventManager.add(premiumBtn, 'click', () => {
+                this.hideHamburgerMenu();
+                this.onNavigateToPremium();
             });
         }
         
@@ -390,6 +403,16 @@ class HubView {
      */
     onNavigateToProfile() {
         this.dispatchEvent('navigate', { view: 'profile' });
+    }
+
+    /**
+     * 프리미엄 모드로 이동
+     */
+    onNavigateToPremium() {
+        this.dispatchEvent('showMessage', {
+            type: 'info',
+            message: '프리미엄 모드 기능은 추후 구현 예정입니다.'
+        });
     }
 
     /**
