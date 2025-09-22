@@ -81,89 +81,230 @@ class TravelReportView {
     }
 
     /**
-     * 모든 섹션을 렌더링합니다
+     * 모든 섹션을 렌더링합니다 (중앙 집중식 데이터 관리)
      */
     async renderAllSections() {
-        const renderPromises = [
-            this.renderWorldExploration(),
-            this.renderBasicStats(),
-            this.renderTravelDNA(),
-            this.renderYearlyStats(),
-            this.renderInitialHeatmap(),
-            this.renderCharts(),
-            this.renderInsights()
-        ];
+        try {
+            // 1. 데이터를 한 번만 로드 (메모리 효율성)
+            const sharedData = await this.loadSharedData();
+            
+            // 2. 각 섹션을 순차적으로 렌더링 (데이터 공유)
+            await this.renderWorldExploration(sharedData);
+            await this.renderBasicStats(sharedData);
+            await this.renderTravelDNA(sharedData);
+            await this.renderYearlyStats(sharedData);
+            await this.renderInitialHeatmap(sharedData);
+            await this.renderCharts(sharedData);
+            await this.renderInsights(sharedData);
+            
+        } catch (error) {
+            console.error('TravelReportView: 섹션 렌더링 중 오류:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 공유 데이터를 로드합니다 (한 번만 로드하여 메모리 효율성 확보)
+     * @returns {Object} 공유 데이터 객체
+     */
+    async loadSharedData() {
+        try {
+            const logs = this.controller.getAllLogs();
+            
+            // 기본 통계 계산 (한 번만)
+            const basicStats = this.calculateBasicStats(logs);
+            
+            // 연도별 통계 계산 (한 번만)
+            const currentYear = new Date().getFullYear().toString();
+            const yearlyStats = this.controller.getYearlyStatsAnalysis(currentYear);
+            
+            return {
+                logs: logs,
+                basicStats: basicStats,
+                yearlyStats: yearlyStats,
+                currentYear: currentYear
+            };
+        } catch (error) {
+            console.error('TravelReportView: 공유 데이터 로드 실패:', error);
+            return {
+                logs: [],
+                basicStats: this.getEmptyBasicStats(),
+                yearlyStats: { currentStats: this.getEmptyYearlyStats() },
+                currentYear: new Date().getFullYear().toString()
+            };
+        }
+    }
+
+    /**
+     * 기본 통계를 계산합니다 (중복 계산 방지)
+     * @param {Array} logs - 여행 로그 배열
+     * @returns {Object} 기본 통계
+     */
+    calculateBasicStats(logs) {
+        if (!logs || logs.length === 0) {
+            return this.getEmptyBasicStats();
+        }
+
+        // 국가 수 계산
+        const uniqueCountries = new Set(logs.map(log => log.country)).size;
         
-        await Promise.all(renderPromises);
+        // 도시 수 계산
+        const uniqueCities = new Set(logs.map(log => log.city)).size;
+        
+        // 총 여행 일수 계산 (InsightsRenderer와 동일한 로직)
+        const totalDays = this.calculateTotalTravelDays(logs);
+        
+        // 평균 만족도 계산
+        const ratings = logs.map(log => log.rating || 0).filter(rating => rating > 0);
+        const averageRating = ratings.length > 0 ? 
+            ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : 0;
+
+        return {
+            totalTrips: logs.length,
+            uniqueCountries: uniqueCountries,
+            uniqueCities: uniqueCities,
+            totalTravelDays: totalDays,
+            averageRating: averageRating
+        };
+    }
+
+    /**
+     * 총 여행 일수를 계산합니다 (InsightsRenderer와 동일한 로직)
+     * @param {Array} logs - 여행 로그 배열
+     * @returns {number} 총 여행 일수
+     */
+    calculateTotalTravelDays(logs) {
+        if (!logs || logs.length === 0) return 0;
+        
+        return logs.reduce((total, log) => {
+            // days 필드가 있으면 사용, 없으면 계산
+            if (log.days && typeof log.days === 'number') {
+                return total + log.days;
+            }
+            
+            // startDate와 endDate로 계산 (시작일과 종료일 포함)
+            if (log.startDate && log.endDate) {
+                const start = new Date(log.startDate);
+                const end = new Date(log.endDate);
+                
+                // 유효한 날짜인지 확인
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                    return total;
+                }
+                
+                // 시작일과 종료일 포함하여 계산
+                const diffTime = end.getTime() - start.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                return total + (diffDays > 0 ? diffDays : 0);
+            }
+            
+            return total;
+        }, 0);
+    }
+
+    /**
+     * 빈 기본 통계를 반환합니다
+     * @returns {Object} 빈 기본 통계
+     */
+    getEmptyBasicStats() {
+        return {
+            totalTrips: 0,
+            uniqueCountries: 0,
+            uniqueCities: 0,
+            totalTravelDays: 0,
+            averageRating: 0
+        };
+    }
+
+    /**
+     * 빈 연도별 통계를 반환합니다
+     * @returns {Object} 빈 연도별 통계
+     */
+    getEmptyYearlyStats() {
+        return {
+            totalTrips: 0,
+            uniqueCountries: 0,
+            uniqueCities: 0,
+            totalTravelDays: 0,
+            averageTravelDays: 0,
+            averageRating: 0
+        };
     }
 
     /**
      * 전세계 탐험 현황을 렌더링합니다
+     * @param {Object} sharedData - 공유 데이터
      */
-    async renderWorldExploration() {
+    async renderWorldExploration(sharedData) {
         const container = this.container.querySelector('#world-exploration-section');
         if (container) {
-            await this.worldExplorationRenderer.render(container);
+            await this.worldExplorationRenderer.render(container, sharedData);
         }
     }
 
     /**
      * 기본 통계를 렌더링합니다
+     * @param {Object} sharedData - 공유 데이터
      */
-    async renderBasicStats() {
+    async renderBasicStats(sharedData) {
         const container = this.container.querySelector('#basic-stats-grid');
         if (container) {
-            await this.basicStatsRenderer.render(container);
+            await this.basicStatsRenderer.render(container, sharedData);
         }
     }
 
     /**
      * 여행 DNA를 렌더링합니다
+     * @param {Object} sharedData - 공유 데이터
      */
-    async renderTravelDNA() {
+    async renderTravelDNA(sharedData) {
         const container = this.container.querySelector('.travel-dna-section .dna-content');
         if (container) {
-            await this.travelDNARenderer.render(container);
+            await this.travelDNARenderer.render(container, sharedData);
         }
     }
 
     /**
      * 연도별 통계를 렌더링합니다
+     * @param {Object} sharedData - 공유 데이터
      */
-    async renderYearlyStats() {
+    async renderYearlyStats(sharedData) {
         const container = this.container.querySelector('#yearly-stats-content');
         if (container) {
-            await this.yearlyStatsRenderer.render(container);
+            await this.yearlyStatsRenderer.render(container, sharedData);
         }
     }
 
     /**
      * 히트맵을 렌더링합니다
+     * @param {Object} sharedData - 공유 데이터
      */
-    async renderInitialHeatmap() {
+    async renderInitialHeatmap(sharedData) {
         const container = this.container.querySelector('#heatmap-grid');
         if (container) {
-            await this.heatmapRenderer.render(container);
+            await this.heatmapRenderer.render(container, sharedData);
         }
     }
 
     /**
      * 차트를 렌더링합니다
+     * @param {Object} sharedData - 공유 데이터
      */
-    async renderCharts() {
+    async renderCharts(sharedData) {
         const container = this.container.querySelector('#chart-content');
         if (container) {
-            await this.chartRenderer.render(container);
+            await this.chartRenderer.render(container, sharedData);
         }
     }
 
     /**
      * 인사이트를 렌더링합니다
+     * @param {Object} sharedData - 공유 데이터
      */
-    async renderInsights() {
+    async renderInsights(sharedData) {
         const container = this.container.querySelector('#insights-content');
         if (container) {
-            await this.insightsRenderer.render(container);
+            await this.insightsRenderer.render(container, sharedData);
         }
     }
 

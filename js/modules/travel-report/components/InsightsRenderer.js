@@ -22,8 +22,9 @@ class InsightsRenderer {
     /**
      * 인사이트 섹션을 렌더링합니다
      * @param {HTMLElement} container - 렌더링할 컨테이너
+     * @param {Object} sharedData - 공유 데이터 (메모리 효율성을 위해)
      */
-    render(container) {
+    render(container, sharedData = null) {
         try {
             this.container = container;
             
@@ -32,7 +33,13 @@ class InsightsRenderer {
                 return;
             }
 
-            this.renderInsights();
+            // 공유 데이터가 있으면 사용, 없으면 기존 방식으로 로드
+            if (sharedData) {
+                this.renderInsightsWithSharedData(sharedData);
+            } else {
+                this.renderInsights();
+            }
+            
             this.bindEvents();
             
             console.log('InsightsRenderer: 인사이트 렌더링 완료');
@@ -43,7 +50,7 @@ class InsightsRenderer {
     }
 
     /**
-     * 인사이트를 렌더링합니다
+     * 인사이트를 렌더링합니다 (기존 방식 - 호환성 유지)
      */
     renderInsights() {
         if (!this.container) {
@@ -61,6 +68,84 @@ class InsightsRenderer {
                 <div class="insight-text">${insight.text}</div>
             </div>
         `).join('');
+    }
+
+    /**
+     * 공유 데이터를 사용하여 인사이트를 렌더링합니다 (메모리 효율성)
+     * @param {Object} sharedData - 공유 데이터
+     */
+    renderInsightsWithSharedData(sharedData) {
+        if (!this.container) {
+            console.warn('InsightsRenderer: 컨테이너가 없습니다.');
+            return;
+        }
+
+        // 공유 데이터를 사용하여 인사이트 생성 (중복 계산 방지)
+        const insights = this.generateInsightsFromSharedData(sharedData);
+        
+        // 컨테이너 자체에 직접 렌더링
+        this.container.innerHTML = insights.map(insight => `
+            <div class="insight-item">
+                <div class="insight-icon">${insight.icon}</div>
+                <div class="insight-text">${insight.text}</div>
+            </div>
+        `).join('');
+    }
+
+    /**
+     * 공유 데이터를 사용하여 인사이트를 생성합니다 (메모리 효율성)
+     * @param {Object} sharedData - 공유 데이터
+     * @returns {Array} 인사이트 배열
+     */
+    generateInsightsFromSharedData(sharedData) {
+        const { logs, basicStats } = sharedData;
+        
+        // 일정이 없는 경우
+        if (!logs || logs.length === 0) {
+            return [{
+                icon: '💡',
+                text: '일정이 추가되면 인사이트를 분석합니다.'
+            }];
+        }
+
+        // 일정이 있는 경우 - 공유 데이터 사용 (중복 계산 방지)
+        return this.generateBasicInsightsFromSharedData(logs, basicStats);
+    }
+
+    /**
+     * 공유 데이터를 사용하여 기본 인사이트를 생성합니다 (중복 계산 방지)
+     * @param {Array} logs - 여행 로그 배열
+     * @param {Object} basicStats - 기본 통계 (이미 계산됨)
+     * @returns {Array} 기본 인사이트 배열
+     */
+    generateBasicInsightsFromSharedData(logs, basicStats) {
+        const insights = [];
+        
+        // 1. 여행 시작 연도 분석 (기존 로직 유지)
+        const startYear = this.getTravelStartYear(logs);
+        if (startYear) {
+            insights.push({
+                icon: '🚀',
+                text: `${startYear}년부터 여행을 시작하셨네요!`
+            });
+        }
+        
+        // 2. 총 여행 일수 분석 (공유 데이터 사용 - 중복 계산 방지)
+        if (basicStats.totalTravelDays > 0) {
+            insights.push({
+                icon: '📅',
+                text: `총 ${basicStats.totalTravelDays}일간 여행하셨어요!`
+            });
+        }
+        
+        // 향후 확장을 위한 플레이스홀더
+        // TODO: Phase 2에서 추가될 분석들
+        // - 국가 수 분석 (basicStats.uniqueCountries 사용)
+        // - 가장 많이 방문한 국가
+        // - 계절별 여행 패턴
+        // - 연도별 트렌드
+        
+        return insights;
     }
 
 
@@ -137,7 +222,7 @@ class InsightsRenderer {
     }
 
     /**
-     * 총 여행 일수를 계산합니다
+     * 총 여행 일수를 계산합니다 (시작일과 종료일 포함)
      * @param {Array} logs - 여행 로그 배열
      * @returns {number} 총 여행 일수
      */
@@ -150,13 +235,20 @@ class InsightsRenderer {
                 return total + log.days;
             }
             
-            // startDate와 endDate로 계산
+            // startDate와 endDate로 계산 (시작일과 종료일 포함)
             if (log.startDate && log.endDate) {
                 const start = new Date(log.startDate);
                 const end = new Date(log.endDate);
-                const diffTime = end - start;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                return total + (diffDays > 0 ? diffDays : 1);
+                
+                // 유효한 날짜인지 확인
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                    return total;
+                }
+                
+                // 시작일과 종료일 포함하여 계산 (YearlyStatsService와 동일한 로직)
+                const diffTime = end.getTime() - start.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                return total + (diffDays > 0 ? diffDays : 0);
             }
             
             return total;
