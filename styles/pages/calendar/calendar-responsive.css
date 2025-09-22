@@ -81,7 +81,22 @@
     }
     
     .current-month {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
+    }
+    
+    .current-year {
+        font-size: 0.8rem;
+    }
+    
+    .date-picker-trigger {
+        padding: 6px 12px;
+        min-height: 36px;
+    }
+    
+    .date-picker-icon {
+        font-size: 10px;
+        top: 4px;
+        right: 8px;
     }
     
     .calendar-day {
@@ -191,19 +206,19 @@
     
     .calendar-details {
         padding: 12px;
-        min-height: 150px;
+        min-height: 100px;
     }
     
     .placeholder-icon {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
     
     .placeholder-title {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     
     .placeholder-description {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
 }
 
