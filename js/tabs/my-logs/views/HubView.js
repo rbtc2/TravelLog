@@ -16,6 +16,7 @@ class HubView {
         this.eventManager = new EventManager();
         this.container = null;
         this.isLoggingOut = false;
+        this.scrollPosition = undefined;
     }
 
     /**
@@ -237,6 +238,13 @@ class HubView {
         // 기존 메뉴가 있다면 제거
         this.hideHamburgerMenu();
         
+        // 현재 스크롤 위치 저장
+        this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // body 스크롤 비활성화
+        document.body.classList.add('hamburger-menu-open');
+        document.body.style.top = `-${this.scrollPosition}px`;
+        
         // 햄버거 메뉴 HTML 생성
         const menuHTML = this.getHamburgerMenuHTML();
         
@@ -269,10 +277,20 @@ class HubView {
             overlay.classList.remove('show');
             menu.classList.remove('show');
             
-            // 애니메이션 완료 후 DOM에서 제거
+            // 애니메이션 완료 후 DOM에서 제거 및 스크롤 복원
             setTimeout(() => {
                 if (overlay && overlay.parentNode) {
                     overlay.parentNode.removeChild(overlay);
+                }
+                
+                // body 스크롤 복원
+                document.body.classList.remove('hamburger-menu-open');
+                document.body.style.top = '';
+                
+                // 스크롤 위치 복원
+                if (this.scrollPosition !== undefined) {
+                    window.scrollTo(0, this.scrollPosition);
+                    this.scrollPosition = undefined;
                 }
             }, 300);
         }
@@ -355,6 +373,13 @@ class HubView {
                 }
             });
         }
+        
+        // ESC 키로 메뉴 닫기
+        this.eventManager.add(document, 'keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.hideHamburgerMenu();
+            }
+        });
         
         // 메뉴 아이템들
         const profileBtn = document.getElementById('menu-profile');

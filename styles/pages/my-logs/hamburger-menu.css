@@ -138,6 +138,14 @@
     transition: all var(--transition-normal);
 }
 
+/* 햄버거 메뉴가 열릴 때 body 스크롤 비활성화 */
+body.hamburger-menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
 /* 다크모드 햄버거 메뉴 오버레이 */
 .dark .hamburger-menu-overlay {
     background: rgba(0, 0, 0, 0.7);

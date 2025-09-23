@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>햄버거 메뉴 스크롤 오버플로우 수정 테스트</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        /* 테스트용 긴 콘텐츠 */
+        .test-content {
+            height: 200vh;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-section {
+            margin: 50px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .test-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .test-instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+        }
+        
+        .test-instructions h3 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+        }
+        
+        .test-instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .test-instructions li {
+            margin: 5px 0;
+            color: #424242;
+        }
+        
+        .status-indicator {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            top: 60px;
+            left: 10px;
+            background: #ff9800;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="status-indicator">테스트 모드</div>
+    <div class="scroll-indicator" id="scroll-indicator">스크롤: 0px</div>
+    
+    <div class="test-content">
+        <div class="test-section">
+            <h1 class="test-title">햄버거 메뉴 스크롤 오버플로우 수정 테스트</h1>
+            
+            <div class="test-instructions">
+                <h3>테스트 방법:</h3>
+                <ol>
+                    <li>페이지를 아래로 스크롤하여 충분한 스크롤 공간을 만듭니다</li>
+                    <li>우측 상단의 햄버거 메뉴 버튼을 클릭합니다</li>
+                    <li>메뉴가 열린 상태에서 스크롤을 시도해봅니다</li>
+                    <li>스크롤이 비활성화되어야 합니다 (원래 콘텐츠 끝을 넘어서 스크롤되지 않아야 함)</li>
+                    <li>메뉴를 닫으면 원래 스크롤 위치로 복원되어야 합니다</li>
+                </ol>
+            </div>
+            
+            <div class="test-description">
+                이 테스트는 햄버거 메뉴가 열릴 때 페이지 스크롤이 비활성화되고, 
+                메뉴가 닫힐 때 원래 스크롤 위치로 복원되는지 확인합니다.
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">테스트 콘텐츠 섹션 1</h2>
+            <div class="test-description">
+                이 섹션은 스크롤 테스트를 위한 충분한 높이를 제공합니다. 
+                햄버거 메뉴가 열린 상태에서 이 콘텐츠를 스크롤할 수 없어야 합니다.
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">테스트 콘텐츠 섹션 2</h2>
+            <div class="test-description">
+                추가적인 스크롤 공간을 제공하는 섹션입니다. 
+                메뉴가 열린 상태에서는 이 영역까지 스크롤할 수 없어야 합니다.
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">테스트 콘텐츠 섹션 3</h2>
+            <div class="test-description">
+                마지막 테스트 섹션입니다. 
+                햄버거 메뉴가 열린 상태에서 이 섹션까지 스크롤할 수 없어야 합니다.
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">테스트 완료</h2>
+            <div class="test-description">
+                모든 테스트가 완료되었습니다. 
+                햄버거 메뉴의 스크롤 오버플로우 버그가 수정되었는지 확인해주세요.
+            </div>
+        </div>
+    </div>
+
+    <!-- 햄버거 메뉴 버튼 (테스트용) -->
+    <button class="hamburger-menu-btn" id="test-hamburger-btn">
+        <div class="hamburger-icon"></div>
+        <div class="hamburger-icon"></div>
+        <div class="hamburger-icon"></div>
+    </button>
+
+    <script>
+        // 스크롤 위치 표시
+        function updateScrollIndicator() {
+            const indicator = document.getElementById('scroll-indicator');
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            indicator.textContent = `스크롤: ${Math.round(scrollTop)}px`;
+        }
+        
+        window.addEventListener('scroll', updateScrollIndicator);
+        
+        // 햄버거 메뉴 테스트
+        const hamburgerBtn = document.getElementById('test-hamburger-btn');
+        let isMenuOpen = false;
+        
+        hamburgerBtn.addEventListener('click', () => {
+            if (!isMenuOpen) {
+                // 메뉴 열기
+                isMenuOpen = true;
+                hamburgerBtn.classList.add('active');
+                
+                // 현재 스크롤 위치 저장
+                const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // body 스크롤 비활성화
+                document.body.classList.add('hamburger-menu-open');
+                document.body.style.top = `-${scrollPosition}px`;
+                
+                // 테스트용 메뉴 HTML 생성
+                const menuHTML = `
+                    <div class="hamburger-menu-overlay" id="test-hamburger-overlay">
+                        <div class="hamburger-menu" id="test-hamburger-menu">
+                            <div class="hamburger-menu-header">
+                                <h2 class="hamburger-menu-title">테스트 메뉴</h2>
+                                <button class="hamburger-menu-close" id="test-menu-close">×</button>
+                            </div>
+                            <div class="hamburger-menu-content">
+                                <div class="hamburger-menu-section">
+                                    <h3 class="hamburger-menu-section-title">테스트</h3>
+                                    <button class="hamburger-menu-item">
+                                        <span class="hamburger-menu-item-icon">🧪</span>
+                                        <span class="hamburger-menu-item-text">스크롤 테스트</span>
+                                        <span class="hamburger-menu-item-arrow">▶</span>
+                                    </button>
+                                </div>
+                                <div class="hamburger-menu-section">
+                                    <button class="hamburger-menu-item version-info">
+                                        <span class="hamburger-menu-item-text">테스트 버전 1.0.0</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', menuHTML);
+                
+                // 애니메이션
+                requestAnimationFrame(() => {
+                    const overlay = document.getElementById('test-hamburger-overlay');
+                    const menu = document.getElementById('test-hamburger-menu');
+                    if (overlay && menu) {
+                        overlay.classList.add('show');
+                        menu.classList.add('show');
+                    }
+                });
+                
+                // 이벤트 바인딩
+                const closeBtn = document.getElementById('test-menu-close');
+                const overlay = document.getElementById('test-hamburger-overlay');
+                
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', closeMenu);
+                }
+                
+                if (overlay) {
+                    overlay.addEventListener('click', (e) => {
+                        if (e.target === overlay) {
+                            closeMenu();
+                        }
+                    });
+                }
+                
+                // ESC 키
+                document.addEventListener('keydown', handleEscape);
+                
+            } else {
+                closeMenu();
+            }
+        });
+        
+        function closeMenu() {
+            if (!isMenuOpen) return;
+            
+            isMenuOpen = false;
+            hamburgerBtn.classList.remove('active');
+            
+            const overlay = document.getElementById('test-hamburger-overlay');
+            const menu = document.getElementById('test-hamburger-menu');
+            
+            if (overlay && menu) {
+                overlay.classList.remove('show');
+                menu.classList.remove('show');
+                
+                setTimeout(() => {
+                    if (overlay && overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+                    
+                    // body 스크롤 복원
+                    document.body.classList.remove('hamburger-menu-open');
+                    document.body.style.top = '';
+                    
+                    // 스크롤 위치 복원
+                    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+                    window.scrollTo(0, scrollPosition);
+                }, 300);
+            }
+            
+            // ESC 키 이벤트 제거
+            document.removeEventListener('keydown', handleEscape);
+        }
+        
+        function handleEscape(e) {
+            if (e.key === 'Escape') {
+                closeMenu();
+            }
+        }
+        
+        // 초기 스크롤 표시
+        updateScrollIndicator();
+    </script>
+</body>
+</html>
