@@ -359,6 +359,7 @@
             <div class="test-controls">
                 <button class="test-btn" onclick="simulateLoginScreen()">로그인 화면 시뮬레이션</button>
                 <button class="test-btn" onclick="testCountrySelectorInLogin()">로그인 화면에서 Country Selector 테스트</button>
+                <button class="test-btn" onclick="testNewCountrySelector()">새로운 Country Selector 테스트</button>
                 <button class="test-btn" onclick="closeLoginScreen()">로그인 화면 닫기</button>
             </div>
             
@@ -1238,6 +1239,60 @@
                 setTimeout(() => {
                     dropdown.classList.add('open');
                 }, 10);
+            }
+        }
+        
+        // 새로운 Country Selector 테스트 함수
+        async function testNewCountrySelector() {
+            console.log('새로운 Country Selector 테스트 시작...');
+            
+            try {
+                // Country Selector 모듈 동적 로드
+                const { CountrySelector } = await import('../js/modules/ui-components/country-selector.js');
+                
+                // 테스트 컨테이너 생성
+                const testContainer = document.createElement('div');
+                testContainer.className = 'country-selector-container';
+                testContainer.id = 'test-new-country-selector';
+                testContainer.style.marginTop = '20px';
+                
+                // 테스트 섹션에 추가
+                const testSection = document.querySelector('.test-section:nth-child(2)');
+                testSection.appendChild(testContainer);
+                
+                // Country Selector 인스턴스 생성
+                const countrySelector = new CountrySelector(testContainer, {
+                    placeholder: '새로운 Country Selector 테스트...'
+                });
+                
+                // 국가 선택 이벤트 리스너
+                testContainer.addEventListener('country-selected', (event) => {
+                    console.log('국가 선택됨:', event.detail.country);
+                    alert(`선택된 국가: ${event.detail.country.name}`);
+                });
+                
+                // 테스트 결과 표시
+                const resultDiv = document.getElementById('test-result-2');
+                resultDiv.innerHTML = `
+                    <div style="color: green; font-weight: bold;">
+                        ✅ 새로운 Country Selector 테스트 성공!<br>
+                        위의 입력 필드를 클릭하여 드롭다운을 테스트해보세요.
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+                
+                console.log('✅ 새로운 Country Selector 테스트 완료');
+                
+            } catch (error) {
+                console.error('새로운 Country Selector 테스트 실패:', error);
+                
+                const resultDiv = document.getElementById('test-result-2');
+                resultDiv.innerHTML = `
+                    <div style="color: red; font-weight: bold;">
+                        ❌ 새로운 Country Selector 테스트 실패: ${error.message}
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
             }
         }
         

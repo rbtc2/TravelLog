@@ -1,461 +1,243 @@
 /* ========================================
- * CountrySelector - 현대적 UI/UX 스타일
+ * CountrySelector - 통합 스타일 시스템
+ * DOM 구조와 CSS 완전 통합
  * ======================================== */
 
-.country-selector {
+/* 국가 선택기 컨테이너 - 통합 스타일 */
+.country-selector-container {
     position: relative;
     width: 100%;
     font-family: var(--font-family-base);
-    
-    /* Portal 시스템이 z-index 문제를 해결하므로 제거 */
-    /* 독립적인 stacking context 생성 */
-    isolation: isolate;
-    
-    /* 성능 최적화 */
-    contain: layout style paint;
+    /* Portal 시스템이 z-index 문제를 해결 */
 }
 
 /* 입력 필드 스타일링 */
-.selector-input {
+.country-selector-container .selector-input {
     position: relative;
+    width: 100%;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 16px;
-    padding: 4px;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Portal 시스템이 z-index 문제를 해결하므로 제거 */
 }
 
-.selector-input:focus-within {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
-}
-
-.selector-input input {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.95);
-    border: none;
+.country-selector-container .selector-input input {
+    width: 100%;
+    padding: 12px 40px 12px 16px; /* 오른쪽 패딩 추가 (화살표 공간) */
+    border: 2px solid #e1e5e9;
     border-radius: 12px;
-    padding: 16px 20px;
     font-size: 16px;
-    color: #2d3748;
-    outline: none;
+    background: #ffffff;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    outline: none;
+    font-family: var(--font-family-base);
 }
 
-.selector-input input::placeholder {
-    color: #a0aec0;
-    font-weight: 500;
+.country-selector-container .selector-input input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.selector-input input:focus {
-    background: rgba(255, 255, 255, 1);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+.country-selector-container .selector-input input::placeholder {
+    color: #9ca3af;
 }
 
-/* 드롭다운 화살표 버튼 */
-.dropdown-arrow {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+/* 드롭다운 화살표 */
+.country-selector-container .dropdown-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
     border: none;
-    border-radius: 12px;
-    width: 48px;
-    height: 48px;
-    margin-left: 8px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
-    /* 통합 Z-Index 시스템 사용 */
-    z-index: var(--z-country-selector);
+    padding: 4px;
+    color: #6b7280;
+    transition: color 0.3s ease;
+    z-index: 2;
 }
 
-.dropdown-arrow:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+.country-selector-container .dropdown-arrow:hover {
+    color: #667eea;
 }
 
-.dropdown-arrow:active {
-    transform: scale(0.95);
-}
-
-.arrow-icon {
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
+.country-selector-container .arrow-icon {
+    font-size: 12px;
     transition: transform 0.3s ease;
 }
 
-.country-selector.open .arrow-icon {
+.country-selector-container.open .arrow-icon {
     transform: rotate(180deg);
 }
 
-/* 드롭다운 컨테이너 */
-.selector-dropdown {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Critical UI Layer 사용 */
-    z-index: var(--z-country-dropdown);
-    max-height: 400px;
-    
-    /* 독립적인 stacking context */
-    isolation: isolate;
-}
-
-.selector-dropdown.open {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-/* 섹션 제목 */
-.section-title {
-    margin: 0;
-    padding: 20px 24px 16px;
-    font-size: 18px;
-    font-weight: 700;
-    color: #2d3748;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-}
-
-/* 국가 리스트 컨테이너 */
-.countries-list {
-    max-height: 320px;
-    overflow-y: auto;
-    padding: 8px 0;
-}
-
-/* 스크롤바 스타일링 */
-.countries-list::-webkit-scrollbar {
-    width: 8px;
-}
-
-.countries-list::-webkit-scrollbar-track {
-    background: rgba(102, 126, 234, 0.1);
-    border-radius: 4px;
-}
-
-.countries-list::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 4px;
-}
-
-.countries-list::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #5a67d8, #6b46c1);
-}
-
-/* 국가 아이템 카드 */
-.country-item {
-    display: flex;
-    align-items: center;
-    padding: 16px 24px;
-    margin: 4px 16px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
-    /* 통합 Z-Index 시스템 사용 */
-    z-index: var(--z-country-selector);
-}
-
-.country-item::before {
-    content: '';
-    position: absolute;
+/* 드롭다운 - Portal 방식으로 body에 직접 추가될 스타일 */
+.country-selector-portal {
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: var(--z-country-portal);
+}
+
+.country-selector-portal .selector-dropdown {
+    position: absolute;
+    background: #ffffff;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 4px;
+    pointer-events: auto;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    min-width: 200px;
 }
 
-.country-item:hover {
-    transform: translateX(8px) scale(1.02);
-    background: rgba(255, 255, 255, 0.95);
-    border-color: rgba(102, 126, 234, 0.3);
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
-}
-
-.country-item:hover::before {
+.country-selector-portal .selector-dropdown.open {
     opacity: 1;
+    transform: translateY(0);
 }
 
-.country-item.selected {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-    border-color: rgba(102, 126, 234, 0.5);
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
-    transform: translateX(8px) scale(1.02);
+/* 드롭다운 내용 */
+.country-selector-portal .countries-section {
+    padding: 16px;
 }
 
-/* 국기 이모지 */
-.country-flag {
-    font-size: 32px;
-    margin-right: 16px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-    transition: transform 0.3s ease;
-}
-
-.country-item:hover .country-flag {
-    transform: scale(1.1) rotate(5deg);
-}
-
-/* 국가명 (한글) */
-.country-name {
-    font-size: 18px;
+.country-selector-portal .section-title {
+    font-size: 14px;
     font-weight: 600;
-    color: #2d3748;
-    margin-right: 12px;
+    color: #374151;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.country-selector-portal .countries-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.country-selector-portal .country-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    gap: 12px;
+}
+
+.country-selector-portal .country-item:hover,
+.country-selector-portal .country-item.selected {
+    background-color: #f3f4f6;
+}
+
+.country-selector-portal .country-flag {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.country-selector-portal .country-name {
+    font-weight: 500;
+    color: #111827;
     flex: 1;
 }
 
-/* 국가명 (영문) */
-.country-name-en {
+.country-selector-portal .country-name-en {
     font-size: 14px;
-    color: #718096;
-    font-weight: 500;
-    margin-right: 12px;
-    font-style: italic;
-}
-
-/* 대륙 정보 */
-.country-continent {
-    font-size: 12px;
-    color: #a0aec0;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin-left: 8px;
 }
 
 /* 검색 결과 없음 */
-.no-countries {
-    padding: 40px 24px;
+.country-selector-portal .no-countries {
+    padding: 20px;
     text-align: center;
-    color: #a0aec0;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-/* 검색 결과 하이라이팅 */
-/* 공통 스타일은 main.css에서 정의됨 */
-
-/* 로딩 상태 */
-.country-selector.loading .selector-input {
-    background: linear-gradient(135deg, #a0aec0, #718096);
-}
-
-.country-selector.loading .selector-input::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 60px;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top: 2px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: translateY(-50%) rotate(0deg); }
-    100% { transform: translateY(-50%) rotate(360deg); }
+    color: #6b7280;
+    font-style: italic;
 }
 
 /* 모바일 최적화 */
 @media (max-width: 768px) {
-    .selector-input {
-        border-radius: 12px;
-        padding: 2px;
-    }
-    
-    .selector-input input {
-        padding: 14px 16px;
-        font-size: 16px;
-    }
-    
-    .dropdown-arrow {
-        width: 44px;
-        height: 44px;
-    }
-    
-    .country-item {
-        padding: 14px 20px;
-        margin: 3px 12px;
-    }
-    
-    .country-flag {
-        font-size: 28px;
-        margin-right: 12px;
-    }
-    
-    .country-name {
-        font-size: 16px;
-    }
-    
-    .country-name-en {
-        font-size: 13px;
-    }
-    
-    .selector-dropdown {
-        border-radius: 16px;
-        max-height: 60vh;
-    }
-}
-
-/* ===== STACKING CONTEXT 격리 문제 해결 ===== */
-
-/* 
- * 기존 문제점: 부모 요소의 stacking context에 갇혀 드롭다운이 가려짐
- * 해결책: Portal 패턴과 CSS Isolation을 통한 완전한 격리
- */
-
-/* Country Selector 컨테이너 - 명시적 stacking context 생성 */
-.country-selector-container {
-    /* 가장 깔끔한 stacking context 생성 방법 */
-    isolation: isolate;
-    position: relative;
-    
-    /* Portal 시스템을 위한 준비 */
-    contain: layout style;
-}
-
-/* 기존 Country Selector - Portal 시스템으로 전환 준비 */
-.country-selector {
-    /* Portal로 이동될 예정이므로 기본 스타일만 유지 */
-    position: relative;
-    width: 100%;
-    font-family: var(--font-family-base);
-}
-
-/* 드롭다운은 Portal로 이동되므로 기존 스타일 제거 */
-.selector-dropdown {
-    /* Portal 시스템에서 처리됨 */
-    display: none;
-}
-
-/* Portal 기반 드롭다운 스타일 */
-.country-selector-portal {
-    position: fixed;
-    z-index: var(--z-country-portal); /* 더 높은 우선순위 */
-    pointer-events: none;
-}
-
-.country-selector-portal .selector-dropdown {
-    pointer-events: auto;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: auto;
-    width: auto;
-    min-width: 300px;
-    max-width: 500px;
-}
-
-/* 모바일 환경 Fallback */
-@media (max-width: 768px) {
     .country-selector-portal .selector-dropdown {
-        position: fixed;
-        top: 50%;
-        left: 20px;
-        right: 20px;
-        transform: translateY(-50%);
-        width: auto;
+        position: fixed !important;
+        top: 50% !important;
+        left: 20px !important;
+        right: 20px !important;
+        transform: translateY(-50%) !important;
         max-height: 70vh;
-        z-index: var(--z-modal);
+        margin-top: 0 !important;
+    }
+    
+    .country-selector-portal .selector-dropdown.open {
+        transform: translateY(-50%) !important;
     }
 }
 
-/* 다크모드 지원 */
+/* 다크 모드 지원 */
 @media (prefers-color-scheme: dark) {
-    .selector-input {
-        background: linear-gradient(135deg, #4c51bf, #553c9a);
+    .country-selector-container .selector-input input {
+        background: #1f2937;
+        border-color: #374151;
+        color: #f9fafb;
     }
     
-    .selector-input input {
-        background: rgba(26, 32, 44, 0.95);
-        color: #e2e8f0;
+    .country-selector-container .selector-input input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
     }
     
-    .selector-input input::placeholder {
-        color: #718096;
+    .country-selector-container .selector-input input::placeholder {
+        color: #9ca3af;
     }
     
-    .selector-dropdown {
-        background: rgba(26, 32, 44, 0.98);
-        border-color: rgba(102, 126, 234, 0.3);
+    .country-selector-portal .selector-dropdown {
+        background: #1f2937;
+        border-color: #374151;
     }
     
-    .section-title {
-        color: #e2e8f0;
-        border-bottom-color: rgba(102, 126, 234, 0.2);
+    .country-selector-portal .section-title {
+        color: #f9fafb;
+        border-bottom-color: #374151;
     }
     
-    .country-item {
-        background: rgba(45, 55, 72, 0.8);
+    .country-selector-portal .country-item:hover,
+    .country-selector-portal .country-item.selected {
+        background-color: #374151;
     }
     
-    .country-item:hover {
-        background: rgba(45, 55, 72, 0.95);
+    .country-selector-portal .country-name {
+        color: #f9fafb;
     }
     
-    .country-name {
-        color: #e2e8f0;
+    .country-selector-portal .country-name-en {
+        color: #9ca3af;
     }
     
-    .country-name-en {
-        color: #a0aec0;
-    }
-    
-    .country-continent {
-        color: #718096;
+    .country-selector-portal .no-countries {
+        color: #9ca3af;
     }
 }
 
 /* 접근성 개선 */
-.country-item:focus {
+.country-selector-container .selector-input input:focus {
     outline: 2px solid #667eea;
     outline-offset: 2px;
 }
 
-.country-item:focus-visible {
+.country-selector-portal .country-item:focus {
     outline: 2px solid #667eea;
-    outline-offset: 2px;
+    outline-offset: -2px;
 }
 
-/* 애니메이션 지연을 위한 스태거 효과 */
-.country-item:nth-child(1) { transition-delay: 0ms; }
-.country-item:nth-child(2) { transition-delay: 20ms; }
-.country-item:nth-child(3) { transition-delay: 40ms; }
-.country-item:nth-child(4) { transition-delay: 60ms; }
-.country-item:nth-child(5) { transition-delay: 80ms; }
-.country-item:nth-child(6) { transition-delay: 100ms; }
-.country-item:nth-child(7) { transition-delay: 120ms; }
-.country-item:nth-child(8) { transition-delay: 140ms; }
-.country-item:nth-child(9) { transition-delay: 160ms; }
-.country-item:nth-child(10) { transition-delay: 180ms; }
+/* 애니메이션 성능 최적화 */
+.country-selector-portal .selector-dropdown {
+    will-change: transform, opacity;
+}
+
+.country-selector-container .arrow-icon {
+    will-change: transform;
+}

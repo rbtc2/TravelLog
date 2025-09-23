@@ -5,7 +5,7 @@
 
 import { authService } from '../services/auth-service.js';
 import { toastManager } from '../ui-components/toast-manager.js';
-import { createCountrySelector } from '../ui-components/country-selector.js';
+import { CountrySelector } from '../ui-components/country-selector.js';
 
 class AuthManager {
     constructor() {
@@ -584,16 +584,13 @@ class AuthManager {
             }
 
             // Country selector 생성
-            this.countrySelector = await createCountrySelector(container, {
-                placeholder: '현재 거주국을 선택하세요',
-                showFlags: true,
-                showEnglishNames: true,
-                inputId: 'signup-country-selector-input'
+            this.countrySelector = new CountrySelector(container, {
+                placeholder: '현재 거주국을 선택하세요'
             });
 
             // 국가 선택 이벤트 리스너
             container.addEventListener('country-selected', (event) => {
-                const selectedCountry = event.detail;
+                const selectedCountry = event.detail.country;
                 this.handleCountrySelection(selectedCountry);
             });
 
