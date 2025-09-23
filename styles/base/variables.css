@@ -148,10 +148,10 @@
   --desktop-grid-cols-xl: 5;         /* 초대형 데스크톱: 5열 */
   
   /* 데스크톱 사이드바 시스템 - PHASE 1 */
-  --sidebar-width-sm: 280px;         /* 소형 데스크톱 사이드바 */
-  --sidebar-width-md: 320px;         /* 중형 데스크톱 사이드바 */
-  --sidebar-width-lg: 360px;         /* 대형 데스크톱 사이드바 */
-  --sidebar-width-xl: 400px;         /* 초대형 데스크톱 사이드바 */
+  --sidebar-width-sm: 240px;         /* 소형 데스크톱 사이드바 */
+  --sidebar-width-md: 280px;         /* 중형 데스크톱 사이드바 */
+  --sidebar-width-lg: 320px;         /* 대형 데스크톱 사이드바 */
+  --sidebar-width-xl: 360px;         /* 초대형 데스크톱 사이드바 */
   
   /* 데스크톱 여백 시스템 - PHASE 1 */
   --desktop-padding-sm: 24px;        /* 소형 데스크톱 패딩 */
