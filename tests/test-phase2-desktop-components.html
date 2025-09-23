@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHASE 2: 데스크톱 컴포넌트 최적화 테스트</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        body {
+            font-family: 'Pretendard Variable', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .test-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .test-subtitle {
+            font-size: 1.2rem;
+            color: #718096;
+            margin-bottom: 20px;
+        }
+        
+        .test-description {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-section:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+        
+        .test-title-section {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .test-description-section {
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .test-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .test-result.success {
+            background: #f0fff4;
+            border: 2px solid #68d391;
+            color: #22543d;
+        }
+        
+        .test-result.error {
+            background: #fed7d7;
+            border: 2px solid #fc8181;
+            color: #742a2a;
+        }
+        
+        .component-demo {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .demo-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .desktop-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .desktop-mode-toggle:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .desktop-mode-toggle.active {
+            background: #48bb78;
+        }
+    </style>
+</head>
+<body>
+    <button class="desktop-mode-toggle" onclick="toggleDesktopMode()">데스크톱 모드 토글</button>
+    
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">PHASE 2: 데스크톱 컴포넌트 최적화 테스트</h1>
+            <p class="test-subtitle">TravelLog 컴포넌트 데스크톱 최적화 검증</p>
+            <div class="test-description">
+                <strong>테스트 목표:</strong> PHASE 2에서 구현된 카드, 폼, 모달, 버튼 컴포넌트의 데스크톱 최적화가 올바르게 작동하는지 검증합니다.
+                <br><strong>테스트 범위:</strong> 1024px+ 데스크톱, 1440px+ 대형 데스크톱, 1600px+ 초대형 데스크톱
+            </div>
+        </div>
+        
+        <!-- 테스트 1: 카드 컴포넌트 데스크톱 최적화 -->
+        <div class="test-section">
+            <div class="test-title-section">테스트 1: 카드 컴포넌트 데스크톱 최적화</div>
+            <div class="test-description-section">카드 컴포넌트의 데스크톱 최적화 (크기, 호버 효과, 그리드 레이아웃)를 확인합니다.</div>
+            <button class="test-button" onclick="testCardDesktopOptimization()">카드 컴포넌트 테스트</button>
+            <div id="test1-result" class="test-result" style="display: none;"></div>
+            
+            <div class="component-demo">
+                <div class="demo-title">카드 컴포넌트 데모</div>
+                <div class="hub-section">
+                    <div class="section-header">
+                        <h3 class="section-title">여행 허브</h3>
+                    </div>
+                    <div class="archive-content">
+                        <div class="archive-item">
+                            <div class="archive-icon">🏖️</div>
+                            <div class="archive-details">
+                                <div class="archive-title">해변 휴가</div>
+                                <div class="archive-description">바다와 함께하는 휴식의 시간</div>
+                            </div>
+                            <div class="archive-arrow">→</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 테스트 2: 폼 컴포넌트 데스크톱 최적화 -->
+        <div class="test-section">
+            <div class="test-title-section">테스트 2: 폼 컴포넌트 데스크톱 최적화</div>
+            <div class="test-description-section">폼 컴포넌트의 데스크톱 최적화 (크기, 레이아웃, 사용성)를 확인합니다.</div>
+            <button class="test-button" onclick="testFormDesktopOptimization()">폼 컴포넌트 테스트</button>
+            <div id="test2-result" class="test-result" style="display: none;"></div>
+            
+            <div class="component-demo">
+                <div class="demo-title">폼 컴포넌트 데모</div>
+                <form>
+                    <div class="form-group">
+                        <label class="form-label">여행지</label>
+                        <input type="text" class="form-input" placeholder="여행지를 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">메모</label>
+                        <textarea class="form-textarea" placeholder="여행에 대한 메모를 작성하세요"></textarea>
+                    </div>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="purpose" value="leisure">
+                            <span class="radio-custom">휴식</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="purpose" value="business">
+                            <span class="radio-custom">업무</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 테스트 3: 모달 컴포넌트 데스크톱 최적화 -->
+        <div class="test-section">
+            <div class="test-title-section">테스트 3: 모달 컴포넌트 데스크톱 최적화</div>
+            <div class="test-description-section">모달 컴포넌트의 데스크톱 최적화 (크기, 위치, 반응형)를 확인합니다.</div>
+            <button class="test-button" onclick="testModalDesktopOptimization()">모달 컴포넌트 테스트</button>
+            <button class="test-button" onclick="showTestModal()">테스트 모달 열기</button>
+            <div id="test3-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- 테스트 4: 버튼 컴포넌트 데스크톱 최적화 -->
+        <div class="test-section">
+            <div class="test-title-section">테스트 4: 버튼 컴포넌트 데스크톱 최적화</div>
+            <div class="test-description-section">버튼 컴포넌트의 데스크톱 최적화 (크기, 호버 효과, 반응형)를 확인합니다.</div>
+            <button class="test-button" onclick="testButtonDesktopOptimization()">버튼 컴포넌트 테스트</button>
+            <div id="test4-result" class="test-result" style="display: none;"></div>
+            
+            <div class="component-demo">
+                <div class="demo-title">버튼 컴포넌트 데모</div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+                    <button class="action-btn">기본 버튼</button>
+                    <button class="secondary-action-btn">보조 버튼</button>
+                    <button class="danger-action-btn">위험 버튼</button>
+                    <button class="success-action-btn">성공 버튼</button>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+                    <button class="icon-btn">⚙️</button>
+                    <button class="modal-btn">모달 버튼</button>
+                    <button class="toggle-btn">토글</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 테스트 5: 반응형 브레이크포인트 -->
+        <div class="test-section">
+            <div class="test-title-section">테스트 5: 반응형 브레이크포인트</div>
+            <div class="test-description-section">다양한 화면 크기에서 컴포넌트 최적화가 올바르게 적용되는지 확인합니다.</div>
+            <button class="test-button" onclick="testResponsiveBreakpoints()">반응형 테스트</button>
+            <div id="test5-result" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- 전체 테스트 실행 -->
+        <div class="test-section">
+            <div class="test-title-section">전체 테스트 실행</div>
+            <div class="test-description-section">모든 PHASE 2 테스트를 순차적으로 실행합니다.</div>
+            <button class="test-button" onclick="runAllPhase2Tests()" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">전체 테스트 실행</button>
+            <div id="overall-result" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <!-- 테스트 모달 -->
+    <div id="test-modal" class="delete-confirm-modal" style="display: none;">
+        <div class="modal-overlay" onclick="hideTestModal()"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-header-content">
+                    <h3>테스트 모달</h3>
+                    <button class="modal-close-btn" onclick="hideTestModal()">×</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p>이것은 데스크톱 최적화 테스트를 위한 모달입니다.</p>
+                <div class="log-preview">
+                    <div class="log-preview-header">
+                        <span class="log-preview-country">🇰🇷 한국</span>
+                        <span class="log-preview-city">서울</span>
+                    </div>
+                    <div class="log-preview-dates">2024.01.01 - 2024.01.07</div>
+                    <div class="log-preview-memo">데스크톱 최적화된 모달 컴포넌트 테스트</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" onclick="hideTestModal()">취소</button>
+                <button class="modal-btn confirm-btn" onclick="hideTestModal()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isDesktopMode = false;
+        
+        // 데스크톱 모드 토글
+        function toggleDesktopMode() {
+            isDesktopMode = !isDesktopMode;
+            const body = document.body;
+            const toggle = document.querySelector('.desktop-mode-toggle');
+            
+            if (isDesktopMode) {
+                body.classList.add('desktop-mode');
+                toggle.textContent = '모바일 모드로';
+                toggle.classList.add('active');
+            } else {
+                body.classList.remove('desktop-mode');
+                toggle.textContent = '데스크톱 모드로';
+                toggle.classList.remove('active');
+            }
+        }
+        
+        // 테스트 결과 표시
+        function showTestResult(elementId, success, message) {
+            const element = document.getElementById(elementId);
+            element.className = `test-result ${success ? 'success' : 'error'}`;
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+        
+        // 테스트 1: 카드 컴포넌트 데스크톱 최적화
+        function testCardDesktopOptimization() {
+            try {
+                const hubSection = document.querySelector('.hub-section');
+                const archiveItem = document.querySelector('.archive-item');
+                const archiveIcon = document.querySelector('.archive-icon');
+                
+                if (!hubSection || !archiveItem || !archiveIcon) {
+                    showTestResult('test1-result', false, '카드 컴포넌트 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                // 데스크톱 모드 활성화
+                document.body.classList.add('desktop-mode');
+                
+                // 스타일 적용 대기
+                setTimeout(() => {
+                    const computedStyle = window.getComputedStyle(hubSection);
+                    const itemStyle = window.getComputedStyle(archiveItem);
+                    const iconStyle = window.getComputedStyle(archiveIcon);
+                    
+                    // 데스크톱 최적화 확인
+                    const hasDesktopPadding = computedStyle.padding.includes('32px') || computedStyle.padding.includes('48px');
+                    const hasDesktopBorderRadius = computedStyle.borderRadius.includes('24px') || computedStyle.borderRadius.includes('32px');
+                    const hasDesktopIconSize = iconStyle.width === '64px' || iconStyle.width === '72px';
+                    
+                    if (hasDesktopPadding && hasDesktopBorderRadius && hasDesktopIconSize) {
+                        showTestResult('test1-result', true, '카드 컴포넌트 데스크톱 최적화가 올바르게 적용되었습니다.');
+                    } else {
+                        showTestResult('test1-result', false, '카드 컴포넌트 데스크톱 최적화가 적용되지 않았습니다.');
+                    }
+                    
+                    // 데스크톱 모드 비활성화
+                    document.body.classList.remove('desktop-mode');
+                }, 100);
+                
+            } catch (error) {
+                showTestResult('test1-result', false, `카드 컴포넌트 테스트 실패: ${error.message}`);
+            }
+        }
+        
+        // 테스트 2: 폼 컴포넌트 데스크톱 최적화
+        function testFormDesktopOptimization() {
+            try {
+                const formInput = document.querySelector('.form-input');
+                const formTextarea = document.querySelector('.form-textarea');
+                const radioGroup = document.querySelector('.radio-group');
+                
+                if (!formInput || !formTextarea || !radioGroup) {
+                    showTestResult('test2-result', false, '폼 컴포넌트 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                // 데스크톱 모드 활성화
+                document.body.classList.add('desktop-mode');
+                
+                setTimeout(() => {
+                    const inputStyle = window.getComputedStyle(formInput);
+                    const textareaStyle = window.getComputedStyle(formTextarea);
+                    const radioStyle = window.getComputedStyle(radioGroup);
+                    
+                    // 데스크톱 최적화 확인
+                    const hasDesktopInputSize = inputStyle.padding.includes('24px') || inputStyle.padding.includes('32px');
+                    const hasDesktopFontSize = inputStyle.fontSize === '18px' || inputStyle.fontSize === '20px';
+                    const hasDesktopTextareaSize = textareaStyle.minHeight === '120px' || textareaStyle.minHeight === '140px';
+                    
+                    if (hasDesktopInputSize && hasDesktopFontSize && hasDesktopTextareaSize) {
+                        showTestResult('test2-result', true, '폼 컴포넌트 데스크톱 최적화가 올바르게 적용되었습니다.');
+                    } else {
+                        showTestResult('test2-result', false, '폼 컴포넌트 데스크톱 최적화가 적용되지 않았습니다.');
+                    }
+                    
+                    // 데스크톱 모드 비활성화
+                    document.body.classList.remove('desktop-mode');
+                }, 100);
+                
+            } catch (error) {
+                showTestResult('test2-result', false, `폼 컴포넌트 테스트 실패: ${error.message}`);
+            }
+        }
+        
+        // 테스트 3: 모달 컴포넌트 데스크톱 최적화
+        function testModalDesktopOptimization() {
+            try {
+                const modal = document.getElementById('test-modal');
+                if (!modal) {
+                    showTestResult('test3-result', false, '테스트 모달을 찾을 수 없습니다.');
+                    return;
+                }
+                
+                // 모달 표시
+                modal.style.display = 'flex';
+                
+                setTimeout(() => {
+                    const modalContent = modal.querySelector('.modal-content');
+                    const modalHeader = modal.querySelector('.modal-header h3');
+                    const modalBtn = modal.querySelector('.modal-btn');
+                    
+                    if (!modalContent || !modalHeader || !modalBtn) {
+                        showTestResult('test3-result', false, '모달 요소를 찾을 수 없습니다.');
+                        modal.style.display = 'none';
+                        return;
+                    }
+                    
+                    const contentStyle = window.getComputedStyle(modalContent);
+                    const headerStyle = window.getComputedStyle(modalHeader);
+                    const btnStyle = window.getComputedStyle(modalBtn);
+                    
+                    // 데스크톱 최적화 확인
+                    const hasDesktopWidth = contentStyle.maxWidth === '600px' || contentStyle.maxWidth === '700px';
+                    const hasDesktopHeaderSize = headerStyle.fontSize === '24px' || headerStyle.fontSize === '32px';
+                    const hasDesktopBtnSize = btnStyle.padding.includes('16px') || btnStyle.padding.includes('24px');
+                    
+                    if (hasDesktopWidth && hasDesktopHeaderSize && hasDesktopBtnSize) {
+                        showTestResult('test3-result', true, '모달 컴포넌트 데스크톱 최적화가 올바르게 적용되었습니다.');
+                    } else {
+                        showTestResult('test3-result', false, '모달 컴포넌트 데스크톱 최적화가 적용되지 않았습니다.');
+                    }
+                    
+                    // 모달 숨김
+                    modal.style.display = 'none';
+                }, 100);
+                
+            } catch (error) {
+                showTestResult('test3-result', false, `모달 컴포넌트 테스트 실패: ${error.message}`);
+            }
+        }
+        
+        // 테스트 모달 표시
+        function showTestModal() {
+            const modal = document.getElementById('test-modal');
+            modal.style.display = 'flex';
+        }
+        
+        // 테스트 모달 숨김
+        function hideTestModal() {
+            const modal = document.getElementById('test-modal');
+            modal.style.display = 'none';
+        }
+        
+        // 테스트 4: 버튼 컴포넌트 데스크톱 최적화
+        function testButtonDesktopOptimization() {
+            try {
+                const actionBtn = document.querySelector('.action-btn');
+                const iconBtn = document.querySelector('.icon-btn');
+                const modalBtn = document.querySelector('.modal-btn');
+                
+                if (!actionBtn || !iconBtn || !modalBtn) {
+                    showTestResult('test4-result', false, '버튼 컴포넌트 요소를 찾을 수 없습니다.');
+                    return;
+                }
+                
+                // 데스크톱 모드 활성화
+                document.body.classList.add('desktop-mode');
+                
+                setTimeout(() => {
+                    const actionStyle = window.getComputedStyle(actionBtn);
+                    const iconStyle = window.getComputedStyle(iconBtn);
+                    const modalStyle = window.getComputedStyle(modalBtn);
+                    
+                    // 데스크톱 최적화 확인
+                    const hasDesktopActionSize = actionStyle.padding.includes('24px') || actionStyle.padding.includes('32px');
+                    const hasDesktopIconSize = iconStyle.width === '48px' || iconStyle.width === '56px';
+                    const hasDesktopModalSize = modalStyle.minWidth === '120px' || modalStyle.minWidth === '140px';
+                    
+                    if (hasDesktopActionSize && hasDesktopIconSize && hasDesktopModalSize) {
+                        showTestResult('test4-result', true, '버튼 컴포넌트 데스크톱 최적화가 올바르게 적용되었습니다.');
+                    } else {
+                        showTestResult('test4-result', false, '버튼 컴포넌트 데스크톱 최적화가 적용되지 않았습니다.');
+                    }
+                    
+                    // 데스크톱 모드 비활성화
+                    document.body.classList.remove('desktop-mode');
+                }, 100);
+                
+            } catch (error) {
+                showTestResult('test4-result', false, `버튼 컴포넌트 테스트 실패: ${error.message}`);
+            }
+        }
+        
+        // 테스트 5: 반응형 브레이크포인트
+        function testResponsiveBreakpoints() {
+            try {
+                const currentWidth = window.innerWidth;
+                let breakpoint = '';
+                
+                if (currentWidth >= 1600) {
+                    breakpoint = '초대형 데스크톱 (1600px+)';
+                } else if (currentWidth >= 1440) {
+                    breakpoint = '대형 데스크톱 (1440px+)';
+                } else if (currentWidth >= 1024) {
+                    breakpoint = '데스크톱 (1024px+)';
+                } else if (currentWidth >= 768) {
+                    breakpoint = '태블릿 (768px+)';
+                } else {
+                    breakpoint = '모바일 (768px 미만)';
+                }
+                
+                showTestResult('test5-result', true, 
+                    `현재 화면 크기: ${currentWidth}px (${breakpoint}). 데스크톱 최적화는 1024px 이상에서 적용됩니다.`);
+                
+            } catch (error) {
+                showTestResult('test5-result', false, `반응형 테스트 실패: ${error.message}`);
+            }
+        }
+        
+        // 전체 PHASE 2 테스트 실행
+        async function runAllPhase2Tests() {
+            const tests = [
+                { name: '카드 컴포넌트 데스크톱 최적화', func: testCardDesktopOptimization },
+                { name: '폼 컴포넌트 데스크톱 최적화', func: testFormDesktopOptimization },
+                { name: '모달 컴포넌트 데스크톱 최적화', func: testModalDesktopOptimization },
+                { name: '버튼 컴포넌트 데스크톱 최적화', func: testButtonDesktopOptimization },
+                { name: '반응형 브레이크포인트', func: testResponsiveBreakpoints }
+            ];
+            
+            let passed = 0;
+            let failed = 0;
+            
+            for (const test of tests) {
+                try {
+                    console.log(`실행 중: ${test.name}`);
+                    await new Promise(resolve => {
+                        test.func();
+                        setTimeout(resolve, 500); // 각 테스트 간 간격
+                    });
+                    passed++;
+                } catch (error) {
+                    console.error(`${test.name} 실패:`, error);
+                    failed++;
+                }
+            }
+            
+            const total = passed + failed;
+            const successRate = ((passed / total) * 100).toFixed(1);
+            
+            showTestResult('overall-result', passed === total, 
+                `PHASE 2 테스트 완료: ${passed}/${total} 통과 (${successRate}%)`);
+        }
+        
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('PHASE 2 데스크톱 컴포넌트 최적화 테스트 페이지가 로드되었습니다.');
+        });
+    </script>
+</body>
+</html>

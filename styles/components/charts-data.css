@@ -1,0 +1,707 @@
+/* ===== 차트 및 데이터 시각화 컴포넌트 스타일 ===== */
+
+/* ===== 기본 차트 컨테이너 ===== */
+.chart-container {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.chart-title {
+    font-size: var(--font-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.chart-subtitle {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    margin: var(--spacing-xs) 0 0 0;
+}
+
+.chart-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.chart-toggle {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--gray-300);
+    background: var(--white);
+    color: var(--text-secondary);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: var(--font-xs);
+    transition: all var(--transition-normal);
+}
+
+.chart-toggle:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.chart-toggle.active {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+/* ===== 차트 캔버스 영역 ===== */
+.chart-canvas {
+    width: 100%;
+    height: 300px;
+    position: relative;
+}
+
+.chart-canvas canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* ===== 범례 ===== */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--gray-200);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-label {
+    font-weight: var(--font-medium);
+}
+
+/* ===== 통계 카드 ===== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.stat-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+
+.stat-value {
+    font-size: var(--font-3xl);
+    font-weight: var(--font-bold);
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-change {
+    font-size: var(--font-xs);
+    margin-top: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-full);
+    font-weight: var(--font-semibold);
+}
+
+.stat-change.positive {
+    background: var(--success-color);
+    color: var(--white);
+}
+
+.stat-change.negative {
+    background: var(--error-color);
+    color: var(--white);
+}
+
+.stat-change.neutral {
+    background: var(--gray-200);
+    color: var(--text-secondary);
+}
+
+/* ===== 프로그레스 바 ===== */
+.progress-container {
+    margin-bottom: var(--spacing-lg);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-label {
+    font-size: var(--font-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+}
+
+.progress-value {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    font-weight: var(--font-medium);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--gray-200);
+    border-radius: var(--border-radius-full);
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border-radius: var(--border-radius-full);
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ===== 도넛 차트 ===== */
+.donut-chart {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.donut-center-value {
+    font-size: var(--font-2xl);
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.donut-center-label {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    margin-top: var(--spacing-xs);
+}
+
+/* ===== 히트맵 ===== */
+.heatmap-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: var(--spacing-lg);
+}
+
+.heatmap-grid {
+    display: grid;
+    gap: 2px;
+    min-width: 600px;
+}
+
+.heatmap-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--gray-200);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    position: relative;
+}
+
+.heatmap-cell:hover {
+    transform: scale(1.2);
+    z-index: 10;
+}
+
+.heatmap-cell[data-level="0"] { background: #ebedf0; }
+.heatmap-cell[data-level="1"] { background: #c6e48b; }
+.heatmap-cell[data-level="2"] { background: #7bc96f; }
+.heatmap-cell[data-level="3"] { background: #239a3b; }
+.heatmap-cell[data-level="4"] { background: #196127; }
+
+.heatmap-tooltip {
+    position: absolute;
+    background: var(--gray-800);
+    color: var(--white);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-xs);
+    pointer-events: none;
+    z-index: 1000;
+    white-space: nowrap;
+}
+
+/* ===== 타임라인 ===== */
+.timeline {
+    position: relative;
+    padding-left: var(--spacing-xl);
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--gray-300);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+    padding-left: var(--spacing-lg);
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.timeline-content {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.timeline-date {
+    font-size: var(--font-sm);
+    color: var(--text-muted);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--spacing-xs);
+}
+
+.timeline-title {
+    font-size: var(--font-base);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.timeline-description {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ===== 다크모드 ===== */
+.dark .chart-container {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .chart-header {
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+.dark .chart-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .chart-subtitle {
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .chart-toggle {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .chart-legend {
+    border-top-color: var(--gray-400, #718096);
+}
+
+.dark .legend-item {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .stat-card {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .stat-value {
+    color: var(--primary-color, #4dabf7);
+}
+
+.dark .progress-bar {
+    background: var(--gray-100, #4a5568);
+}
+
+.dark .timeline::before {
+    background: var(--gray-400, #718096);
+}
+
+.dark .timeline-content {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .timeline-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .timeline-description {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* ===== PHASE 3: 데스크톱 차트 최적화 ===== */
+@media (min-width: 1024px) {
+    /* 차트 컨테이너 데스크톱 최적화 */
+    .chart-container {
+        border-radius: var(--border-radius-2xl);
+        padding: var(--spacing-xl);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .chart-header {
+        margin-bottom: var(--spacing-xl);
+        padding-bottom: var(--spacing-lg);
+    }
+    
+    .chart-title {
+        font-size: var(--font-xl);
+    }
+    
+    .chart-subtitle {
+        font-size: var(--font-base);
+    }
+    
+    .chart-controls {
+        gap: var(--spacing-md);
+    }
+    
+    .chart-toggle {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-sm);
+        border-radius: var(--border-radius-lg);
+    }
+    
+    /* 차트 캔버스 데스크톱 최적화 */
+    .chart-canvas {
+        height: 400px;
+    }
+    
+    /* 범례 데스크톱 최적화 */
+    .chart-legend {
+        gap: var(--spacing-lg);
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-lg);
+    }
+    
+    .legend-item {
+        font-size: var(--font-base);
+    }
+    
+    .legend-color {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* 통계 카드 데스크톱 최적화 */
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-xl);
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .stat-card {
+        padding: var(--spacing-xl);
+        border-radius: var(--border-radius-2xl);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .stat-value {
+        font-size: var(--font-4xl);
+    }
+    
+    .stat-label {
+        font-size: var(--font-base);
+    }
+    
+    .stat-change {
+        font-size: var(--font-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    /* 프로그레스 바 데스크톱 최적화 */
+    .progress-container {
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .progress-header {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .progress-label {
+        font-size: var(--font-base);
+    }
+    
+    .progress-value {
+        font-size: var(--font-base);
+    }
+    
+    .progress-bar {
+        height: 12px;
+    }
+    
+    /* 도넛 차트 데스크톱 최적화 */
+    .donut-chart {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .donut-center-value {
+        font-size: var(--font-3xl);
+    }
+    
+    .donut-center-label {
+        font-size: var(--font-base);
+    }
+    
+    /* 히트맵 데스크톱 최적화 */
+    .heatmap-container {
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .heatmap-grid {
+        min-width: 800px;
+        gap: 3px;
+    }
+    
+    .heatmap-cell {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+    }
+    
+    .heatmap-tooltip {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-sm);
+    }
+    
+    /* 타임라인 데스크톱 최적화 */
+    .timeline {
+        padding-left: var(--spacing-2xl);
+    }
+    
+    .timeline::before {
+        left: 12px;
+        width: 3px;
+    }
+    
+    .timeline-item {
+        margin-bottom: var(--spacing-2xl);
+        padding-left: var(--spacing-xl);
+    }
+    
+    .timeline-item::before {
+        left: -8px;
+        top: 12px;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .timeline-content {
+        padding: var(--spacing-xl);
+        border-radius: var(--border-radius-2xl);
+    }
+    
+    .timeline-date {
+        font-size: var(--font-base);
+    }
+    
+    .timeline-title {
+        font-size: var(--font-lg);
+    }
+    
+    .timeline-description {
+        font-size: var(--font-base);
+    }
+}
+
+/* 대형 데스크톱에서 추가 최적화 */
+@media (min-width: 1440px) {
+    .chart-container {
+        padding: var(--spacing-2xl);
+    }
+    
+    .chart-title {
+        font-size: var(--font-2xl);
+    }
+    
+    .chart-subtitle {
+        font-size: var(--font-lg);
+    }
+    
+    .chart-canvas {
+        height: 500px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-2xl);
+    }
+    
+    .stat-card {
+        padding: var(--spacing-2xl);
+    }
+    
+    .stat-value {
+        font-size: var(--font-5xl);
+    }
+    
+    .stat-label {
+        font-size: var(--font-lg);
+    }
+    
+    .donut-chart {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .donut-center-value {
+        font-size: var(--font-4xl);
+    }
+    
+    .heatmap-grid {
+        min-width: 1000px;
+        gap: 4px;
+    }
+    
+    .heatmap-cell {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* 초대형 데스크톱에서 최대 최적화 */
+@media (min-width: 1600px) {
+    .chart-container {
+        padding: var(--spacing-3xl);
+    }
+    
+    .chart-title {
+        font-size: var(--font-3xl);
+    }
+    
+    .chart-subtitle {
+        font-size: var(--font-xl);
+    }
+    
+    .chart-canvas {
+        height: 600px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: var(--spacing-3xl);
+    }
+    
+    .stat-value {
+        font-size: var(--font-6xl);
+    }
+    
+    .stat-label {
+        font-size: var(--font-xl);
+    }
+    
+    .donut-chart {
+        width: 350px;
+        height: 350px;
+    }
+    
+    .donut-center-value {
+        font-size: var(--font-5xl);
+    }
+    
+    .heatmap-grid {
+        min-width: 1200px;
+        gap: 5px;
+    }
+    
+    .heatmap-cell {
+        width: 24px;
+        height: 24px;
+    }
+}

@@ -508,6 +508,205 @@
     flex: 1;
 }
 
+/* ===== PHASE 2: 데스크톱 카드 최적화 ===== */
+
+/* 데스크톱에서 카드 그리드 레이아웃 */
+@media (min-width: 1024px) {
+    /* 허브 섹션 데스크톱 최적화 */
+    .hub-section {
+        padding: var(--spacing-2xl);
+        margin-bottom: var(--spacing-xl);
+        box-shadow: var(--shadow-lg);
+        border-radius: var(--border-radius-3xl);
+    }
+    
+    /* 섹션 제목 데스크톱 최적화 */
+    .section-title {
+        font-size: var(--font-3xl);
+        font-weight: var(--font-bold);
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    /* 보관함 아이템 데스크톱 최적화 */
+    .archive-item {
+        padding: var(--spacing-xl);
+        border-radius: var(--border-radius-2xl);
+        transition: all var(--transition-normal);
+    }
+    
+    .archive-item:hover:not(.disabled) {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-color);
+    }
+    
+    .archive-icon {
+        width: 64px;
+        height: 64px;
+        font-size: var(--font-2xl);
+    }
+    
+    .archive-title {
+        font-size: var(--font-xl);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .archive-description {
+        font-size: var(--font-base);
+        line-height: 1.6;
+    }
+    
+    /* 여행 DNA 섹션 데스크톱 최적화 */
+    .dna-content {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: var(--spacing-xl);
+    }
+    
+    .dna-item {
+        padding: var(--spacing-xl);
+        border-radius: var(--border-radius-3xl);
+    }
+    
+    .dna-item:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .dna-icon {
+        width: 64px;
+        height: 64px;
+        font-size: var(--font-2xl);
+    }
+    
+    .dna-label {
+        font-size: var(--font-base);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .dna-value {
+        font-size: var(--font-lg);
+    }
+    
+    /* 여행 일지 카드 데스크톱 최적화 */
+    .log-card {
+        padding: var(--spacing-xl);
+        border-radius: var(--border-radius-2xl);
+        transition: all var(--transition-normal);
+    }
+    
+    .log-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-color);
+    }
+    
+    .log-header {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .log-title {
+        font-size: var(--font-xl);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .log-meta {
+        font-size: var(--font-base);
+    }
+    
+    .log-content {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .log-description {
+        font-size: var(--font-base);
+        line-height: 1.6;
+    }
+    
+    .log-footer {
+        padding-top: var(--spacing-lg);
+    }
+    
+    /* 히트맵 데스크톱 최적화 */
+    .heatmap-placeholder {
+        padding: var(--spacing-xl);
+    }
+    
+    .heatmap-grid {
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .month-activity {
+        height: 32px;
+        border-radius: var(--border-radius-md);
+    }
+    
+    .month-label {
+        font-size: var(--font-sm);
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .heatmap-caption {
+        font-size: var(--font-base);
+    }
+}
+
+/* 대형 데스크톱에서 추가 최적화 */
+@media (min-width: 1440px) {
+    .hub-section {
+        padding: var(--spacing-3xl);
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .section-title {
+        font-size: var(--font-4xl);
+    }
+    
+    .archive-item {
+        padding: var(--spacing-2xl);
+    }
+    
+    .archive-icon {
+        width: 72px;
+        height: 72px;
+        font-size: var(--font-3xl);
+    }
+    
+    .archive-title {
+        font-size: var(--font-2xl);
+    }
+    
+    .dna-content {
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: var(--spacing-2xl);
+    }
+    
+    .dna-item {
+        padding: var(--spacing-2xl);
+    }
+    
+    .dna-icon {
+        width: 72px;
+        height: 72px;
+        font-size: var(--font-3xl);
+    }
+}
+
+/* 초대형 데스크톱에서 최대 최적화 */
+@media (min-width: 1600px) {
+    .hub-section {
+        padding: var(--spacing-4xl);
+    }
+    
+    .section-title {
+        font-size: var(--font-5xl);
+    }
+    
+    .dna-content {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+}
+
 /* ===== 반응형 카드 스타일 ===== */
 @media (max-width: 768px) {
     .hub-section {
