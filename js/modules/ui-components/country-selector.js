@@ -308,8 +308,8 @@ export class CountrySelector {
         this.dropdown.style.display = 'block';
         
         // z-index를 최상위로 설정하여 다른 요소들 위에 표시
-        this.dropdown.style.zIndex = '100000';
-        this.container.style.zIndex = '99999';
+        this.dropdown.style.zIndex = '100007';
+        this.container.style.zIndex = '100006';
         
         // 컨테이너에 open 클래스 추가
         this.container.classList.add('open');

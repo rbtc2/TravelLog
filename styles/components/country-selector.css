@@ -5,9 +5,16 @@
 .country-selector {
     position: relative;
     width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    /* stacking context 생성으로 z-index 문제 해결 */
-    z-index: 99998;
+    font-family: var(--font-family-base);
+    
+    /* 통합 Z-Index 시스템 사용 */
+    z-index: var(--z-country-selector);
+    
+    /* 독립적인 stacking context 생성 */
+    isolation: isolate;
+    
+    /* 성능 최적화 */
+    contain: layout style paint;
 }
 
 /* 입력 필드 스타일링 */
@@ -20,8 +27,8 @@
     padding: 4px;
     box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    /* 입력 필드가 다른 요소들 위에 표시되도록 보장 */
-    z-index: 99997;
+    /* 통합 Z-Index 시스템 사용 */
+    z-index: var(--z-country-selector);
 }
 
 .selector-input:focus-within {
@@ -66,8 +73,8 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 16px rgba(255, 107, 107, 0.3);
-    /* 화살표 버튼이 다른 요소들 위에 표시되도록 보장 */
-    z-index: 99996;
+    /* 통합 Z-Index 시스템 사용 */
+    z-index: var(--z-country-selector);
 }
 
 .dropdown-arrow:hover {
@@ -105,9 +112,11 @@
     opacity: 0;
     transform: translateY(-20px) scale(0.95);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 99999;
+    /* Critical UI Layer 사용 */
+    z-index: var(--z-country-dropdown);
     max-height: 400px;
-    /* 드롭다운이 다른 요소들 위에 표시되도록 보장 */
+    
+    /* 독립적인 stacking context */
     isolation: isolate;
 }
 
@@ -169,8 +178,8 @@
     border: 2px solid transparent;
     position: relative;
     overflow: hidden;
-    /* 카드가 다른 요소들 위에 표시되도록 보장 */
-    z-index: 99995;
+    /* 통합 Z-Index 시스템 사용 */
+    z-index: var(--z-country-selector);
 }
 
 .country-item::before {
@@ -322,50 +331,47 @@
     }
 }
 
-/* 폼 요소들과의 z-index 충돌 방지 */
+/* ===== 통합 Z-Index 시스템 적용 ===== */
+
+/* 폼 요소들과의 충돌 방지 */
 .form-group {
     position: relative;
-    z-index: 1;
+    z-index: var(--z-base);
 }
 
-/* 국가 선택기 컨테이너가 폼 요소들 위에 표시되도록 보장 */
+/* 국가 선택기 컨테이너 */
 #country-selector-container {
     position: relative;
-    z-index: 99997;
+    z-index: var(--z-country-selector);
 }
 
-/* 드롭다운이 열렸을 때 최상위에 표시 */
+/* 드롭다운이 열렸을 때 최상위 표시 */
 .country-selector.open {
-    z-index: 99999;
+    z-index: var(--z-country-dropdown);
 }
 
 .country-selector.open .selector-dropdown {
-    z-index: 100000;
+    z-index: var(--z-country-dropdown);
 }
 
 /* 다른 폼 요소들이 국가 선택기를 가리지 않도록 */
 .form-group:not(:has(.country-selector)) {
-    z-index: 1;
+    z-index: var(--z-base);
 }
 
-/* 국가 선택기 관련 요소들만 높은 z-index */
+/* 국가 선택기 관련 요소들 */
 .country-selector,
 .country-selector * {
     position: relative;
 }
 
-/* 드롭다운이 열렸을 때 모든 요소 위에 표시 */
-.selector-dropdown[style*="display: block"] {
-    z-index: 100000 !important;
-}
-
-/* 국가 선택기 드롭다운이 열렸을 때 최우선 표시 */
+/* 드롭다운이 열렸을 때 최우선 표시 */
 .country-selector.open .selector-dropdown {
-    z-index: 100000 !important;
-    position: absolute !important;
+    z-index: var(--z-country-dropdown);
+    position: absolute;
 }
 
-/* 다른 모든 폼 요소들의 z-index를 낮게 설정 */
+/* 다른 폼 요소들의 z-index 관리 */
 .form-group,
 .form-input,
 .form-label,
@@ -373,7 +379,7 @@ button,
 input,
 select,
 textarea {
-    z-index: 1 !important;
+    z-index: var(--z-base);
 }
 
 /* 국가 선택기만 예외적으로 높은 z-index */

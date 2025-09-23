@@ -118,14 +118,55 @@
   --scroll-timing: cubic-bezier(0.4, 0, 0.2, 1);
   --scroll-duration: 0.3s;
   
-  /* z-index 레이어 */
-  --z-dropdown: 1000;
+  /* ===== 통합 Z-INDEX 계층 구조 시스템 ===== */
+  /* 
+   * 전문가 수준의 z-index 관리 시스템
+   * 각 레이어는 100 단위로 구분하여 확장성 확보
+   * Country Selector 전용 Critical UI Layer 포함
+   */
+  
+  /* Base Layer (0-99): 일반 페이지 요소 */
+  --z-base: 0;
+  --z-content: 10;
+  --z-elevated: 20;
+  --z-floating: 30;
+  
+  /* Content Layer (100-199): 카드, 패널, 위젯 */
+  --z-card: 100;
+  --z-panel: 110;
+  --z-widget: 120;
+  --z-overlay-content: 130;
+  
+  /* Navigation Layer (200-299): 네비게이션, 헤더, 푸터 */
+  --z-navigation: 200;
+  --z-header: 210;
+  --z-sidebar: 220;
+  --z-footer: 230;
+  --z-breadcrumb: 240;
+  
+  /* Overlay Layer (300-399): 모달, 팝업, 드롭다운 */
+  --z-dropdown: 300;
+  --z-popover: 310;
+  --z-tooltip: 320;
+  --z-modal-backdrop: 330;
+  --z-modal: 340;
+  --z-drawer: 350;
+  
+  /* Critical UI Layer (400-499): Country Selector, 중요 드롭다운 */
+  --z-country-selector: 400;
+  --z-country-dropdown: 410;
+  --z-critical-dropdown: 420;
+  --z-form-overlay: 430;
+  
+  /* System Layer (500+): 에러 메시지, 로딩, 시스템 알림 */
+  --z-loading: 500;
+  --z-error: 510;
+  --z-notification: 520;
+  --z-system-overlay: 530;
+  
+  /* Legacy 호환성 (기존 코드와의 호환을 위해 유지) */
   --z-sticky: 1020;
   --z-fixed: 1030;
-  --z-modal-backdrop: 1040;
-  --z-modal: 1050;
-  --z-popover: 1060;
-  --z-tooltip: 1070;
   
   /* 컨테이너 크기 (반응형 최적화) - PHASE 1 개선 */
   --container-mobile: 100%;

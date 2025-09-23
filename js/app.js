@@ -10,6 +10,7 @@ import AuthManager from './modules/auth/auth-manager.js'; // 인증 관리자
 import PasswordResetHandler from './modules/auth/password-reset-handler.js'; // 비밀번호 재설정 핸들러
 import EmailConfirmationHandler from './modules/auth/email-confirmation-handler.js'; // 이메일 확인 핸들러
 import { travelLogService } from './modules/services/travel-log-service.js'; // 여행 로그 서비스
+import ZIndexManager from './modules/utils/z-index-manager.js'; // Z-Index 충돌 관리 시스템
 
 // 모바일 환경 최적화
 (function() {
@@ -134,6 +135,9 @@ class AppManager {
         
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         this.desktopLayoutManager = new DesktopLayoutManager();
+        
+        // Z-Index 충돌 관리 시스템 초기화
+        this.zIndexManager = window.zIndexManager;
         
         // DOM 요소들
         this.loginScreen = document.getElementById('login-screen');
