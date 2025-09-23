@@ -311,12 +311,11 @@ export class CountriesManager {
             // 캐시에 저장
             this.saveToCache(this.countries);
             
-            console.log(`CountriesManager: ${this.countries.length}개국 데이터 로드 완료`);
             return true;
 
         } catch (error) {
             this.lastError = error;
-            console.error('CountriesManager: 초기화 실패:', error);
+            console.error('CountriesManager: 초기화 실패', error);
             throw error;
         } finally {
             this.isLoading = false;

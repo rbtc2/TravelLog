@@ -1276,7 +1276,10 @@
                 resultDiv.innerHTML = `
                     <div style="color: green; font-weight: bold;">
                         ✅ 새로운 Country Selector 테스트 성공!<br>
-                        위의 입력 필드를 클릭하여 드롭다운을 테스트해보세요.
+                        위의 입력 필드를 클릭하여 드롭다운을 테스트해보세요.<br>
+                        <button onclick="checkCountriesManagerStatus()" style="margin-top: 10px; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            CountriesManager 상태 확인
+                        </button>
                     </div>
                 `;
                 resultDiv.style.display = 'block';
@@ -1293,6 +1296,36 @@
                     </div>
                 `;
                 resultDiv.style.display = 'block';
+            }
+        }
+        
+        // CountriesManager 상태 확인 함수
+        async function checkCountriesManagerStatus() {
+            try {
+                const { countriesManager } = await import('../js/data/countries-manager.js');
+                
+                const status = {
+                    isInitialized: countriesManager.isInitialized,
+                    countriesCount: countriesManager.countries ? countriesManager.countries.length : 0,
+                    isLoading: countriesManager.isLoading,
+                    lastError: countriesManager.lastError,
+                    lastUpdated: countriesManager.lastUpdated
+                };
+                
+                console.log('CountriesManager 상태:', status);
+                
+                alert(`CountriesManager 상태:
+초기화됨: ${status.isInitialized ? '✅' : '❌'}
+국가 수: ${status.countriesCount}개
+로딩 중: ${status.isLoading ? '✅' : '❌'}
+마지막 오류: ${status.lastError || '없음'}
+마지막 업데이트: ${status.lastUpdated || '없음'}
+
+자세한 정보는 콘솔을 확인하세요.`);
+                
+            } catch (error) {
+                console.error('CountriesManager 상태 확인 실패:', error);
+                alert('CountriesManager 상태 확인 실패: ' + error.message);
             }
         }
         

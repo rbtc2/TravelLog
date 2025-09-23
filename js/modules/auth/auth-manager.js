@@ -563,8 +563,10 @@ class AuthManager {
         // 이벤트 리바인딩
         this.bindEvents();
         
-        // Country selector 초기화
-        this.initializeCountrySelector();
+        // Country selector 초기화 (약간의 지연 후)
+        setTimeout(() => {
+            this.initializeCountrySelector();
+        }, 100);
     }
 
     /**
@@ -572,9 +574,12 @@ class AuthManager {
      */
     async initializeCountrySelector() {
         try {
+            const { CountrySelector } = await import('../ui-components/country-selector.js');
             const container = document.getElementById('signup-country-selector-container');
+            
             if (!container) {
-                return; // 회원가입 폼이 아닌 경우 무시
+                console.error('AuthManager: signup-country-selector-container를 찾을 수 없음');
+                return;
             }
 
             // 기존 selector가 있다면 제거
@@ -594,10 +599,8 @@ class AuthManager {
                 this.handleCountrySelection(selectedCountry);
             });
 
-            console.log('AuthManager: Country selector 초기화 완료');
-
         } catch (error) {
-            console.error('AuthManager: Country selector 초기화 실패:', error);
+            console.error('AuthManager: Country Selector 초기화 실패:', error);
         }
     }
 
