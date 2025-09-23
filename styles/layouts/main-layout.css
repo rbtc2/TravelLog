@@ -91,7 +91,7 @@
     overflow-x: hidden;
 }
 
-/* 반응형 레이아웃 */
+/* 반응형 레이아웃 - PHASE 1 개선 */
 @media (max-width: 768px) {
     #main-content {
         padding: var(--spacing-md);
@@ -106,45 +106,87 @@
         max-width: var(--container-mobile);
         padding: 0 var(--spacing-md);
     }
+    
+    /* PHASE 1: 모바일에서 데스크톱 레이아웃 완전 숨김 */
+    .desktop-layout {
+        display: none !important;
+    }
 }
 
-/* 태블릿 최적화 (768px - 1024px) */
+/* 태블릿 최적화 (768px - 1024px) - PHASE 1 개선 */
 @media (min-width: 768px) and (max-width: 1023px) {
     .page-container {
         max-width: var(--container-tablet);
         padding: 0 var(--spacing-lg);
     }
+    
+    /* PHASE 1: 태블릿에서 데스크톱 레이아웃 숨김 */
+    .desktop-layout {
+        display: none !important;
+    }
 }
 
-/* 소형 데스크톱 (1024px - 1280px) */
+/* 소형 데스크톱 (1024px - 1280px) - PHASE 1 개선 */
 @media (min-width: 1024px) and (max-width: 1279px) {
     .page-container {
         max-width: var(--container-desktop-sm);
         padding: 0 var(--spacing-xl);
     }
+    
+    /* PHASE 1: 소형 데스크톱에서 기존 레이아웃 유지, 데스크톱 레이아웃 옵션 제공 */
+    .main-app {
+        /* 기존 모바일 레이아웃 유지 */
+    }
 }
 
-/* 중형 데스크톱 (1280px - 1440px) */
+/* 중형 데스크톱 (1280px - 1440px) - PHASE 1 개선 */
 @media (min-width: 1280px) and (max-width: 1439px) {
     .page-container {
         max-width: var(--container-desktop-md);
         padding: 0 var(--spacing-xl);
     }
+    
+    /* PHASE 1: 중형 데스크톱에서 데스크톱 레이아웃 활성화 옵션 */
+    .main-app.desktop-mode .desktop-layout {
+        display: flex !important;
+    }
+    
+    .main-app.desktop-mode #main-content {
+        display: none;
+    }
 }
 
-/* 대형 데스크톱 (1440px - 1600px) */
+/* 대형 데스크톱 (1440px - 1600px) - PHASE 1 개선 */
 @media (min-width: 1440px) and (max-width: 1599px) {
     .page-container {
         max-width: var(--container-desktop-lg);
         padding: 0 var(--spacing-2xl);
     }
+    
+    /* PHASE 1: 대형 데스크톱에서 데스크톱 레이아웃 기본 활성화 */
+    .main-app.desktop-mode .desktop-layout {
+        display: flex !important;
+    }
+    
+    .main-app.desktop-mode #main-content {
+        display: none;
+    }
 }
 
-/* 초대형 데스크톱 (1600px+) */
+/* 초대형 데스크톱 (1600px+) - PHASE 1 개선 */
 @media (min-width: 1600px) {
     .page-container {
         max-width: var(--container-desktop-xl);
         padding: 0 var(--spacing-3xl);
+    }
+    
+    /* PHASE 1: 초대형 데스크톱에서 데스크톱 레이아웃 기본 활성화 */
+    .main-app.desktop-mode .desktop-layout {
+        display: flex !important;
+    }
+    
+    .main-app.desktop-mode #main-content {
+        display: none;
     }
 }
 
@@ -153,5 +195,41 @@
     #main-content {
         /* 데스크톱에서는 더 많은 하단 여백 확보 */
         padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 60px);
+    }
+    
+    /* PHASE 1: 데스크톱 모드에서 하단 네비게이션 여백 제거 */
+    .main-app.desktop-mode #main-content {
+        padding-bottom: var(--spacing-lg);
+    }
+    
+    /* PHASE 1: 데스크톱 레이아웃 활성화 버튼 */
+    .desktop-layout-toggle {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: var(--z-tooltip);
+        background: var(--primary-color);
+        color: var(--white);
+        border: none;
+        border-radius: var(--border-radius-lg);
+        padding: var(--spacing-md);
+        box-shadow: var(--shadow-lg);
+        cursor: pointer;
+        transition: var(--transition-all);
+        font-size: var(--font-sm);
+        font-weight: var(--font-medium);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .desktop-layout-toggle:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .desktop-layout-toggle .icon {
+        font-size: var(--font-lg);
     }
 }

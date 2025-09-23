@@ -81,6 +81,12 @@
     display: none !important;
 }
 
+/* PHASE 1: 데스크톱 모드에서 모바일 탭 네비게이션 숨김 */
+.main-app.desktop-mode #tab-navigation,
+.main-app.desktop-mode .navigation-container {
+    display: none !important;
+}
+
 /* ===== 네비게이션 탭 ===== */
 .navigation-tab {
     flex: 1;

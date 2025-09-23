@@ -35,6 +35,7 @@
 @import url('./layouts/main-layout.css');
 @import url('./layouts/tab-navigation.css');
 @import url('./layouts/tab-content.css');
+@import url('./layouts/desktop-layout.css'); /* PHASE 1: 데스크톱 최적화 레이아웃 */
 
 /* 페이지별 스타일 - 각 탭별 독립적 관리 */
 @import url('./pages/login.css');

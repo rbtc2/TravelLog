@@ -1,0 +1,522 @@
+/* ===== 데스크톱 최적화 레이아웃 시스템 - PHASE 1 ===== */
+/* 
+ * 데스크톱에서의 화면 활용도를 40-60% 개선하는 고도화된 레이아웃 시스템
+ * 기존 모바일 레이아웃을 완전히 보존하면서 데스크톱 전용 최적화 제공
+ */
+
+/* ===== 데스크톱 메인 레이아웃 컨테이너 ===== */
+.desktop-layout {
+    display: none; /* 기본적으로 숨김, 데스크톱에서만 활성화 */
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+    position: relative;
+}
+
+/* 데스크톱에서만 활성화 - PHASE 1 정교화 */
+@media (min-width: 1024px) {
+    .desktop-layout {
+        display: flex;
+        flex-direction: row;
+    }
+    
+    /* 소형 데스크톱에서 기본적으로 숨김, 사용자 설정으로 활성화 */
+    .main-app:not(.desktop-mode) .desktop-layout {
+        display: none !important;
+    }
+    
+    /* PHASE 1 수정: 로그인 화면에서 데스크톱 레이아웃 완전 숨김 */
+    .main-app.hidden .desktop-layout {
+        display: none !important;
+    }
+    
+    /* 로그인 화면이 표시될 때 데스크톱 레이아웃 숨김 */
+    #login-screen:not([style*="display: none"]) ~ .desktop-layout {
+        display: none !important;
+    }
+    
+    /* 로그인 화면이 표시될 때 모든 데스크톱 레이아웃 숨김 */
+    #login-screen:not([style*="display: none"]) .desktop-layout {
+        display: none !important;
+    }
+    
+    /* 로그인 화면이 표시될 때 데스크톱 토글 버튼 숨김 */
+    #login-screen:not([style*="display: none"]) ~ .desktop-layout-toggle {
+        display: none !important;
+    }
+    
+    /* PHASE 1: 데스크톱 레이아웃 내에서 모바일 탭 네비게이션 숨김 */
+    .desktop-layout #tab-navigation,
+    .desktop-layout .navigation-container {
+        display: none !important;
+    }
+}
+
+/* ===== 데스크톱 사이드바 영역 ===== */
+.desktop-sidebar {
+    display: none;
+    flex-shrink: 0;
+    background-color: var(--surface-primary);
+    border-right: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: var(--z-sticky);
+}
+
+/* 데스크톱에서만 활성화 - PHASE 1 정교화 */
+@media (min-width: 1024px) {
+    .desktop-sidebar {
+        display: block;
+        width: var(--sidebar-width-sm);
+    }
+    
+    /* 데스크톱 모드에서만 표시 */
+    .main-app:not(.desktop-mode) .desktop-sidebar {
+        display: none !important;
+    }
+}
+
+/* 사이드바 크기별 조정 */
+@media (min-width: 1280px) {
+    .desktop-sidebar {
+        width: var(--sidebar-width-md);
+    }
+}
+
+@media (min-width: 1440px) {
+    .desktop-sidebar {
+        width: var(--sidebar-width-lg);
+    }
+}
+
+@media (min-width: 1600px) {
+    .desktop-sidebar {
+        width: var(--sidebar-width-xl);
+    }
+}
+
+/* ===== 데스크톱 메인 콘텐츠 영역 ===== */
+.desktop-main-content {
+    display: none;
+    flex: 1;
+    min-height: 100vh;
+    background-color: var(--bg-primary);
+    position: relative;
+    overflow-x: hidden;
+    /* PHASE 1: 데스크톱에서는 하단 네비게이션 여백 불필요 */
+    padding-bottom: var(--spacing-lg);
+}
+
+/* 데스크톱에서만 활성화 - PHASE 1 정교화 */
+@media (min-width: 1024px) {
+    .desktop-main-content {
+        display: block;
+    }
+    
+    /* 데스크톱 모드에서만 표시 */
+    .main-app:not(.desktop-mode) .desktop-main-content {
+        display: none !important;
+    }
+}
+
+/* ===== 데스크톱 콘텐츠 컨테이너 ===== */
+.desktop-content-container {
+    max-width: var(--desktop-container-sm);
+    margin: 0 auto;
+    padding: var(--desktop-padding-sm);
+    min-height: 100vh;
+}
+
+/* 데스크톱 크기별 컨테이너 조정 */
+@media (min-width: 1280px) {
+    .desktop-content-container {
+        max-width: var(--desktop-container-md);
+        padding: var(--desktop-padding-md);
+    }
+}
+
+@media (min-width: 1440px) {
+    .desktop-content-container {
+        max-width: var(--desktop-container-lg);
+        padding: var(--desktop-padding-lg);
+    }
+}
+
+@media (min-width: 1600px) {
+    .desktop-content-container {
+        max-width: var(--desktop-container-xl);
+        padding: var(--desktop-padding-xl);
+    }
+}
+
+/* ===== 데스크톱 그리드 시스템 ===== */
+.desktop-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+    grid-template-columns: 1fr;
+}
+
+/* 소형 데스크톱: 2열 그리드 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .desktop-grid {
+        grid-template-columns: repeat(var(--desktop-grid-cols-sm), 1fr);
+        gap: var(--spacing-md);
+    }
+}
+
+/* 중형 데스크톱: 3열 그리드 */
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .desktop-grid {
+        grid-template-columns: repeat(var(--desktop-grid-cols-md), 1fr);
+        gap: var(--spacing-lg);
+    }
+}
+
+/* 대형 데스크톱: 4열 그리드 */
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .desktop-grid {
+        grid-template-columns: repeat(var(--desktop-grid-cols-lg), 1fr);
+        gap: var(--spacing-lg);
+    }
+}
+
+/* 초대형 데스크톱: 5열 그리드 */
+@media (min-width: 1600px) {
+    .desktop-grid {
+        grid-template-columns: repeat(var(--desktop-grid-cols-xl), 1fr);
+        gap: var(--spacing-xl);
+    }
+}
+
+/* ===== 데스크톱 카드 레이아웃 ===== */
+.desktop-card {
+    background-color: var(--surface-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-lg);
+    transition: var(--transition-all);
+    position: relative;
+    overflow: hidden;
+}
+
+.desktop-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-medium);
+}
+
+/* ===== 데스크톱 사이드바 네비게이션 ===== */
+.desktop-sidebar-nav {
+    padding: var(--spacing-lg);
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.desktop-sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: var(--transition-all);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: var(--font-medium);
+    position: relative;
+    overflow: hidden;
+}
+
+.desktop-sidebar-nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--primary-color);
+    transform: scaleY(0);
+    transition: var(--transition-all);
+    border-radius: 0 2px 2px 0;
+}
+
+.desktop-sidebar-nav-item:hover {
+    background-color: var(--gray-50);
+    color: var(--text-primary);
+    transform: translateX(4px);
+}
+
+.desktop-sidebar-nav-item:hover::before {
+    transform: scaleY(1);
+}
+
+.desktop-sidebar-nav-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-weight: var(--font-semibold);
+    transform: translateX(4px);
+}
+
+.desktop-sidebar-nav-item.active::before {
+    transform: scaleY(1);
+}
+
+.desktop-sidebar-nav-item .icon {
+    margin-right: var(--spacing-md);
+    font-size: var(--font-lg);
+    width: 24px;
+    text-align: center;
+    transition: var(--transition-all);
+}
+
+.desktop-sidebar-nav-item.active .icon {
+    transform: scale(1.1);
+}
+
+/* 사이드바 네비게이션 그룹 */
+.desktop-sidebar-nav-group {
+    margin-bottom: var(--spacing-xl);
+}
+
+.desktop-sidebar-nav-group-title {
+    font-size: var(--font-xs);
+    font-weight: var(--font-semibold);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--spacing-md);
+    padding: 0 var(--spacing-md);
+}
+
+/* ===== 데스크톱 상단 헤더 ===== */
+.desktop-header {
+    display: none;
+    background-color: var(--surface-primary);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+}
+
+/* 데스크톱에서만 활성화 */
+@media (min-width: 1024px) {
+    .desktop-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.desktop-header-title {
+    font-size: var(--font-xl);
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.desktop-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* ===== 데스크톱 브레드크럼 ===== */
+.desktop-breadcrumb {
+    display: none;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--surface-secondary);
+    border-bottom: 1px solid var(--border-light);
+    font-size: var(--font-sm);
+    color: var(--text-tertiary);
+}
+
+/* 데스크톱에서만 활성화 */
+@media (min-width: 1024px) {
+    .desktop-breadcrumb {
+        display: block;
+    }
+}
+
+.desktop-breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: var(--transition-colors);
+}
+
+.desktop-breadcrumb-item:hover {
+    color: var(--primary-color);
+}
+
+.desktop-breadcrumb-separator {
+    margin: 0 var(--spacing-sm);
+    color: var(--text-quaternary);
+}
+
+/* ===== 데스크톱 푸터 ===== */
+.desktop-footer {
+    display: none;
+    background-color: var(--surface-secondary);
+    border-top: 1px solid var(--border-light);
+    padding: var(--spacing-lg);
+    margin-top: auto;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: var(--font-sm);
+}
+
+/* 데스크톱에서만 활성화 */
+@media (min-width: 1024px) {
+    .desktop-footer {
+        display: block;
+    }
+}
+
+/* ===== 다크모드 지원 ===== */
+.dark .desktop-layout {
+    background-color: var(--bg-primary, #1a1a1a);
+}
+
+.dark .desktop-sidebar {
+    background-color: var(--surface-secondary, #2d2d2d);
+    border-right-color: var(--border-medium, #4a5568);
+}
+
+.dark .desktop-main-content {
+    background-color: var(--bg-primary, #1a1a1a);
+}
+
+.dark .desktop-card {
+    background-color: var(--surface-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+}
+
+.dark .desktop-card:hover {
+    border-color: var(--border-strong, #6b7280);
+}
+
+.dark .desktop-sidebar-nav-item {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .desktop-sidebar-nav-item:hover {
+    background-color: var(--gray-100, #2d3748);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .desktop-sidebar-nav-item.active {
+    background-color: var(--primary-color, #4dabf7);
+    color: var(--white, #ffffff);
+}
+
+.dark .desktop-header {
+    background-color: var(--surface-secondary, #2d2d2d);
+    border-bottom-color: var(--border-medium, #4a5568);
+}
+
+.dark .desktop-breadcrumb {
+    background-color: var(--surface-tertiary, #374151);
+    border-bottom-color: var(--border-medium, #4a5568);
+}
+
+.dark .desktop-footer {
+    background-color: var(--surface-tertiary, #374151);
+    border-top-color: var(--border-medium, #4a5568);
+}
+
+/* ===== 반응형 전환 애니메이션 ===== */
+@media (min-width: 1024px) {
+    .desktop-layout {
+        animation: desktopLayoutFadeIn 0.3s ease-out;
+    }
+    
+    .desktop-sidebar {
+        animation: desktopSidebarSlideIn 0.3s ease-out;
+    }
+    
+    .desktop-main-content {
+        animation: desktopContentFadeIn 0.3s ease-out 0.1s both;
+    }
+}
+
+@keyframes desktopLayoutFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes desktopSidebarSlideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes desktopContentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===== 접근성 지원 ===== */
+.desktop-sidebar-nav-item:focus,
+.desktop-card:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.desktop-sidebar-nav-item:focus:not(:focus-visible),
+.desktop-card:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ===== 성능 최적화 ===== */
+.desktop-layout,
+.desktop-sidebar,
+.desktop-main-content,
+.desktop-card {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+/* ===== 스크롤 최적화 ===== */
+.desktop-sidebar-nav {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gray-300) transparent;
+}
+
+.desktop-sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.desktop-sidebar-nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.desktop-sidebar-nav::-webkit-scrollbar-thumb {
+    background-color: var(--gray-300);
+    border-radius: 3px;
+}
+
+.desktop-sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gray-400);
+}

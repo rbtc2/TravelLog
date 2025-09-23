@@ -127,13 +127,37 @@
   --z-popover: 1060;
   --z-tooltip: 1070;
   
-  /* 컨테이너 크기 (반응형 최적화) */
+  /* 컨테이너 크기 (반응형 최적화) - PHASE 1 개선 */
   --container-mobile: 100%;
   --container-tablet: 90%;
   --container-desktop-sm: 1000px;
   --container-desktop-md: 1200px;
   --container-desktop-lg: 1400px;
   --container-desktop-xl: 1600px;
+  
+  /* 데스크톱 최적화 컨테이너 시스템 - PHASE 1 */
+  --desktop-container-sm: 1200px;    /* 소형 데스크톱: 1024px-1279px */
+  --desktop-container-md: 1400px;    /* 중형 데스크톱: 1280px-1439px */
+  --desktop-container-lg: 1600px;    /* 대형 데스크톱: 1440px-1599px */
+  --desktop-container-xl: 1800px;    /* 초대형 데스크톱: 1600px+ */
+  
+  /* 데스크톱 그리드 시스템 - PHASE 1 */
+  --desktop-grid-cols-sm: 2;         /* 소형 데스크톱: 2열 */
+  --desktop-grid-cols-md: 3;         /* 중형 데스크톱: 3열 */
+  --desktop-grid-cols-lg: 4;         /* 대형 데스크톱: 4열 */
+  --desktop-grid-cols-xl: 5;         /* 초대형 데스크톱: 5열 */
+  
+  /* 데스크톱 사이드바 시스템 - PHASE 1 */
+  --sidebar-width-sm: 280px;         /* 소형 데스크톱 사이드바 */
+  --sidebar-width-md: 320px;         /* 중형 데스크톱 사이드바 */
+  --sidebar-width-lg: 360px;         /* 대형 데스크톱 사이드바 */
+  --sidebar-width-xl: 400px;         /* 초대형 데스크톱 사이드바 */
+  
+  /* 데스크톱 여백 시스템 - PHASE 1 */
+  --desktop-padding-sm: 24px;        /* 소형 데스크톱 패딩 */
+  --desktop-padding-md: 32px;        /* 중형 데스크톱 패딩 */
+  --desktop-padding-lg: 40px;        /* 대형 데스크톱 패딩 */
+  --desktop-padding-xl: 48px;        /* 초대형 데스크톱 패딩 */
   
   /* 반응형 브레이크포인트 */
   --breakpoint-sm: 640px;
