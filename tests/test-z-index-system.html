@@ -259,13 +259,14 @@
         <h1>🔧 Stacking Context 격리 해결 시스템 종합 테스트</h1>
         <p>Portal 패턴을 통한 Country Selector의 Stacking Context 격리 문제 해결을 위한 종합 테스트 페이지입니다.</p>
         
-        <div class="test-controls">
-            <button onclick="testPortalSystem()" class="test-btn">Portal 시스템 테스트</button>
-            <button onclick="testStackingContextDebug()" class="test-btn">Stacking Context 디버그</button>
-            <button onclick="testAutoUpgrade()" class="test-btn">자동 업그레이드 테스트</button>
-            <button onclick="enableDebugMode()" class="test-btn success">디버그 모드 활성화</button>
-            <button onclick="clearAllTests()" class="test-btn">모든 테스트 정리</button>
-        </div>
+               <div class="test-controls">
+                   <button onclick="testPortalSystem()" class="test-btn">Portal 시스템 테스트</button>
+                   <button onclick="testStackingContextDebug()" class="test-btn">Stacking Context 디버그</button>
+                   <button onclick="testAutoUpgrade()" class="test-btn">자동 업그레이드 테스트</button>
+                   <button onclick="testLoginScreen()" class="test-btn">로그인 화면 테스트</button>
+                   <button onclick="enableDebugMode()" class="test-btn success">디버그 모드 활성화</button>
+                   <button onclick="clearAllTests()" class="test-btn">모든 테스트 정리</button>
+               </div>
         
         <!-- 테스트 1: 기본 Country Selector 테스트 -->
         <div class="test-section">
@@ -348,9 +349,77 @@
             <div id="test-result-1" class="test-result" style="display: none;"></div>
         </div>
         
-        <!-- 테스트 2: 모달과의 충돌 테스트 -->
+        <!-- 테스트 2: 로그인 화면 Stacking Context 테스트 -->
         <div class="test-section">
-            <div class="test-title">테스트 2: 모달과의 충돌 해결</div>
+            <div class="test-title">테스트 2: 로그인 화면 Stacking Context 해결</div>
+            <div class="test-description">
+                로그인 화면의 stacking context 문제가 Portal 시스템으로 해결되는지 확인합니다.
+                이 테스트는 Country Selector가 가려지는 근본 원인인 .login-screen의 stacking context를 시뮬레이션합니다.
+            </div>
+            <div class="test-controls">
+                <button class="test-btn" onclick="simulateLoginScreen()">로그인 화면 시뮬레이션</button>
+                <button class="test-btn" onclick="testCountrySelectorInLogin()">로그인 화면에서 Country Selector 테스트</button>
+                <button class="test-btn" onclick="closeLoginScreen()">로그인 화면 닫기</button>
+            </div>
+            
+            <!-- 로그인 화면 시뮬레이션 -->
+            <div id="login-screen-simulation" class="login-screen" style="display: none;">
+                <div class="login-container">
+                    <h2>TravelLog 로그인</h2>
+                    <form class="login-form">
+                        <div class="form-group">
+                            <label for="email">이메일</label>
+                            <input type="email" id="email" placeholder="이메일을 입력하세요">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">비밀번호</label>
+                            <input type="password" id="password" placeholder="비밀번호를 입력하세요">
+                        </div>
+                        <div class="form-group">
+                            <label for="country">국가</label>
+                            <div class="country-selector" id="login-country-selector">
+                                <div class="selector-input-container">
+                                    <input type="text" class="selector-input" placeholder="국가를 선택하세요..." id="login-country-input">
+                                    <button class="dropdown-arrow" onclick="toggleDropdownLogin('login-country-selector')">
+                                        <span class="arrow-icon">▼</span>
+                                    </button>
+                                </div>
+                                <div class="selector-dropdown" id="login-dropdown">
+                                    <div class="section-title">인기 국가</div>
+                                    <div class="countries-list">
+                                        <div class="country-item">
+                                            <span class="country-flag">🇰🇷</span>
+                                            <span class="country-name">대한민국</span>
+                                            <span class="country-name-en">South Korea</span>
+                                            <span class="country-continent">ASIA</span>
+                                        </div>
+                                        <div class="country-item">
+                                            <span class="country-flag">🇯🇵</span>
+                                            <span class="country-name">일본</span>
+                                            <span class="country-name-en">Japan</span>
+                                            <span class="country-continent">ASIA</span>
+                                        </div>
+                                        <div class="country-item">
+                                            <span class="country-flag">🇺🇸</span>
+                                            <span class="country-name">미국</span>
+                                            <span class="country-name-en">United States</span>
+                                            <span class="country-continent">NORTH AMERICA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="login-btn">로그인</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="test-result-2" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <!-- 테스트 3: 모달과의 충돌 테스트 -->
+        <div class="test-section">
+            <div class="test-title">테스트 3: 모달과의 충돌 해결</div>
             <div class="test-description">
                 Country Selector가 모달과 함께 사용될 때 충돌이 해결되는지 확인합니다.
             </div>
@@ -1038,6 +1107,140 @@
             }
         }
         
+        function testLoginScreen() {
+            console.log('로그인 화면 테스트 시작...');
+            
+            try {
+                // 로그인 화면 시뮬레이션
+                simulateLoginScreen();
+                
+                // 잠시 후 Country Selector 테스트
+                setTimeout(() => {
+                    testCountrySelectorInLogin();
+                }, 500);
+                
+            } catch (error) {
+                console.error('로그인 화면 테스트 실패:', error);
+                alert('❌ 로그인 화면 테스트 실패: ' + error.message);
+            }
+        }
+        
+        function simulateLoginScreen() {
+            console.log('로그인 화면 시뮬레이션 시작...');
+            
+            const loginScreen = document.getElementById('login-screen-simulation');
+            if (!loginScreen) {
+                throw new Error('로그인 화면 시뮬레이션 요소를 찾을 수 없습니다');
+            }
+            
+            // 로그인 화면 표시
+            loginScreen.style.display = 'flex';
+            
+            // 애니메이션 효과
+            loginScreen.style.opacity = '0';
+            loginScreen.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                loginScreen.style.transition = 'all 0.3s ease';
+                loginScreen.style.opacity = '1';
+                loginScreen.style.transform = 'scale(1)';
+            }, 10);
+            
+            console.log('✅ 로그인 화면 시뮬레이션 완료');
+        }
+        
+        function testCountrySelectorInLogin() {
+            console.log('로그인 화면에서 Country Selector 테스트 시작...');
+            
+            try {
+                const countrySelector = document.getElementById('login-country-selector');
+                const dropdown = document.getElementById('login-dropdown');
+                
+                if (!countrySelector || !dropdown) {
+                    throw new Error('로그인 화면의 Country Selector 요소를 찾을 수 없습니다');
+                }
+                
+                // 드롭다운 열기
+                dropdown.style.display = 'block';
+                dropdown.classList.add('open');
+                
+                // Portal 시스템이 작동하는지 확인
+                setTimeout(() => {
+                    const portalRoot = document.getElementById('dropdown-portal-root');
+                    const portalDropdown = portalRoot.querySelector('.selector-dropdown');
+                    
+                    if (portalDropdown) {
+                        console.log('✅ Portal 시스템이 정상 작동 중');
+                        console.log('Portal 드롭다운 z-index:', window.getComputedStyle(portalDropdown).zIndex);
+                        
+                        // 테스트 결과 표시
+                        const resultDiv = document.getElementById('test-result-2');
+                        resultDiv.innerHTML = `
+                            <div style="color: green; font-weight: bold;">
+                                ✅ 로그인 화면 Stacking Context 해결 성공!<br>
+                                Portal 시스템이 정상 작동하여 Country Selector가 가려지지 않습니다.
+                            </div>
+                        `;
+                        resultDiv.style.display = 'block';
+                        
+                    } else {
+                        throw new Error('Portal 시스템이 작동하지 않습니다');
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('로그인 화면 Country Selector 테스트 실패:', error);
+                
+                const resultDiv = document.getElementById('test-result-2');
+                resultDiv.innerHTML = `
+                    <div style="color: red; font-weight: bold;">
+                        ❌ 로그인 화면 Stacking Context 해결 실패: ${error.message}
+                    </div>
+                `;
+                resultDiv.style.display = 'block';
+            }
+        }
+        
+        function closeLoginScreen() {
+            console.log('로그인 화면 닫기...');
+            
+            const loginScreen = document.getElementById('login-screen-simulation');
+            if (loginScreen) {
+                loginScreen.style.transition = 'all 0.3s ease';
+                loginScreen.style.opacity = '0';
+                loginScreen.style.transform = 'scale(0.9)';
+                
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                }, 300);
+            }
+            
+            // 테스트 결과 숨기기
+            const resultDiv = document.getElementById('test-result-2');
+            if (resultDiv) {
+                resultDiv.style.display = 'none';
+            }
+            
+            console.log('✅ 로그인 화면 닫기 완료');
+        }
+        
+        function toggleDropdownLogin(selectorId) {
+            const selector = document.getElementById(selectorId);
+            const dropdown = selector.querySelector('.selector-dropdown');
+            
+            if (dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+                setTimeout(() => {
+                    dropdown.style.display = 'none';
+                }, 200);
+            } else {
+                dropdown.style.display = 'block';
+                setTimeout(() => {
+                    dropdown.classList.add('open');
+                }, 10);
+            }
+        }
+        
         function clearAllTests() {
             console.log('모든 테스트 정리 시작...');
             
@@ -1047,6 +1250,9 @@
                 
                 // 모든 업그레이드 해제
                 window.countrySelectorUpgrade.downgradeAll();
+                
+                // 로그인 화면 닫기
+                closeLoginScreen();
                 
                 // 테스트 결과 초기화
                 testResults = {};

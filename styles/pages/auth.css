@@ -14,7 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: var(--z-modal);
+    /* z-index 제거 - Portal 시스템이 해결 */
     overflow-y: auto;
     padding: 20px;
     box-sizing: border-box;
@@ -31,7 +31,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     animation: slideUp 0.6s ease-out;
     position: relative;
-    z-index: var(--z-content);
+    /* z-index 제거 - Portal 시스템이 해결 */
 }
 
 @keyframes slideUp {
@@ -204,7 +204,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: var(--z-content);
+    /* z-index 제거 - Portal 시스템이 해결 */
 }
 
 .login-btn:hover {
@@ -286,7 +286,7 @@
     color: #a0aec0;
     font-size: 14px;
     position: relative;
-    z-index: var(--z-content);
+    /* z-index 제거 - Portal 시스템이 해결 */
 }
 
 /* ===== 링크 스타일 ===== */

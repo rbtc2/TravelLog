@@ -157,7 +157,7 @@
   /* Critical UI Layer (2000-2999): Country Selector Portal */
   --z-country-selector: 2000;
   --z-country-dropdown: 2100;
-  --z-country-portal: 2200;
+  --z-country-portal: 9999; /* 최고 우선순위로 설정 */
   --z-critical-dropdown: 2300;
   
   /* System Layer (9000+): 에러 메시지, 로딩, 시스템 알림 */

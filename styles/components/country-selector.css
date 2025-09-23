@@ -7,9 +7,7 @@
     width: 100%;
     font-family: var(--font-family-base);
     
-    /* 통합 Z-Index 시스템 사용 */
-    z-index: var(--z-country-selector);
-    
+    /* Portal 시스템이 z-index 문제를 해결하므로 제거 */
     /* 독립적인 stacking context 생성 */
     isolation: isolate;
     
@@ -27,8 +25,7 @@
     padding: 4px;
     box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    /* 통합 Z-Index 시스템 사용 */
-    z-index: var(--z-country-selector);
+    /* Portal 시스템이 z-index 문제를 해결하므로 제거 */
 }
 
 .selector-input:focus-within {
@@ -365,7 +362,7 @@
 /* Portal 기반 드롭다운 스타일 */
 .country-selector-portal {
     position: fixed;
-    z-index: var(--z-country-dropdown);
+    z-index: var(--z-country-portal); /* 더 높은 우선순위 */
     pointer-events: none;
 }
 
