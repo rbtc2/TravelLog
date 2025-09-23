@@ -151,7 +151,6 @@ class AppManager {
         try {
             const emailConfirmationHandler = new EmailConfirmationHandler();
             await emailConfirmationHandler.initialize();
-            console.log('이메일 확인 핸들러 초기화 완료');
         } catch (error) {
             console.error('이메일 확인 핸들러 초기화 실패:', error);
         }
@@ -160,7 +159,6 @@ class AppManager {
         try {
             const passwordResetHandler = new PasswordResetHandler();
             await passwordResetHandler.initialize();
-            console.log('비밀번호 재설정 핸들러 초기화 완료');
         } catch (error) {
             console.error('비밀번호 재설정 핸들러 초기화 실패:', error);
         }
@@ -168,7 +166,6 @@ class AppManager {
         // 인증 관리자 초기화
         try {
             this.authManager = new AuthManager();
-            console.log('인증 관리자 초기화 완료');
         } catch (error) {
             console.error('인증 관리자 초기화 실패:', error);
             this.showLoginScreen();
@@ -177,7 +174,6 @@ class AppManager {
         // 여행 로그 서비스 초기화
         try {
             await travelLogService.initialize();
-            console.log('여행 로그 서비스 초기화 완료');
         } catch (error) {
             console.error('여행 로그 서비스 초기화 실패:', error);
         }
@@ -185,7 +181,6 @@ class AppManager {
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         try {
             await this.desktopLayoutManager.initialize();
-            console.log('데스크톱 레이아웃 매니저 초기화 완료');
             
             // 데스크톱 레이아웃 토글 버튼 추가
             this.addDesktopLayoutToggle();
@@ -337,7 +332,6 @@ class AppManager {
         
         // PHASE 1 수정: 로그인 성공 후 데스크톱 레이아웃 재초기화
         this.initializeDesktopLayoutAfterLogin();
-        
         this.loadTab('home'); // 기본 탭 로드
     }
     
@@ -353,8 +347,13 @@ class AppManager {
     }
     
     showMainApp() {
-        this.loginScreen.style.display = 'none';
-        this.mainApp.classList.remove('hidden');
+        if (this.loginScreen) {
+            this.loginScreen.style.display = 'none';
+        }
+
+        if (this.mainApp) {
+            this.mainApp.classList.remove('hidden');
+        }
     }
     
     async switchTab(tabName) {
@@ -644,6 +643,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 앱 매니저 초기화
     const appManager = new AppManager();
+    
+    // 전역으로 설정 (AuthManager에서 참조)
+    window.appManager = appManager;
     
     // PHASE 1: 전역 TabManager 설정 (데스크톱 레이아웃에서 탭 전환 지원)
     window.TabManager = {

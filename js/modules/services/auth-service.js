@@ -65,8 +65,6 @@ class AuthService {
         if (!this.client) return;
 
         this.client.auth.onAuthStateChange((event, session) => {
-            console.log('인증 상태 변경:', event, session?.user?.email);
-            
             this.currentUser = session?.user || null;
             
             // 등록된 리스너들에게 알림
@@ -158,6 +156,10 @@ class AuthService {
             throw new Error('인증 서비스가 초기화되지 않았습니다.');
         }
 
+        if (!this.client) {
+            throw new Error('Supabase 클라이언트가 없습니다.');
+        }
+
         try {
             const { data, error } = await this.client.auth.signInWithPassword({
                 email: email,
@@ -169,12 +171,6 @@ class AuthService {
             }
 
             this.currentUser = data.user;
-            
-            // 로그인 상태 유지 설정
-            if (remember) {
-                // Supabase는 기본적으로 세션을 로컬 스토리지에 저장
-                console.log('로그인 상태가 유지됩니다.');
-            }
 
             toastManager.show('로그인되었습니다!', 'success');
             return {

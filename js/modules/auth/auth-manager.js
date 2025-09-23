@@ -15,7 +15,7 @@ class AuthManager {
         this.signupForm = null;
         this.forgotPasswordForm = null;
         this.demoBtn = null;
-        
+
         this.init();
     }
 
@@ -32,11 +32,13 @@ class AuthManager {
             this.loginForm = document.getElementById('login-form');
             this.demoBtn = document.getElementById('demo-btn');
             
-            // 이벤트 바인딩
-            this.bindEvents();
-            
-            // 인증 상태 리스너 등록
-            this.setupAuthStateListener();
+            // 이벤트 바인딩 (한 번만)
+            if (!this.isInitialized) {
+                this.bindEvents();
+                
+                // 인증 상태 리스너 등록
+                this.setupAuthStateListener();
+            }
             
             // 현재 인증 상태 확인
             if (authService.isLoggedIn()) {
@@ -46,7 +48,6 @@ class AuthManager {
             }
             
             this.isInitialized = true;
-            console.log('인증 관리자가 초기화되었습니다.');
             
         } catch (error) {
             console.error('인증 관리자 초기화 실패:', error);
@@ -58,9 +59,25 @@ class AuthManager {
      * 이벤트 리스너를 바인딩합니다
      */
     bindEvents() {
+        // 기존 이벤트 리스너 제거 (중복 방지)
+        if (this.loginForm) {
+            this.loginForm.removeEventListener('submit', this.handleLoginSubmit);
+        }
+        
         // 로그인 폼 제출
         if (this.loginForm) {
-            this.loginForm.addEventListener('submit', (e) => {
+            this.handleLoginSubmit = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.handleLogin();
+            };
+            this.loginForm.addEventListener('submit', this.handleLoginSubmit);
+        }
+        
+        // 로그인 버튼 클릭
+        const loginBtn = document.getElementById('login-btn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.handleLogin();
             });
@@ -132,8 +149,6 @@ class AuthManager {
      */
     setupAuthStateListener() {
         authService.onAuthStateChange((event, session) => {
-            console.log('인증 상태 변경:', event);
-            
             if (event === 'SIGNED_IN' && session) {
                 this.handleAuthSuccess();
             } else if (event === 'SIGNED_OUT') {
@@ -150,6 +165,7 @@ class AuthManager {
         const password = document.getElementById('password').value;
         const remember = document.getElementById('remember').checked;
 
+
         if (!email || !password) {
             toastManager.show('이메일과 비밀번호를 입력해주세요.', 'error');
             return;
@@ -159,7 +175,13 @@ class AuthManager {
             // 로딩 상태 표시
             this.setLoadingState(true);
             
-            await authService.signIn(email, password, remember);
+            const result = await authService.signIn(email, password, remember);
+            
+            if (result && result.success) {
+                this.handleAuthSuccess();
+            } else {
+                toastManager.show('로그인에 실패했습니다.', 'error');
+            }
             
         } catch (error) {
             console.error('로그인 실패:', error);
@@ -262,8 +284,6 @@ class AuthManager {
      * 인증 성공을 처리합니다
      */
     handleAuthSuccess() {
-        console.log('인증 성공');
-        
         // 로그인 화면 숨기기
         if (this.loginScreen) {
             this.loginScreen.style.display = 'none';
