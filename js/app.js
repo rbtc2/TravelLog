@@ -6,6 +6,10 @@
 import { AppInfo } from './config/app-config.js';
 import { themeManager } from './modules/utils/theme-manager.js';
 import DesktopLayoutManager from './modules/desktop-layout-manager.js'; // PHASE 1: 데스크톱 레이아웃 매니저
+import AuthManager from './modules/auth/auth-manager.js'; // 인증 관리자
+import PasswordResetHandler from './modules/auth/password-reset-handler.js'; // 비밀번호 재설정 핸들러
+import EmailConfirmationHandler from './modules/auth/email-confirmation-handler.js'; // 이메일 확인 핸들러
+import { travelLogService } from './modules/services/travel-log-service.js'; // 여행 로그 서비스
 
 // 모바일 환경 최적화
 (function() {
@@ -125,6 +129,7 @@ class AppManager {
         this.currentTab = null;
         this.tabModules = new Map();
         this.isLoggedIn = false;
+        this.authManager = null;
         
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         this.desktopLayoutManager = new DesktopLayoutManager();
@@ -132,8 +137,6 @@ class AppManager {
         // DOM 요소들
         this.loginScreen = document.getElementById('login-screen');
         this.mainApp = document.getElementById('main-app');
-        this.loginForm = document.getElementById('login-form');
-        this.demoBtn = document.getElementById('demo-btn');
         this.tabContent = document.getElementById('tab-content');
         this.tabButtons = document.querySelectorAll('.tab-btn');
         
@@ -143,7 +146,41 @@ class AppManager {
     async init() {
         this.bindEvents();
         this.updateAppInfo();
-        this.showLoginScreen();
+        
+        // 이메일 확인 핸들러 초기화 (URL 토큰 확인)
+        try {
+            const emailConfirmationHandler = new EmailConfirmationHandler();
+            await emailConfirmationHandler.initialize();
+            console.log('이메일 확인 핸들러 초기화 완료');
+        } catch (error) {
+            console.error('이메일 확인 핸들러 초기화 실패:', error);
+        }
+
+        // 비밀번호 재설정 핸들러 초기화 (URL 토큰 확인)
+        try {
+            const passwordResetHandler = new PasswordResetHandler();
+            await passwordResetHandler.initialize();
+            console.log('비밀번호 재설정 핸들러 초기화 완료');
+        } catch (error) {
+            console.error('비밀번호 재설정 핸들러 초기화 실패:', error);
+        }
+
+        // 인증 관리자 초기화
+        try {
+            this.authManager = new AuthManager();
+            console.log('인증 관리자 초기화 완료');
+        } catch (error) {
+            console.error('인증 관리자 초기화 실패:', error);
+            this.showLoginScreen();
+        }
+
+        // 여행 로그 서비스 초기화
+        try {
+            await travelLogService.initialize();
+            console.log('여행 로그 서비스 초기화 완료');
+        } catch (error) {
+            console.error('여행 로그 서비스 초기화 실패:', error);
+        }
         
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         try {
@@ -285,17 +322,6 @@ class AppManager {
     }
     
     bindEvents() {
-        // 로그인 폼 제출
-        this.loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleLogin();
-        });
-        
-        // 데모 버튼 클릭
-        this.demoBtn.addEventListener('click', () => {
-            this.handleDemoLogin();
-        });
-        
         // 탭 버튼 클릭
         this.tabButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -303,24 +329,6 @@ class AppManager {
                 this.switchTab(tabName);
             });
         });
-    }
-    
-    handleLogin() {
-        // 실제 로그인 기능은 구현하지 않음 (UI만)
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const remember = document.getElementById('remember').checked;
-        
-        console.log('로그인 시도:', { email, password, remember });
-        
-        // 데모 목적으로 바로 로그인 성공 처리
-        this.loginSuccess();
-    }
-    
-    handleDemoLogin() {
-        // 데모 로그인 - 바로 앱 화면으로 전환
-        console.log('데모 로그인 시작');
-        this.loginSuccess();
     }
     
     loginSuccess() {
@@ -575,12 +583,20 @@ class AppManager {
         });
     }
     
-    // 로그아웃 기능 (향후 구현 예정)
-    logout() {
-        this.isLoggedIn = false;
-        this.currentTab = null;
-        this.tabModules.clear();
-        this.showLoginScreen();
+    // 로그아웃 기능
+    async logout() {
+        try {
+            if (this.authManager) {
+                await this.authManager.logout();
+            }
+            
+            this.isLoggedIn = false;
+            this.currentTab = null;
+            this.tabModules.clear();
+            this.showLoginScreen();
+        } catch (error) {
+            console.error('로그아웃 실패:', error);
+        }
     }
 }
 

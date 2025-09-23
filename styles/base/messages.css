@@ -134,12 +134,46 @@
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    display: inline-block !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
 }
 
 .toast-message.show {
     transform: translateX(-50%) translateY(0) !important;
     opacity: 1 !important;
+}
+
+/* 토스트 메시지 타입별 스타일 */
+.toast-success {
+    background: linear-gradient(135deg, #48bb78, #38a169) !important;
+    border: 1px solid #38a169 !important;
+}
+
+.toast-error {
+    background: linear-gradient(135deg, #f56565, #e53e3e) !important;
+    border: 1px solid #e53e3e !important;
+}
+
+.toast-warning {
+    background: linear-gradient(135deg, #ed8936, #dd6b20) !important;
+    border: 1px solid #dd6b20 !important;
+}
+
+.toast-info {
+    background: linear-gradient(135deg, #4299e1, #3182ce) !important;
+    border: 1px solid #3182ce !important;
+}
+
+/* 토스트 아이콘 */
+.toast-icon {
+    font-size: 16px !important;
+    flex-shrink: 0 !important;
+}
+
+.toast-text {
+    flex: 1 !important;
+    text-align: left !important;
 }
 
 /* 모바일 최적화 */
@@ -159,12 +193,18 @@
         max-width: calc(100vw - 32px) !important;
         min-width: auto !important;
         width: auto !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+        text-align: left !important;
     }
     
     .toast-message.show {
         transform: translateY(0) !important;
+    }
+    
+    .toast-text {
+        text-align: left !important;
+        white-space: normal !important;
     }
 }

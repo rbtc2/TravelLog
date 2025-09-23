@@ -76,7 +76,69 @@ export class ToastManager {
     }
 }
 
+// 싱글톤 인스턴스 생성 및 export
+export const toastManager = {
+    show: (message, type = 'info', duration = 2000) => {
+        // 기존 토스트가 있으면 제거
+        const existingToast = document.querySelector('.toast-message');
+        if (existingToast) {
+            existingToast.remove();
+        }
+        
+        // 새 토스트 생성
+        const toast = document.createElement('div');
+        toast.className = `toast-message toast-${type}`;
+        
+        // 타입별 아이콘 설정
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        
+        toast.innerHTML = `
+            <span class="toast-icon">${icons[type] || icons.info}</span>
+            <span class="toast-text">${message}</span>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // 애니메이션으로 나타나기
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+        
+        // 자동 제거
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, duration);
+    },
+    
+    success: (message, duration = 2000) => {
+        toastManager.show(message, 'success', duration);
+    },
+    
+    error: (message, duration = 3000) => {
+        toastManager.show(message, 'error', duration);
+    },
+    
+    warning: (message, duration = 2500) => {
+        toastManager.show(message, 'warning', duration);
+    },
+    
+    info: (message, duration = 2000) => {
+        toastManager.show(message, 'info', duration);
+    }
+};
+
 // 전역에서 접근할 수 있도록 window 객체에 등록 (디버깅용)
 if (typeof window !== 'undefined') {
     window.ToastManager = ToastManager;
+    window.toastManager = toastManager;
 }
