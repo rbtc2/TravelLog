@@ -11,6 +11,8 @@ import PasswordResetHandler from './modules/auth/password-reset-handler.js'; // 
 import EmailConfirmationHandler from './modules/auth/email-confirmation-handler.js'; // 이메일 확인 핸들러
 import { travelLogService } from './modules/services/travel-log-service.js'; // 여행 로그 서비스
 import ZIndexManager from './modules/utils/z-index-manager.js'; // Z-Index 충돌 관리 시스템
+import CountrySelectorUpgrade from './modules/ui-components/country-selector-upgrade.js'; // Country Selector Portal 업그레이드
+import StackingContextDebugger from './modules/utils/stacking-context-debugger.js'; // Stacking Context 디버깅 도구
 
 // 모바일 환경 최적화
 (function() {
@@ -136,8 +138,14 @@ class AppManager {
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         this.desktopLayoutManager = new DesktopLayoutManager();
         
-        // Z-Index 충돌 관리 시스템 초기화
-        this.zIndexManager = window.zIndexManager;
+            // Z-Index 충돌 관리 시스템 초기화
+            this.zIndexManager = window.zIndexManager;
+            
+            // Country Selector Portal 업그레이드 시스템 초기화
+            this.countrySelectorUpgrade = window.countrySelectorUpgrade;
+            
+            // Stacking Context 디버깅 도구 초기화
+            this.stackingContextDebugger = window.stackingContextDebugger;
         
         // DOM 요소들
         this.loginScreen = document.getElementById('login-screen');

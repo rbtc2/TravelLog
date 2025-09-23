@@ -1,8 +1,8 @@
-# 🔧 TravelLog Z-Index 시스템 가이드
+# 🔧 TravelLog Stacking Context 격리 해결 시스템 가이드
 
 ## 📋 개요
 
-TravelLog의 Z-Index 시스템은 Country Selector와 다른 UI 요소들 간의 z-index 충돌을 근본적으로 해결하기 위해 설계된 전문가 수준의 관리 시스템입니다.
+TravelLog의 Stacking Context 격리 해결 시스템은 Portal 패턴을 사용하여 Country Selector의 드롭다운이 부모 요소의 stacking context에 갇혀 가려지는 문제를 근본적으로 해결하기 위해 설계된 전문가 수준의 관리 시스템입니다.
 
 ## 🎯 주요 특징
 

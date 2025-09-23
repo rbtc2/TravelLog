@@ -161,7 +161,19 @@ class ZIndexManager {
      * @param {string} type - 요소 타입
      */
     watchElement(element, type) {
-        if (!element || this.watchedElements.has(element)) {
+        // 요소 유효성 검사
+        if (!element || !(element instanceof Element)) {
+            console.warn('watchElement: Invalid element provided', element);
+            return;
+        }
+        
+        // 요소가 DOM에 연결되어 있는지 확인
+        if (!document.contains(element)) {
+            console.warn('watchElement: Element not in DOM', element);
+            return;
+        }
+        
+        if (this.watchedElements.has(element)) {
             return;
         }
         
@@ -425,14 +437,31 @@ class ZIndexManager {
      * @returns {number} z-index 값
      */
     getElementZIndex(element) {
-        const computedStyle = window.getComputedStyle(element);
-        const zIndex = parseInt(computedStyle.zIndex, 10);
-        
-        if (isNaN(zIndex)) {
+        // 요소 유효성 검사
+        if (!element || !(element instanceof Element)) {
+            console.warn('getElementZIndex: Invalid element provided', element);
             return 0;
         }
         
-        return zIndex;
+        // 요소가 DOM에 연결되어 있는지 확인
+        if (!document.contains(element)) {
+            console.warn('getElementZIndex: Element not in DOM', element);
+            return 0;
+        }
+        
+        try {
+            const computedStyle = window.getComputedStyle(element);
+            const zIndex = parseInt(computedStyle.zIndex, 10);
+            
+            if (isNaN(zIndex)) {
+                return 0;
+            }
+            
+            return zIndex;
+        } catch (error) {
+            console.error('getElementZIndex: Failed to get computed style', error, element);
+            return 0;
+        }
     }
     
     /**
@@ -441,7 +470,23 @@ class ZIndexManager {
      * @param {number} zIndex - 새로운 z-index 값
      */
     setElementZIndex(element, zIndex) {
-        element.style.zIndex = zIndex.toString();
+        // 요소 유효성 검사
+        if (!element || !(element instanceof Element)) {
+            console.warn('setElementZIndex: Invalid element provided', element);
+            return;
+        }
+        
+        // 요소가 DOM에 연결되어 있는지 확인
+        if (!document.contains(element)) {
+            console.warn('setElementZIndex: Element not in DOM', element);
+            return;
+        }
+        
+        try {
+            element.style.zIndex = zIndex.toString();
+        } catch (error) {
+            console.error('setElementZIndex: Failed to set z-index', error, element);
+        }
         
         // data 속성에도 저장 (디버깅용)
         element.setAttribute('data-z-index', zIndex.toString());
@@ -453,6 +498,18 @@ class ZIndexManager {
      * @returns {boolean} 활성 상태 여부
      */
     isElementActive(element) {
+        // 요소 유효성 검사
+        if (!element || !(element instanceof Element)) {
+            console.warn('isElementActive: Invalid element provided', element);
+            return false;
+        }
+        
+        // 요소가 DOM에 연결되어 있는지 확인
+        if (!document.contains(element)) {
+            console.warn('isElementActive: Element not in DOM', element);
+            return false;
+        }
+        
         // Country Selector
         if (element.classList.contains('country-selector') || 
             element.classList.contains('country-selector-v2')) {
@@ -490,7 +547,20 @@ class ZIndexManager {
      * @param {Event} event - 이벤트
      */
     handleCountrySelectorOpen(event) {
-        const element = event.target;
+        const element = event.detail?.element || event.target;
+        
+        // 요소 유효성 검사
+        if (!element || !(element instanceof Element)) {
+            console.warn('handleCountrySelectorOpen: Invalid element provided', element);
+            return;
+        }
+        
+        // 요소가 DOM에 연결되어 있는지 확인
+        if (!document.contains(element)) {
+            console.warn('handleCountrySelectorOpen: Element not in DOM', element);
+            return;
+        }
+        
         this.watchElement(element, 'country-selector');
         
         // 최고 우선순위로 설정

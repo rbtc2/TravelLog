@@ -118,11 +118,11 @@
   --scroll-timing: cubic-bezier(0.4, 0, 0.2, 1);
   --scroll-duration: 0.3s;
   
-  /* ===== 통합 Z-INDEX 계층 구조 시스템 ===== */
+  /* ===== STACKING CONTEXT 격리 해결을 위한 Z-INDEX 시스템 ===== */
   /* 
-   * 전문가 수준의 z-index 관리 시스템
-   * 각 레이어는 100 단위로 구분하여 확장성 확보
-   * Country Selector 전용 Critical UI Layer 포함
+   * Portal 패턴 기반 z-index 관리 시스템
+   * 명확한 계층 구조로 stacking context 격리 문제 해결
+   * Country Selector Portal 전용 Critical Layer 포함
    */
   
   /* Base Layer (0-99): 일반 페이지 요소 */
@@ -144,25 +144,32 @@
   --z-footer: 230;
   --z-breadcrumb: 240;
   
-  /* Overlay Layer (300-399): 모달, 팝업, 드롭다운 */
+  /* Overlay Layer (300-399): 일반 드롭다운, 팝업 */
   --z-dropdown: 300;
   --z-popover: 310;
   --z-tooltip: 320;
-  --z-modal-backdrop: 330;
-  --z-modal: 340;
-  --z-drawer: 350;
   
-  /* Critical UI Layer (400-499): Country Selector, 중요 드롭다운 */
-  --z-country-selector: 400;
-  --z-country-dropdown: 410;
-  --z-critical-dropdown: 420;
-  --z-form-overlay: 430;
+  /* Modal Layer (1000-1999): 모달, 백드롭 */
+  --z-modal-backdrop: 1000;
+  --z-modal: 1100;
+  --z-drawer: 1200;
   
-  /* System Layer (500+): 에러 메시지, 로딩, 시스템 알림 */
-  --z-loading: 500;
-  --z-error: 510;
-  --z-notification: 520;
-  --z-system-overlay: 530;
+  /* Critical UI Layer (2000-2999): Country Selector Portal */
+  --z-country-selector: 2000;
+  --z-country-dropdown: 2100;
+  --z-country-portal: 2200;
+  --z-critical-dropdown: 2300;
+  
+  /* System Layer (9000+): 에러 메시지, 로딩, 시스템 알림 */
+  --z-loading: 9000;
+  --z-error: 9100;
+  --z-notification: 9200;
+  --z-system-overlay: 9300;
+  
+  /* Portal System Variables */
+  --portal-z-base: 2000;
+  --portal-z-dropdown: 2100;
+  --portal-z-modal: 2200;
   
   /* Legacy 호환성 (기존 코드와의 호환을 위해 유지) */
   --z-sticky: 1020;

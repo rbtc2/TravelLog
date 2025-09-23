@@ -331,61 +331,67 @@
     }
 }
 
-/* ===== 통합 Z-Index 시스템 적용 ===== */
+/* ===== STACKING CONTEXT 격리 문제 해결 ===== */
 
-/* 폼 요소들과의 충돌 방지 */
-.form-group {
+/* 
+ * 기존 문제점: 부모 요소의 stacking context에 갇혀 드롭다운이 가려짐
+ * 해결책: Portal 패턴과 CSS Isolation을 통한 완전한 격리
+ */
+
+/* Country Selector 컨테이너 - 명시적 stacking context 생성 */
+.country-selector-container {
+    /* 가장 깔끔한 stacking context 생성 방법 */
+    isolation: isolate;
     position: relative;
-    z-index: var(--z-base);
+    
+    /* Portal 시스템을 위한 준비 */
+    contain: layout style;
 }
 
-/* 국가 선택기 컨테이너 */
-#country-selector-container {
+/* 기존 Country Selector - Portal 시스템으로 전환 준비 */
+.country-selector {
+    /* Portal로 이동될 예정이므로 기본 스타일만 유지 */
     position: relative;
-    z-index: var(--z-country-selector);
+    width: 100%;
+    font-family: var(--font-family-base);
 }
 
-/* 드롭다운이 열렸을 때 최상위 표시 */
-.country-selector.open {
+/* 드롭다운은 Portal로 이동되므로 기존 스타일 제거 */
+.selector-dropdown {
+    /* Portal 시스템에서 처리됨 */
+    display: none;
+}
+
+/* Portal 기반 드롭다운 스타일 */
+.country-selector-portal {
+    position: fixed;
     z-index: var(--z-country-dropdown);
+    pointer-events: none;
 }
 
-.country-selector.open .selector-dropdown {
-    z-index: var(--z-country-dropdown);
-}
-
-/* 다른 폼 요소들이 국가 선택기를 가리지 않도록 */
-.form-group:not(:has(.country-selector)) {
-    z-index: var(--z-base);
-}
-
-/* 국가 선택기 관련 요소들 */
-.country-selector,
-.country-selector * {
-    position: relative;
-}
-
-/* 드롭다운이 열렸을 때 최우선 표시 */
-.country-selector.open .selector-dropdown {
-    z-index: var(--z-country-dropdown);
+.country-selector-portal .selector-dropdown {
+    pointer-events: auto;
     position: absolute;
+    top: 0;
+    left: 0;
+    right: auto;
+    width: auto;
+    min-width: 300px;
+    max-width: 500px;
 }
 
-/* 다른 폼 요소들의 z-index 관리 */
-.form-group,
-.form-input,
-.form-label,
-button,
-input,
-select,
-textarea {
-    z-index: var(--z-base);
-}
-
-/* 국가 선택기만 예외적으로 높은 z-index */
-.country-selector,
-.country-selector * {
-    z-index: inherit;
+/* 모바일 환경 Fallback */
+@media (max-width: 768px) {
+    .country-selector-portal .selector-dropdown {
+        position: fixed;
+        top: 50%;
+        left: 20px;
+        right: 20px;
+        transform: translateY(-50%);
+        width: auto;
+        max-height: 70vh;
+        z-index: var(--z-modal);
+    }
 }
 
 /* 다크모드 지원 */
