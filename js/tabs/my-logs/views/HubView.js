@@ -15,6 +15,7 @@ class HubView {
         this.controller = controller;
         this.eventManager = new EventManager();
         this.container = null;
+        this.isLoggingOut = false;
     }
 
     /**
@@ -429,10 +430,125 @@ class HubView {
      * 로그아웃
      */
     onLogout() {
-        this.dispatchEvent('showMessage', {
-            type: 'info',
-            message: '로그아웃 기능은 추후 구현 예정입니다.'
+        // 중복 로그아웃 방지
+        if (this.isLoggingOut) {
+            return;
+        }
+        this.isLoggingOut = true;
+        
+        this.showLogoutConfirmation();
+    }
+
+    /**
+     * 로그아웃 확인 모달을 표시합니다
+     */
+    showLogoutConfirmation() {
+        const modal = document.createElement('div');
+        modal.className = 'logout-confirmation-modal';
+        modal.innerHTML = `
+            <div class="logout-confirmation-overlay">
+                <div class="logout-confirmation-content">
+                    <div class="logout-confirmation-header">
+                        <h3 class="logout-confirmation-title">로그아웃</h3>
+                        <p class="logout-confirmation-message">정말로 로그아웃하시겠습니까?</p>
+                    </div>
+                    <div class="logout-confirmation-actions">
+                        <button class="logout-confirmation-btn cancel-btn" id="logout-cancel">
+                            취소
+                        </button>
+                        <button class="logout-confirmation-btn confirm-btn" id="logout-confirm">
+                            로그아웃
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // 이벤트 바인딩
+        const cancelBtn = document.getElementById('logout-cancel');
+        const confirmBtn = document.getElementById('logout-confirm');
+        const overlay = modal.querySelector('.logout-confirmation-overlay');
+
+        if (cancelBtn) {
+            this.eventManager.add(cancelBtn, 'click', () => {
+                this.hideLogoutConfirmation(modal);
+            });
+        }
+
+        if (confirmBtn) {
+            this.eventManager.add(confirmBtn, 'click', () => {
+                this.performLogout(modal);
+            });
+        }
+
+        if (overlay) {
+            this.eventManager.add(overlay, 'click', (e) => {
+                if (e.target === overlay) {
+                    this.hideLogoutConfirmation(modal);
+                }
+            });
+        }
+
+        // 모달 표시 애니메이션
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
         });
+    }
+
+    /**
+     * 로그아웃 확인 모달을 숨깁니다
+     */
+    hideLogoutConfirmation(modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
+            // 모달이 숨겨질 때 로그아웃 상태 리셋
+            this.isLoggingOut = false;
+        }, 300);
+    }
+
+    /**
+     * 실제 로그아웃을 수행합니다
+     */
+    async performLogout(modal) {
+        try {
+            // 로딩 상태 표시
+            const confirmBtn = document.getElementById('logout-confirm');
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = '로그아웃 중...';
+            }
+
+            // AuthService를 통해 로그아웃
+            const { authService } = await import('../../../modules/services/auth-service.js');
+            await authService.signOut();
+
+            // 모달 숨기기
+            this.hideLogoutConfirmation(modal);
+
+        } catch (error) {
+            console.error('로그아웃 실패:', error);
+            
+            // 에러 메시지 표시
+            this.dispatchEvent('showMessage', {
+                type: 'error',
+                message: '로그아웃 중 오류가 발생했습니다.'
+            });
+
+            // 버튼 상태 복원
+            const confirmBtn = document.getElementById('logout-confirm');
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = '로그아웃';
+            }
+        } finally {
+            // 로그아웃 상태 리셋
+            this.isLoggingOut = false;
+        }
     }
 
     /**

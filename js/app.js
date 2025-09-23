@@ -129,6 +129,7 @@ class AppManager {
         this.currentTab = null;
         this.tabModules = new Map();
         this.isLoggedIn = false;
+        this.isHandlingLoginSuccess = false;
         this.authManager = null;
         
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
@@ -327,12 +328,38 @@ class AppManager {
     }
     
     loginSuccess() {
+        // 중복 호출 방지
+        if (this.isHandlingLoginSuccess) {
+            return;
+        }
+        this.isHandlingLoginSuccess = true;
+
         this.isLoggedIn = true;
         this.showMainApp();
         
         // PHASE 1 수정: 로그인 성공 후 데스크톱 레이아웃 재초기화
         this.initializeDesktopLayoutAfterLogin();
         this.loadTab('home'); // 기본 탭 로드
+
+        // 상태 리셋
+        setTimeout(() => {
+            this.isHandlingLoginSuccess = false;
+        }, 2000);
+    }
+
+    /**
+     * 로그아웃 성공을 처리합니다
+     */
+    logoutSuccess() {
+        this.isLoggedIn = false;
+        this.showLoginScreen();
+        
+        // 현재 탭 정리
+        this.cleanupCurrentTab();
+        
+        // 탭 상태 초기화
+        this.currentTab = null;
+        this.tabModules.clear();
     }
     
     showLoginScreen() {

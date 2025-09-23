@@ -6,10 +6,17 @@
 class HomeTab {
     constructor() {
         this.isInitialized = false;
+        this.isRendering = false;
         this.eventListeners = [];
     }
     
     render(container) {
+        // 중복 렌더링 방지
+        if (this.isRendering) {
+            return;
+        }
+        this.isRendering = true;
+
         this.container = container;
         // 홈 탭 CSS 네임스페이스 클래스 추가
         this.container.classList.add('home-tab');
@@ -19,6 +26,9 @@ class HomeTab {
         
         // 탭 렌더링 후 스크롤을 상단으로 이동
         this.scrollToTop();
+
+        // 렌더링 완료
+        this.isRendering = false;
     }
     
     renderContent() {

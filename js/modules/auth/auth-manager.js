@@ -9,6 +9,9 @@ import { toastManager } from '../ui-components/toast-manager.js';
 class AuthManager {
     constructor() {
         this.isInitialized = false;
+        this.isLoggingOut = false;
+        this.isHandlingAuthSuccess = false;
+        this.authStateListenerSetup = false;
         this.currentView = 'login'; // 'login' | 'signup' | 'forgot-password'
         this.loginScreen = null;
         this.loginForm = null;
@@ -148,6 +151,12 @@ class AuthManager {
      * 인증 상태 변경 리스너를 설정합니다
      */
     setupAuthStateListener() {
+        // 중복 리스너 방지
+        if (this.authStateListenerSetup) {
+            return;
+        }
+        this.authStateListenerSetup = true;
+
         authService.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN' && session) {
                 this.handleAuthSuccess();
@@ -284,6 +293,12 @@ class AuthManager {
      * 인증 성공을 처리합니다
      */
     handleAuthSuccess() {
+        // 중복 호출 방지
+        if (this.isHandlingAuthSuccess) {
+            return;
+        }
+        this.isHandlingAuthSuccess = true;
+
         // 로그인 화면 숨기기
         if (this.loginScreen) {
             this.loginScreen.style.display = 'none';
@@ -299,13 +314,22 @@ class AuthManager {
         if (window.appManager) {
             window.appManager.loginSuccess();
         }
+
+        // 상태 리셋
+        setTimeout(() => {
+            this.isHandlingAuthSuccess = false;
+        }, 1000);
     }
 
     /**
      * 로그아웃을 처리합니다
      */
     handleAuthLogout() {
-        console.log('로그아웃됨');
+        // 중복 호출 방지
+        if (this.isLoggingOut) {
+            return;
+        }
+        this.isLoggingOut = true;
         
         // 메인 앱 숨기기
         const mainApp = document.getElementById('main-app');
@@ -318,8 +342,13 @@ class AuthManager {
         
         // 앱 매니저에 로그아웃 알림
         if (window.appManager) {
-            window.appManager.logout();
+            window.appManager.logoutSuccess();
         }
+        
+        // 로그아웃 상태 리셋
+        setTimeout(() => {
+            this.isLoggingOut = false;
+        }, 1000);
     }
 
     /**

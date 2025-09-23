@@ -11,6 +11,7 @@ class AuthService {
         this.client = null;
         this.currentUser = null;
         this.isInitialized = false;
+        this.isRedirecting = false;
         this.authStateListeners = [];
     }
 
@@ -203,7 +204,11 @@ class AuthService {
             }
 
             this.currentUser = null;
-            toastManager.show('로그아웃되었습니다.', 'info');
+            
+            // 로그아웃 후 로그인 화면으로 리다이렉트
+            setTimeout(() => {
+                this.redirectToLogin();
+            }, 1000);
             
             return {
                 success: true
@@ -214,6 +219,44 @@ class AuthService {
             toastManager.show(error.message, 'error');
             throw error;
         }
+    }
+
+    /**
+     * 로그인 화면으로 리다이렉트합니다
+     */
+    redirectToLogin() {
+        // 중복 리다이렉트 방지
+        if (this.isRedirecting) {
+            return;
+        }
+        this.isRedirecting = true;
+
+        // 메인 앱 숨기기
+        const mainApp = document.getElementById('main-app');
+        if (mainApp) {
+            mainApp.classList.add('hidden');
+        }
+
+        // 로그인 화면 표시
+        const loginScreen = document.getElementById('login-screen');
+        if (loginScreen) {
+            loginScreen.style.display = 'flex';
+        }
+
+        // URL을 로그인 페이지로 변경 (선택사항)
+        if (window.history && window.history.replaceState) {
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+
+        // 앱 매니저에 로그아웃 알림
+        if (window.appManager && typeof window.appManager.logoutSuccess === 'function') {
+            window.appManager.logoutSuccess();
+        }
+
+        // 리다이렉트 상태 리셋
+        setTimeout(() => {
+            this.isRedirecting = false;
+        }, 2000);
     }
 
     /**
