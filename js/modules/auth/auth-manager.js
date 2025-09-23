@@ -5,6 +5,7 @@
 
 import { authService } from '../services/auth-service.js';
 import { toastManager } from '../ui-components/toast-manager.js';
+import { createCountrySelector } from '../ui-components/country-selector.js';
 
 class AuthManager {
     constructor() {
@@ -18,6 +19,7 @@ class AuthManager {
         this.signupForm = null;
         this.forgotPasswordForm = null;
         this.demoBtn = null;
+        this.countrySelector = null;
 
         this.init();
     }
@@ -225,10 +227,16 @@ class AuthManager {
         const password = document.getElementById('signup-password').value;
         const confirmPassword = document.getElementById('signup-confirm-password').value;
         const fullName = document.getElementById('signup-full-name').value;
+        const residenceCountry = document.getElementById('signup-residence-country').value;
 
         // 유효성 검사
-        if (!email || !password || !confirmPassword) {
+        if (!email || !password || !confirmPassword || !fullName) {
             toastManager.show('모든 필드를 입력해주세요.', 'error');
+            return;
+        }
+
+        if (!residenceCountry) {
+            toastManager.show('현재 거주국을 선택해주세요.', 'error');
             return;
         }
 
@@ -246,7 +254,10 @@ class AuthManager {
             // 로딩 상태 표시
             this.setLoadingState(true);
             
-            const result = await authService.signUp(email, password, { fullName });
+            const result = await authService.signUp(email, password, { 
+                fullName, 
+                residenceCountry 
+            });
             
             if (result.needsEmailConfirmation) {
                 this.showEmailConfirmationView();
@@ -525,6 +536,19 @@ class AuthManager {
                         >
                     </div>
                     
+                    <div class="form-group">
+                        <label for="signup-residence-country" class="form-label">현재 거주국</label>
+                        <div id="signup-country-selector-container" class="country-selector-container">
+                            <!-- Country selector will be initialized here -->
+                        </div>
+                        <input 
+                            type="hidden" 
+                            id="signup-residence-country" 
+                            name="residenceCountry" 
+                            value=""
+                        >
+                    </div>
+                    
                     <button type="submit" class="login-btn" id="signup-btn">
                         회원가입
                     </button>
@@ -538,6 +562,57 @@ class AuthManager {
 
         // 이벤트 리바인딩
         this.bindEvents();
+        
+        // Country selector 초기화
+        this.initializeCountrySelector();
+    }
+
+    /**
+     * Country selector를 초기화합니다
+     */
+    async initializeCountrySelector() {
+        try {
+            const container = document.getElementById('signup-country-selector-container');
+            if (!container) {
+                return; // 회원가입 폼이 아닌 경우 무시
+            }
+
+            // 기존 selector가 있다면 제거
+            if (this.countrySelector) {
+                this.countrySelector.destroy();
+                this.countrySelector = null;
+            }
+
+            // Country selector 생성
+            this.countrySelector = await createCountrySelector(container, {
+                placeholder: '현재 거주국을 선택하세요',
+                showFlags: true,
+                showEnglishNames: true,
+                inputId: 'signup-country-selector-input'
+            });
+
+            // 국가 선택 이벤트 리스너
+            container.addEventListener('country-selected', (event) => {
+                const selectedCountry = event.detail;
+                this.handleCountrySelection(selectedCountry);
+            });
+
+            console.log('AuthManager: Country selector 초기화 완료');
+
+        } catch (error) {
+            console.error('AuthManager: Country selector 초기화 실패:', error);
+        }
+    }
+
+    /**
+     * 국가 선택 이벤트를 처리합니다
+     */
+    handleCountrySelection(selectedCountry) {
+        const hiddenInput = document.getElementById('signup-residence-country');
+        if (hiddenInput && selectedCountry) {
+            hiddenInput.value = selectedCountry.code;
+            console.log('선택된 거주국:', selectedCountry.nameKo, selectedCountry.code);
+        }
     }
 
     /**

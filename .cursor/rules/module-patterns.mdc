@@ -281,6 +281,531 @@ class CalendarRenderer {
 }
 ```
 
+### **Authentication System Pattern** ⭐ **NEW PATTERN**
+A comprehensive authentication system using Supabase with proper security and state management:
+
+```javascript
+/**
+ * Authentication System Architecture
+ * 
+ * Three-tier structure:
+ * Level 1: AuthManager - UI management and user interaction
+ * Level 2: AuthService - Supabase API calls and business logic  
+ * Level 3: SupabaseConfig - Configuration and client initialization
+ */
+
+/**
+ * Level 1: AuthManager - UI Management Layer
+ */
+class AuthManager {
+    constructor() {
+        this.isInitialized = false;
+        this.isLoggingOut = false;
+        this.isHandlingAuthSuccess = false;
+        this.authStateListenerSetup = false;
+        this.currentView = 'login'; // 'login' | 'signup' | 'forgot-password'
+        
+        // UI elements
+        this.loginScreen = null;
+        this.loginForm = null;
+        this.signupForm = null;
+        this.forgotPasswordForm = null;
+        this.demoBtn = null;
+        this.countrySelector = null;
+        
+        this.init();
+    }
+    
+    /**
+     * Initialize authentication manager
+     */
+    async init() {
+        try {
+            // Initialize auth service
+            await authService.initialize();
+            
+            // Get DOM elements
+            this.loginScreen = document.getElementById('login-screen');
+            this.loginForm = document.getElementById('login-form');
+            this.demoBtn = document.getElementById('demo-btn');
+            
+            // Bind events (only once)
+            if (!this.isInitialized) {
+                this.bindEvents();
+                this.setupAuthStateListener();
+            }
+            
+            // Check current auth state
+            if (authService.isLoggedIn()) {
+                this.handleAuthSuccess();
+            } else {
+                this.showLoginView();
+            }
+            
+            this.isInitialized = true;
+        } catch (error) {
+            console.error('Auth manager initialization failed:', error);
+            this.showError('Authentication system could not be initialized.');
+        }
+    }
+    
+    /**
+     * Bind event listeners with proper cleanup
+     */
+    bindEvents() {
+        // Remove existing listeners to prevent duplicates
+        if (this.loginForm) {
+            this.loginForm.removeEventListener('submit', this.handleLoginSubmit);
+        }
+        
+        // Login form submission
+        if (this.loginForm) {
+            this.handleLoginSubmit = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.handleLogin();
+            };
+            this.loginForm.addEventListener('submit', this.handleLoginSubmit);
+        }
+        
+        // Other event bindings...
+    }
+    
+    /**
+     * Setup authentication state listener
+     */
+    setupAuthStateListener() {
+        if (this.authStateListenerSetup) return;
+        this.authStateListenerSetup = true;
+
+        authService.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                this.handleAuthSuccess();
+            } else if (event === 'SIGNED_OUT') {
+                this.handleAuthLogout();
+            }
+        });
+    }
+    
+    /**
+     * Handle login process
+     */
+    async handleLogin() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const remember = document.getElementById('remember').checked;
+
+        if (!email || !password) {
+            toastManager.show('이메일과 비밀번호를 입력해주세요.', 'error');
+            return;
+        }
+
+        try {
+            this.setLoadingState(true);
+            
+            const result = await authService.signIn(email, password, remember);
+            
+            if (result && result.success) {
+                this.handleAuthSuccess();
+            } else {
+                toastManager.show('로그인에 실패했습니다.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Login failed:', error);
+            // Error messages are handled by authService
+        } finally {
+            this.setLoadingState(false);
+        }
+    }
+    
+    /**
+     * Handle authentication success
+     */
+    handleAuthSuccess() {
+        if (this.isHandlingAuthSuccess) return;
+        this.isHandlingAuthSuccess = true;
+
+        // Hide login screen
+        if (this.loginScreen) {
+            this.loginScreen.style.display = 'none';
+        }
+        
+        // Show main app
+        const mainApp = document.getElementById('main-app');
+        if (mainApp) {
+            mainApp.classList.remove('hidden');
+        }
+        
+        // Notify app manager
+        if (window.appManager) {
+            window.appManager.loginSuccess();
+        }
+
+        // Reset state
+        setTimeout(() => {
+            this.isHandlingAuthSuccess = false;
+        }, 1000);
+    }
+}
+
+/**
+ * Level 2: AuthService - Business Logic Layer
+ */
+class AuthService {
+    constructor() {
+        this.client = null;
+        this.currentUser = null;
+        this.isInitialized = false;
+        this.isRedirecting = false;
+        this.authStateListeners = [];
+    }
+    
+    /**
+     * Initialize authentication service
+     */
+    async initialize() {
+        try {
+            this.client = await initializeSupabase();
+            this.isInitialized = true;
+            
+            // Check current session
+            await this.checkCurrentSession();
+            
+            // Setup auth state listener
+            this.setupAuthStateListener();
+            
+            console.log('Authentication service initialized.');
+        } catch (error) {
+            console.error('Auth service initialization failed:', error);
+            throw error;
+        }
+    }
+    
+    /**
+     * Check current session
+     */
+    async checkCurrentSession() {
+        if (!this.client) return;
+
+        try {
+            const { data: { session }, error } = await this.client.auth.getSession();
+            
+            if (error) {
+                console.error('Session check failed:', error);
+                return;
+            }
+
+            if (session) {
+                this.currentUser = session.user;
+                console.log('Current user:', this.currentUser.email);
+            }
+        } catch (error) {
+            console.error('Session check error:', error);
+        }
+    }
+    
+    /**
+     * Setup authentication state listener
+     */
+    setupAuthStateListener() {
+        if (!this.client) return;
+
+        this.client.auth.onAuthStateChange((event, session) => {
+            this.currentUser = session?.user || null;
+            
+            // Notify registered listeners
+            this.authStateListeners.forEach(listener => {
+                try {
+                    listener(event, session);
+                } catch (error) {
+                    console.error('Auth state listener error:', error);
+                }
+            });
+        });
+    }
+    
+    /**
+     * Register authentication state change listener
+     */
+    onAuthStateChange(listener) {
+        this.authStateListeners.push(listener);
+    }
+    
+    /**
+     * Sign up with email and password
+     */
+    async signUp(email, password, userData = {}) {
+        if (!this.isInitialized) {
+            throw new Error('Authentication service not initialized.');
+        }
+
+        try {
+            const { data, error } = await this.client.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: userData.fullName || '',
+                        residence_country: userData.residenceCountry || '',
+                        avatar_url: userData.avatarUrl || '',
+                        created_at: new Date().toISOString()
+                    }
+                }
+            });
+
+            if (error) {
+                throw new Error(this.getErrorMessage(error));
+            }
+
+            // Email confirmation required
+            if (data.user && !data.session) {
+                toastManager.show('이메일 확인 링크를 발송했습니다. 이메일을 확인해주세요.', 'info');
+                return {
+                    success: true,
+                    needsEmailConfirmation: true,
+                    user: data.user
+                };
+            }
+
+            // Immediately signed in
+            if (data.session) {
+                this.currentUser = data.user;
+                toastManager.show('회원가입이 완료되었습니다!', 'success');
+                return {
+                    success: true,
+                    needsEmailConfirmation: false,
+                    user: data.user,
+                    session: data.session
+                };
+            }
+
+        } catch (error) {
+            console.error('Signup failed:', error);
+            toastManager.show(error.message, 'error');
+            throw error;
+        }
+    }
+    
+    /**
+     * Sign in with email and password
+     */
+    async signIn(email, password, remember = false) {
+        if (!this.isInitialized) {
+            throw new Error('Authentication service not initialized.');
+        }
+
+        if (!this.client) {
+            throw new Error('Supabase client not available.');
+        }
+
+        try {
+            const { data, error } = await this.client.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                throw new Error(this.getErrorMessage(error));
+            }
+
+            this.currentUser = data.user;
+
+            toastManager.show('로그인되었습니다!', 'success');
+            return {
+                success: true,
+                user: data.user,
+                session: data.session
+            };
+
+        } catch (error) {
+            console.error('Sign in failed:', error);
+            toastManager.show(error.message, 'error');
+            throw error;
+        }
+    }
+    
+    /**
+     * Sign out
+     */
+    async signOut() {
+        if (!this.isInitialized) {
+            throw new Error('Authentication service not initialized.');
+        }
+
+        try {
+            const { error } = await this.client.auth.signOut();
+
+            if (error) {
+                throw new Error(this.getErrorMessage(error));
+            }
+
+            this.currentUser = null;
+            
+            // Redirect to login after logout
+            setTimeout(() => {
+                this.redirectToLogin();
+            }, 1000);
+            
+            return {
+                success: true
+            };
+
+        } catch (error) {
+            console.error('Sign out failed:', error);
+            toastManager.show(error.message, 'error');
+            throw error;
+        }
+    }
+    
+    /**
+     * Get current user
+     */
+    getCurrentUser() {
+        return this.currentUser;
+    }
+    
+    /**
+     * Check if user is logged in
+     */
+    isLoggedIn() {
+        return !!this.currentUser;
+    }
+    
+    /**
+     * Convert Supabase error messages to Korean
+     */
+    getErrorMessage(error) {
+        const errorMessages = {
+            'Invalid login credentials': '이메일 또는 비밀번호가 올바르지 않습니다.',
+            'Email not confirmed': '이메일 인증이 필요합니다. 이메일을 확인해주세요.',
+            'User already registered': '이미 등록된 이메일입니다.',
+            'Password should be at least 6 characters': '비밀번호는 최소 6자 이상이어야 합니다.',
+            'Invalid email': '올바른 이메일 형식이 아닙니다.',
+            'Signup requires a valid password': '유효한 비밀번호가 필요합니다.',
+            'User not found': '사용자를 찾을 수 없습니다.',
+            'Too many requests': '너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.',
+            'Network request failed': '네트워크 연결을 확인해주세요.',
+            'Invalid API key': 'API 키가 유효하지 않습니다.',
+            'Service unavailable': '서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
+        };
+
+        return errorMessages[error.message] || error.message || '알 수 없는 오류가 발생했습니다.';
+    }
+    
+    /**
+     * Cleanup authentication service
+     */
+    cleanup() {
+        this.authStateListeners = [];
+        this.currentUser = null;
+        this.isInitialized = false;
+    }
+}
+
+/**
+ * Level 3: SupabaseConfig - Configuration Layer
+ */
+export const SUPABASE_CONFIG = {
+    url: 'https://your-project.supabase.co',
+    anonKey: 'your-anon-key',
+    serviceRoleKey: 'your-service-role-key'
+};
+
+let supabaseClient = null;
+
+/**
+ * Initialize Supabase client
+ */
+export async function initializeSupabase() {
+    if (supabaseClient) {
+        return supabaseClient;
+    }
+
+    try {
+        // Use global Supabase object
+        if (typeof window !== 'undefined' && window.supabase) {
+            supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+                auth: {
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
+        } else {
+            // Dynamic import fallback
+            const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+            supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey, {
+                auth: {
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true
+                }
+            });
+        }
+
+        console.log('Supabase client initialized.');
+        return supabaseClient;
+    } catch (error) {
+        console.error('Supabase client initialization failed:', error);
+        throw new Error('Could not initialize Supabase client.');
+    }
+}
+
+// Singleton instance
+export const authService = new AuthService();
+```
+
+#### **Key Characteristics of Authentication System Pattern:**
+
+1. **Three-Tier Architecture**: Clear separation between UI, business logic, and configuration
+2. **Security First**: Proper error handling, input validation, and secure session management
+3. **State Management**: Centralized authentication state with proper listeners
+4. **Error Handling**: Korean error messages for better user experience
+5. **Session Management**: Automatic token refresh and session persistence
+6. **Modular Design**: Each layer has specific responsibilities
+7. **Event-Driven**: Authentication state changes trigger appropriate UI updates
+8. **Resource Management**: Proper cleanup of listeners and resources
+9. **Extensibility**: Easy to add new authentication methods or providers
+10. **Type Safety**: Proper error handling and validation
+
+#### **Usage Pattern for Authentication:**
+
+```javascript
+// Step 1: Initialize authentication
+const authManager = new AuthManager();
+await authManager.init();
+
+// Step 2: Check authentication state
+if (authService.isLoggedIn()) {
+    const user = authService.getCurrentUser();
+    console.log('User logged in:', user.email);
+}
+
+// Step 3: Handle authentication events
+authService.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN') {
+        console.log('User signed in');
+    } else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+    }
+});
+
+// Step 4: Perform authentication operations
+await authService.signIn(email, password);
+await authService.signUp(email, password, userData);
+await authService.signOut();
+```
+
+#### **Benefits of This Pattern:**
+
+- **Security**: Proper authentication flow with secure session management
+- **User Experience**: Korean error messages and smooth state transitions
+- **Maintainability**: Clear separation of concerns across three layers
+- **Extensibility**: Easy to add new authentication providers or methods
+- **Performance**: Efficient state management and resource cleanup
+- **Reliability**: Comprehensive error handling and validation
+
 ### **Extensible Sub-Tab Collection System Pattern** ⭐ **NEW PATTERN**
 A sophisticated pattern for creating expandable collection systems with dynamic sub-tab navigation:
 

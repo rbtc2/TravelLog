@@ -311,6 +311,9 @@ export class CountrySelector {
         this.dropdown.style.zIndex = '100000';
         this.container.style.zIndex = '99999';
         
+        // 컨테이너에 open 클래스 추가
+        this.container.classList.add('open');
+        
         // 부드러운 애니메이션 효과
         requestAnimationFrame(() => {
             this.dropdown.classList.add('open');

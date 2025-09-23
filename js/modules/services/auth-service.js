@@ -106,6 +106,7 @@ class AuthService {
                 options: {
                     data: {
                         full_name: userData.fullName || '',
+                        residence_country: userData.residenceCountry || '',
                         avatar_url: userData.avatarUrl || '',
                         created_at: new Date().toISOString()
                     }
