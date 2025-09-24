@@ -28,10 +28,11 @@ class AuthManager {
     async init() {
         try {
             // 뷰 관리자 초기화
-            this.viewManager.initialize({
-                onViewChange: (viewName) => this.handleViewChange(viewName, true), // 콜백 체인 방지
-                onCountrySelection: (country) => this.handleCountrySelection(country)
-            });
+        this.viewManager.initialize({
+            onViewChange: (viewName) => this.handleViewChange(viewName, true), // 콜백 체인 방지
+            onSubmit: (data) => this.handleFormSubmit(data),
+            onError: (message) => this.showError(message)
+        });
 
             // 이벤트 핸들러 초기화
             this.eventHandler.initialize({
@@ -98,14 +99,20 @@ class AuthManager {
     async handleGoogleLogin() {
         try {
             this.viewManager.setLoadingState(true);
-            const result = await this.authController.handleGoogleLogin();
             
-            if (result.success) {
-                // 성공 시 handleAuthSuccess가 자동으로 호출됨
+            // Google 로그인 기능은 아직 구현되지 않음
+            // 토스트 메시지로 알림
+            if (window.toastManager) {
+                window.toastManager.show('Google 로그인 기능은 준비 중입니다.', 'info');
+            } else {
+                console.log('Google 로그인 기능은 준비 중입니다.');
             }
             
         } catch (error) {
             console.error('Google 로그인 처리 실패:', error);
+            if (window.toastManager) {
+                window.toastManager.show('Google 로그인 처리 중 오류가 발생했습니다.', 'error');
+            }
         } finally {
             this.viewManager.setLoadingState(false);
         }
@@ -270,12 +277,29 @@ class AuthManager {
     }
 
     /**
-     * 국가 선택을 처리합니다
-     * @param {Object} country - 선택된 국가 정보
+     * 폼 제출을 처리합니다
+     * @param {Object} data - 제출 데이터
      */
-    handleCountrySelection(country) {
-        // 국가 선택 로직은 viewManager에서 처리됨
-        console.log('국가 선택됨:', country);
+    handleFormSubmit(data) {
+        switch (data.type) {
+            case 'login':
+                this.handleLogin(data.data);
+                break;
+            case 'google-login':
+                this.handleGoogleLogin();
+                break;
+            case 'signup':
+                this.handleSignup(data.data);
+                break;
+            case 'forgot-password':
+                this.handleForgotPassword(data.data);
+                break;
+            case 'resend-email':
+                this.handleResendEmail();
+                break;
+            default:
+                console.warn('알 수 없는 폼 제출 타입:', data.type);
+        }
     }
 
     /**
