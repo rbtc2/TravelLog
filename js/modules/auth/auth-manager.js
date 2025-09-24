@@ -322,6 +322,9 @@ class AuthManager {
         }
         this.isHandlingAuthSuccess = true;
 
+        // 사용자 정보 저장
+        this.saveUserInfo();
+
         // 로그인 화면 숨기기
         if (this.loginScreen) {
             this.loginScreen.style.display = 'none';
@@ -342,6 +345,28 @@ class AuthManager {
         setTimeout(() => {
             this.isHandlingAuthSuccess = false;
         }, 1000);
+    }
+
+    /**
+     * 사용자 정보를 저장합니다
+     */
+    saveUserInfo() {
+        try {
+            const currentUser = authService.getCurrentUser();
+            if (currentUser) {
+                const userInfo = {
+                    id: currentUser.id || 'user_' + Date.now(),
+                    email: currentUser.email || 'user@example.com',
+                    lastLogin: new Date().toISOString(),
+                    createdAt: currentUser.created_at || new Date().toISOString()
+                };
+                
+                localStorage.setItem('travelLog_user', JSON.stringify(userInfo));
+                console.log('사용자 정보 저장됨:', userInfo);
+            }
+        } catch (error) {
+            console.error('사용자 정보 저장 실패:', error);
+        }
     }
 
     /**

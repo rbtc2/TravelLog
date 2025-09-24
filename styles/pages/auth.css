@@ -430,6 +430,10 @@
     }
     
     .form-options {
+        flex-direction: row;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
         margin: 16px 0;
     }
     
@@ -514,9 +518,10 @@
     }
     
     .form-options {
-        flex-direction: column;
-        gap: 14px;
-        align-items: flex-start;
+        flex-direction: row;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
         margin: 14px 0;
     }
     

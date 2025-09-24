@@ -411,8 +411,101 @@ class ProfileView {
                     this.updateProfileImage(profileData.image);
                 }
             }
+            
+            // 실제 사용자 정보 업데이트
+            this.updateUserInfo();
         } catch (error) {
             console.error('프로필 데이터 로드 실패:', error);
+        }
+    }
+
+    /**
+     * 실제 사용자 정보를 업데이트합니다
+     */
+    updateUserInfo() {
+        try {
+            // 현재 사용자 정보 가져오기
+            const currentUser = this.getCurrentUser();
+            
+            // 계정 ID 업데이트
+            const accountIdElement = document.querySelector('.info-item:nth-child(1) .info-value');
+            if (accountIdElement) {
+                accountIdElement.textContent = currentUser.id || 'user_unknown';
+            }
+            
+            // 마지막 로그인 시간 업데이트
+            const lastLoginElement = document.querySelector('.info-item:nth-child(2) .info-value');
+            if (lastLoginElement) {
+                const lastLogin = currentUser.lastLogin || new Date().toISOString();
+                const loginDate = new Date(lastLogin);
+                const formattedDate = this.formatKoreanDate(loginDate);
+                lastLoginElement.textContent = formattedDate;
+            }
+            
+            // 데이터 사용량 계산 (실제 로그 데이터 기반)
+            const dataUsageElement = document.querySelector('.info-item:nth-child(3) .info-value');
+            if (dataUsageElement) {
+                const dataUsage = this.calculateDataUsage();
+                dataUsageElement.textContent = dataUsage;
+            }
+            
+        } catch (error) {
+            console.error('사용자 정보 업데이트 실패:', error);
+        }
+    }
+
+    /**
+     * 현재 사용자 정보를 가져옵니다
+     */
+    getCurrentUser() {
+        // 로컬 스토리지에서 사용자 정보 가져오기
+        const userData = localStorage.getItem('travelLog_user');
+        if (userData) {
+            return JSON.parse(userData);
+        }
+        
+        // 기본 사용자 정보 반환
+        return {
+            id: 'user_' + Date.now(),
+            lastLogin: new Date().toISOString(),
+            email: 'user@example.com'
+        };
+    }
+
+    /**
+     * 한국어 날짜 형식으로 포맷합니다
+     */
+    formatKoreanDate(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        
+        return `${year}년 ${month}월 ${day}일 ${hours}:${minutes}`;
+    }
+
+    /**
+     * 데이터 사용량을 계산합니다
+     */
+    calculateDataUsage() {
+        try {
+            const logs = this.controller.getAllLogs();
+            let totalSize = 0;
+            
+            // 각 로그의 크기 추정 (JSON 문자열 길이 기반)
+            logs.forEach(log => {
+                const logSize = JSON.stringify(log).length;
+                totalSize += logSize;
+            });
+            
+            // 바이트를 MB로 변환
+            const sizeInMB = (totalSize / (1024 * 1024)).toFixed(1);
+            return `${sizeInMB} MB`;
+            
+        } catch (error) {
+            console.error('데이터 사용량 계산 실패:', error);
+            return '0.0 MB';
         }
     }
 

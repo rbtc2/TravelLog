@@ -227,24 +227,26 @@ export class CountrySelector {
         if (!this.isOpen) return;
         
         try {
-            // 포커스를 입력 필드로 이동 (접근성 개선)
-            if (this.input) {
-                this.input.focus();
-            }
-            
             // 드롭다운 내부 요소들의 포커스 제거
             const focusedElement = document.activeElement;
             if (focusedElement && this.dropdown.contains(focusedElement)) {
                 focusedElement.blur();
             }
             
+            // 포커스를 입력 필드로 이동 (접근성 개선)
+            if (this.input) {
+                this.input.focus();
+            }
+            
             this.dropdown.classList.remove('open');
             this.container.classList.remove('open');
             this.input.setAttribute('aria-expanded', 'false');
             
-            // 접근성 개선: 포털과 드롭다운의 aria-hidden을 true로 설정 (포커스가 제거된 후)
-            this.portal.setAttribute('aria-hidden', 'true');
-            this.dropdown.setAttribute('aria-hidden', 'true');
+            // 포커스 제거가 완전히 완료된 후 aria-hidden 설정
+            setTimeout(() => {
+                this.portal.setAttribute('aria-hidden', 'true');
+                this.dropdown.setAttribute('aria-hidden', 'true');
+            }, 0);
             
             setTimeout(() => {
                 this.dropdown.style.display = 'none';
