@@ -13,6 +13,7 @@ import { travelLogService } from './modules/services/travel-log-service.js'; // 
 import ZIndexManager from './modules/utils/z-index-manager.js'; // Z-Index 충돌 관리 시스템
 import CountrySelectorUpgrade from './modules/ui-components/country-selector-upgrade.js'; // Country Selector Portal 업그레이드
 import StackingContextDebugger from './modules/utils/stacking-context-debugger.js'; // Stacking Context 디버깅 도구
+import DevelopmentValidator from './modules/utils/development-validator.js'; // 개발 시 실시간 검증기
 
 // 모바일 환경 최적화
 (function() {
@@ -679,6 +680,15 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🛠️ TravelLog 개발자 도구가 로드되었습니다.');
     console.log('사용법: TravelLogDev.checkFeatureStatus("travelDNA")');
     console.log('사용법: TravelLogDev.validateDependencies()');
+    
+    // 개발 검증기 초기화 (개발 모드에서만)
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1' ||
+        window.location.search.includes('dev=true')) {
+        const devValidator = new DevelopmentValidator();
+        window.devValidator = devValidator;
+        console.log('🔍 CSS-DOM 실시간 검증기가 활성화되었습니다.');
+    }
     
     // 앱 매니저 초기화
     const appManager = new AppManager();

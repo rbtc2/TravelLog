@@ -14,7 +14,10 @@
     "lint": "node tools/css-linter.js",
     "format": "prettier --write 'styles/**/*.css'",
     "clean": "rimraf dist/",
-    "serve": "python -m http.server 8000 --directory dist"
+    "serve": "python -m http.server 8000 --directory dist",
+    "validate-css-dom": "node tools/css-dom-validator.js",
+    "fix-css-namespace": "node tools/auto-fix-css-namespace.js",
+    "fix-css-namespace:dry-run": "node tools/auto-fix-css-namespace.js --dry-run"
   },
   "keywords": [
     "travel",
