@@ -11,7 +11,6 @@ import PasswordResetHandler from './modules/auth/password-reset-handler.js'; // 
 import EmailConfirmationHandler from './modules/auth/email-confirmation-handler.js'; // 이메일 확인 핸들러
 import { travelLogService } from './modules/services/travel-log-service.js'; // 여행 로그 서비스
 import ZIndexManager from './modules/utils/z-index-manager.js'; // Z-Index 충돌 관리 시스템
-import CountrySelectorUpgrade from './modules/ui-components/country-selector-upgrade.js'; // Country Selector Portal 업그레이드
 import StackingContextDebugger from './modules/utils/stacking-context-debugger.js'; // Stacking Context 디버깅 도구
 import DevelopmentValidator from './modules/utils/development-validator.js'; // 개발 시 실시간 검증기
 
@@ -142,8 +141,6 @@ class AppManager {
             // Z-Index 충돌 관리 시스템 초기화
             this.zIndexManager = window.zIndexManager;
             
-            // Country Selector Portal 업그레이드 시스템 초기화
-            this.countrySelectorUpgrade = window.countrySelectorUpgrade;
             
             // Stacking Context 디버깅 도구 초기화
             this.stackingContextDebugger = window.stackingContextDebugger;
@@ -406,9 +403,9 @@ class AppManager {
             
             // PHASE 1: 데스크톱 레이아웃에서 탭 콘텐츠 렌더링
             if (this.desktopLayoutManager.isDesktopMode()) {
-                this.renderDesktopTabContent(module, tabName);
+                await this.renderDesktopTabContent(module, tabName);
             } else {
-                this.renderTabContent(module);
+                await this.renderTabContent(module);
             }
             
             // 모든 탭에 대해 데이터 새로고침 (데모 데이터 생성 포함)
@@ -440,7 +437,7 @@ class AppManager {
             const module = await this.loadTabModule(tabName);
             
             // 탭 콘텐츠 렌더링
-            this.renderTabContent(module);
+            await this.renderTabContent(module);
             
             this.currentTab = tabName;
             
@@ -472,10 +469,10 @@ class AppManager {
         return module;
     }
     
-    renderTabContent(module) {
+    async renderTabContent(module) {
         if (module && module.default && typeof module.default.render === 'function') {
             this.tabContent.innerHTML = '';
-            module.default.render(this.tabContent);
+            await module.default.render(this.tabContent);
         } else {
             this.showPlaceholder();
         }
@@ -484,7 +481,7 @@ class AppManager {
     /**
      * PHASE 1: 데스크톱 레이아웃에서 탭 콘텐츠 렌더링
      */
-    renderDesktopTabContent(module, tabName) {
+    async renderDesktopTabContent(module, tabName) {
         const desktopGrid = document.querySelector('.desktop-grid');
         if (!desktopGrid) {
             console.warn('데스크톱 그리드 컨테이너를 찾을 수 없습니다.');
@@ -503,7 +500,7 @@ class AppManager {
             tempContainer.style.gridColumn = '1 / -1';
             
             // 모듈 렌더링
-            module.default.render(tempContainer);
+            await module.default.render(tempContainer);
             this.currentTabModule = module.default;
             
             // 그리드에 추가

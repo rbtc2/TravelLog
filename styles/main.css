@@ -31,7 +31,6 @@
 @import url('./components/cards.css');
 @import url('./components/navigation.css');
 @import url('./components/country-selector.css');
-@import url('./components/country-selector-v2.css'); /* Country Selector V2 - 전문가 수준 Z-Index 관리 */
 @import url('./components/common-components.css');
 @import url('./components/collection-tabs.css');
 @import url('./components/tables-lists.css'); /* PHASE 3: 테이블/리스트 컴포넌트 */

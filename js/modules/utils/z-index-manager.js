@@ -131,7 +131,7 @@ class ZIndexManager {
      */
     scanExistingElements() {
         // Country Selector 요소들 찾기
-        const countrySelectors = document.querySelectorAll('.country-selector, .country-selector-v2');
+        const countrySelectors = document.querySelectorAll('.country-selector');
         countrySelectors.forEach(element => {
             this.watchElement(element, 'country-selector');
         });
@@ -224,7 +224,13 @@ class ZIndexManager {
             if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach(node => {
                     if (node.nodeType === Node.ELEMENT_NODE) {
-                        this.scanNewElement(node);
+                        // DOM에 추가된 후 약간의 지연을 두고 스캔
+                        // 여러 프레임에 걸쳐 확인하여 안정성 향상
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                this.scanNewElement(node);
+                            });
+                        });
                     }
                 });
             }
@@ -244,9 +250,35 @@ class ZIndexManager {
      * @param {HTMLElement} element - 스캔할 요소
      */
     scanNewElement(element) {
+        // 요소 유효성 검사
+        if (!element || !(element instanceof Element)) {
+            return;
+        }
+        
+        // 요소가 DOM에 존재하는지 먼저 확인
+        if (!document.contains(element)) {
+            // 디버그 모드에서만 경고 표시 (일반적인 경우는 조용히 무시)
+            if (this.debugMode) {
+                console.warn('scanNewElement: Element not in DOM, skipping scan', element);
+            }
+            return;
+        }
+        
+        // 요소가 실제로 렌더링되었는지 확인 (offsetParent 체크)
+        if (element.offsetParent === null && element.tagName !== 'BODY') {
+            // 아직 렌더링되지 않은 요소는 다음 프레임에서 다시 시도
+            if (this.debugMode) {
+                console.log('scanNewElement: Element not yet rendered, retrying next frame', element);
+            }
+            requestAnimationFrame(() => {
+                this.scanNewElement(element);
+            });
+            return;
+        }
+        
         // Country Selector 확인
         if (element.classList.contains('country-selector') || 
-            element.classList.contains('country-selector-v2')) {
+            element.classList.contains('country-selector')) {
             this.watchElement(element, 'country-selector');
         }
         
@@ -269,7 +301,7 @@ class ZIndexManager {
         }
         
         // 하위 요소들도 스캔
-        const children = element.querySelectorAll('.country-selector, .country-selector-v2, .modal, .dropdown, .tooltip');
+        const children = element.querySelectorAll('.country-selector, .modal, .dropdown, .tooltip');
         children.forEach(child => {
             this.scanNewElement(child);
         });
@@ -512,7 +544,7 @@ class ZIndexManager {
         
         // Country Selector
         if (element.classList.contains('country-selector') || 
-            element.classList.contains('country-selector-v2')) {
+            element.classList.contains('country-selector')) {
             return element.classList.contains('open');
         }
         
@@ -574,7 +606,13 @@ class ZIndexManager {
      * @param {Event} event - 이벤트
      */
     handleCountrySelectorClose(event) {
-        const element = event.target;
+        const element = event.detail?.element || event.target;
+        
+        // 요소 유효성 검사
+        if (!element || !(element instanceof Element)) {
+            console.warn('handleCountrySelectorClose: Invalid element provided', element);
+            return;
+        }
         
         // 원래 z-index로 복원
         const elementInfo = this.watchedElements.get(element);
@@ -661,7 +699,7 @@ class ZIndexManager {
      * 모바일 폴백 메커니즘 활성화
      */
     enableMobileFallback() {
-        const countrySelectors = document.querySelectorAll('.country-selector-v2');
+        const countrySelectors = document.querySelectorAll('.country-selector');
         countrySelectors.forEach(element => {
             element.classList.add('mobile-fallback');
         });
@@ -671,7 +709,7 @@ class ZIndexManager {
      * 모바일 폴백 메커니즘 비활성화
      */
     disableMobileFallback() {
-        const countrySelectors = document.querySelectorAll('.country-selector-v2');
+        const countrySelectors = document.querySelectorAll('.country-selector');
         countrySelectors.forEach(element => {
             element.classList.remove('mobile-fallback');
         });
@@ -683,13 +721,24 @@ class ZIndexManager {
      */
     getHighestZIndex() {
         let highest = 0;
+        const validElements = new Map();
         
-        this.activeElements.forEach(elementInfo => {
-            const zIndex = this.getElementZIndex(elementInfo.element);
-            if (zIndex > highest) {
-                highest = zIndex;
+        // DOM에 존재하는 요소만 필터링
+        this.activeElements.forEach((elementInfo, element) => {
+            if (element && document.contains(element)) {
+                validElements.set(element, elementInfo);
+                const zIndex = this.getElementZIndex(element);
+                if (zIndex > highest) {
+                    highest = zIndex;
+                }
             }
         });
+        
+        // 유효하지 않은 요소들을 activeElements에서 제거
+        if (validElements.size !== this.activeElements.size) {
+            this.activeElements = validElements;
+            console.log('Z-Index Manager: DOM에서 제거된 요소들을 activeElements에서 정리했습니다.');
+        }
         
         return highest;
     }

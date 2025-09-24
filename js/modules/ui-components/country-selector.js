@@ -209,8 +209,8 @@ export class CountrySelector {
             this.input.setAttribute('aria-expanded', 'true');
             this.isOpen = true;
             
-            // 커스텀 이벤트 발생
-            this.dispatchEvent('country-selector-open', { element: this.container });
+            // 커스텀 이벤트 발생 (드롭다운 요소 전달)
+            this.dispatchEvent('country-selector-open', { element: this.dropdown });
         } catch (error) {
             console.error('드롭다운 열기 실패:', error);
         }
@@ -223,20 +223,33 @@ export class CountrySelector {
         if (!this.isOpen) return;
         
         try {
+            // 포커스를 입력 필드로 이동 (접근성 개선)
+            if (this.input) {
+                this.input.focus();
+            }
+            
+            // 드롭다운 내부 요소들의 포커스 제거
+            const focusedElement = document.activeElement;
+            if (focusedElement && this.dropdown.contains(focusedElement)) {
+                focusedElement.blur();
+            }
+            
             this.dropdown.classList.remove('open');
             this.container.classList.remove('open');
             this.input.setAttribute('aria-expanded', 'false');
             
+            // aria-hidden을 즉시 설정 (포커스가 제거된 후)
+            this.dropdown.setAttribute('aria-hidden', 'true');
+            
             setTimeout(() => {
                 this.dropdown.style.display = 'none';
-                this.dropdown.setAttribute('aria-hidden', 'true');
             }, 300);
             
             this.isOpen = false;
             this.selectedIndex = -1;
             
-            // 커스텀 이벤트 발생
-            this.dispatchEvent('country-selector-close', { element: this.container });
+            // 커스텀 이벤트 발생 (드롭다운 요소 전달)
+            this.dispatchEvent('country-selector-close', { element: this.dropdown });
         } catch (error) {
             console.error('드롭다운 닫기 실패:', error);
         }
@@ -328,6 +341,10 @@ export class CountrySelector {
                 
             case 'Escape':
                 e.preventDefault();
+                // 포커스를 입력 필드로 이동한 후 닫기
+                if (this.input) {
+                    this.input.focus();
+                }
                 this.close();
                 break;
         }
@@ -393,8 +410,14 @@ export class CountrySelector {
      */
     selectCountry(country) {
         try {
-        this.input.value = country.nameKo;
-        this.close();
+            this.input.value = country.nameKo;
+            
+            // 포커스를 입력 필드로 이동한 후 닫기
+            if (this.input) {
+                this.input.focus();
+            }
+            
+            this.close();
 
             // 커스텀 이벤트 발생
             this.dispatchEvent('country-selected', { 
@@ -483,6 +506,18 @@ export class CountrySelector {
             console.error('CountrySelector 리소스 정리 실패:', error);
         }
     }
+}
+
+/**
+ * CountrySelector 인스턴스를 생성하는 팩토리 함수
+ * @param {HTMLElement} container - 컨테이너 요소
+ * @param {Object} options - 옵션 설정
+ * @returns {Promise<CountrySelector>} CountrySelector 인스턴스
+ */
+export async function createCountrySelector(container, options = {}) {
+    const selector = new CountrySelector(container, options);
+    await selector.init();
+    return selector;
 }
 
 // 기본 export
