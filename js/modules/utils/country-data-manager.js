@@ -187,10 +187,18 @@ export class CountryDataManager {
     async loadFromAPI() {
         try {
             // REST Countries API 사용 (무료, 안정적)
-            const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,cca3,flags,region,subregion');
+            const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,cca3,flags,region,subregion', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                // 타임아웃 설정 (10초)
+                signal: AbortSignal.timeout(10000)
+            });
             
             if (!response.ok) {
-                throw new Error(`API 응답 오류: ${response.status}`);
+                throw new Error(`API 응답 오류: ${response.status} ${response.statusText}`);
             }
 
             const apiCountries = await response.json();
@@ -198,8 +206,53 @@ export class CountryDataManager {
 
         } catch (error) {
             console.error('API 데이터 로드 실패:', error);
+            
+            // 네트워크 오류 시 기본 데이터 반환
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                console.warn('네트워크 연결 실패, 기본 국가 데이터를 사용합니다.');
+                return this.getFallbackCountryData();
+            }
+            
             return null;
         }
+    }
+
+    /**
+     * 네트워크 연결 실패 시 사용할 기본 국가 데이터
+     */
+    getFallbackCountryData() {
+        return [
+            { name: '대한민국', code: 'KR', flag: '🇰🇷', region: 'Asia', subregion: 'Eastern Asia' },
+            { name: '일본', code: 'JP', flag: '🇯🇵', region: 'Asia', subregion: 'Eastern Asia' },
+            { name: '중국', code: 'CN', flag: '🇨🇳', region: 'Asia', subregion: 'Eastern Asia' },
+            { name: '미국', code: 'US', flag: '🇺🇸', region: 'Americas', subregion: 'North America' },
+            { name: '영국', code: 'GB', flag: '🇬🇧', region: 'Europe', subregion: 'Northern Europe' },
+            { name: '프랑스', code: 'FR', flag: '🇫🇷', region: 'Europe', subregion: 'Western Europe' },
+            { name: '독일', code: 'DE', flag: '🇩🇪', region: 'Europe', subregion: 'Western Europe' },
+            { name: '이탈리아', code: 'IT', flag: '🇮🇹', region: 'Europe', subregion: 'Southern Europe' },
+            { name: '스페인', code: 'ES', flag: '🇪🇸', region: 'Europe', subregion: 'Southern Europe' },
+            { name: '캐나다', code: 'CA', flag: '🇨🇦', region: 'Americas', subregion: 'North America' },
+            { name: '호주', code: 'AU', flag: '🇦🇺', region: 'Oceania', subregion: 'Australia and New Zealand' },
+            { name: '뉴질랜드', code: 'NZ', flag: '🇳🇿', region: 'Oceania', subregion: 'Australia and New Zealand' },
+            { name: '태국', code: 'TH', flag: '🇹🇭', region: 'Asia', subregion: 'South-Eastern Asia' },
+            { name: '베트남', code: 'VN', flag: '🇻🇳', region: 'Asia', subregion: 'South-Eastern Asia' },
+            { name: '싱가포르', code: 'SG', flag: '🇸🇬', region: 'Asia', subregion: 'South-Eastern Asia' },
+            { name: '인도네시아', code: 'ID', flag: '🇮🇩', region: 'Asia', subregion: 'South-Eastern Asia' },
+            { name: '말레이시아', code: 'MY', flag: '🇲🇾', region: 'Asia', subregion: 'South-Eastern Asia' },
+            { name: '필리핀', code: 'PH', flag: '🇵🇭', region: 'Asia', subregion: 'South-Eastern Asia' },
+            { name: '인도', code: 'IN', flag: '🇮🇳', region: 'Asia', subregion: 'Southern Asia' },
+            { name: '브라질', code: 'BR', flag: '🇧🇷', region: 'Americas', subregion: 'South America' },
+            { name: '아르헨티나', code: 'AR', flag: '🇦🇷', region: 'Americas', subregion: 'South America' },
+            { name: '멕시코', code: 'MX', flag: '🇲🇽', region: 'Americas', subregion: 'North America' },
+            { name: '러시아', code: 'RU', flag: '🇷🇺', region: 'Europe', subregion: 'Eastern Europe' },
+            { name: '터키', code: 'TR', flag: '🇹🇷', region: 'Asia', subregion: 'Western Asia' },
+            { name: '이집트', code: 'EG', flag: '🇪🇬', region: 'Africa', subregion: 'Northern Africa' },
+            { name: '남아프리카공화국', code: 'ZA', flag: '🇿🇦', region: 'Africa', subregion: 'Southern Africa' },
+            { name: '모로코', code: 'MA', flag: '🇲🇦', region: 'Africa', subregion: 'Northern Africa' },
+            { name: '케냐', code: 'KE', flag: '🇰🇪', region: 'Africa', subregion: 'Eastern Africa' },
+            { name: '나이지리아', code: 'NG', flag: '🇳🇬', region: 'Africa', subregion: 'Western Africa' },
+            { name: '가나', code: 'GH', flag: '🇬🇭', region: 'Africa', subregion: 'Western Africa' }
+        ];
     }
 
     /**

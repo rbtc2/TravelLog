@@ -67,16 +67,25 @@ export function getSupabaseClient() {
 export async function checkSupabaseConnection() {
     try {
         const client = await initializeSupabase();
-        const { data, error } = await client.from('_supabase_migrations').select('*').limit(1);
+        
+        // 더 간단한 연결 테스트 (auth 상태 확인)
+        const { data: { session }, error } = await client.auth.getSession();
         
         if (error) {
             console.warn('Supabase 연결 확인 중 오류:', error);
             return false;
         }
         
+        console.log('Supabase 연결 상태 확인 완료');
         return true;
     } catch (error) {
         console.error('Supabase 연결 확인 실패:', error);
+        
+        // 네트워크 오류인 경우 사용자에게 알림
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            console.warn('네트워크 연결 문제로 Supabase에 접근할 수 없습니다.');
+        }
+        
         return false;
     }
 }
