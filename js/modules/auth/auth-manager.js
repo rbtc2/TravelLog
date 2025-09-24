@@ -28,11 +28,11 @@ class AuthManager {
     async init() {
         try {
             // 뷰 관리자 초기화
-        this.viewManager.initialize({
-            onViewChange: (viewName) => this.handleViewChange(viewName, true), // 콜백 체인 방지
-            onSubmit: (data) => this.handleFormSubmit(data),
-            onError: (message) => this.showError(message)
-        });
+            this.viewManager.initialize({
+                onViewChange: (viewName) => this.handleViewChange(viewName, true),
+                onSubmit: (data) => this.handleFormSubmit(data),
+                onError: (message) => this.showError(message)
+            });
 
             // 이벤트 핸들러 초기화
             this.eventHandler.initialize({
@@ -41,7 +41,7 @@ class AuthManager {
                 onSignup: (data) => this.handleSignup(data),
                 onForgotPassword: (data) => this.handleForgotPassword(data),
                 onResendEmail: () => this.handleResendEmail(),
-                onViewChange: (viewName) => this.handleViewChange(viewName, true) // 콜백 체인 방지
+                onViewChange: (viewName) => this.handleViewChange(viewName, true)
             });
 
             // 인증 컨트롤러 초기화
@@ -101,11 +101,8 @@ class AuthManager {
             this.viewManager.setLoadingState(true);
             
             // Google 로그인 기능은 아직 구현되지 않음
-            // 토스트 메시지로 알림
             if (window.toastManager) {
                 window.toastManager.show('Google 로그인 기능은 준비 중입니다.', 'info');
-            } else {
-                console.log('Google 로그인 기능은 준비 중입니다.');
             }
             
         } catch (error) {
@@ -209,6 +206,7 @@ class AuthManager {
      */
     showLoginView(skipCallback = false) {
         this.viewManager.showLoginView(skipCallback);
+        // 새로운 DOM 요소에 이벤트 바인딩
         this.bindEvents();
     }
 
@@ -218,7 +216,7 @@ class AuthManager {
      */
     showSignupView(skipCallback = false) {
         this.viewManager.showSignupView(skipCallback);
-        // CountrySelector는 viewManager에서 자동으로 초기화되므로 bindEvents만 호출
+        // 새로운 DOM 요소에 이벤트 바인딩
         this.bindEvents();
     }
 
@@ -228,6 +226,7 @@ class AuthManager {
      */
     showForgotPasswordView(skipCallback = false) {
         this.viewManager.showForgotPasswordView(skipCallback);
+        // 새로운 DOM 요소에 이벤트 바인딩
         this.bindEvents();
     }
 
@@ -237,6 +236,7 @@ class AuthManager {
      */
     showEmailConfirmationView(skipCallback = false) {
         this.viewManager.showEmailConfirmationView(skipCallback);
+        // 새로운 DOM 요소에 이벤트 바인딩
         this.bindEvents();
     }
 
@@ -246,6 +246,7 @@ class AuthManager {
      */
     showEmailSentView(skipCallback = false) {
         this.viewManager.showEmailSentView(skipCallback);
+        // 새로운 DOM 요소에 이벤트 바인딩
         this.bindEvents();
     }
 
@@ -310,7 +311,7 @@ class AuthManager {
             const result = await this.authController.handleResendEmail();
             
             if (result.success) {
-                console.log('이메일 재발송 성공');
+                // 이메일 재발송 성공
             }
             
         } catch (error) {
@@ -342,7 +343,7 @@ class AuthManager {
             const result = await this.authController.logout();
             
             if (result.success) {
-                console.log('로그아웃 성공');
+                // 로그아웃 성공
             }
             
         } catch (error) {

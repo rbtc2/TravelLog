@@ -62,7 +62,6 @@ export class BaseAuthView {
      */
     render(skipCallback = false) {
         if (!this.isInitialized) {
-            // 자동 초기화 수행 (조용히)
             this.initialize({
                 onViewChange: () => {},
                 onSubmit: () => {},

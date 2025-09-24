@@ -54,6 +54,9 @@ class AuthEventHandler {
             return;
         }
 
+        // 기존 이벤트 리스너 정리 (중복 방지)
+        this.unbindAllEvents();
+
         this.bindLoginEvents();
         this.bindSignupEvents();
         this.bindForgotPasswordEvents();
@@ -88,12 +91,8 @@ class AuthEventHandler {
         const googleLoginBtn = document.getElementById('google-login-btn');
         if (googleLoginBtn) {
             this.addEventListener(googleLoginBtn, 'click', () => {
-                // console.log('Google 로그인 버튼 클릭됨');
                 this.handleGoogleLogin();
             });
-        } else {
-            // Google 로그인 버튼이 없는 경우 (정상적인 상황)
-            // console.warn('Google 로그인 버튼을 찾을 수 없습니다');
         }
     }
 
@@ -180,7 +179,6 @@ class AuthEventHandler {
 
         if (!email || !password) {
             const message = '이메일과 비밀번호를 입력해주세요.';
-            console.error(message);
             
             // 사용자에게 토스트 메시지로 알림
             if (window.toastManager) {
@@ -213,7 +211,6 @@ class AuthEventHandler {
 
         if (!email || !password || !confirmPassword || !fullName) {
             const message = '모든 필드를 입력해주세요.';
-            console.error(message);
             
             // 사용자에게 토스트 메시지로 알림
             if (window.toastManager) {
@@ -226,7 +223,6 @@ class AuthEventHandler {
 
         if (!residenceCountry) {
             const message = '현재 거주국을 선택해주세요.';
-            console.error(message);
             
             // 사용자에게 토스트 메시지로 알림
             if (window.toastManager) {
@@ -239,7 +235,6 @@ class AuthEventHandler {
 
         if (password !== confirmPassword) {
             const message = '비밀번호가 일치하지 않습니다.';
-            console.error(message);
             
             // 사용자에게 토스트 메시지로 알림
             if (window.toastManager) {
@@ -261,7 +256,6 @@ class AuthEventHandler {
 
         if (!email) {
             const message = '이메일을 입력해주세요.';
-            console.error(message);
             
             // 사용자에게 토스트 메시지로 알림
             if (window.toastManager) {
