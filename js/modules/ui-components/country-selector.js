@@ -143,6 +143,7 @@ export class CountrySelector {
         this.dropdown.className = 'selector-dropdown';
         this.dropdown.setAttribute('role', 'listbox');
         this.dropdown.setAttribute('aria-label', '국가 목록');
+        this.dropdown.setAttribute('aria-hidden', 'true');
         this.portal.appendChild(this.dropdown);
     }
     
@@ -197,9 +198,12 @@ export class CountrySelector {
             this.dropdown.style.left = `${inputRect.left}px`;
             this.dropdown.style.width = `${inputRect.width}px`;
             
+            // 접근성 개선: 포털과 드롭다운의 aria-hidden을 false로 설정
+            this.portal.setAttribute('aria-hidden', 'false');
+            this.dropdown.setAttribute('aria-hidden', 'false');
+            
             // 애니메이션을 위해 잠시 후 open 클래스 추가
             this.dropdown.style.display = 'block';
-            this.dropdown.setAttribute('aria-hidden', 'false');
             
             requestAnimationFrame(() => {
                 this.dropdown.classList.add('open');
@@ -238,7 +242,8 @@ export class CountrySelector {
             this.container.classList.remove('open');
             this.input.setAttribute('aria-expanded', 'false');
             
-            // aria-hidden을 즉시 설정 (포커스가 제거된 후)
+            // 접근성 개선: 포털과 드롭다운의 aria-hidden을 true로 설정 (포커스가 제거된 후)
+            this.portal.setAttribute('aria-hidden', 'true');
             this.dropdown.setAttribute('aria-hidden', 'true');
             
             setTimeout(() => {

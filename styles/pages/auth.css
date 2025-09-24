@@ -16,7 +16,7 @@
     justify-content: center;
     /* z-index 제거 - Portal 시스템이 해결 */
     overflow-y: auto;
-    padding: 20px;
+    padding: 24px;
     box-sizing: border-box;
 }
 
@@ -24,7 +24,7 @@
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 20px;
-    padding: 40px;
+    padding: 32px;
     width: 100%;
     max-width: 400px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -48,7 +48,7 @@
 /* ===== 로그인 헤더 ===== */
 .login-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .login-logo {
@@ -91,7 +91,7 @@
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
 }
 
 .form-group {
@@ -258,8 +258,8 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .google-login-btn:hover {
@@ -297,7 +297,7 @@
 .login-divider {
     position: relative;
     text-align: center;
-    margin: 20px 0;
+    margin: 16px 0;
 }
 
 .login-divider::before {
@@ -376,41 +376,172 @@
 /* ===== 반응형 디자인 ===== */
 @media (max-width: 768px) {
     .login-screen {
-        padding: 10px;
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
     }
     
     .login-container {
-        padding: 30px 20px;
+        padding: 32px 24px;
         border-radius: 16px;
+        margin: 0 auto;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    
+    .login-header {
+        margin-bottom: 28px;
+    }
+    
+    .login-logo {
+        font-size: 40px;
+        margin-bottom: 12px;
     }
     
     .login-title {
         font-size: 24px;
+        margin-bottom: 8px;
     }
     
     .login-subtitle {
         font-size: 14px;
     }
     
+    .login-form {
+        gap: 20px;
+    }
+    
+    .form-group {
+        gap: 8px;
+    }
+    
+    .form-label {
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
     .form-input {
         font-size: 16px; /* iOS 줌 방지 */
+        padding: 14px 16px;
+        min-height: 48px;
+        border-radius: 8px;
+    }
+    
+    .form-options {
+        margin: 16px 0;
+    }
+    
+    .checkbox-label {
+        font-size: 14px;
+    }
+    
+    .forgot-password {
+        font-size: 14px;
+    }
+    
+    .login-btn, .google-login-btn {
+        padding: 14px 20px;
+        font-size: 16px;
+        min-height: 48px;
+        border-radius: 8px;
+    }
+    
+    .login-divider {
+        margin: 20px 0;
+    }
+    
+    .signup-link {
+        font-size: 14px;
+        margin-top: 16px;
     }
 }
 
 @media (max-width: 480px) {
+    .login-screen {
+        padding: 16px;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+    
     .login-container {
-        padding: 20px 15px;
-        margin: 10px;
+        padding: 28px 20px;
+        margin: 0 auto;
+        max-width: 100%;
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+    }
+    
+    .login-header {
+        margin-bottom: 24px;
+    }
+    
+    .login-logo {
+        font-size: 36px;
+        margin-bottom: 10px;
     }
     
     .login-title {
         font-size: 22px;
+        margin-bottom: 6px;
+    }
+    
+    .login-subtitle {
+        font-size: 13px;
+    }
+    
+    .login-form {
+        gap: 18px;
+    }
+    
+    .form-group {
+        gap: 6px;
+    }
+    
+    .form-label {
+        font-size: 13px;
+        font-weight: 500;
+    }
+    
+    .form-input {
+        padding: 12px 14px;
+        font-size: 16px;
+        min-height: 48px;
+        border-radius: 6px;
     }
     
     .form-options {
         flex-direction: column;
-        gap: 15px;
+        gap: 14px;
         align-items: flex-start;
+        margin: 14px 0;
+    }
+    
+    .checkbox-label {
+        font-size: 13px;
+    }
+    
+    .forgot-password {
+        font-size: 13px;
+    }
+    
+    .login-btn, .google-login-btn {
+        padding: 12px 18px;
+        font-size: 15px;
+        min-height: 48px;
+        border-radius: 6px;
+    }
+    
+    .login-divider {
+        margin: 16px 0;
+    }
+    
+    .signup-link {
+        font-size: 13px;
+        margin-top: 12px;
     }
 }
 
