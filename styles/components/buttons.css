@@ -99,34 +99,61 @@
     transform: none;
 }
 
-.demo-btn {
+/* Google 로그인 버튼 */
+.google-login-btn {
     width: 100%;
     padding: 14px;
-    background: var(--success-color);
-    color: var(--white);
-    border: none;
+    background: var(--white);
+    color: #3c4043;
+    border: 1px solid #dadce0;
     border-radius: var(--border-radius-md);
     font-size: var(--font-base);
-    font-weight: var(--font-semibold);
+    font-weight: 500;
     cursor: pointer;
     transition: all var(--transition-normal);
     margin-bottom: var(--spacing-lg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
 }
 
-.demo-btn:hover {
-    background: var(--success-dark);
+.google-login-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #c1c7cd;
 }
 
-.demo-btn:active {
+.google-login-btn:active {
     transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.demo-btn:disabled {
+.google-login-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+}
+
+.google-btn-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.google-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+}
+
+.google-btn-text {
+    font-size: var(--font-base);
+    font-weight: 500;
+    color: #3c4043;
 }
 
 /* ===== 보고서 및 일지 관련 버튼 ===== */

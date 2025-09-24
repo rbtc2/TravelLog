@@ -84,5 +84,5 @@ http://localhost:8000/tests/test-z-index-system.html
 
 **테스트 폴더 버전**: 2.0.0  
 **최종 업데이트**: 2025-09-24  
-**관리자**: AI Assistant  
+**관리자**: REDIPX
 **정리된 파일**: Phase별 개발 테스트 파일들 제거, 핵심 테스트만 유지

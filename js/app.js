@@ -99,7 +99,7 @@ import DevelopmentValidator from './modules/utils/development-validator.js'; // 
     });
     
     // 터치 피드백 효과 최적화
-    const touchElements = document.querySelectorAll('button, .tab-btn, .login-btn, .demo-btn, a');
+    const touchElements = document.querySelectorAll('button, .tab-btn, .login-btn, .google-login-btn, a');
     touchElements.forEach(element => {
         element.addEventListener('touchstart', function() {
             if (!isScrolling) {
@@ -699,6 +699,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if (appManager && typeof appManager.switchTab === 'function') {
                 appManager.switchTab(tabName);
             }
+        }
+    };
+    
+    // 디버깅용 전역 함수들
+    window.testGoogleLogin = () => {
+        console.log('Google 로그인 테스트 시작');
+        const googleBtn = document.getElementById('google-login-btn');
+        if (googleBtn) {
+            console.log('Google 버튼 찾음, 클릭 시뮬레이션');
+            googleBtn.click();
+        } else {
+            console.error('Google 로그인 버튼을 찾을 수 없습니다');
+        }
+    };
+    
+    window.testToast = (message = '테스트 토스트 메시지') => {
+        console.log('토스트 테스트 시작');
+        if (window.toastManager) {
+            window.toastManager.show(message, 'info');
+        } else {
+            console.error('toastManager를 찾을 수 없습니다');
         }
     };
 });
