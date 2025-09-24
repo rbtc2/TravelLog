@@ -242,24 +242,28 @@ class HubView {
         const tabContent = document.getElementById('tab-content');
         this.scrollPosition = tabContent ? tabContent.scrollTop : (window.pageYOffset || document.documentElement.scrollTop);
         
-        // body 스크롤 비활성화
+        // 햄버거 메뉴 HTML 생성
+        const menuHTML = this.getHamburgerMenuHTML();
+        
+        // 메뉴를 body에 추가 (애니메이션 전에 미리 추가)
+        document.body.insertAdjacentHTML('beforeend', menuHTML);
+        
+        // body 스크롤 비활성화 (메뉴 추가 후)
         document.body.classList.add('hamburger-menu-open');
         
-        // 스크롤 위치 고정을 위한 스타일 적용
+        // 스크롤 위치 고정 (transform 대신 scrollTop 사용)
         if (tabContent) {
-            tabContent.style.transform = `translateY(-${this.scrollPosition}px)`;
+            // 스크롤 위치를 0으로 설정하여 고정
+            tabContent.scrollTop = 0;
+            // 현재 위치를 CSS 변수로 저장 (시각적 위치 유지)
+            tabContent.style.setProperty('--scroll-offset', `-${this.scrollPosition}px`);
         } else {
             document.body.style.top = `-${this.scrollPosition}px`;
         }
         
-        // 햄버거 메뉴 HTML 생성
-        const menuHTML = this.getHamburgerMenuHTML();
-        
-        // 메뉴를 body에 추가
-        document.body.insertAdjacentHTML('beforeend', menuHTML);
-        
         // 애니메이션을 위해 약간의 지연 후 show 클래스 추가
-        requestAnimationFrame(() => {
+        // 레이아웃이 안정화된 후 애니메이션 시작
+        setTimeout(() => {
             const overlay = document.querySelector('.hamburger-menu-overlay');
             const menu = document.querySelector('.hamburger-menu');
             
@@ -267,7 +271,7 @@ class HubView {
                 overlay.classList.add('show');
                 menu.classList.add('show');
             }
-        });
+        }, 10); // 10ms 지연으로 레이아웃 안정화
         
         // 메뉴 이벤트 바인딩
         this.bindHamburgerMenuEvents();
@@ -303,13 +307,17 @@ class HubView {
                 // 탭 콘텐츠 스크롤 복원
                 const tabContent = document.getElementById('tab-content');
                 if (tabContent) {
-                    tabContent.style.transform = '';
+                    // CSS 변수 제거
+                    tabContent.style.removeProperty('--scroll-offset');
                 }
                 
                 // 스크롤 위치 복원
                 if (this.scrollPosition !== undefined) {
                     if (tabContent) {
-                        tabContent.scrollTop = this.scrollPosition;
+                        // 약간의 지연 후 스크롤 위치 복원 (레이아웃 안정화 후)
+                        requestAnimationFrame(() => {
+                            tabContent.scrollTop = this.scrollPosition;
+                        });
                     } else {
                         window.scrollTo(0, this.scrollPosition);
                     }

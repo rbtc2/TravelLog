@@ -135,7 +135,7 @@
     z-index: var(--z-modal-backdrop);
     opacity: 0;
     visibility: hidden;
-    transition: all var(--transition-normal);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 /* 햄버거 메뉴가 열릴 때 body 스크롤 비활성화 */
@@ -162,13 +162,19 @@ body.hamburger-menu-open::-webkit-scrollbar {
 /* 햄버거 메뉴 오픈 시 탭 콘텐츠 스크롤도 비활성화 */
 body.hamburger-menu-open #tab-content {
     overflow: hidden;
-    /* 스크롤 위치 고정 */
-    position: relative;
+    /* 스크롤 위치 고정 - transform 대신 position 사용 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     /* 터치 스크롤 비활성화 */
     touch-action: none;
     /* 스크롤바 숨김 */
     scrollbar-width: none;
     -ms-overflow-style: none;
+    /* 부드러운 전환을 위한 transition */
+    transition: none;
 }
 
 /* Webkit 브라우저 탭 콘텐츠 스크롤바 숨김 */
@@ -238,7 +244,7 @@ body.hamburger-menu-open .hamburger-menu::-webkit-scrollbar-thumb:hover {
     background: var(--white);
     z-index: var(--z-modal);
     transform: translateX(100%);
-    transition: transform var(--transition-normal);
+    transition: transform 0.3s ease;
     overflow-y: auto;
     box-shadow: var(--shadow-xl);
     border-left: 1px solid var(--gray-200);
