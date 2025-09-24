@@ -79,7 +79,7 @@ export class AuthButton {
         const { id = 'google-login-btn', text = 'Google로 계속하기' } = config;
         
         return `
-            <button type="button" class="google-btn" id="${id}">
+            <button type="button" class="google-login-btn" id="${id}">
                 <div class="google-btn-content">
                     <div class="google-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24">

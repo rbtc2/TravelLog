@@ -111,13 +111,11 @@ export class AuthForm {
         const checkedAttr = checked ? 'checked' : '';
 
         return `
-            <div class="form-group">
-                <label class="checkbox-label" for="${id}">
-                    <input type="checkbox" id="${id}" name="${name}" ${checkedAttr}>
-                    <span class="checkmark"></span>
-                    ${label}
-                </label>
-            </div>
+            <label class="checkbox-label" for="${id}">
+                <input type="checkbox" id="${id}" name="${name}" ${checkedAttr}>
+                <span class="checkmark"></span>
+                ${label}
+            </label>
         `;
     }
 

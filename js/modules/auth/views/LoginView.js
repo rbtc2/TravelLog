@@ -40,14 +40,14 @@ export class LoginView extends BaseAuthView {
             
             ${AuthForm.createPasswordField({ id: 'password', name: 'password' })}
             
-            ${AuthForm.createFormOptions(`
+            <div class="form-options">
                 ${AuthForm.createCheckbox({ 
                     id: 'remember', 
                     name: 'remember', 
                     label: '로그인 상태 유지' 
                 })}
                 <a href="#" class="forgot-password" data-action="forgot-password">비밀번호 찾기</a>
-            `)}
+            </div>
             
             ${AuthButton.createLoginButton()}
             
