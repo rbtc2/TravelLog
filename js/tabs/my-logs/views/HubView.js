@@ -238,12 +238,19 @@ class HubView {
         // 기존 메뉴가 있다면 제거
         this.hideHamburgerMenu();
         
-        // 현재 스크롤 위치 저장
-        this.scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        // 현재 스크롤 위치 저장 (tab-content 기준)
+        const tabContent = document.getElementById('tab-content');
+        this.scrollPosition = tabContent ? tabContent.scrollTop : (window.pageYOffset || document.documentElement.scrollTop);
         
         // body 스크롤 비활성화
         document.body.classList.add('hamburger-menu-open');
-        document.body.style.top = `-${this.scrollPosition}px`;
+        
+        // 스크롤 위치 고정을 위한 스타일 적용
+        if (tabContent) {
+            tabContent.style.transform = `translateY(-${this.scrollPosition}px)`;
+        } else {
+            document.body.style.top = `-${this.scrollPosition}px`;
+        }
         
         // 햄버거 메뉴 HTML 생성
         const menuHTML = this.getHamburgerMenuHTML();
@@ -264,6 +271,9 @@ class HubView {
         
         // 메뉴 이벤트 바인딩
         this.bindHamburgerMenuEvents();
+        
+        // 스크롤 이벤트 완전 차단
+        this.preventScrollEvents();
     }
 
     /**
@@ -283,17 +293,107 @@ class HubView {
                     overlay.parentNode.removeChild(overlay);
                 }
                 
+                // 스크롤 이벤트 차단 해제
+                this.restoreScrollEvents();
+                
                 // body 스크롤 복원
                 document.body.classList.remove('hamburger-menu-open');
                 document.body.style.top = '';
                 
+                // 탭 콘텐츠 스크롤 복원
+                const tabContent = document.getElementById('tab-content');
+                if (tabContent) {
+                    tabContent.style.transform = '';
+                }
+                
                 // 스크롤 위치 복원
                 if (this.scrollPosition !== undefined) {
-                    window.scrollTo(0, this.scrollPosition);
+                    if (tabContent) {
+                        tabContent.scrollTop = this.scrollPosition;
+                    } else {
+                        window.scrollTo(0, this.scrollPosition);
+                    }
                     this.scrollPosition = undefined;
                 }
             }, 300);
         }
+    }
+
+    /**
+     * 스크롤 이벤트를 완전히 차단합니다
+     */
+    preventScrollEvents() {
+        // 스크롤 이벤트 차단 함수
+        this.scrollPreventHandler = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        };
+        
+        // 휠 이벤트 차단
+        this.wheelPreventHandler = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        };
+        
+        // 터치 이벤트 차단
+        this.touchPreventHandler = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        };
+        
+        // 키보드 스크롤 이벤트 차단
+        this.keyPreventHandler = (e) => {
+            const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; // 스페이스, Page Up/Down, Home, End, 방향키
+            if (scrollKeys.includes(e.keyCode)) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        };
+        
+        // 이벤트 리스너 등록
+        document.addEventListener('scroll', this.scrollPreventHandler, { passive: false, capture: true });
+        document.addEventListener('wheel', this.wheelPreventHandler, { passive: false, capture: true });
+        document.addEventListener('touchmove', this.touchPreventHandler, { passive: false, capture: true });
+        document.addEventListener('keydown', this.keyPreventHandler, { passive: false, capture: true });
+        
+        // 탭 콘텐츠에도 적용
+        const tabContent = document.getElementById('tab-content');
+        if (tabContent) {
+            tabContent.addEventListener('scroll', this.scrollPreventHandler, { passive: false, capture: true });
+            tabContent.addEventListener('wheel', this.wheelPreventHandler, { passive: false, capture: true });
+            tabContent.addEventListener('touchmove', this.touchPreventHandler, { passive: false, capture: true });
+        }
+    }
+    
+    /**
+     * 스크롤 이벤트 차단을 해제합니다
+     */
+    restoreScrollEvents() {
+        // 이벤트 리스너 제거
+        if (this.scrollPreventHandler) {
+            document.removeEventListener('scroll', this.scrollPreventHandler, { capture: true });
+            document.removeEventListener('wheel', this.wheelPreventHandler, { capture: true });
+            document.removeEventListener('touchmove', this.touchPreventHandler, { capture: true });
+            document.removeEventListener('keydown', this.keyPreventHandler, { capture: true });
+            
+            // 탭 콘텐츠에서도 제거
+            const tabContent = document.getElementById('tab-content');
+            if (tabContent) {
+                tabContent.removeEventListener('scroll', this.scrollPreventHandler, { capture: true });
+                tabContent.removeEventListener('wheel', this.wheelPreventHandler, { capture: true });
+                tabContent.removeEventListener('touchmove', this.touchPreventHandler, { capture: true });
+            }
+        }
+        
+        // 핸들러 정리
+        this.scrollPreventHandler = null;
+        this.wheelPreventHandler = null;
+        this.touchPreventHandler = null;
+        this.keyPreventHandler = null;
     }
 
     /**
@@ -776,6 +876,9 @@ class HubView {
     cleanup() {
         // 햄버거 메뉴 정리
         this.hideHamburgerMenu();
+        
+        // 스크롤 이벤트 차단 해제
+        this.restoreScrollEvents();
         
         if (this.eventManager) {
             this.eventManager.cleanup();
