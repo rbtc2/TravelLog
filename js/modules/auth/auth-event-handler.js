@@ -88,11 +88,12 @@ class AuthEventHandler {
         const googleLoginBtn = document.getElementById('google-login-btn');
         if (googleLoginBtn) {
             this.addEventListener(googleLoginBtn, 'click', () => {
-                console.log('Google 로그인 버튼 클릭됨');
+                // console.log('Google 로그인 버튼 클릭됨');
                 this.handleGoogleLogin();
             });
         } else {
-            console.warn('Google 로그인 버튼을 찾을 수 없습니다');
+            // Google 로그인 버튼이 없는 경우 (정상적인 상황)
+            // console.warn('Google 로그인 버튼을 찾을 수 없습니다');
         }
     }
 
@@ -178,7 +179,15 @@ class AuthEventHandler {
         const remember = document.getElementById('remember')?.checked;
 
         if (!email || !password) {
-            console.error('이메일과 비밀번호를 입력해주세요.');
+            const message = '이메일과 비밀번호를 입력해주세요.';
+            console.error(message);
+            
+            // 사용자에게 토스트 메시지로 알림
+            if (window.toastManager) {
+                window.toastManager.show(message, 'error');
+            } else {
+                alert(message);
+            }
             return;
         }
 
@@ -203,12 +212,41 @@ class AuthEventHandler {
         const residenceCountry = document.getElementById('signup-residence-country')?.value;
 
         if (!email || !password || !confirmPassword || !fullName) {
-            console.error('모든 필드를 입력해주세요.');
+            const message = '모든 필드를 입력해주세요.';
+            console.error(message);
+            
+            // 사용자에게 토스트 메시지로 알림
+            if (window.toastManager) {
+                window.toastManager.show(message, 'error');
+            } else {
+                alert(message);
+            }
             return;
         }
 
         if (!residenceCountry) {
-            console.error('현재 거주국을 선택해주세요.');
+            const message = '현재 거주국을 선택해주세요.';
+            console.error(message);
+            
+            // 사용자에게 토스트 메시지로 알림
+            if (window.toastManager) {
+                window.toastManager.show(message, 'error');
+            } else {
+                alert(message);
+            }
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            const message = '비밀번호가 일치하지 않습니다.';
+            console.error(message);
+            
+            // 사용자에게 토스트 메시지로 알림
+            if (window.toastManager) {
+                window.toastManager.show(message, 'error');
+            } else {
+                alert(message);
+            }
             return;
         }
 
@@ -222,7 +260,15 @@ class AuthEventHandler {
         const email = document.getElementById('forgot-email')?.value;
 
         if (!email) {
-            console.error('이메일을 입력해주세요.');
+            const message = '이메일을 입력해주세요.';
+            console.error(message);
+            
+            // 사용자에게 토스트 메시지로 알림
+            if (window.toastManager) {
+                window.toastManager.show(message, 'error');
+            } else {
+                alert(message);
+            }
             return;
         }
 

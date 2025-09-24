@@ -55,7 +55,7 @@ export class BaseAuthView {
      */
     render(skipCallback = false) {
         if (!this.isInitialized) {
-            console.warn(`${this.constructor.name}이 초기화되지 않았습니다. 자동 초기화를 수행합니다.`);
+            // 자동 초기화 수행 (조용히)
             this.initialize({
                 onViewChange: () => {},
                 onSubmit: () => {},

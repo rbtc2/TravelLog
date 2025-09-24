@@ -323,8 +323,15 @@ class AuthManager {
      * @param {string} message - 오류 메시지
      */
     showError(message) {
-        // toastManager는 authController에서 처리됨
         console.error('AuthManager Error:', message);
+        
+        // 사용자에게 토스트 메시지로 알림
+        if (window.toastManager) {
+            window.toastManager.show(message, 'error');
+        } else {
+            // toastManager가 없는 경우 alert 사용
+            alert(message);
+        }
     }
 
     /**
