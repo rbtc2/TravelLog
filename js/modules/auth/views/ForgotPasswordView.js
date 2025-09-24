@@ -7,6 +7,7 @@
  */
 
 import { BaseAuthView } from './BaseAuthView.js';
+import { AuthForm, AuthButton, AuthHeader } from '../components/index.js';
 
 /**
  * 비밀번호 찾기 뷰 클래스
@@ -35,25 +36,18 @@ export class ForgotPasswordView extends BaseAuthView {
      */
     renderContent() {
         const formContent = `
-            <div class="form-group">
-                <label for="forgot-email" class="form-label">이메일</label>
-                <input 
-                    type="email" 
-                    id="forgot-email" 
-                    name="email" 
-                    class="form-input" 
-                    placeholder="your@email.com"
-                    required
-                >
-            </div>
+            ${AuthForm.createEmailField({ 
+                id: 'forgot-email', 
+                name: 'email' 
+            })}
             
-            <button type="submit" class="login-btn" id="forgot-password-btn">
-                재설정 링크 보내기
-            </button>
+            ${AuthButton.createResetButton()}
             
-            <div class="signup-link">
-                <a href="#" class="login-btn-link" data-action="login">로그인으로 돌아가기</a>
-            </div>
+            ${AuthForm.createLink({ 
+                text: '로그인으로 돌아가기', 
+                className: 'login-btn-link', 
+                action: 'login' 
+            })}
         `;
 
         this.container.innerHTML = this.renderFormContainer(formContent, 'forgot-password-form');

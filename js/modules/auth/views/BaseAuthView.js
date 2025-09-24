@@ -6,6 +6,9 @@
  * @since 2024-12-29
  */
 
+import { AuthForm, AuthButton, AuthHeader, AuthMessage } from '../components/index.js';
+import { AuthEventManager, AuthValidationManager } from '../managers/index.js';
+
 /**
  * 인증 뷰 베이스 클래스
  * 모든 인증 뷰가 상속받아야 하는 추상 클래스
@@ -32,6 +35,10 @@ export class BaseAuthView {
         this.onViewChange = null;
         this.onSubmit = null;
         this.onError = null;
+        
+        // 관리자 인스턴스들
+        this.eventManager = new AuthEventManager();
+        this.validationManager = new AuthValidationManager();
     }
 
     /**
@@ -234,6 +241,11 @@ export class BaseAuthView {
      * 뷰를 정리합니다
      */
     cleanup() {
+        // 이벤트 관리자 정리
+        if (this.eventManager) {
+            this.eventManager.cleanup();
+        }
+        
         this.isInitialized = false;
         this.isRendered = false;
         this.container = null;

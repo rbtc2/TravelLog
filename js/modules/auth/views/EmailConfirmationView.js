@@ -7,6 +7,7 @@
  */
 
 import { BaseAuthView } from './BaseAuthView.js';
+import { AuthForm, AuthButton, AuthHeader, AuthMessage } from '../components/index.js';
 
 /**
  * 이메일 확인 뷰 클래스
@@ -36,19 +37,15 @@ export class EmailConfirmationView extends BaseAuthView {
     renderContent() {
         const content = `
             <div class="email-confirmation-content">
-                <div class="confirmation-icon">📬</div>
-                <p class="confirmation-message">
-                    회원가입이 완료되었습니다!<br>
-                    이메일로 전송된 확인 링크를 클릭하여 계정을 활성화해주세요.
-                </p>
+                ${AuthMessage.createEmailConfirmationMessage()}
                 
-                <button type="button" class="login-btn" id="resend-email-btn">
-                    이메일 다시 보내기
-                </button>
+                ${AuthButton.createResendButton()}
                 
-                <div class="signup-link">
-                    <a href="#" class="login-btn-link" data-action="login">로그인으로 돌아가기</a>
-                </div>
+                ${AuthForm.createLink({ 
+                    text: '로그인으로 돌아가기', 
+                    className: 'login-btn-link', 
+                    action: 'login' 
+                })}
             </div>
         `;
 

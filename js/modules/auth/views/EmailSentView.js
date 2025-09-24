@@ -7,6 +7,7 @@
  */
 
 import { BaseAuthView } from './BaseAuthView.js';
+import { AuthForm, AuthButton, AuthHeader, AuthMessage } from '../components/index.js';
 
 /**
  * 이메일 발송 완료 뷰 클래스
@@ -36,15 +37,13 @@ export class EmailSentView extends BaseAuthView {
     renderContent() {
         const content = `
             <div class="email-sent-content">
-                <div class="sent-icon">✅</div>
-                <p class="sent-message">
-                    이메일로 비밀번호 재설정 링크를 보내드렸습니다.<br>
-                    이메일을 확인하고 링크를 클릭하여 비밀번호를 재설정해주세요.
-                </p>
+                ${AuthMessage.createEmailSentMessage()}
                 
-                <div class="signup-link">
-                    <a href="#" class="login-btn-link" data-action="login">로그인으로 돌아가기</a>
-                </div>
+                ${AuthForm.createLink({ 
+                    text: '로그인으로 돌아가기', 
+                    className: 'login-btn-link', 
+                    action: 'login' 
+                })}
             </div>
         `;
 

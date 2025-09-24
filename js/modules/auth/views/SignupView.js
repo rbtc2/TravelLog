@@ -7,6 +7,7 @@
  */
 
 import { BaseAuthView } from './BaseAuthView.js';
+import { AuthForm, AuthButton, AuthHeader } from '../components/index.js';
 
 /**
  * 회원가입 뷰 클래스
@@ -44,53 +45,29 @@ export class SignupView extends BaseAuthView {
         }
 
         const formContent = `
-            <div class="form-group">
-                <label for="signup-full-name" class="form-label">이름</label>
-                <input 
-                    type="text" 
-                    id="signup-full-name" 
-                    name="fullName" 
-                    class="form-input" 
-                    placeholder="홍길동"
-                    required
-                >
-            </div>
+            ${AuthForm.createTextField({ 
+                id: 'signup-full-name', 
+                name: 'fullName', 
+                label: '이름', 
+                placeholder: '홍길동',
+                required: true
+            })}
             
-            <div class="form-group">
-                <label for="signup-email" class="form-label">이메일</label>
-                <input 
-                    type="email" 
-                    id="signup-email" 
-                    name="email" 
-                    class="form-input" 
-                    placeholder="your@email.com"
-                    required
-                >
-            </div>
+            ${AuthForm.createEmailField({ 
+                id: 'signup-email', 
+                name: 'email' 
+            })}
             
-            <div class="form-group">
-                <label for="signup-password" class="form-label">비밀번호</label>
-                <input 
-                    type="password" 
-                    id="signup-password" 
-                    name="password" 
-                    class="form-input" 
-                    placeholder="••••••••"
-                    required
-                >
-            </div>
+            ${AuthForm.createPasswordField({ 
+                id: 'signup-password', 
+                name: 'password' 
+            })}
             
-            <div class="form-group">
-                <label for="signup-confirm-password" class="form-label">비밀번호 확인</label>
-                <input 
-                    type="password" 
-                    id="signup-confirm-password" 
-                    name="confirmPassword" 
-                    class="form-input" 
-                    placeholder="••••••••"
-                    required
-                >
-            </div>
+            ${AuthForm.createPasswordField({ 
+                id: 'signup-confirm-password', 
+                name: 'confirmPassword', 
+                label: '비밀번호 확인' 
+            })}
             
             <div class="form-group">
                 <label for="signup-residence-country" class="form-label">현재 거주국</label>
@@ -105,13 +82,13 @@ export class SignupView extends BaseAuthView {
                 >
             </div>
             
-            <button type="submit" class="login-btn" id="signup-btn">
-                회원가입
-            </button>
+            ${AuthButton.createSignupButton()}
             
-            <div class="signup-link">
-                <a href="#" class="login-btn-link" data-action="login">이미 계정이 있으신가요? 로그인</a>
-            </div>
+            ${AuthForm.createLink({ 
+                text: '이미 계정이 있으신가요? 로그인', 
+                className: 'login-btn-link', 
+                action: 'login' 
+            })}
         `;
 
         this.container.innerHTML = this.renderFormContainer(formContent, 'signup-form');
