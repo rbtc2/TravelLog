@@ -20,7 +20,7 @@ export class CalendarRenderer {
         this.calendarCache = new Map();
         this.lastRenderDate = null;
         this.isDarkMode = false; // 다크모드 상태 추적
-        this.useBarSystem = true; // 바 형태 시스템 사용 여부
+        this.useBarSystem = true; // 바 형태 시스템 강제 사용 (레거시 시스템 제거)
     }
 
     /**
@@ -100,6 +100,18 @@ export class CalendarRenderer {
         
         // 렌더링 완료 후 스크롤 설정 복원
         this.restoreScrollSettings();
+    }
+    
+    /**
+     * 로그 상세 화면 렌더링 (통일된 DOM 구조)
+     * @param {Object} logData - 로그 데이터
+     */
+    renderLogDetail(logData) {
+        this.container.innerHTML = `
+            <div class="log-detail-container">
+                <!-- 로그 상세 내용은 LogDetailModule에서 처리 -->
+            </div>
+        `;
     }
     
     /**
@@ -202,7 +214,7 @@ export class CalendarRenderer {
                         
                         <div class="day-number">${currentDate.getDate()}</div>
                         
-                        ${hasTravelLog ? (this.useBarSystem ? this.renderTravelLogIndicators(travelLogs) : this.renderTravelLogIndicatorsLegacy(travelLogs)) : ''}
+                        ${hasTravelLog ? this.renderTravelLogIndicators(travelLogs) : ''}
                         
                         ${isToday ? '<div class="today-indicator"></div>' : ''}
                     </div>
@@ -294,64 +306,12 @@ export class CalendarRenderer {
     }
 
     /**
-     * 레거시 여행 로그 표시기 렌더링 (기존 도트 시스템)
-     * @param {Array} travelLogs - 해당 날짜의 여행 로그 배열
+     * 레거시 여행 로그 표시기 렌더링 (기존 도트 시스템) - 제거됨
+     * @deprecated 이 메서드는 더 이상 사용되지 않습니다. renderTravelLogIndicators를 사용하세요.
      */
     renderTravelLogIndicatorsLegacy(travelLogs) {
-        if (!travelLogs || travelLogs.length === 0) return '';
-        
-        // 최대 3개까지만 표시 (나머지는 +N 형태)
-        const maxDisplay = 3;
-        const displayLogs = travelLogs.slice(0, maxDisplay);
-        const remainingCount = travelLogs.length - maxDisplay;
-        
-        let indicatorsHTML = '<div class="travel-log-indicators" role="group" aria-label="여행 기록">';
-        
-        displayLogs.forEach((log, index) => {
-            const countryInfo = getCountryInfo(log.country, this.dataManager.getCountriesManager());
-            const flag = getCountryFlag(log.country, this.dataManager.getCountriesManager());
-            const countryName = countryInfo ? countryInfo.nameKo : log.country;
-            
-            // 여행 기간 상태에 따른 클래스
-            let statusClass = '';
-            if (log.isStartDay) statusClass = 'start-day';
-            else if (log.isEndDay) statusClass = 'end-day';
-            else if (log.isMiddleDay) statusClass = 'middle-day';
-            
-            // 툴팁 텍스트 생성
-            const tooltipText = generateTooltipText(log, countryName);
-            
-            indicatorsHTML += `
-                <div class="travel-log-indicator ${statusClass}" 
-                     data-country="${log.country || 'unknown'}"
-                     data-log-id="${log.id || ''}"
-                     data-day-of-trip="${log.dayOfTrip || 1}"
-                     data-total-days="${log.totalDays || 1}"
-                     title="${tooltipText}"
-                     role="button"
-                     tabindex="0"
-                     aria-label="${tooltipText}">
-                    <span class="flag-emoji" aria-hidden="true">${flag}</span>
-                    ${log.isStartDay ? '<span class="start-indicator" aria-hidden="true">●</span>' : ''}
-                    ${log.isEndDay ? '<span class="end-indicator" aria-hidden="true">●</span>' : ''}
-                </div>
-            `;
-        });
-        
-        if (remainingCount > 0) {
-            indicatorsHTML += `
-                <div class="travel-log-more" 
-                     title="${remainingCount}개 더 보기"
-                     role="button"
-                     tabindex="0"
-                     aria-label="${remainingCount}개 더 보기">
-                    +${remainingCount}
-                </div>
-            `;
-        }
-        
-        indicatorsHTML += '</div>';
-        return indicatorsHTML;
+        console.warn('renderTravelLogIndicatorsLegacy는 더 이상 사용되지 않습니다. renderTravelLogIndicators를 사용하세요.');
+        return this.renderTravelLogIndicators(travelLogs);
     }
 
     /**

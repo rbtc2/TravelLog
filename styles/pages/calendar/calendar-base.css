@@ -72,6 +72,9 @@
     /* 하드웨어 가속 */
     transform: translateZ(0);
     backface-visibility: hidden;
+    /* 네임스페이스 격리 */
+    background: var(--surface-primary);
+    color: var(--text-primary);
 }
 
 /* 반응형 캘린더 상세 화면 최적화 */
