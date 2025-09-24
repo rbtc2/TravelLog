@@ -265,7 +265,7 @@ export class CountryDataManager {
             'Belgium': '벨기에',
             'Portugal': '포르투갈',
             'Greece': '그리스',
-            'Turkey': '터키',
+            'Türkiye': '튀르키예',
             'Thailand': '태국',
             'Vietnam': '베트남',
             'Singapore': '싱가포르',

@@ -1,18 +1,26 @@
 # 🧪 TravelLog 테스트 파일
 
-이 폴더는 TravelLog 프로젝트의 테스트 파일들을 포함합니다.
+이 폴더는 TravelLog 프로젝트의 핵심 테스트 파일들을 포함합니다.
 
 ## 📋 테스트 파일 목록
 
 ### **`test-final-integration.html`**
-- **목적**: Phase 5 최종 통합 테스트
-- **기능**: 모든 Phase의 결과를 검증할 수 있는 종합 테스트
+- **목적**: 최종 통합 테스트
+- **기능**: 전체 시스템의 핵심 기능들을 종합적으로 검증
 - **사용법**: 브라우저에서 직접 열어서 전체 시스템 동작 확인
+- **검증 항목**: 탭 전환, 네비게이션, 반응형 디자인, 데이터 로딩
 
 ### **`test-search-functionality.html`**
 - **목적**: 검색 기능 종합 테스트
-- **기능**: 검색 엔진, 하이라이팅, 정렬 등 검색 관련 모든 기능 테스트
+- **기능**: 검색 엔진, 하이라이팅, 정렬, 특수문자 정규화 등 검색 관련 모든 기능 테스트
 - **사용법**: 검색 기능 개발 및 디버깅 시 사용
+- **검증 항목**: 실시간 검색, 검색 결과 정렬, 검색어 하이라이팅, 특수문자 검색
+
+### **`test-z-index-system.html`**
+- **목적**: Z-Index 시스템 테스트
+- **기능**: 모달, 드롭다운, 툴팁 등 레이어 우선순위 검증
+- **사용법**: UI 컴포넌트 레이어링 문제 디버깅 시 사용
+- **검증 항목**: 모달 오버레이, 드롭다운 표시, 툴팁 위치
 
 ## 🚀 테스트 실행 방법
 
@@ -32,6 +40,7 @@ php -S localhost:8000
 ```
 http://localhost:8000/tests/test-final-integration.html
 http://localhost:8000/tests/test-search-functionality.html
+http://localhost:8000/tests/test-z-index-system.html
 ```
 
 ## 📝 테스트 가이드
@@ -47,6 +56,13 @@ http://localhost:8000/tests/test-search-functionality.html
 - [ ] 검색 결과가 관련성 순으로 정렬되는가?
 - [ ] 검색어 하이라이팅이 올바르게 표시되는가?
 - [ ] 정렬 옵션이 정상적으로 작동하는가?
+- [ ] 특수문자 정규화 검색이 작동하는가? (예: "Turkiye" → "Türkiye")
+
+### **Z-Index 시스템 테스트 체크리스트**
+- [ ] 모달이 다른 요소들 위에 올바르게 표시되는가?
+- [ ] 드롭다운이 적절한 레이어에 표시되는가?
+- [ ] 툴팁이 다른 UI 요소를 가리지 않는가?
+- [ ] 레이어 간 충돌이 없는가?
 
 ## 🔧 개발자 가이드
 
@@ -57,8 +73,8 @@ http://localhost:8000/tests/test-search-functionality.html
 
 ### **테스트 파일 명명 규칙**
 - `test-{기능명}.html`: 특정 기능 테스트
-- `test-{통합명}-integration.html`: 통합 테스트
-- `test-{버전명}-final.html`: 최종 버전 테스트
+- `test-{시스템명}-system.html`: 시스템 레벨 테스트
+- `test-final-integration.html`: 최종 통합 테스트
 
 ## 📞 지원
 
@@ -66,6 +82,7 @@ http://localhost:8000/tests/test-search-functionality.html
 
 ---
 
-**테스트 폴더 버전**: 1.0.0  
-**최종 업데이트**: 2024-12-29  
-**관리자**: AI Assistant
+**테스트 폴더 버전**: 2.0.0  
+**최종 업데이트**: 2025-09-24  
+**관리자**: AI Assistant  
+**정리된 파일**: Phase별 개발 테스트 파일들 제거, 핵심 테스트만 유지

@@ -259,7 +259,7 @@ class CountryAnalysisManager {
             'RU': '러시아',
             'MX': '멕시코',
             'ID': '인도네시아',
-            'TR': '터키',
+            'TR': '튀르키예',
             'EG': '이집트'
         };
 

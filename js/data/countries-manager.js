@@ -100,7 +100,7 @@ export class CountriesManager {
             { code: 'IL', nameEn: 'Israel', nameKo: '이스라엘', flag: '🇮🇱', continent: 'Asia', continentKo: '아시아', popular: false },
             { code: 'PS', nameEn: 'Palestine', nameKo: '팔레스타인', flag: '🇵🇸', continent: 'Asia', continentKo: '아시아', popular: false },
             { code: 'CY', nameEn: 'Cyprus', nameKo: '키프로스', flag: '🇨🇾', continent: 'Asia', continentKo: '아시아', popular: false },
-            { code: 'TR', nameEn: 'Turkey', nameKo: '터키', flag: '🇹🇷', continent: 'Asia', continentKo: '아시아', popular: false },
+            { code: 'TR', nameEn: 'Türkiye', nameKo: '튀르키예', flag: '🇹🇷', continent: 'Asia', continentKo: '아시아', popular: false },
             { code: 'GE', nameEn: 'Georgia', nameKo: '조지아', flag: '🇬🇪', continent: 'Asia', continentKo: '아시아', popular: false },
             { code: 'AM', nameEn: 'Armenia', nameKo: '아르메니아', flag: '🇦🇲', continent: 'Asia', continentKo: '아시아', popular: false },
             { code: 'AZ', nameEn: 'Azerbaijan', nameKo: '아제르바이잔', flag: '🇦🇿', continent: 'Asia', continentKo: '아시아', popular: false },
@@ -510,13 +510,42 @@ export class CountriesManager {
     }
 
     /**
-     * 통합 검색 - 한글/영문 동시 검색, 부분 문자열 매칭
+     * 특수문자 정규화 함수 - 검색 편의성을 위한 문자 변환
+     * @private
+     * @param {string} text - 정규화할 텍스트
+     * @returns {string} 정규화된 텍스트
+     */
+    normalizeText(text) {
+        if (!text || typeof text !== 'string') return '';
+        
+        return text
+            .toLowerCase()
+            .normalize('NFD') // 유니코드 정규화 (분해)
+            .replace(/[\u0300-\u036f]/g, '') // 조합 문자 제거
+            .replace(/[àáâãäå]/g, 'a')
+            .replace(/[èéêë]/g, 'e')
+            .replace(/[ìíîï]/g, 'i')
+            .replace(/[òóôõö]/g, 'o')
+            .replace(/[ùúûü]/g, 'u')
+            .replace(/[ýÿ]/g, 'y')
+            .replace(/[ñ]/g, 'n')
+            .replace(/[ç]/g, 'c')
+            .replace(/[ß]/g, 'ss')
+            .replace(/[æ]/g, 'ae')
+            .replace(/[œ]/g, 'oe')
+            .replace(/[ð]/g, 'd')
+            .replace(/[þ]/g, 'th');
+    }
+
+    /**
+     * 통합 검색 - 한글/영문 동시 검색, 부분 문자열 매칭, 특수문자 정규화 지원
      * @public
      * @param {string} query - 검색 쿼리
      * @param {Object} options - 검색 옵션
      * @param {number} options.limit - 최대 결과 수 (기본값: 50)
      * @param {boolean} options.caseSensitive - 대소문자 구분 여부 (기본값: false)
      * @param {boolean} options.exactMatch - 정확한 매칭 여부 (기본값: false)
+     * @param {boolean} options.normalizeSpecialChars - 특수문자 정규화 여부 (기본값: true)
      * @returns {Country[]} 검색 결과 배열
      */
     searchCountries(query, options = {}) {
@@ -529,10 +558,12 @@ export class CountriesManager {
         const {
             limit = 50,
             caseSensitive = false,
-            exactMatch = false
+            exactMatch = false,
+            normalizeSpecialChars = true
         } = options;
 
         const searchQuery = caseSensitive ? query.trim() : query.trim().toLowerCase();
+        const normalizedSearchQuery = normalizeSpecialChars ? this.normalizeText(query) : searchQuery;
         const results = [];
 
         // 성능 최적화: 조기 종료를 위한 카운터
@@ -546,13 +577,36 @@ export class CountriesManager {
 
             if (exactMatch) {
                 // 정확한 매칭
+                const code = caseSensitive ? country.code : country.code.toLowerCase();
+                const nameEn = caseSensitive ? country.nameEn : country.nameEn.toLowerCase();
+                const nameKo = caseSensitive ? country.nameKo : country.nameKo.toLowerCase();
+                const continent = caseSensitive ? country.continent : country.continent.toLowerCase();
+                const continentKo = caseSensitive ? country.continentKo : country.continentKo.toLowerCase();
+
                 isMatch = (
-                    (caseSensitive ? country.code : country.code.toLowerCase()) === searchQuery ||
-                    (caseSensitive ? country.nameEn : country.nameEn.toLowerCase()) === searchQuery ||
-                    (caseSensitive ? country.nameKo : country.nameKo.toLowerCase()) === searchQuery ||
-                    (caseSensitive ? country.continent : country.continent.toLowerCase()) === searchQuery ||
-                    (caseSensitive ? country.continentKo : country.continentKo.toLowerCase()) === searchQuery
+                    code === searchQuery ||
+                    nameEn === searchQuery ||
+                    nameKo === searchQuery ||
+                    continent === searchQuery ||
+                    continentKo === searchQuery
                 );
+
+                // 특수문자 정규화 검색 (정확한 매칭에서도 지원)
+                if (!isMatch && normalizeSpecialChars) {
+                    const normalizedCode = this.normalizeText(country.code);
+                    const normalizedNameEn = this.normalizeText(country.nameEn);
+                    const normalizedNameKo = this.normalizeText(country.nameKo);
+                    const normalizedContinent = this.normalizeText(country.continent);
+                    const normalizedContinentKo = this.normalizeText(country.continentKo);
+
+                    isMatch = (
+                        normalizedCode === normalizedSearchQuery ||
+                        normalizedNameEn === normalizedSearchQuery ||
+                        normalizedNameKo === normalizedSearchQuery ||
+                        normalizedContinent === normalizedSearchQuery ||
+                        normalizedContinentKo === normalizedSearchQuery
+                    );
+                }
             } else {
                 // 부분 문자열 매칭 (더 빠른 검색)
                 const code = caseSensitive ? country.code : country.code.toLowerCase();
@@ -568,6 +622,23 @@ export class CountriesManager {
                     continent.includes(searchQuery) ||
                     continentKo.includes(searchQuery)
                 );
+
+                // 특수문자 정규화 검색 (부분 매칭에서도 지원)
+                if (!isMatch && normalizeSpecialChars) {
+                    const normalizedCode = this.normalizeText(country.code);
+                    const normalizedNameEn = this.normalizeText(country.nameEn);
+                    const normalizedNameKo = this.normalizeText(country.nameKo);
+                    const normalizedContinent = this.normalizeText(country.continent);
+                    const normalizedContinentKo = this.normalizeText(country.continentKo);
+
+                    isMatch = (
+                        normalizedCode.includes(normalizedSearchQuery) ||
+                        normalizedNameEn.includes(normalizedSearchQuery) ||
+                        normalizedNameKo.includes(normalizedSearchQuery) ||
+                        normalizedContinent.includes(normalizedSearchQuery) ||
+                        normalizedContinentKo.includes(normalizedSearchQuery)
+                    );
+                }
             }
 
             if (isMatch) {
@@ -610,12 +681,13 @@ export class CountriesManager {
     }
 
     /**
-     * 국가명으로 국가 조회 (한글/영문)
+     * 국가명으로 국가 조회 (한글/영문, 특수문자 정규화 지원)
      * @public
      * @param {string} name - 국가명
      * @param {Object} options - 검색 옵션
      * @param {boolean} options.caseSensitive - 대소문자 구분 여부 (기본값: false)
      * @param {boolean} options.exactMatch - 정확한 매칭 여부 (기본값: false)
+     * @param {boolean} options.normalizeSpecialChars - 특수문자 정규화 여부 (기본값: true)
      * @returns {Country|null} 국가 객체 또는 null
      */
     getCountryByName(name, options = {}) {
@@ -625,24 +697,54 @@ export class CountriesManager {
 
         const {
             caseSensitive = false,
-            exactMatch = false
+            exactMatch = false,
+            normalizeSpecialChars = true
         } = options;
 
         const searchName = caseSensitive ? name.trim() : name.trim().toLowerCase();
+        const normalizedSearchName = normalizeSpecialChars ? this.normalizeText(name) : searchName;
 
         for (const country of this.countries) {
             let isMatch = false;
 
             if (exactMatch) {
+                const nameEn = caseSensitive ? country.nameEn : country.nameEn.toLowerCase();
+                const nameKo = caseSensitive ? country.nameKo : country.nameKo.toLowerCase();
+
                 isMatch = (
-                    (caseSensitive ? country.nameEn : country.nameEn.toLowerCase()) === searchName ||
-                    (caseSensitive ? country.nameKo : country.nameKo.toLowerCase()) === searchName
+                    nameEn === searchName ||
+                    nameKo === searchName
                 );
+
+                // 특수문자 정규화 검색 (정확한 매칭에서도 지원)
+                if (!isMatch && normalizeSpecialChars) {
+                    const normalizedNameEn = this.normalizeText(country.nameEn);
+                    const normalizedNameKo = this.normalizeText(country.nameKo);
+
+                    isMatch = (
+                        normalizedNameEn === normalizedSearchName ||
+                        normalizedNameKo === normalizedSearchName
+                    );
+                }
             } else {
+                const nameEn = caseSensitive ? country.nameEn : country.nameEn.toLowerCase();
+                const nameKo = caseSensitive ? country.nameKo : country.nameKo.toLowerCase();
+
                 isMatch = (
-                    (caseSensitive ? country.nameEn : country.nameEn.toLowerCase()) === searchName ||
-                    (caseSensitive ? country.nameKo : country.nameKo.toLowerCase()) === searchName
+                    nameEn === searchName ||
+                    nameKo === searchName
                 );
+
+                // 특수문자 정규화 검색 (부분 매칭에서도 지원)
+                if (!isMatch && normalizeSpecialChars) {
+                    const normalizedNameEn = this.normalizeText(country.nameEn);
+                    const normalizedNameKo = this.normalizeText(country.nameKo);
+
+                    isMatch = (
+                        normalizedNameEn === normalizedSearchName ||
+                        normalizedNameKo === normalizedSearchName
+                    );
+                }
             }
 
             if (isMatch) {
