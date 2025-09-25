@@ -12,6 +12,7 @@ import { EventManager } from '../../../modules/utils/event-manager.js';
 import { ScrollManager } from '../../../modules/utils/ScrollManager.js';
 import { LogoutManager } from '../../../modules/managers/LogoutManager.js';
 import { ProfileManager } from '../../../modules/managers/ProfileManager.js';
+import { HamburgerMenuManager } from '../../../modules/ui-components/HamburgerMenuManager.js';
 
 class HubView {
     constructor(controller) {
@@ -20,6 +21,7 @@ class HubView {
         this.scrollManager = new ScrollManager();
         this.logoutManager = new LogoutManager(this.eventManager, this.dispatchEvent.bind(this));
         this.profileManager = new ProfileManager(this.eventManager, this.dispatchEvent.bind(this));
+        this.hamburgerMenuManager = new HamburgerMenuManager(this.eventManager, this.scrollManager, this.dispatchEvent.bind(this));
         this.container = null;
         this.isLoggingOut = false; // 기존 코드와의 호환성을 위해 유지
         this.scrollPosition = undefined; // 기존 코드와의 호환성을 위해 유지
@@ -35,6 +37,7 @@ class HubView {
         this.container.classList.add('hub-view');
         this.container.innerHTML = this.getHubHTML();
         this.bindEvents();
+        this.bindCustomEventListeners();
         // ProfileManager를 사용하여 프로필 데이터 로드
         this.profileManager.loadProfileData();
         // 기존 코드와의 호환성을 위해 기존 방식도 유지
@@ -188,7 +191,10 @@ class HubView {
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
             this.eventManager.add(settingsBtn, 'click', () => {
-                this.showHamburgerMenu();
+                // HamburgerMenuManager를 사용하여 메뉴 표시
+                this.hamburgerMenuManager.showHamburgerMenu();
+                // 기존 코드는 주석 처리 (HamburgerMenuManager가 처리하므로)
+                // this.showHamburgerMenu();
             });
         }
 
@@ -197,6 +203,16 @@ class HubView {
         this.profileManager.bindProfileEvents();
         // 기존 코드와의 호환성을 위해 기존 방식도 유지
         this.bindProfileEvents();
+    }
+
+    /**
+     * 커스텀 이벤트 리스너를 바인딩합니다
+     */
+    bindCustomEventListeners() {
+        // 로그아웃 이벤트 리스너
+        this.container.addEventListener('hubView:logout', () => {
+            this.onLogout();
+        });
     }
 
     /**
@@ -847,8 +863,8 @@ class HubView {
      * View 정리
      */
     cleanup() {
-        // 햄버거 메뉴 정리
-        this.hideHamburgerMenu();
+        // 햄버거 메뉴 정리 (HamburgerMenuManager가 처리)
+        // this.hideHamburgerMenu();
         
         // 스크롤 이벤트 차단 해제
         this.scrollManager.restoreScroll();
@@ -869,6 +885,10 @@ class HubView {
         
         if (this.profileManager) {
             this.profileManager.cleanup();
+        }
+        
+        if (this.hamburgerMenuManager) {
+            this.hamburgerMenuManager.cleanup();
         }
         
         this.container = null;
