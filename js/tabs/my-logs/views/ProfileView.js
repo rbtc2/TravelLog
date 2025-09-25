@@ -392,17 +392,17 @@ class ProfileView {
      */
     loadProfileData() {
         try {
+            // 먼저 실제 사용자 정보에서 이름을 가져옵니다
+            this.loadUserProfileName();
+            
+            // 그 다음 로컬 프로필 데이터를 로드합니다
             const savedData = localStorage.getItem('travelLog_profile');
             if (savedData) {
                 const profileData = JSON.parse(savedData);
                 
-                const profileName = document.getElementById('profile-name');
                 const profileEmail = document.getElementById('profile-email');
                 
-                if (profileName && profileData.name) {
-                    profileName.textContent = profileData.name;
-                }
-                
+                // 이름은 실제 사용자 정보를 우선하고, 이메일은 로컬 데이터를 사용
                 if (profileEmail && profileData.email) {
                     profileEmail.textContent = profileData.email;
                 }
@@ -416,6 +416,40 @@ class ProfileView {
             this.updateUserInfo();
         } catch (error) {
             console.error('프로필 데이터 로드 실패:', error);
+        }
+    }
+
+    /**
+     * 실제 사용자 정보에서 프로필 이름을 로드합니다
+     */
+    loadUserProfileName() {
+        try {
+            // AuthController를 통해 현재 사용자 정보 가져오기
+            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
+                const currentUser = window.appManager.authManager.authController.getCurrentUser();
+                if (currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name) {
+                    const profileName = document.getElementById('profile-name');
+                    if (profileName) {
+                        profileName.textContent = currentUser.user_metadata.full_name;
+                        console.log('ProfileView - 사용자 이름 로드됨:', currentUser.user_metadata.full_name);
+                        return;
+                    }
+                }
+            }
+            
+            // AuthController가 없거나 사용자 정보가 없는 경우 기본값 사용
+            const profileName = document.getElementById('profile-name');
+            if (profileName) {
+                profileName.textContent = '여행자';
+                console.log('ProfileView - 기본 이름 사용: 여행자');
+            }
+        } catch (error) {
+            console.error('ProfileView - 사용자 프로필 이름 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileName = document.getElementById('profile-name');
+            if (profileName) {
+                profileName.textContent = '여행자';
+            }
         }
     }
 
