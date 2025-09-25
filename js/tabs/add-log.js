@@ -83,12 +83,6 @@ class AddLogTab {
                 inputId: 'country-selector-input'
             });
 
-            // 국가 선택 이벤트 리스너
-            container.addEventListener('country-selected', (event) => {
-                const selectedCountry = event.detail;
-                this.handleCountrySelection(selectedCountry);
-            });
-
             console.log('AddLogTab: CountrySelector 초기화 완료');
 
         } catch (error) {
@@ -120,14 +114,15 @@ class AddLogTab {
         const cityInput = this.safeGetElementById('city', '국가 선택');
         if (cityInput) {
             cityInput.disabled = false;
-            cityInput.placeholder = `${selectedCountry.nameKo}의 도시를 입력하세요`;
+            cityInput.placeholder = `${selectedCountry.name}의 도시를 입력하세요`;
+            cityInput.value = ''; // 기존 값 초기화
         }
 
         // 검증 에러 제거
         this.showFieldError('country', '');
         
         // 콘솔 로그
-        console.log(`AddLogTab: 국가 선택됨 - ${selectedCountry.nameKo} (${selectedCountry.code})`);
+        console.log(`AddLogTab: 국가 선택됨 - ${selectedCountry.name} (${selectedCountry.code})`);
     }
 
     /**
@@ -353,6 +348,12 @@ class AddLogTab {
 
         // CountrySelector 초기화
         this.initializeCountrySelector();
+        
+        // 국가 선택 이벤트 리스너 등록 (CountrySelector 초기화 후)
+        this.addEventListener(document, 'country-selected', (event) => {
+            const selectedCountry = event.detail.country;
+            this.handleCountrySelection(selectedCountry);
+        });
         
         // 국가 입력 시 도시 활성화 (CountrySelector 이벤트로 대체됨)
         // this.addEventListener(countryInput, 'input', (e) => {
