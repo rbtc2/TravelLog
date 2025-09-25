@@ -287,12 +287,12 @@ export class SearchUIRenderer {
                     <div class="date-range-filter">
                         <div class="date-input-group">
                             <label class="date-label" for="start-date">시작일</label>
-                            <input type="date" class="date-input" id="start-date" name="start-date" autocomplete="bday">
+                            <input type="date" class="date-input" id="start-date" name="start-date" autocomplete="off">
                         </div>
                         <div class="date-separator">~</div>
                         <div class="date-input-group">
                             <label class="date-label" for="end-date">종료일</label>
-                            <input type="date" class="date-input" id="end-date" name="end-date" autocomplete="bday">
+                            <input type="date" class="date-input" id="end-date" name="end-date" autocomplete="off">
                         </div>
                     </div>
                 </div>

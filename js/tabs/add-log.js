@@ -210,7 +210,7 @@ class AddLogTab {
                             class="form-input" 
                             placeholder="국가를 먼저 선택해주세요"
                             maxlength="${FORM_CONFIG.city.maxLength}"
-                            autocomplete="address-level2"
+                            autocomplete="address-level1"
                             disabled
                             required
                         >
@@ -225,7 +225,7 @@ class AddLogTab {
                             id="startDate" 
                             name="startDate" 
                             class="form-input" 
-                            autocomplete="bday"
+                            autocomplete="off"
                             required
                         >
                         <div class="form-error" id="startDate-error"></div>
@@ -239,7 +239,7 @@ class AddLogTab {
                             id="endDate" 
                             name="endDate" 
                             class="form-input" 
-                            autocomplete="bday"
+                            autocomplete="off"
                             disabled
                             required
                         >

@@ -85,18 +85,18 @@ class LogEditModule {
                             </div>
                             <div class="form-group">
                                 <label for="edit-city">도시 *</label>
-                                <input type="text" id="edit-city" name="city" value="${log.city}" autocomplete="address-level2" required ${!log.country ? 'disabled' : ''} placeholder="${!log.country ? '국가를 먼저 선택해주세요' : '도시를 입력하세요'}">
+                                <input type="text" id="edit-city" name="city" value="${log.city}" autocomplete="address-level1" required ${!log.country ? 'disabled' : ''} placeholder="${!log.country ? '국가를 먼저 선택해주세요' : '도시를 입력하세요'}">
                             </div>
                         </div>
                         
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="edit-start-date">시작일 *</label>
-                                <input type="date" id="edit-start-date" name="startDate" value="${log.startDate}" max="${log.endDate}" autocomplete="bday" required>
+                                <input type="date" id="edit-start-date" name="startDate" value="${log.startDate}" max="${log.endDate}" autocomplete="off" required>
                             </div>
                             <div class="form-group">
                                 <label for="edit-end-date">종료일 *</label>
-                                <input type="date" id="edit-end-date" name="endDate" value="${log.endDate}" min="${log.startDate}" autocomplete="bday" required>
+                                <input type="date" id="edit-end-date" name="endDate" value="${log.endDate}" min="${log.startDate}" autocomplete="off" required>
                             </div>
                         </div>
                         
