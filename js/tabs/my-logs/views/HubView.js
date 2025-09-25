@@ -10,14 +10,16 @@
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
 import { ScrollManager } from '../../../modules/utils/ScrollManager.js';
+import { LogoutManager } from '../../../modules/managers/LogoutManager.js';
 
 class HubView {
     constructor(controller) {
         this.controller = controller;
         this.eventManager = new EventManager();
         this.scrollManager = new ScrollManager();
+        this.logoutManager = new LogoutManager(this.eventManager, this.dispatchEvent.bind(this));
         this.container = null;
-        this.isLoggingOut = false;
+        this.isLoggingOut = false; // 기존 코드와의 호환성을 위해 유지
         this.scrollPosition = undefined; // 기존 코드와의 호환성을 위해 유지
     }
 
@@ -575,13 +577,18 @@ class HubView {
      * 로그아웃
      */
     onLogout() {
-        // 중복 로그아웃 방지
-        if (this.isLoggingOut) {
-            return;
-        }
-        this.isLoggingOut = true;
+        console.log('HubView.onLogout() 호출됨');
         
-        this.showLogoutConfirmation();
+        // LogoutManager를 사용하여 로그아웃 처리
+        this.logoutManager.onLogout();
+        
+        // 기존 코드는 주석 처리 (LogoutManager가 처리하므로)
+        // if (this.isLoggingOut) {
+        //     return;
+        // }
+        // this.isLoggingOut = true;
+        // 
+        // this.showLogoutConfirmation();
     }
 
     /**
@@ -846,6 +853,10 @@ class HubView {
         
         if (this.scrollManager) {
             this.scrollManager.cleanup();
+        }
+        
+        if (this.logoutManager) {
+            this.logoutManager.cleanup();
         }
         
         this.container = null;
