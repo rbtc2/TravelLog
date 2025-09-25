@@ -58,17 +58,6 @@ export class SignupView extends BaseAuthView {
                 name: 'email' 
             })}
             
-            ${AuthForm.createPasswordField({ 
-                id: 'signup-password', 
-                name: 'password' 
-            })}
-            
-            ${AuthForm.createPasswordField({ 
-                id: 'signup-confirm-password', 
-                name: 'confirmPassword', 
-                label: '비밀번호 확인' 
-            })}
-            
             <div class="form-group">
                 <label for="signup-residence-country" class="form-label">현재 거주국</label>
                 <div id="signup-country-selector-container" class="country-selector-container">
@@ -81,6 +70,17 @@ export class SignupView extends BaseAuthView {
                     value=""
                 >
             </div>
+            
+            ${AuthForm.createPasswordField({ 
+                id: 'signup-password', 
+                name: 'password' 
+            })}
+            
+            ${AuthForm.createPasswordField({ 
+                id: 'signup-confirm-password', 
+                name: 'confirmPassword', 
+                label: '비밀번호 확인' 
+            })}
             
             ${AuthButton.createSignupButton()}
             
