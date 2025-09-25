@@ -14,14 +14,14 @@ import ZIndexManager from './modules/utils/z-index-manager.js'; // Z-Index 충�
 import StackingContextDebugger from './modules/utils/stacking-context-debugger.js'; // Stacking Context 디버깅 도구
 import DevelopmentValidator from './modules/utils/development-validator.js'; // 개발 시 실시간 검증기
 import { mobileOptimizer } from './modules/optimization/mobile-optimizer.js'; // Phase 1: 모바일 최적화 모듈
+import { TabManager } from './modules/core/tab-manager.js'; // Phase 2: 탭 관리 모듈
 
 // Phase 1: 모바일 최적화는 별도 모듈로 분리됨
+// Phase 2: 탭 관리는 별도 모듈로 분리됨
 // mobileOptimizer는 자동으로 초기화됩니다.
 
 class AppManager {
     constructor() {
-        this.currentTab = null;
-        this.tabModules = new Map();
         this.isLoggedIn = false;
         this.isHandlingLoginSuccess = false;
         this.authManager = null;
@@ -33,6 +33,9 @@ class AppManager {
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         this.desktopLayoutManager = new DesktopLayoutManager();
         
+        // PHASE 2: 탭 매니저 초기화
+        this.tabManager = new TabManager(this);
+        
             // Z-Index 충돌 관리 시스템 초기화
             this.zIndexManager = window.zIndexManager;
             
@@ -43,8 +46,6 @@ class AppManager {
         // DOM 요소들
         this.loginScreen = document.getElementById('login-screen');
         this.mainApp = document.getElementById('main-app');
-        this.tabContent = document.getElementById('tab-content');
-        this.tabButtons = document.querySelectorAll('.tab-btn');
         
         this.init();
     }
@@ -271,7 +272,7 @@ class AppManager {
         // 현재 상태 저장
         this.lastVisibleState = {
             isLoggedIn: this.isLoggedIn,
-            currentTab: this.currentTab,
+            currentTab: this.tabManager.getCurrentTab(),
             isDesktopMode: this.desktopLayoutManager ? this.desktopLayoutManager.isDesktopMode() : false
         };
     }
@@ -289,8 +290,8 @@ class AppManager {
         this.restoreNavigationState();
         
         // 현재 탭이 있다면 새로고침
-        if (this.currentTab) {
-            this.refreshCurrentTab();
+        if (this.tabManager.getCurrentTab()) {
+            this.tabManager.refreshCurrentTab();
         }
     }
     
@@ -328,22 +329,7 @@ class AppManager {
         }
     }
     
-    /**
-     * 현재 탭 새로고침
-     */
-    refreshCurrentTab() {
-        if (this.currentTab && this.tabModules.has(this.currentTab)) {
-            const module = this.tabModules.get(this.currentTab);
-            if (module.default && typeof module.default.refresh === 'function') {
-                try {
-                    module.default.refresh();
-                    console.log(`탭 ${this.currentTab}이 새로고침되었습니다.`);
-                } catch (error) {
-                    console.error(`탭 ${this.currentTab} 새로고침 실패:`, error);
-                }
-            }
-        }
-    }
+    // refreshCurrentTab 메서드는 TabManager로 이동됨
     
     /**
      * 앱 정보를 업데이트합니다
@@ -380,13 +366,8 @@ class AppManager {
     }
     
     bindEvents() {
-        // 탭 버튼 클릭
-        this.tabButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const tabName = e.currentTarget.dataset.tab;
-                this.switchTab(tabName);
-            });
-        });
+        // 탭 이벤트 바인딩은 TabManager에서 처리됨
+        // TabManager는 생성자에서 자동으로 이벤트를 바인딩합니다
     }
     
     loginSuccess() {
@@ -401,7 +382,7 @@ class AppManager {
         
         // PHASE 1 수정: 로그인 성공 후 데스크톱 레이아웃 재초기화
         this.initializeDesktopLayoutAfterLogin();
-        this.loadTab('home'); // 기본 탭 로드
+        this.tabManager.loadTab('home'); // 기본 탭 로드
 
         // 상태 리셋
         setTimeout(() => {
@@ -416,12 +397,8 @@ class AppManager {
         this.isLoggedIn = false;
         this.showLoginScreen();
         
-        // 현재 탭 정리
-        this.cleanupCurrentTab();
-        
-        // 탭 상태 초기화
-        this.currentTab = null;
-        this.tabModules.clear();
+        // 탭 매니저 정리
+        this.tabManager.cleanup();
         
         // 네비게이션 모니터링 정리
         this.stopNavigationMonitoring();
@@ -458,231 +435,29 @@ class AppManager {
         }
     }
     
-    async switchTab(tabName) {
-        try {
-            // 현재 탭 정리
-            await this.cleanupCurrentTab();
-            
-            // 새 탭 로드
-            const module = await this.loadTabModule(tabName);
-            
-            // PHASE 1: 데스크톱 레이아웃에서 탭 콘텐츠 렌더링
-            if (this.desktopLayoutManager.isDesktopMode()) {
-                await this.renderDesktopTabContent(module, tabName);
-            } else {
-                await this.renderTabContent(module);
-            }
-            
-            // 모든 탭에 대해 데이터 새로고침 (데모 데이터 생성 포함)
-            if (module.default && typeof module.default.refresh === 'function') {
-                module.default.refresh();
-            }
-            
-            // UI 업데이트
-            this.updateTabUI(tabName);
-            
-            // 현재 탭 업데이트
-            this.currentTab = tabName;
-            
-            // 탭 전환 후 스크롤을 상단으로 이동
-            this.scrollToTop();
-            
-        } catch (error) {
-            console.error(`탭 전환 실패: ${tabName}`, error);
-            this.showError(tabName, error);
-        }
-    }
+    // switchTab 메서드는 TabManager로 이동됨
     
-    async loadTab(tabName) {
-        try {
-            // 로딩 상태 표시
-            this.showLoading();
-            
-            // 동적 모듈 로드
-            const module = await this.loadTabModule(tabName);
-            
-            // 탭 콘텐츠 렌더링
-            await this.renderTabContent(module);
-            
-            this.currentTab = tabName;
-            
-            // 탭 로드 후 스크롤을 상단으로 이동
-            this.scrollToTop();
-            
-        } catch (error) {
-            console.error(`탭 로드 실패: ${tabName}`, error);
-            this.showError(tabName, error);
-        }
-    }
+    // loadTab 메서드는 TabManager로 이동됨
     
-    async loadTabModule(tabName) {
-        // 이미 로드된 모듈이 있다면 재사용
-        if (this.tabModules.has(tabName)) {
-            return this.tabModules.get(tabName);
-        }
-        
-        // 동적 import로 모듈 로드
-        let moduleName = tabName;
-        if (tabName === 'my-logs') {
-            moduleName = 'my-logs';
-        } else if (tabName === 'search') {
-            moduleName = 'search';
-        }
-        const module = await import(`./tabs/${moduleName}.js`);
-        this.tabModules.set(tabName, module);
-        
-        return module;
-    }
+    // loadTabModule 메서드는 TabManager로 이동됨
     
-    async renderTabContent(module) {
-        if (module && module.default && typeof module.default.render === 'function') {
-            this.tabContent.innerHTML = '';
-            await module.default.render(this.tabContent);
-        } else {
-            this.showPlaceholder();
-        }
-    }
+    // renderTabContent 메서드는 TabManager로 이동됨
     
-    /**
-     * PHASE 1: 데스크톱 레이아웃에서 탭 콘텐츠 렌더링
-     */
-    async renderDesktopTabContent(module, tabName) {
-        const desktopGrid = document.querySelector('.desktop-grid');
-        if (!desktopGrid) {
-            console.warn('데스크톱 그리드 컨테이너를 찾을 수 없습니다.');
-            return;
-        }
-        
-        // 기존 콘텐츠 정리
-        desktopGrid.innerHTML = '';
-        
-        // 탭별 데스크톱 최적화 렌더링
-        if (module && module.default && typeof module.default.render === 'function') {
-            // 임시 컨테이너 생성
-            const tempContainer = document.createElement('div');
-            tempContainer.className = 'desktop-tab-content';
-            tempContainer.style.width = '100%';
-            tempContainer.style.gridColumn = '1 / -1';
-            
-            // 모듈 렌더링
-            await module.default.render(tempContainer);
-            this.currentTabModule = module.default;
-            
-            // 그리드에 추가
-            desktopGrid.appendChild(tempContainer);
-        } else {
-            desktopGrid.innerHTML = '<div class="error-message">탭을 로드할 수 없습니다.</div>';
-        }
-    }
+    // renderDesktopTabContent 메서드는 TabManager로 이동됨
     
-    /**
-     * PHASE 1: 데스크톱 레이아웃에서 탭 정리
-     */
-    async cleanupDesktopTab() {
-        const desktopGrid = document.querySelector('.desktop-grid');
-        if (desktopGrid) {
-            // 기존 탭 모듈 정리
-            if (this.currentTabModule && typeof this.currentTabModule.cleanup === 'function') {
-                try {
-                    await this.currentTabModule.cleanup();
-                } catch (error) {
-                    console.error('데스크톱 탭 정리 실패:', error);
-                }
-            }
-            
-            // 그리드 콘텐츠 정리
-            desktopGrid.innerHTML = '';
-        }
-    }
+    // cleanupDesktopTab 메서드는 TabManager로 이동됨
     
-    async cleanupCurrentTab() {
-        // PHASE 1: 데스크톱 레이아웃에서 탭 정리
-        if (this.desktopLayoutManager.isDesktopMode()) {
-            await this.cleanupDesktopTab();
-        }
-        
-        if (this.currentTab && this.tabModules.has(this.currentTab)) {
-            const module = this.tabModules.get(this.currentTab);
-            
-            // 모듈에 cleanup 메서드가 있다면 호출
-            if (module.default && typeof module.default.cleanup === 'function') {
-                try {
-                    await module.default.cleanup();
-                } catch (error) {
-                    console.error(`탭 정리 실패: ${this.currentTab}`, error);
-                }
-            }
-        }
-    }
+    // cleanupCurrentTab 메서드는 TabManager로 이동됨
     
-    updateTabUI(activeTabName) {
-        // 기존 모바일 탭 버튼 업데이트
-        this.tabButtons.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.tab === activeTabName);
-        });
-        
-        // PHASE 1: 데스크톱 사이드바 네비게이션 업데이트
-        if (this.desktopLayoutManager.isDesktopMode()) {
-            this.desktopLayoutManager.updateDesktopSidebar(activeTabName);
-        }
-    }
+    // updateTabUI 메서드는 TabManager로 이동됨
     
-    showLoading() {
-        this.tabContent.innerHTML = `
-            <div class="tab-loading">
-                <div class="loading-spinner"></div>
-                <span>탭을 로딩 중...</span>
-            </div>
-        `;
-    }
+    // showLoading 메서드는 TabManager로 이동됨
     
-    showError(tabName, error) {
-        this.tabContent.innerHTML = `
-            <div class="tab-placeholder">
-                <div class="tab-placeholder-icon">⚠️</div>
-                <div class="tab-placeholder-title">오류 발생</div>
-                <div class="tab-placeholder-description">
-                    ${tabName} 탭을 로드하는 중 오류가 발생했습니다.<br>
-                    잠시 후 다시 시도해주세요.
-                </div>
-            </div>
-        `;
-    }
+    // showError 메서드는 TabManager로 이동됨
     
-    showPlaceholder() {
-        this.tabContent.innerHTML = `
-            <div class="tab-placeholder">
-                <div class="tab-placeholder-icon">📱</div>
-                <div class="tab-placeholder-title">준비 중</div>
-                <div class="tab-placeholder-description">
-                    이 탭의 기능은 현재 개발 중입니다.<br>
-                    곧 새로운 기능을 만나보실 수 있습니다.
-                </div>
-            </div>
-        `;
-    }
+    // showPlaceholder 메서드는 TabManager로 이동됨
     
-    /**
-     * 스크롤을 맨 위로 즉시 이동시킵니다
-     * 탭 전환 시 사용자 경험을 개선하기 위해 구현
-     */
-    scrollToTop() {
-        // DOM이 완전히 렌더링될 때까지 대기
-        requestAnimationFrame(() => {
-            // 윈도우 스크롤을 맨 위로 이동
-            window.scrollTo({ 
-                top: 0, 
-                left: 0, 
-                behavior: 'instant' 
-            });
-            
-            // 탭 콘텐츠 컨테이너도 스크롤 초기화
-            if (this.tabContent) {
-                this.tabContent.scrollTop = 0;
-                this.tabContent.scrollLeft = 0;
-            }
-        });
-    }
+    // scrollToTop 메서드는 TabManager로 이동됨
     
     // 로그아웃 기능
     async logout() {
@@ -692,8 +467,7 @@ class AppManager {
             }
             
             this.isLoggedIn = false;
-            this.currentTab = null;
-            this.tabModules.clear();
+            this.tabManager.cleanup();
             this.showLoginScreen();
         } catch (error) {
             console.error('로그아웃 실패:', error);
@@ -759,11 +533,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 전역으로 설정 (AuthManager에서 참조)
     window.appManager = appManager;
     
-    // PHASE 1: 전역 TabManager 설정 (데스크톱 레이아웃에서 탭 전환 지원)
+    // PHASE 2: 전역 TabManager 설정 (데스크톱 레이아웃에서 탭 전환 지원)
     window.TabManager = {
         switchTab: (tabName) => {
-            if (appManager && typeof appManager.switchTab === 'function') {
-                appManager.switchTab(tabName);
+            if (appManager && appManager.tabManager) {
+                appManager.tabManager.switchTab(tabName);
             }
         }
     };
