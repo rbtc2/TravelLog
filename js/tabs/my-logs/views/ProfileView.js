@@ -6,6 +6,11 @@
  * - 프로필 설정 화면 이벤트 바인딩
  * - 계정 관련 설정 관리 (프로필 편집, 비밀번호, 이메일, 계정 연동)
  * 
+ * 🔗 관계:
+ * - 하위 뷰: ProfileEditView (profile.edit로 접근)
+ * - 접근 경로: HubView → 햄버거 메뉴 → ProfileView
+ * - ProfileEditView의 상위 뷰 역할
+ * 
  * @class ProfileView
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
@@ -328,12 +333,10 @@ class ProfileView {
 
     /**
      * 프로필 편집
+     * ProfileEditView로 네비게이션 (하위 뷰)
      */
     onEditProfile() {
-        this.dispatchEvent('showMessage', {
-            type: 'info',
-            message: '프로필 편집 기능은 추후 구현 예정입니다.'
-        });
+        this.dispatchEvent('navigate', { view: 'profile.edit' });
     }
 
     /**

@@ -4,6 +4,8 @@
  * 🏗️ 모듈 구조 (Phase 7 완료):
  * ✅ MyLogsController: 비즈니스 로직 및 데이터 관리
  * ✅ HubView: 허브 화면 (프로필, 요약, 보관함)
+ * ✅ ProfileView: 프로필 설정 화면 (상위 뷰)
+ * ✅ ProfileEditView: 프로필 편집 화면 (ProfileView 하위 뷰, profile.edit로 접근)
  * ✅ SettingsView: 설정 화면
  * ✅ TravelReportView: 트래블 레포트 화면
  * ✅ LogsListView: 로그 목록 화면
@@ -12,6 +14,15 @@
  * ✅ EventManager: 이벤트 리스너 관리 및 정리
  * ✅ ModalManager: 모달 다이얼로그 관리
  * ✅ ToastManager: 토스트 메시지 관리
+ * 
+ * 🔗 뷰 계층 구조:
+ * - HubView (메인 허브)
+ *   └── ProfileView (햄버거 메뉴 → 프로필)
+ *       └── ProfileEditView (프로필 편집 버튼 → profile.edit)
+ * - SettingsView (햄버거 메뉴 → 설정)
+ * - TravelReportView (트래블 레포트)
+ * - TravelCollectionView (여행 도감)
+ * - LogsListView (일지 목록)
  * 
  * 🚀 주요 기능:
  * - 허브 화면 (프로필, 요약, 보관함)
@@ -40,6 +51,7 @@ import { MyLogsController } from './my-logs/controllers/MyLogsController.js';
 import { 
     HubView, 
     ProfileView, 
+    ProfileEditView,
     SettingsView, 
     TravelReportView, 
     LogsListView,
@@ -66,6 +78,7 @@ class MyLogsTab {
         this.views = {
             hub: new HubView(this.controller),
             profile: new ProfileView(this.controller),
+            'profile.edit': new ProfileEditView(this.controller), // ProfileView에서만 접근 가능한 하위 뷰
             settings: new SettingsView(this.controller),
             travelReport: new TravelReportView(this.controller),
             collection: new TravelCollectionView(this.controller),
@@ -184,6 +197,15 @@ class MyLogsTab {
         });
         
         this.addViewEventListener('profileView:showMessage', (e) => {
+            this.showMessage(e.detail.type, e.detail.message);
+        });
+        
+        // 프로필 편집 뷰 이벤트
+        this.addViewEventListener('profileEditView:navigate', (e) => {
+            this.navigateToView(e.detail.view);
+        });
+        
+        this.addViewEventListener('profileEditView:showMessage', (e) => {
             this.showMessage(e.detail.type, e.detail.message);
         });
         

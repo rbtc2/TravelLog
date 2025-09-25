@@ -14,6 +14,7 @@ export { HubView } from './HubView.js';
 export { LogsListView } from './LogsListView.js';
 export { TravelReportView } from './TravelReportView.js';
 export { ProfileView } from './ProfileView.js';
+export { ProfileEditView } from './ProfileEditView.js';
 export { SettingsView } from './SettingsView.js';
 
 // 컬렉션 시스템 (여행 도감)

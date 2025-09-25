@@ -1,0 +1,619 @@
+/**
+ * ProfileEditView 스타일
+ * 프로필 편집 화면 전용 스타일
+ * 
+ * 네임스페이스: .my-logs-tab .profile-edit-view
+ * 
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+
+/* ===== 프로필 편집 뷰 기본 스타일 ===== */
+.my-logs-tab .profile-edit-view {
+    min-height: 100vh;
+    background: var(--surface-primary);
+}
+
+/* ===== 헤더 스타일 ===== */
+.my-logs-tab .profile-edit-view .my-logs-header {
+    background: var(--surface-primary);
+    border-bottom: 1px solid var(--border-light);
+    padding: var(--spacing-md) var(--spacing-lg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.my-logs-tab .profile-edit-view .header-with-back {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.my-logs-tab .profile-edit-view .back-btn {
+    background: var(--surface-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--text-primary);
+    font-size: var(--font-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-width: 60px;
+}
+
+.my-logs-tab .profile-edit-view .back-btn:hover {
+    background: var(--surface-tertiary);
+    border-color: var(--border-medium);
+}
+
+.my-logs-tab .profile-edit-view .back-btn:active {
+    transform: scale(0.98);
+}
+
+.my-logs-tab .profile-edit-view .header-content {
+    flex: 1;
+    text-align: center;
+}
+
+.my-logs-tab .profile-edit-view .my-logs-title {
+    font-size: var(--font-xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.my-logs-tab .profile-edit-view .my-logs-subtitle {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin: var(--spacing-xs) 0 0 0;
+    line-height: 1.4;
+}
+
+.my-logs-tab .profile-edit-view .save-btn {
+    background: var(--primary-color);
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    color: white;
+    font-size: var(--font-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    min-width: 60px;
+}
+
+.my-logs-tab .profile-edit-view .save-btn:hover:not(:disabled) {
+    background: var(--primary-color-dark);
+    transform: translateY(-1px);
+}
+
+.my-logs-tab .profile-edit-view .save-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.my-logs-tab .profile-edit-view .save-btn:disabled {
+    background: var(--surface-tertiary);
+    color: var(--text-disabled);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== 섹션 스타일 ===== */
+.my-logs-tab .profile-edit-view .hub-section {
+    background: var(--surface-primary);
+    border-radius: var(--border-radius-lg);
+    margin: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+}
+
+.my-logs-tab .profile-edit-view .section-header {
+    margin-bottom: var(--spacing-lg);
+}
+
+.my-logs-tab .profile-edit-view .section-title {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* ===== 프로필 사진 섹션 ===== */
+.my-logs-tab .profile-edit-view .profile-photo-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xl);
+}
+
+.my-logs-tab .profile-edit-view .profile-avatar-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.my-logs-tab .profile-edit-view .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--surface-secondary);
+    border: 3px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.my-logs-tab .profile-edit-view .profile-avatar:hover {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.my-logs-tab .profile-edit-view .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.my-logs-tab .profile-edit-view .profile-avatar-placeholder {
+    font-size: 48px;
+    color: var(--text-secondary);
+}
+
+.my-logs-tab .profile-edit-view .profile-avatar-edit {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--primary-color);
+    border: 3px solid var(--surface-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    z-index: 2;
+}
+
+.my-logs-tab .profile-edit-view .profile-avatar-edit:hover {
+    background: var(--primary-color-dark);
+    transform: scale(1.1);
+}
+
+.my-logs-tab .profile-edit-view .camera-icon {
+    font-size: 16px;
+    color: white;
+}
+
+/* ===== 아바타 옵션 스타일 ===== */
+.my-logs-tab .profile-edit-view .avatar-options {
+    text-align: center;
+}
+
+.my-logs-tab .profile-edit-view .avatar-options-title {
+    font-size: var(--font-md);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.my-logs-tab .profile-edit-view .avatar-options-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.my-logs-tab .profile-edit-view .avatar-option {
+    width: 50px;
+    height: 50px;
+    border: 2px solid var(--border-light);
+    border-radius: 50%;
+    background: var(--surface-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.my-logs-tab .profile-edit-view .avatar-option:hover {
+    border-color: var(--primary-color);
+    background: var(--surface-tertiary);
+    transform: scale(1.1);
+}
+
+.my-logs-tab .profile-edit-view .avatar-option.selected {
+    border-color: var(--primary-color);
+    background: var(--primary-color-light);
+    transform: scale(1.1);
+}
+
+/* ===== 폼 스타일 ===== */
+.my-logs-tab .profile-edit-view .profile-info-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.my-logs-tab .profile-edit-view .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.my-logs-tab .profile-edit-view .form-label {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.my-logs-tab .profile-edit-view .required-indicator {
+    color: var(--error-color);
+    font-size: var(--font-xs);
+}
+
+.my-logs-tab .profile-edit-view .form-input,
+.my-logs-tab .profile-edit-view .form-textarea,
+.my-logs-tab .profile-edit-view .form-select {
+    padding: var(--spacing-md);
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    font-size: var(--font-md);
+    transition: all var(--transition-normal);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.my-logs-tab .profile-edit-view .form-input:focus,
+.my-logs-tab .profile-edit-view .form-textarea:focus,
+.my-logs-tab .profile-edit-view .form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-color-light);
+}
+
+.my-logs-tab .profile-edit-view .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+.my-logs-tab .profile-edit-view .form-select {
+    cursor: pointer;
+}
+
+.my-logs-tab .profile-edit-view .form-char-count {
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    text-align: right;
+    margin-top: var(--spacing-xs);
+}
+
+.my-logs-tab .profile-edit-view .form-char-count.over-limit {
+    color: var(--error-color);
+    font-weight: 600;
+}
+
+.my-logs-tab .profile-edit-view .form-error {
+    font-size: var(--font-xs);
+    color: var(--error-color);
+    margin-top: var(--spacing-xs);
+    display: none;
+}
+
+/* ===== 액션 버튼 스타일 ===== */
+.my-logs-tab .profile-edit-view .profile-edit-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--surface-primary);
+    border-top: 1px solid var(--border-light);
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+}
+
+.my-logs-tab .profile-edit-view .cancel-btn {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    font-size: var(--font-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.my-logs-tab .profile-edit-view .cancel-btn:hover {
+    background: var(--surface-secondary);
+    border-color: var(--border-medium);
+}
+
+.my-logs-tab .profile-edit-view .cancel-btn:active {
+    transform: scale(0.98);
+}
+
+.my-logs-tab .profile-edit-view .save-btn.primary {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius-md);
+    background: var(--primary-color);
+    color: white;
+    font-size: var(--font-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.my-logs-tab .profile-edit-view .save-btn.primary:hover:not(:disabled) {
+    background: var(--primary-color-dark);
+    transform: translateY(-1px);
+}
+
+.my-logs-tab .profile-edit-view .save-btn.primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.my-logs-tab .profile-edit-view .save-btn.primary:disabled {
+    background: var(--surface-tertiary);
+    color: var(--text-disabled);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== 변경사항 확인 모달 스타일 ===== */
+.my-logs-tab .profile-edit-view .unsaved-changes-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.my-logs-tab .profile-edit-view .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.my-logs-tab .profile-edit-view .modal-content {
+    position: relative;
+    background: var(--surface-primary);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.my-logs-tab .profile-edit-view .modal-title {
+    font-size: var(--font-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.my-logs-tab .profile-edit-view .modal-message {
+    font-size: var(--font-md);
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-xl) 0;
+    line-height: 1.5;
+}
+
+.my-logs-tab .profile-edit-view .modal-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.my-logs-tab .profile-edit-view .modal-btn {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 2px solid var(--border-light);
+    border-radius: var(--border-radius-md);
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    font-size: var(--font-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.my-logs-tab .profile-edit-view .modal-btn.secondary:hover {
+    background: var(--surface-secondary);
+    border-color: var(--border-medium);
+}
+
+.my-logs-tab .profile-edit-view .modal-btn.danger {
+    background: var(--error-color);
+    border-color: var(--error-color);
+    color: white;
+}
+
+.my-logs-tab .profile-edit-view .modal-btn.danger:hover {
+    background: var(--error-color-dark);
+    border-color: var(--error-color-dark);
+}
+
+/* ===== 반응형 디자인 ===== */
+@media (max-width: 768px) {
+    .my-logs-tab .profile-edit-view .my-logs-header {
+        padding: var(--spacing-md);
+    }
+    
+    .my-logs-tab .profile-edit-view .header-with-back {
+        gap: var(--spacing-sm);
+    }
+    
+    .my-logs-tab .profile-edit-view .back-btn {
+        padding: var(--spacing-sm);
+        min-width: 50px;
+        font-size: var(--font-xs);
+    }
+    
+    .my-logs-tab .profile-edit-view .save-btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        min-width: 50px;
+        font-size: var(--font-xs);
+    }
+    
+    .my-logs-tab .profile-edit-view .hub-section {
+        margin: var(--spacing-md);
+        padding: var(--spacing-md);
+    }
+    
+    .my-logs-tab .profile-edit-view .profile-avatar {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .my-logs-tab .profile-edit-view .profile-avatar-placeholder {
+        font-size: 40px;
+    }
+    
+    .my-logs-tab .profile-edit-view .avatar-options-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-sm);
+        max-width: 240px;
+    }
+    
+    .my-logs-tab .profile-edit-view .avatar-option {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+    
+    .my-logs-tab .profile-edit-view .profile-edit-actions {
+        padding: var(--spacing-md);
+        gap: var(--spacing-sm);
+    }
+    
+    .my-logs-tab .profile-edit-view .cancel-btn,
+    .my-logs-tab .profile-edit-view .save-btn.primary {
+        padding: var(--spacing-md);
+        font-size: var(--font-sm);
+    }
+    
+    .my-logs-tab .profile-edit-view .modal-content {
+        padding: var(--spacing-lg);
+        margin: var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .my-logs-tab .profile-edit-view .my-logs-title {
+        font-size: var(--font-lg);
+    }
+    
+    .my-logs-tab .profile-edit-view .my-logs-subtitle {
+        font-size: var(--font-xs);
+    }
+    
+    .my-logs-tab .profile-edit-view .profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .my-logs-tab .profile-edit-view .profile-avatar-placeholder {
+        font-size: 32px;
+    }
+    
+    .my-logs-tab .profile-edit-view .avatar-options-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 160px;
+    }
+    
+    .my-logs-tab .profile-edit-view .avatar-option {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+}
+
+/* ===== 다크 모드 지원 ===== */
+@media (prefers-color-scheme: dark) {
+    .my-logs-tab .profile-edit-view .profile-avatar {
+        border-color: var(--border-dark);
+    }
+    
+    .my-logs-tab .profile-edit-view .profile-avatar:hover {
+        border-color: var(--primary-color-light);
+    }
+    
+    .my-logs-tab .profile-edit-view .avatar-option {
+        border-color: var(--border-dark);
+    }
+    
+    .my-logs-tab .profile-edit-view .avatar-option:hover {
+        border-color: var(--primary-color-light);
+    }
+    
+    .my-logs-tab .profile-edit-view .avatar-option.selected {
+        border-color: var(--primary-color-light);
+    }
+}
+
+.dark .my-logs-tab .profile-edit-view .profile-avatar {
+    border-color: var(--border-dark);
+}
+
+.dark .my-logs-tab .profile-edit-view .profile-avatar:hover {
+    border-color: var(--primary-color-light);
+}
+
+.dark .my-logs-tab .profile-edit-view .avatar-option {
+    border-color: var(--border-dark);
+}
+
+.dark .my-logs-tab .profile-edit-view .avatar-option:hover {
+    border-color: var(--primary-color-light);
+}
+
+.dark .my-logs-tab .profile-edit-view .avatar-option.selected {
+    border-color: var(--primary-color-light);
+}

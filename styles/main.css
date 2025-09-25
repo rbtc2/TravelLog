@@ -75,6 +75,7 @@
 /* 나의 로그 탭 스타일 */
 @import url('./pages/my-logs/base.css');
 @import url('./pages/my-logs/profile-section.css');
+@import url('./pages/my-logs/profile-edit.css');
 @import url('./pages/my-logs/hamburger-menu.css');
 @import url('./pages/my-logs/log-views.css');
 @import url('./pages/my-logs/settings.css');
