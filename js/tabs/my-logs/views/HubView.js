@@ -62,14 +62,10 @@ class HubView {
                                 <img src="" alt="프로필 이미지" class="profile-image" style="display: none;">
                                 <div class="profile-avatar-placeholder">✈️</div>
                             </div>
-                            <button class="profile-avatar-edit" id="profile-avatar-edit" title="프로필 이미지 변경">
-                                <span class="camera-icon">📷</span>
-                            </button>
-                            <input type="file" id="profile-image-input" accept="image/*" style="display: none;">
                         </div>
                         <div class="profile-info">
                             <div class="profile-name" id="profile-name">여행자</div>
-                            <div class="profile-bio" id="profile-bio" contenteditable="true" data-placeholder="한마디 메시지를 입력하세요...">I am new to TravelLog.</div>
+                            <div class="profile-bio" id="profile-bio" data-placeholder="한마디 메시지를 입력하세요...">I am new to TravelLog.</div>
                         </div>
                     </div>
                     
@@ -698,19 +694,6 @@ class HubView {
      * 프로필 관련 이벤트를 바인딩합니다
      */
     bindProfileEvents() {
-        // 프로필 이미지 업로드 버튼
-        const avatarEditBtn = document.getElementById('profile-avatar-edit');
-        const imageInput = document.getElementById('profile-image-input');
-        
-        if (avatarEditBtn && imageInput) {
-            this.eventManager.add(avatarEditBtn, 'click', () => {
-                imageInput.click();
-            });
-            
-            this.eventManager.add(imageInput, 'change', (e) => {
-                this.handleImageUpload(e);
-            });
-        }
 
         // 프로필 이름 편집
         const profileName = document.getElementById('profile-name');
@@ -720,70 +703,9 @@ class HubView {
             });
         }
 
-        // 프로필 한마디 편집
-        const profileBio = document.getElementById('profile-bio');
-        if (profileBio) {
-            this.eventManager.add(profileBio, 'blur', () => {
-                this.saveProfileBio();
-            });
-            
-            this.eventManager.add(profileBio, 'keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    profileBio.blur();
-                }
-            });
-        }
     }
 
-    /**
-     * 이미지 업로드를 처리합니다
-     * @param {Event} event - 파일 입력 이벤트
-     */
-    handleImageUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
 
-        // 파일 크기 검증 (5MB 제한)
-        if (file.size > 5 * 1024 * 1024) {
-            this.dispatchEvent('showMessage', {
-                type: 'error',
-                message: '이미지 크기는 5MB 이하여야 합니다.'
-            });
-            return;
-        }
-
-        // 이미지 타입 검증
-        if (!file.type.startsWith('image/')) {
-            this.dispatchEvent('showMessage', {
-                type: 'error',
-                message: '이미지 파일만 업로드할 수 있습니다.'
-            });
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.updateProfileImage(e.target.result);
-            this.saveProfileData();
-        };
-        reader.readAsDataURL(file);
-    }
-
-    /**
-     * 프로필 이미지를 업데이트합니다
-     * @param {string} imageData - 이미지 데이터 URL
-     */
-    updateProfileImage(imageData) {
-        const profileImage = document.querySelector('.profile-image');
-        const placeholder = document.querySelector('.profile-avatar-placeholder');
-        
-        if (profileImage && placeholder) {
-            profileImage.src = imageData;
-            profileImage.style.display = 'block';
-            placeholder.style.display = 'none';
-        }
-    }
 
     /**
      * 프로필 이름을 편집합니다
@@ -801,25 +723,13 @@ class HubView {
         }
     }
 
-    /**
-     * 프로필 한마디를 저장합니다
-     */
-    saveProfileBio() {
-        const profileBio = document.getElementById('profile-bio');
-        if (!profileBio) return;
-
-        const bio = profileBio.textContent.trim();
-        this.saveProfileData();
-    }
 
     /**
      * 프로필 데이터를 저장합니다
      */
     saveProfileData() {
         const profileData = {
-            name: document.getElementById('profile-name')?.textContent || '여행자',
-            bio: document.getElementById('profile-bio')?.textContent || 'I am new to TravelLog.',
-            image: document.querySelector('.profile-image')?.src || null
+            name: document.getElementById('profile-name')?.textContent || '여행자'
         };
 
         try {
@@ -849,17 +759,7 @@ class HubView {
             const savedData = localStorage.getItem('travelLog_profile');
             if (savedData) {
                 const profileData = JSON.parse(savedData);
-                
-                const profileBio = document.getElementById('profile-bio');
-                
-                // 이름은 실제 사용자 정보를 우선하고, bio는 로컬 데이터를 사용
-                if (profileBio && profileData.bio) {
-                    profileBio.textContent = profileData.bio;
-                }
-                
-                if (profileData.image) {
-                    this.updateProfileImage(profileData.image);
-                }
+                // 프로필 데이터 로드 (이미지 제외)
             }
         } catch (error) {
             console.error('프로필 데이터 로드 실패:', error);
