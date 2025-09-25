@@ -4,9 +4,17 @@
  * 🎯 책임:
  * - 허브 화면 UI 렌더링
  * - 허브 화면 이벤트 바인딩
- * - 프로필, 요약, 보관함 섹션 관리
+ * - 모듈 간 조정 및 통합
+ * 
+ * 📦 모듈 구성:
+ * - ScrollManager: 스크롤 이벤트 관리
+ * - LogoutManager: 로그아웃 처리 관리
+ * - ProfileManager: 프로필 데이터 관리
+ * - HamburgerMenuManager: 햄버거 메뉴 관리
  * 
  * @class HubView
+ * @version 2.0.0 (리팩토링 완료)
+ * @since 2024-12-29
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
 import { ScrollManager } from '../../../modules/utils/ScrollManager.js';
@@ -23,8 +31,6 @@ class HubView {
         this.profileManager = new ProfileManager(this.eventManager, this.dispatchEvent.bind(this));
         this.hamburgerMenuManager = new HamburgerMenuManager(this.eventManager, this.scrollManager, this.dispatchEvent.bind(this));
         this.container = null;
-        this.isLoggingOut = false; // 기존 코드와의 호환성을 위해 유지
-        this.scrollPosition = undefined; // 기존 코드와의 호환성을 위해 유지
     }
 
     /**
@@ -38,10 +44,7 @@ class HubView {
         this.container.innerHTML = this.getHubHTML();
         this.bindEvents();
         this.bindCustomEventListeners();
-        // ProfileManager를 사용하여 프로필 데이터 로드
         this.profileManager.loadProfileData();
-        // 기존 코드와의 호환성을 위해 기존 방식도 유지
-        this.loadProfileData();
     }
 
     /**
@@ -191,18 +194,12 @@ class HubView {
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
             this.eventManager.add(settingsBtn, 'click', () => {
-                // HamburgerMenuManager를 사용하여 메뉴 표시
                 this.hamburgerMenuManager.showHamburgerMenu();
-                // 기존 코드는 주석 처리 (HamburgerMenuManager가 처리하므로)
-                // this.showHamburgerMenu();
             });
         }
 
-        // 프로필 이미지 업로드 이벤트
-        // ProfileManager를 사용하여 프로필 이벤트 바인딩
+        // 프로필 이벤트 바인딩
         this.profileManager.bindProfileEvents();
-        // 기존 코드와의 호환성을 위해 기존 방식도 유지
-        this.bindProfileEvents();
     }
 
     /**
@@ -255,320 +252,8 @@ class HubView {
         this.dispatchEvent('navigate', { view: 'settings' });
     }
 
-    /**
-     * 햄버거 메뉴를 보여줍니다
-     */
-    showHamburgerMenu() {
-        // 기존 메뉴가 있다면 제거
-        this.hideHamburgerMenu();
-        
-        // 현재 스크롤 위치 저장 (tab-content 기준)
-        const tabContent = document.getElementById('tab-content');
-        this.scrollManager.saveScrollPosition(tabContent);
-        // 기존 코드와의 호환성을 위해 기존 변수도 유지
-        this.scrollPosition = tabContent ? tabContent.scrollTop : (window.pageYOffset || document.documentElement.scrollTop);
-        
-        // 햄버거 메뉴 HTML 생성
-        const menuHTML = this.getHamburgerMenuHTML();
-        
-        // 메뉴를 body에 추가 (애니메이션 전에 미리 추가)
-        document.body.insertAdjacentHTML('beforeend', menuHTML);
-        
-        // body 스크롤 비활성화 (메뉴 추가 후)
-        document.body.classList.add('hamburger-menu-open');
-        
-        // 스크롤 위치 고정 (transform 대신 scrollTop 사용)
-        if (tabContent) {
-            // 스크롤 위치를 0으로 설정하여 고정
-            tabContent.scrollTop = 0;
-            // ScrollManager를 사용하여 CSS 변수 설정
-            this.scrollManager.setScrollOffset(tabContent);
-            // 기존 코드와의 호환성을 위해 기존 방식도 유지
-            tabContent.style.setProperty('--scroll-offset', `-${this.scrollPosition}px`);
-        } else {
-            document.body.style.top = `-${this.scrollPosition}px`;
-        }
-        
-        // 애니메이션을 위해 약간의 지연 후 show 클래스 추가
-        // 레이아웃이 안정화된 후 애니메이션 시작
-        setTimeout(() => {
-            const overlay = document.querySelector('.hamburger-menu-overlay');
-            const menu = document.querySelector('.hamburger-menu');
-            
-            if (overlay && menu) {
-                overlay.classList.add('show');
-                menu.classList.add('show');
-            }
-        }, 10); // 10ms 지연으로 레이아웃 안정화
-        
-        // 메뉴 이벤트 바인딩
-        this.bindHamburgerMenuEvents();
-        
-        // 스크롤 이벤트 완전 차단
-        this.scrollManager.preventScroll(tabContent);
-        // 기존 코드와의 호환성을 위해 기존 메서드도 호출
-        this.preventScrollEvents();
-    }
 
-    /**
-     * 햄버거 메뉴를 숨깁니다
-     */
-    hideHamburgerMenu() {
-        const overlay = document.querySelector('.hamburger-menu-overlay');
-        const menu = document.querySelector('.hamburger-menu');
-        
-        if (overlay && menu) {
-            overlay.classList.remove('show');
-            menu.classList.remove('show');
-            
-            // 애니메이션 완료 후 DOM에서 제거 및 스크롤 복원
-            setTimeout(() => {
-                if (overlay && overlay.parentNode) {
-                    overlay.parentNode.removeChild(overlay);
-                }
-                
-                // 탭 콘텐츠 요소 가져오기 (먼저 선언)
-                const tabContent = document.getElementById('tab-content');
-                
-                // 스크롤 이벤트 차단 해제
-                this.scrollManager.restoreScroll(tabContent);
-                // 기존 코드와의 호환성을 위해 기존 메서드도 호출
-                this.restoreScrollEvents();
-                
-                // body 스크롤 복원
-                document.body.classList.remove('hamburger-menu-open');
-                document.body.style.top = '';
-                
-                // 탭 콘텐츠 스크롤 복원
-                if (tabContent) {
-                    // ScrollManager를 사용하여 CSS 변수 제거
-                    this.scrollManager.removeScrollOffset(tabContent);
-                    // 기존 코드와의 호환성을 위해 기존 방식도 유지
-                    tabContent.style.removeProperty('--scroll-offset');
-                }
-                
-                // 스크롤 위치 복원
-                this.scrollManager.restoreScrollPosition(tabContent);
-                // 기존 코드와의 호환성을 위해 기존 방식도 유지
-                if (this.scrollPosition !== undefined) {
-                    if (tabContent) {
-                        // 약간의 지연 후 스크롤 위치 복원 (레이아웃 안정화 후)
-                        requestAnimationFrame(() => {
-                            tabContent.scrollTop = this.scrollPosition;
-                        });
-                    } else {
-                        window.scrollTo(0, this.scrollPosition);
-                    }
-                    this.scrollPosition = undefined;
-                }
-            }, 300);
-        }
-    }
 
-    /**
-     * 스크롤 이벤트를 완전히 차단합니다
-     */
-    preventScrollEvents() {
-        // 스크롤 이벤트 차단 함수
-        this.scrollPreventHandler = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        };
-        
-        // 휠 이벤트 차단
-        this.wheelPreventHandler = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        };
-        
-        // 터치 이벤트 차단
-        this.touchPreventHandler = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        };
-        
-        // 키보드 스크롤 이벤트 차단
-        this.keyPreventHandler = (e) => {
-            const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40]; // 스페이스, Page Up/Down, Home, End, 방향키
-            if (scrollKeys.includes(e.keyCode)) {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-            }
-        };
-        
-        // 이벤트 리스너 등록
-        document.addEventListener('scroll', this.scrollPreventHandler, { passive: false, capture: true });
-        document.addEventListener('wheel', this.wheelPreventHandler, { passive: false, capture: true });
-        document.addEventListener('touchmove', this.touchPreventHandler, { passive: false, capture: true });
-        document.addEventListener('keydown', this.keyPreventHandler, { passive: false, capture: true });
-        
-        // 탭 콘텐츠에도 적용
-        const tabContent = document.getElementById('tab-content');
-        if (tabContent) {
-            tabContent.addEventListener('scroll', this.scrollPreventHandler, { passive: false, capture: true });
-            tabContent.addEventListener('wheel', this.wheelPreventHandler, { passive: false, capture: true });
-            tabContent.addEventListener('touchmove', this.touchPreventHandler, { passive: false, capture: true });
-        }
-    }
-    
-    /**
-     * 스크롤 이벤트 차단을 해제합니다
-     */
-    restoreScrollEvents() {
-        // 이벤트 리스너 제거
-        if (this.scrollPreventHandler) {
-            document.removeEventListener('scroll', this.scrollPreventHandler, { capture: true });
-            document.removeEventListener('wheel', this.wheelPreventHandler, { capture: true });
-            document.removeEventListener('touchmove', this.touchPreventHandler, { capture: true });
-            document.removeEventListener('keydown', this.keyPreventHandler, { capture: true });
-            
-            // 탭 콘텐츠에서도 제거
-            const tabContent = document.getElementById('tab-content');
-            if (tabContent) {
-                tabContent.removeEventListener('scroll', this.scrollPreventHandler, { capture: true });
-                tabContent.removeEventListener('wheel', this.wheelPreventHandler, { capture: true });
-                tabContent.removeEventListener('touchmove', this.touchPreventHandler, { capture: true });
-            }
-        }
-        
-        // 핸들러 정리
-        this.scrollPreventHandler = null;
-        this.wheelPreventHandler = null;
-        this.touchPreventHandler = null;
-        this.keyPreventHandler = null;
-    }
-
-    /**
-     * 햄버거 메뉴 HTML을 생성합니다
-     */
-    getHamburgerMenuHTML() {
-        return `
-            <div class="hamburger-menu-overlay" id="hamburger-menu-overlay">
-                <div class="hamburger-menu" id="hamburger-menu">
-                    <div class="hamburger-menu-header">
-                        <h2 class="hamburger-menu-title">메뉴</h2>
-                        <button class="hamburger-menu-close" id="hamburger-menu-close">×</button>
-                    </div>
-                    <div class="hamburger-menu-content">
-                        <div class="hamburger-menu-section">
-                            <h3 class="hamburger-menu-section-title">설정</h3>
-                            <button class="hamburger-menu-item" id="menu-profile">
-                                <span class="hamburger-menu-item-icon">👤</span>
-                                <span class="hamburger-menu-item-text">프로필</span>
-                                <span class="hamburger-menu-item-arrow">▶</span>
-                            </button>
-                            <button class="hamburger-menu-item" id="menu-settings">
-                                <span class="hamburger-menu-item-icon">⚙️</span>
-                                <span class="hamburger-menu-item-text">설정</span>
-                                <span class="hamburger-menu-item-arrow">▶</span>
-                            </button>
-                        </div>
-                        
-                        <div class="hamburger-menu-section">
-                            <h3 class="hamburger-menu-section-title">지원</h3>
-                            <button class="hamburger-menu-item" id="menu-premium">
-                                <span class="hamburger-menu-item-icon">⭐</span>
-                                <span class="hamburger-menu-item-text">프리미엄 모드</span>
-                                <span class="hamburger-menu-item-arrow">▶</span>
-                            </button>
-                            <button class="hamburger-menu-item" id="menu-support">
-                                <span class="hamburger-menu-item-icon">❓</span>
-                                <span class="hamburger-menu-item-text">서포트</span>
-                                <span class="hamburger-menu-item-arrow">▶</span>
-                            </button>
-                        </div>
-                        
-                        <div class="hamburger-menu-section">
-                            <button class="hamburger-menu-item version-info" id="menu-version">
-                                <span class="hamburger-menu-item-text">버전 1.0.0</span>
-                            </button>
-                            <button class="hamburger-menu-item logout" id="menu-logout">
-                                <span class="hamburger-menu-item-icon">🚪</span>
-                                <span class="hamburger-menu-item-text">로그아웃</span>
-                                <span class="hamburger-menu-item-arrow">▶</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    /**
-     * 햄버거 메뉴 이벤트를 바인딩합니다
-     */
-    bindHamburgerMenuEvents() {
-        // 메뉴 닫기 버튼
-        const closeBtn = document.getElementById('hamburger-menu-close');
-        const overlay = document.getElementById('hamburger-menu-overlay');
-        
-        if (closeBtn) {
-            this.eventManager.add(closeBtn, 'click', () => {
-                this.hideHamburgerMenu();
-            });
-        }
-        
-        if (overlay) {
-            this.eventManager.add(overlay, 'click', (e) => {
-                if (e.target === overlay) {
-                    this.hideHamburgerMenu();
-                }
-            });
-        }
-        
-        // ESC 키로 메뉴 닫기
-        this.eventManager.add(document, 'keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.hideHamburgerMenu();
-            }
-        });
-        
-        // 메뉴 아이템들
-        const profileBtn = document.getElementById('menu-profile');
-        const settingsBtn = document.getElementById('menu-settings');
-        const premiumBtn = document.getElementById('menu-premium');
-        const supportBtn = document.getElementById('menu-support');
-        const logoutBtn = document.getElementById('menu-logout');
-        
-        if (profileBtn) {
-            this.eventManager.add(profileBtn, 'click', () => {
-                this.hideHamburgerMenu();
-                this.onNavigateToProfile();
-            });
-        }
-        
-        if (settingsBtn) {
-            this.eventManager.add(settingsBtn, 'click', () => {
-                this.hideHamburgerMenu();
-                this.onNavigateToSettings();
-            });
-        }
-        
-        if (premiumBtn) {
-            this.eventManager.add(premiumBtn, 'click', () => {
-                this.hideHamburgerMenu();
-                this.onNavigateToPremium();
-            });
-        }
-        
-        if (supportBtn) {
-            this.eventManager.add(supportBtn, 'click', () => {
-                this.hideHamburgerMenu();
-                this.onNavigateToSupport();
-            });
-        }
-        
-        if (logoutBtn) {
-            this.eventManager.add(logoutBtn, 'click', () => {
-                this.hideHamburgerMenu();
-                this.onLogout();
-            });
-        }
-    }
 
     /**
      * 프로필로 이동
@@ -601,131 +286,9 @@ class HubView {
      * 로그아웃
      */
     onLogout() {
-        console.log('HubView.onLogout() 호출됨');
-        
-        // LogoutManager를 사용하여 로그아웃 처리
         this.logoutManager.onLogout();
-        
-        // 기존 코드는 주석 처리 (LogoutManager가 처리하므로)
-        // if (this.isLoggingOut) {
-        //     return;
-        // }
-        // this.isLoggingOut = true;
-        // 
-        // this.showLogoutConfirmation();
     }
 
-    /**
-     * 로그아웃 확인 모달을 표시합니다
-     */
-    showLogoutConfirmation() {
-        const modal = document.createElement('div');
-        modal.className = 'logout-confirmation-modal';
-        modal.innerHTML = `
-            <div class="logout-confirmation-overlay">
-                <div class="logout-confirmation-content">
-                    <div class="logout-confirmation-header">
-                        <h3 class="logout-confirmation-title">로그아웃</h3>
-                        <p class="logout-confirmation-message">정말로 로그아웃하시겠습니까?</p>
-                    </div>
-                    <div class="logout-confirmation-actions">
-                        <button class="logout-confirmation-btn cancel-btn" id="logout-cancel">
-                            취소
-                        </button>
-                        <button class="logout-confirmation-btn confirm-btn" id="logout-confirm">
-                            로그아웃
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(modal);
-
-        // 이벤트 바인딩
-        const cancelBtn = document.getElementById('logout-cancel');
-        const confirmBtn = document.getElementById('logout-confirm');
-        const overlay = modal.querySelector('.logout-confirmation-overlay');
-
-        if (cancelBtn) {
-            this.eventManager.add(cancelBtn, 'click', () => {
-                this.hideLogoutConfirmation(modal);
-            });
-        }
-
-        if (confirmBtn) {
-            this.eventManager.add(confirmBtn, 'click', () => {
-                this.performLogout(modal);
-            });
-        }
-
-        if (overlay) {
-            this.eventManager.add(overlay, 'click', (e) => {
-                if (e.target === overlay) {
-                    this.hideLogoutConfirmation(modal);
-                }
-            });
-        }
-
-        // 모달 표시 애니메이션
-        requestAnimationFrame(() => {
-            modal.classList.add('show');
-        });
-    }
-
-    /**
-     * 로그아웃 확인 모달을 숨깁니다
-     */
-    hideLogoutConfirmation(modal) {
-        modal.classList.remove('show');
-        setTimeout(() => {
-            if (modal.parentNode) {
-                modal.parentNode.removeChild(modal);
-            }
-            // 모달이 숨겨질 때 로그아웃 상태 리셋
-            this.isLoggingOut = false;
-        }, 300);
-    }
-
-    /**
-     * 실제 로그아웃을 수행합니다
-     */
-    async performLogout(modal) {
-        try {
-            // 로딩 상태 표시
-            const confirmBtn = document.getElementById('logout-confirm');
-            if (confirmBtn) {
-                confirmBtn.disabled = true;
-                confirmBtn.textContent = '로그아웃 중...';
-            }
-
-            // AuthService를 통해 로그아웃
-            const { authService } = await import('../../../modules/services/auth-service.js');
-            await authService.signOut();
-
-            // 모달 숨기기
-            this.hideLogoutConfirmation(modal);
-
-        } catch (error) {
-            console.error('로그아웃 실패:', error);
-            
-            // 에러 메시지 표시
-            this.dispatchEvent('showMessage', {
-                type: 'error',
-                message: '로그아웃 중 오류가 발생했습니다.'
-            });
-
-            // 버튼 상태 복원
-            const confirmBtn = document.getElementById('logout-confirm');
-            if (confirmBtn) {
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = '로그아웃';
-            }
-        } finally {
-            // 로그아웃 상태 리셋
-            this.isLoggingOut = false;
-        }
-    }
 
     /**
      * 버킷리스트 클릭 (미구현)
@@ -737,115 +300,6 @@ class HubView {
         });
     }
 
-    /**
-     * 프로필 관련 이벤트를 바인딩합니다
-     */
-    bindProfileEvents() {
-
-        // 프로필 이름 편집
-        const profileName = document.getElementById('profile-name');
-        if (profileName) {
-            this.eventManager.add(profileName, 'click', () => {
-                this.editProfileName();
-            });
-        }
-
-    }
-
-
-
-    /**
-     * 프로필 이름을 편집합니다
-     */
-    editProfileName() {
-        const profileName = document.getElementById('profile-name');
-        if (!profileName) return;
-
-        const currentName = profileName.textContent;
-        const newName = prompt('이름을 입력하세요:', currentName);
-        
-        if (newName && newName.trim() && newName !== currentName) {
-            profileName.textContent = newName.trim();
-            this.saveProfileData();
-        }
-    }
-
-
-    /**
-     * 프로필 데이터를 저장합니다
-     */
-    saveProfileData() {
-        const profileData = {
-            name: document.getElementById('profile-name')?.textContent || '여행자'
-        };
-
-        try {
-            localStorage.setItem('travelLog_profile', JSON.stringify(profileData));
-            this.dispatchEvent('showMessage', {
-                type: 'success',
-                message: '프로필이 저장되었습니다.'
-            });
-        } catch (error) {
-            console.error('프로필 저장 실패:', error);
-            this.dispatchEvent('showMessage', {
-                type: 'error',
-                message: '프로필 저장에 실패했습니다.'
-            });
-        }
-    }
-
-    /**
-     * 저장된 프로필 데이터를 로드합니다
-     */
-    loadProfileData() {
-        try {
-            // 먼저 실제 사용자 정보에서 이름을 가져옵니다
-            this.loadUserProfileName();
-            
-            // 그 다음 로컬 프로필 데이터를 로드합니다
-            const savedData = localStorage.getItem('travelLog_profile');
-            if (savedData) {
-                const profileData = JSON.parse(savedData);
-                // 프로필 데이터 로드 (이미지 제외)
-            }
-        } catch (error) {
-            console.error('프로필 데이터 로드 실패:', error);
-        }
-    }
-
-    /**
-     * 실제 사용자 정보에서 프로필 이름을 로드합니다
-     */
-    loadUserProfileName() {
-        try {
-            // AuthController를 통해 현재 사용자 정보 가져오기
-            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
-                const currentUser = window.appManager.authManager.authController.getCurrentUser();
-                if (currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name) {
-                    const profileName = document.getElementById('profile-name');
-                    if (profileName) {
-                        profileName.textContent = currentUser.user_metadata.full_name;
-                        console.log('사용자 이름 로드됨:', currentUser.user_metadata.full_name);
-                        return;
-                    }
-                }
-            }
-            
-            // AuthController가 없거나 사용자 정보가 없는 경우 기본값 사용
-            const profileName = document.getElementById('profile-name');
-            if (profileName) {
-                profileName.textContent = '여행자';
-                console.log('기본 이름 사용: 여행자');
-            }
-        } catch (error) {
-            console.error('사용자 프로필 이름 로드 실패:', error);
-            // 오류 발생 시 기본값 사용
-            const profileName = document.getElementById('profile-name');
-            if (profileName) {
-                profileName.textContent = '여행자';
-            }
-        }
-    }
 
     /**
      * 커스텀 이벤트를 발생시킵니다
@@ -863,16 +317,9 @@ class HubView {
      * View 정리
      */
     cleanup() {
-        // 햄버거 메뉴 정리 (HamburgerMenuManager가 처리)
-        // this.hideHamburgerMenu();
-        
-        // 스크롤 이벤트 차단 해제
-        this.scrollManager.restoreScroll();
-        // 기존 코드와의 호환성을 위해 기존 메서드도 호출
-        this.restoreScrollEvents();
-        
-        if (this.eventManager) {
-            this.eventManager.cleanup();
+        // 각 매니저들의 cleanup 호출
+        if (this.hamburgerMenuManager) {
+            this.hamburgerMenuManager.cleanup();
         }
         
         if (this.scrollManager) {
@@ -887,8 +334,8 @@ class HubView {
             this.profileManager.cleanup();
         }
         
-        if (this.hamburgerMenuManager) {
-            this.hamburgerMenuManager.cleanup();
+        if (this.eventManager) {
+            this.eventManager.cleanup();
         }
         
         this.container = null;
