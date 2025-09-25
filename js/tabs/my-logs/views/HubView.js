@@ -9,14 +9,16 @@
  * @class HubView
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
+import { ScrollManager } from '../../../modules/utils/ScrollManager.js';
 
 class HubView {
     constructor(controller) {
         this.controller = controller;
         this.eventManager = new EventManager();
+        this.scrollManager = new ScrollManager();
         this.container = null;
         this.isLoggingOut = false;
-        this.scrollPosition = undefined;
+        this.scrollPosition = undefined; // 기존 코드와의 호환성을 위해 유지
     }
 
     /**
@@ -236,6 +238,8 @@ class HubView {
         
         // 현재 스크롤 위치 저장 (tab-content 기준)
         const tabContent = document.getElementById('tab-content');
+        this.scrollManager.saveScrollPosition(tabContent);
+        // 기존 코드와의 호환성을 위해 기존 변수도 유지
         this.scrollPosition = tabContent ? tabContent.scrollTop : (window.pageYOffset || document.documentElement.scrollTop);
         
         // 햄버거 메뉴 HTML 생성
@@ -251,7 +255,9 @@ class HubView {
         if (tabContent) {
             // 스크롤 위치를 0으로 설정하여 고정
             tabContent.scrollTop = 0;
-            // 현재 위치를 CSS 변수로 저장 (시각적 위치 유지)
+            // ScrollManager를 사용하여 CSS 변수 설정
+            this.scrollManager.setScrollOffset(tabContent);
+            // 기존 코드와의 호환성을 위해 기존 방식도 유지
             tabContent.style.setProperty('--scroll-offset', `-${this.scrollPosition}px`);
         } else {
             document.body.style.top = `-${this.scrollPosition}px`;
@@ -273,6 +279,8 @@ class HubView {
         this.bindHamburgerMenuEvents();
         
         // 스크롤 이벤트 완전 차단
+        this.scrollManager.preventScroll(tabContent);
+        // 기존 코드와의 호환성을 위해 기존 메서드도 호출
         this.preventScrollEvents();
     }
 
@@ -293,7 +301,12 @@ class HubView {
                     overlay.parentNode.removeChild(overlay);
                 }
                 
+                // 탭 콘텐츠 요소 가져오기 (먼저 선언)
+                const tabContent = document.getElementById('tab-content');
+                
                 // 스크롤 이벤트 차단 해제
+                this.scrollManager.restoreScroll(tabContent);
+                // 기존 코드와의 호환성을 위해 기존 메서드도 호출
                 this.restoreScrollEvents();
                 
                 // body 스크롤 복원
@@ -301,13 +314,16 @@ class HubView {
                 document.body.style.top = '';
                 
                 // 탭 콘텐츠 스크롤 복원
-                const tabContent = document.getElementById('tab-content');
                 if (tabContent) {
-                    // CSS 변수 제거
+                    // ScrollManager를 사용하여 CSS 변수 제거
+                    this.scrollManager.removeScrollOffset(tabContent);
+                    // 기존 코드와의 호환성을 위해 기존 방식도 유지
                     tabContent.style.removeProperty('--scroll-offset');
                 }
                 
                 // 스크롤 위치 복원
+                this.scrollManager.restoreScrollPosition(tabContent);
+                // 기존 코드와의 호환성을 위해 기존 방식도 유지
                 if (this.scrollPosition !== undefined) {
                     if (tabContent) {
                         // 약간의 지연 후 스크롤 위치 복원 (레이아웃 안정화 후)
@@ -820,11 +836,18 @@ class HubView {
         this.hideHamburgerMenu();
         
         // 스크롤 이벤트 차단 해제
+        this.scrollManager.restoreScroll();
+        // 기존 코드와의 호환성을 위해 기존 메서드도 호출
         this.restoreScrollEvents();
         
         if (this.eventManager) {
             this.eventManager.cleanup();
         }
+        
+        if (this.scrollManager) {
+            this.scrollManager.cleanup();
+        }
+        
         this.container = null;
     }
 }
