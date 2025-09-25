@@ -11,15 +11,16 @@ import PasswordResetHandler from './modules/auth/password-reset-handler.js'; // 
 import EmailConfirmationHandler from './modules/auth/email-confirmation-handler.js'; // 이메일 확인 핸들러
 import { travelLogService } from './modules/services/travel-log-service.js'; // 여행 로그 서비스
 import ZIndexManager from './modules/utils/z-index-manager.js'; // Z-Index 충돌 관리 시스템
-import StackingContextDebugger from './modules/utils/stacking-context-debugger.js'; // Stacking Context 디버깅 도구
-import DevelopmentValidator from './modules/utils/development-validator.js'; // 개발 시 실시간 검증기
+// StackingContextDebugger와 DevelopmentValidator는 DevTools에서 관리됨
 import { mobileOptimizer } from './modules/optimization/mobile-optimizer.js'; // Phase 1: 모바일 최적화 모듈
 import { TabManager } from './modules/core/tab-manager.js'; // Phase 2: 탭 관리 모듈
 import { NavigationMonitor } from './modules/core/navigation-monitor.js'; // Phase 3: 네비게이션 모니터링 모듈
+import { DevTools } from './modules/dev/dev-tools.js'; // Phase 4: 개발자 도구 모듈
 
 // Phase 1: 모바일 최적화는 별도 모듈로 분리됨
 // Phase 2: 탭 관리는 별도 모듈로 분리됨
 // Phase 3: 네비게이션 모니터링은 별도 모듈로 분리됨
+// Phase 4: 개발자 도구는 별도 모듈로 분리됨
 // mobileOptimizer는 자동으로 초기화됩니다.
 
 class AppManager {
@@ -39,12 +40,13 @@ class AppManager {
         // PHASE 3: 네비게이션 모니터 초기화
         this.navigationMonitor = new NavigationMonitor(this);
         
+        // PHASE 4: 개발자 도구 초기화
+        this.devTools = new DevTools();
+        
             // Z-Index 충돌 관리 시스템 초기화
             this.zIndexManager = window.zIndexManager;
             
-            
-            // Stacking Context 디버깅 도구 초기화
-            this.stackingContextDebugger = window.stackingContextDebugger;
+            // Stacking Context 디버깅 도구는 DevTools에서 관리됨
         
         // DOM 요소들
         this.loginScreen = document.getElementById('login-screen');
@@ -347,90 +349,12 @@ class AppManager {
 
 // 애플리케이션 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    // 테마 매니저 초기화 (앱 시작 전)
-    console.log('테마 매니저 초기화 중...');
-    console.log('현재 테마:', themeManager.getCurrentTheme());
-    console.log('테마 정보:', themeManager.getThemeInfo());
-    
-    // 전역에서 테마 매니저 접근 가능하도록 설정
-    window.themeManager = themeManager;
-    
-    // Phase 1: 개발자 도구용 전역 함수들 추가
-    window.TravelLogDev = {
-        // 기능 상태 확인
-        checkFeatureStatus: async (featureName) => {
-            const { FeatureManager } = await import('./config/app-config.js');
-            return FeatureManager.getFeatureStatus(featureName);
-        },
-        
-        // 모든 기능 상태 확인
-        getAllFeatureStatus: async () => {
-            const { FeatureManager } = await import('./config/app-config.js');
-            return FeatureManager.generateFeatureReport();
-        },
-        
-        // 의존성 검증
-        validateDependencies: async () => {
-            const { QuickValidator } = await import('./modules/utils/dependency-validator.js');
-            return QuickValidator.validateTravelReport();
-        },
-        
-        // 기능 활성화/비활성화
-        toggleFeature: async (featureName, status) => {
-            const { FeatureManager } = await import('./config/app-config.js');
-            FeatureManager.updateFeatureStatus(featureName, status);
-            console.log(`기능 ${featureName}이 ${status}로 변경되었습니다.`);
-        }
-    };
-    
-    console.log('🛠️ TravelLog 개발자 도구가 로드되었습니다.');
-    console.log('사용법: TravelLogDev.checkFeatureStatus("travelDNA")');
-    console.log('사용법: TravelLogDev.validateDependencies()');
-    
-    // 개발 검증기 초기화 (개발 모드에서만)
-    if (window.location.hostname === 'localhost' || 
-        window.location.hostname === '127.0.0.1' ||
-        window.location.search.includes('dev=true')) {
-        const devValidator = new DevelopmentValidator();
-        window.devValidator = devValidator;
-        console.log('🔍 CSS-DOM 실시간 검증기가 활성화되었습니다.');
-    }
-    
     // 앱 매니저 초기화
     const appManager = new AppManager();
     
-    // 전역으로 설정 (AuthManager에서 참조)
-    window.appManager = appManager;
-    
-    // PHASE 2: 전역 TabManager 설정 (데스크톱 레이아웃에서 탭 전환 지원)
-    window.TabManager = {
-        switchTab: (tabName) => {
-            if (appManager && appManager.tabManager) {
-                appManager.tabManager.switchTab(tabName);
-            }
-        }
-    };
-    
-    // 디버깅용 전역 함수들
-    window.testGoogleLogin = () => {
-        console.log('Google 로그인 테스트 시작');
-        const googleBtn = document.getElementById('google-login-btn');
-        if (googleBtn) {
-            console.log('Google 버튼 찾음, 클릭 시뮬레이션');
-            googleBtn.click();
-        } else {
-            console.error('Google 로그인 버튼을 찾을 수 없습니다');
-        }
-    };
-    
-    window.testToast = (message = '테스트 토스트 메시지') => {
-        console.log('토스트 테스트 시작');
-        if (window.toastManager) {
-            window.toastManager.show(message, 'info');
-        } else {
-            console.error('toastManager를 찾을 수 없습니다');
-        }
-    };
+    // PHASE 4: 개발자 도구에서 전역 설정 처리
+    appManager.devTools.setupAppManager(appManager);
+    appManager.devTools.setupTabManager(appManager);
 });
 
 // 페이지 언로드 시 정리
