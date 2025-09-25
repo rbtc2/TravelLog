@@ -16,11 +16,13 @@ import { mobileOptimizer } from './modules/optimization/mobile-optimizer.js'; //
 import { TabManager } from './modules/core/tab-manager.js'; // Phase 2: 탭 관리 모듈
 import { NavigationMonitor } from './modules/core/navigation-monitor.js'; // Phase 3: 네비게이션 모니터링 모듈
 import { DevTools } from './modules/dev/dev-tools.js'; // Phase 4: 개발자 도구 모듈
+import { DesktopLayoutController } from './modules/core/desktop-layout-controller.js'; // Phase 5: 데스크톱 레이아웃 컨트롤러
 
 // Phase 1: 모바일 최적화는 별도 모듈로 분리됨
 // Phase 2: 탭 관리는 별도 모듈로 분리됨
 // Phase 3: 네비게이션 모니터링은 별도 모듈로 분리됨
 // Phase 4: 개발자 도구는 별도 모듈로 분리됨
+// Phase 5: 데스크톱 레이아웃 컨트롤러는 별도 모듈로 분리됨
 // mobileOptimizer는 자동으로 초기화됩니다.
 
 class AppManager {
@@ -42,6 +44,9 @@ class AppManager {
         
         // PHASE 4: 개발자 도구 초기화
         this.devTools = new DevTools();
+        
+        // PHASE 5: 데스크톱 레이아웃 컨트롤러 초기화
+        this.desktopLayoutController = new DesktopLayoutController(this.desktopLayoutManager);
         
             // Z-Index 충돌 관리 시스템 초기화
             this.zIndexManager = window.zIndexManager;
@@ -95,106 +100,20 @@ class AppManager {
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         try {
             await this.desktopLayoutManager.initialize();
-            
-            // 데스크톱 레이아웃 토글 버튼 추가
-            this.addDesktopLayoutToggle();
-            
-            // 레이아웃 모드 변경 이벤트 리스너 등록
-            window.addEventListener('layoutModeChanged', (event) => {
-                this.updateDesktopToggleButton();
-            });
         } catch (error) {
             console.warn('데스크톱 레이아웃 매니저 초기화 실패:', error);
         }
+        
+        // PHASE 5: 데스크톱 레이아웃 컨트롤러는 자동으로 초기화됨
     }
     
-    /**
-     * PHASE 1: 데스크톱 레이아웃 토글 버튼 추가
-     */
-    addDesktopLayoutToggle() {
-        // 데스크톱에서만 표시
-        if (window.innerWidth < 1024) return;
-        
-        // 기존 버튼 제거
-        const existingToggle = document.querySelector('.desktop-layout-toggle');
-        if (existingToggle) {
-            existingToggle.remove();
-        }
-        
-        // 토글 버튼 생성
-        const toggleButton = document.createElement('button');
-        toggleButton.className = 'desktop-layout-toggle';
-        toggleButton.innerHTML = `
-            <span class="icon">🖥️</span>
-            <span>데스크톱 모드</span>
-        `;
-        
-        // 이벤트 리스너 추가
-        toggleButton.addEventListener('click', () => {
-            this.toggleDesktopLayout();
-        });
-        
-        // 버튼을 body에 추가
-        document.body.appendChild(toggleButton);
-        
-        // 데스크톱 모드일 때 버튼 숨김
-        this.updateDesktopToggleButton();
-    }
+    // addDesktopLayoutToggle 메서드는 DesktopLayoutController로 이동됨
     
-    /**
-     * PHASE 1: 데스크톱 레이아웃 토글
-     */
-    async toggleDesktopLayout() {
-        try {
-            if (this.desktopLayoutManager.isDesktopMode()) {
-                await this.desktopLayoutManager.switchMode('mobile');
-            } else {
-                await this.desktopLayoutManager.switchMode('desktop');
-            }
-            this.updateDesktopToggleButton();
-        } catch (error) {
-            console.error('데스크톱 레이아웃 토글 실패:', error);
-        }
-    }
+    // toggleDesktopLayout 메서드는 DesktopLayoutController로 이동됨
     
-    /**
-     * PHASE 1: 데스크톱 토글 버튼 업데이트
-     */
-    updateDesktopToggleButton() {
-        const toggleButton = document.querySelector('.desktop-layout-toggle');
-        if (!toggleButton) return;
-        
-        if (this.desktopLayoutManager.isDesktopMode()) {
-            toggleButton.innerHTML = `
-                <span class="icon">📱</span>
-                <span>모바일 모드</span>
-            `;
-            toggleButton.style.display = 'none'; // 데스크톱 모드에서는 숨김
-        } else {
-            toggleButton.innerHTML = `
-                <span class="icon">🖥️</span>
-                <span>데스크톱 모드</span>
-            `;
-            toggleButton.style.display = 'flex'; // 모바일 모드에서는 표시
-        }
-    }
+    // updateDesktopToggleButton 메서드는 DesktopLayoutController로 이동됨
     
-    /**
-     * PHASE 1: 로그인 후 데스크톱 레이아웃 초기화
-     */
-    async initializeDesktopLayoutAfterLogin() {
-        try {
-            // 데스크톱 레이아웃 매니저 재초기화
-            await this.desktopLayoutManager.initialize();
-            
-            // 데스크톱 토글 버튼 다시 추가
-            this.addDesktopLayoutToggle();
-            
-            console.log('로그인 후 데스크톱 레이아웃 초기화 완료');
-        } catch (error) {
-            console.warn('로그인 후 데스크톱 레이아웃 초기화 실패:', error);
-        }
-    }
+    // initializeDesktopLayoutAfterLogin 메서드는 DesktopLayoutController로 이동됨
     
     // setupPageVisibilityHandling 메서드는 NavigationMonitor로 이동됨
     
@@ -259,8 +178,8 @@ class AppManager {
         this.isLoggedIn = true;
         this.showMainApp();
         
-        // PHASE 1 수정: 로그인 성공 후 데스크톱 레이아웃 재초기화
-        this.initializeDesktopLayoutAfterLogin();
+        // PHASE 5: 로그인 성공 후 데스크톱 레이아웃 재초기화
+        this.desktopLayoutController.initializeAfterLogin();
         this.tabManager.loadTab('home'); // 기본 탭 로드
 
         // 상태 리셋
