@@ -11,6 +11,7 @@
 import { EventManager } from '../../../modules/utils/event-manager.js';
 import { ScrollManager } from '../../../modules/utils/ScrollManager.js';
 import { LogoutManager } from '../../../modules/managers/LogoutManager.js';
+import { ProfileManager } from '../../../modules/managers/ProfileManager.js';
 
 class HubView {
     constructor(controller) {
@@ -18,6 +19,7 @@ class HubView {
         this.eventManager = new EventManager();
         this.scrollManager = new ScrollManager();
         this.logoutManager = new LogoutManager(this.eventManager, this.dispatchEvent.bind(this));
+        this.profileManager = new ProfileManager(this.eventManager, this.dispatchEvent.bind(this));
         this.container = null;
         this.isLoggingOut = false; // 기존 코드와의 호환성을 위해 유지
         this.scrollPosition = undefined; // 기존 코드와의 호환성을 위해 유지
@@ -33,6 +35,9 @@ class HubView {
         this.container.classList.add('hub-view');
         this.container.innerHTML = this.getHubHTML();
         this.bindEvents();
+        // ProfileManager를 사용하여 프로필 데이터 로드
+        this.profileManager.loadProfileData();
+        // 기존 코드와의 호환성을 위해 기존 방식도 유지
         this.loadProfileData();
     }
 
@@ -188,6 +193,9 @@ class HubView {
         }
 
         // 프로필 이미지 업로드 이벤트
+        // ProfileManager를 사용하여 프로필 이벤트 바인딩
+        this.profileManager.bindProfileEvents();
+        // 기존 코드와의 호환성을 위해 기존 방식도 유지
         this.bindProfileEvents();
     }
 
@@ -857,6 +865,10 @@ class HubView {
         
         if (this.logoutManager) {
             this.logoutManager.cleanup();
+        }
+        
+        if (this.profileManager) {
+            this.profileManager.cleanup();
         }
         
         this.container = null;
