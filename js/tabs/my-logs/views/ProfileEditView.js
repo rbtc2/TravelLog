@@ -35,13 +35,16 @@ class ProfileEditView {
      * 프로필 편집 화면을 렌더링합니다
      * @param {HTMLElement} container - 렌더링할 컨테이너
      */
-    render(container) {
+    async render(container) {
         this.container = container;
         // 프로필 편집 뷰 CSS 네임스페이스 클래스 추가
         this.container.classList.add('profile-edit-view');
         this.container.innerHTML = this.getProfileEditHTML();
         this.bindEvents();
-        this.loadProfileData();
+        
+        // 사용자 정보 로드 및 폼에 채우기
+        await this.loadUserData();
+        
         this.isInitialized = true;
     }
 
@@ -357,7 +360,86 @@ class ProfileEditView {
     }
 
     /**
-     * 실제 사용자 정보에서 프로필 데이터를 로드합니다
+     * 사용자 정보를 로드하고 폼에 채웁니다
+     */
+    async loadUserData() {
+        try {
+            // 현재 사용자 정보 로드
+            const userData = await this.getCurrentUserData();
+            
+            // 로컬 저장된 프로필 데이터 로드
+            const savedData = localStorage.getItem('travelLog_profile');
+            let profileData = {};
+            
+            if (savedData) {
+                profileData = JSON.parse(savedData);
+            }
+            
+            // 사용자 정보와 로컬 데이터 병합 (사용자 정보 우선)
+            const mergedData = {
+                name: userData.name || profileData.name || '여행자',
+                bio: profileData.bio || 'I am new to TravelLog.',
+                residenceCountry: userData.residenceCountry || profileData.residenceCountry || '',
+                avatar: profileData.avatar || null,
+                defaultAvatar: profileData.defaultAvatar || '✈️'
+            };
+            
+            // 원본 데이터와 현재 데이터 설정
+            this.originalData = { ...mergedData };
+            this.currentData = { ...mergedData };
+            
+            // 폼에 데이터 채우기
+            this.populateForm(mergedData);
+            
+        } catch (error) {
+            console.error('사용자 데이터 로드 실패:', error);
+            this.dispatchEvent('showMessage', {
+                type: 'error',
+                message: '사용자 정보를 불러오는데 실패했습니다.'
+            });
+        }
+    }
+
+    /**
+     * 현재 사용자 정보를 가져옵니다
+     * @returns {Promise<Object>} 사용자 데이터
+     */
+    async getCurrentUserData() {
+        try {
+            let userData = {
+                name: '여행자',
+                residenceCountry: ''
+            };
+            
+            // AuthController를 통한 사용자 정보 가져오기
+            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
+                const currentUser = window.appManager.authManager.authController.getCurrentUser();
+                if (currentUser) {
+                    // 회원가입 시 입력한 이름 가져오기
+                    if (currentUser.user_metadata && currentUser.user_metadata.full_name) {
+                        userData.name = currentUser.user_metadata.full_name;
+                    }
+                    
+                    // 회원가입 시 선택한 거주국 가져오기
+                    if (currentUser.user_metadata && currentUser.user_metadata.residence_country) {
+                        userData.residenceCountry = currentUser.user_metadata.residence_country;
+                    }
+                }
+            }
+            
+            return userData;
+            
+        } catch (error) {
+            console.error('현재 사용자 정보 가져오기 실패:', error);
+            return {
+                name: '여행자',
+                residenceCountry: ''
+            };
+        }
+    }
+
+    /**
+     * 실제 사용자 정보에서 프로필 데이터를 로드합니다 (기존 메서드 유지)
      */
     loadUserProfileData() {
         try {
