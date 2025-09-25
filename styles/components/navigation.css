@@ -87,6 +87,29 @@
     display: none !important;
 }
 
+/* 네비게이션 탭 안정성 개선 - Page Visibility API 대응 */
+#tab-navigation {
+    /* 기본적으로 표시 상태 유지 */
+    display: flex !important;
+    /* 페이지 가시성 변경 시에도 안정적으로 유지 */
+    visibility: visible !important;
+    opacity: 1 !important;
+    /* GPU 가속으로 렌더링 안정성 향상 */
+    transform: translate3d(0, 0, 0) !important;
+    backface-visibility: hidden !important;
+    will-change: transform !important;
+}
+
+/* 로그인 상태에서만 네비게이션 숨김 */
+.main-app.hidden #tab-navigation {
+    display: none !important;
+}
+
+/* 데스크톱 모드에서만 네비게이션 숨김 */
+.main-app.desktop-mode #tab-navigation {
+    display: none !important;
+}
+
 /* ===== 네비게이션 탭 ===== */
 .navigation-tab {
     flex: 1;

@@ -135,6 +135,10 @@ class AppManager {
         this.isHandlingLoginSuccess = false;
         this.authManager = null;
         
+        // Page Visibility API 관련 상태
+        this.lastVisibleState = null;
+        this.navigationCheckInterval = null;
+        
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         this.desktopLayoutManager = new DesktopLayoutManager();
         
@@ -157,6 +161,9 @@ class AppManager {
     async init() {
         this.bindEvents();
         this.updateAppInfo();
+        
+        // Page Visibility API 설정 - 네비게이션 탭 사라짐 문제 해결
+        this.setupPageVisibilityHandling();
         
         // 이메일 확인 핸들러 초기화 (URL 토큰 확인)
         try {
@@ -294,6 +301,160 @@ class AppManager {
     }
     
     /**
+     * Page Visibility API 설정 - 네비게이션 탭 사라짐 문제 해결
+     */
+    setupPageVisibilityHandling() {
+        // 페이지 가시성 변경 감지
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // 페이지가 백그라운드로 이동
+                console.log('페이지가 백그라운드로 이동');
+                this.handlePageHidden();
+            } else {
+                // 페이지가 포그라운드로 복귀
+                console.log('페이지가 포그라운드로 복귀');
+                this.handlePageVisible();
+            }
+        });
+        
+        // 윈도우 포커스 이벤트도 처리
+        window.addEventListener('focus', () => {
+            console.log('윈도우 포커스 복귀');
+            this.handlePageVisible();
+        });
+        
+        window.addEventListener('blur', () => {
+            console.log('윈도우 포커스 잃음');
+            this.handlePageHidden();
+        });
+        
+        // 네비게이션 상태 주기적 확인 (안전장치)
+        this.startNavigationMonitoring();
+    }
+    
+    /**
+     * 네비게이션 상태 주기적 모니터링 시작
+     */
+    startNavigationMonitoring() {
+        // 기존 인터벌 정리
+        if (this.navigationCheckInterval) {
+            clearInterval(this.navigationCheckInterval);
+        }
+        
+        // 5초마다 네비게이션 상태 확인
+        this.navigationCheckInterval = setInterval(() => {
+            this.checkNavigationState();
+        }, 5000);
+    }
+    
+    /**
+     * 네비게이션 상태 확인 및 복원
+     */
+    checkNavigationState() {
+        // 로그인 상태가 아니면 확인하지 않음
+        if (!this.isLoggedIn) {
+            return;
+        }
+        
+        const tabNavigation = document.getElementById('tab-navigation');
+        const mainApp = document.getElementById('main-app');
+        
+        if (!tabNavigation || !mainApp) {
+            return;
+        }
+        
+        // 메인 앱이 숨겨져 있거나 네비게이션이 숨겨져 있는 경우 복원
+        if (mainApp.classList.contains('hidden') || 
+            tabNavigation.style.display === 'none' ||
+            tabNavigation.style.visibility === 'hidden') {
+            
+            console.log('네비게이션 상태 이상 감지, 복원 시도');
+            this.restoreNavigationState();
+        }
+    }
+    
+    /**
+     * 페이지가 숨겨질 때 처리
+     */
+    handlePageHidden() {
+        // 현재 상태 저장
+        this.lastVisibleState = {
+            isLoggedIn: this.isLoggedIn,
+            currentTab: this.currentTab,
+            isDesktopMode: this.desktopLayoutManager ? this.desktopLayoutManager.isDesktopMode() : false
+        };
+    }
+    
+    /**
+     * 페이지가 다시 보일 때 처리 - 네비게이션 탭 복원
+     */
+    handlePageVisible() {
+        // 로그인 상태 확인
+        if (!this.isLoggedIn) {
+            return;
+        }
+        
+        // 네비게이션 탭 상태 복원
+        this.restoreNavigationState();
+        
+        // 현재 탭이 있다면 새로고침
+        if (this.currentTab) {
+            this.refreshCurrentTab();
+        }
+    }
+    
+    /**
+     * 네비게이션 상태 복원
+     */
+    restoreNavigationState() {
+        try {
+            const tabNavigation = document.getElementById('tab-navigation');
+            const mainApp = document.getElementById('main-app');
+            
+            if (!tabNavigation || !mainApp) {
+                console.warn('네비게이션 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            // 메인 앱이 숨겨져 있다면 표시
+            if (mainApp.classList.contains('hidden')) {
+                mainApp.classList.remove('hidden');
+            }
+            
+            // 네비게이션 탭이 숨겨져 있다면 표시
+            if (tabNavigation.style.display === 'none') {
+                tabNavigation.style.display = 'flex';
+            }
+            
+            // 데스크톱 모드가 아닌 경우에만 모바일 네비게이션 표시
+            if (this.desktopLayoutManager && !this.desktopLayoutManager.isDesktopMode()) {
+                tabNavigation.style.display = 'flex';
+            }
+            
+            console.log('네비게이션 상태가 복원되었습니다.');
+        } catch (error) {
+            console.error('네비게이션 상태 복원 실패:', error);
+        }
+    }
+    
+    /**
+     * 현재 탭 새로고침
+     */
+    refreshCurrentTab() {
+        if (this.currentTab && this.tabModules.has(this.currentTab)) {
+            const module = this.tabModules.get(this.currentTab);
+            if (module.default && typeof module.default.refresh === 'function') {
+                try {
+                    module.default.refresh();
+                    console.log(`탭 ${this.currentTab}이 새로고침되었습니다.`);
+                } catch (error) {
+                    console.error(`탭 ${this.currentTab} 새로고침 실패:`, error);
+                }
+            }
+        }
+    }
+    
+    /**
      * 앱 정보를 업데이트합니다
      */
     updateAppInfo() {
@@ -370,6 +531,19 @@ class AppManager {
         // 탭 상태 초기화
         this.currentTab = null;
         this.tabModules.clear();
+        
+        // 네비게이션 모니터링 정리
+        this.stopNavigationMonitoring();
+    }
+    
+    /**
+     * 네비게이션 모니터링 중지
+     */
+    stopNavigationMonitoring() {
+        if (this.navigationCheckInterval) {
+            clearInterval(this.navigationCheckInterval);
+            this.navigationCheckInterval = null;
+        }
     }
     
     showLoginScreen() {
