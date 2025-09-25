@@ -15,9 +15,11 @@ import StackingContextDebugger from './modules/utils/stacking-context-debugger.j
 import DevelopmentValidator from './modules/utils/development-validator.js'; // 개발 시 실시간 검증기
 import { mobileOptimizer } from './modules/optimization/mobile-optimizer.js'; // Phase 1: 모바일 최적화 모듈
 import { TabManager } from './modules/core/tab-manager.js'; // Phase 2: 탭 관리 모듈
+import { NavigationMonitor } from './modules/core/navigation-monitor.js'; // Phase 3: 네비게이션 모니터링 모듈
 
 // Phase 1: 모바일 최적화는 별도 모듈로 분리됨
 // Phase 2: 탭 관리는 별도 모듈로 분리됨
+// Phase 3: 네비게이션 모니터링은 별도 모듈로 분리됨
 // mobileOptimizer는 자동으로 초기화됩니다.
 
 class AppManager {
@@ -26,15 +28,16 @@ class AppManager {
         this.isHandlingLoginSuccess = false;
         this.authManager = null;
         
-        // Page Visibility API 관련 상태
-        this.lastVisibleState = null;
-        this.navigationCheckInterval = null;
+        // Page Visibility API 관련 상태는 NavigationMonitor로 이동됨
         
         // PHASE 1: 데스크톱 레이아웃 매니저 초기화
         this.desktopLayoutManager = new DesktopLayoutManager();
         
         // PHASE 2: 탭 매니저 초기화
         this.tabManager = new TabManager(this);
+        
+        // PHASE 3: 네비게이션 모니터 초기화
+        this.navigationMonitor = new NavigationMonitor(this);
         
             // Z-Index 충돌 관리 시스템 초기화
             this.zIndexManager = window.zIndexManager;
@@ -54,8 +57,7 @@ class AppManager {
         this.bindEvents();
         this.updateAppInfo();
         
-        // Page Visibility API 설정 - 네비게이션 탭 사라짐 문제 해결
-        this.setupPageVisibilityHandling();
+        // Page Visibility API 설정은 NavigationMonitor에서 자동으로 처리됨
         
         // 이메일 확인 핸들러 초기화 (URL 토큰 확인)
         try {
@@ -192,142 +194,17 @@ class AppManager {
         }
     }
     
-    /**
-     * Page Visibility API 설정 - 네비게이션 탭 사라짐 문제 해결
-     */
-    setupPageVisibilityHandling() {
-        // 페이지 가시성 변경 감지
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                // 페이지가 백그라운드로 이동
-                console.log('페이지가 백그라운드로 이동');
-                this.handlePageHidden();
-            } else {
-                // 페이지가 포그라운드로 복귀
-                console.log('페이지가 포그라운드로 복귀');
-                this.handlePageVisible();
-            }
-        });
-        
-        // 윈도우 포커스 이벤트도 처리
-        window.addEventListener('focus', () => {
-            console.log('윈도우 포커스 복귀');
-            this.handlePageVisible();
-        });
-        
-        window.addEventListener('blur', () => {
-            console.log('윈도우 포커스 잃음');
-            this.handlePageHidden();
-        });
-        
-        // 네비게이션 상태 주기적 확인 (안전장치)
-        this.startNavigationMonitoring();
-    }
+    // setupPageVisibilityHandling 메서드는 NavigationMonitor로 이동됨
     
-    /**
-     * 네비게이션 상태 주기적 모니터링 시작
-     */
-    startNavigationMonitoring() {
-        // 기존 인터벌 정리
-        if (this.navigationCheckInterval) {
-            clearInterval(this.navigationCheckInterval);
-        }
-        
-        // 5초마다 네비게이션 상태 확인
-        this.navigationCheckInterval = setInterval(() => {
-            this.checkNavigationState();
-        }, 5000);
-    }
+    // startNavigationMonitoring 메서드는 NavigationMonitor로 이동됨
     
-    /**
-     * 네비게이션 상태 확인 및 복원
-     */
-    checkNavigationState() {
-        // 로그인 상태가 아니면 확인하지 않음
-        if (!this.isLoggedIn) {
-            return;
-        }
-        
-        const tabNavigation = document.getElementById('tab-navigation');
-        const mainApp = document.getElementById('main-app');
-        
-        if (!tabNavigation || !mainApp) {
-            return;
-        }
-        
-        // 메인 앱이 숨겨져 있거나 네비게이션이 숨겨져 있는 경우 복원
-        if (mainApp.classList.contains('hidden') || 
-            tabNavigation.style.display === 'none' ||
-            tabNavigation.style.visibility === 'hidden') {
-            
-            console.log('네비게이션 상태 이상 감지, 복원 시도');
-            this.restoreNavigationState();
-        }
-    }
+    // checkNavigationState 메서드는 NavigationMonitor로 이동됨
     
-    /**
-     * 페이지가 숨겨질 때 처리
-     */
-    handlePageHidden() {
-        // 현재 상태 저장
-        this.lastVisibleState = {
-            isLoggedIn: this.isLoggedIn,
-            currentTab: this.tabManager.getCurrentTab(),
-            isDesktopMode: this.desktopLayoutManager ? this.desktopLayoutManager.isDesktopMode() : false
-        };
-    }
+    // handlePageHidden 메서드는 NavigationMonitor로 이동됨
     
-    /**
-     * 페이지가 다시 보일 때 처리 - 네비게이션 탭 복원
-     */
-    handlePageVisible() {
-        // 로그인 상태 확인
-        if (!this.isLoggedIn) {
-            return;
-        }
-        
-        // 네비게이션 탭 상태 복원
-        this.restoreNavigationState();
-        
-        // 현재 탭이 있다면 새로고침
-        if (this.tabManager.getCurrentTab()) {
-            this.tabManager.refreshCurrentTab();
-        }
-    }
+    // handlePageVisible 메서드는 NavigationMonitor로 이동됨
     
-    /**
-     * 네비게이션 상태 복원
-     */
-    restoreNavigationState() {
-        try {
-            const tabNavigation = document.getElementById('tab-navigation');
-            const mainApp = document.getElementById('main-app');
-            
-            if (!tabNavigation || !mainApp) {
-                console.warn('네비게이션 요소를 찾을 수 없습니다.');
-                return;
-            }
-            
-            // 메인 앱이 숨겨져 있다면 표시
-            if (mainApp.classList.contains('hidden')) {
-                mainApp.classList.remove('hidden');
-            }
-            
-            // 네비게이션 탭이 숨겨져 있다면 표시
-            if (tabNavigation.style.display === 'none') {
-                tabNavigation.style.display = 'flex';
-            }
-            
-            // 데스크톱 모드가 아닌 경우에만 모바일 네비게이션 표시
-            if (this.desktopLayoutManager && !this.desktopLayoutManager.isDesktopMode()) {
-                tabNavigation.style.display = 'flex';
-            }
-            
-            console.log('네비게이션 상태가 복원되었습니다.');
-        } catch (error) {
-            console.error('네비게이션 상태 복원 실패:', error);
-        }
-    }
+    // restoreNavigationState 메서드는 NavigationMonitor로 이동됨
     
     // refreshCurrentTab 메서드는 TabManager로 이동됨
     
@@ -401,18 +278,10 @@ class AppManager {
         this.tabManager.cleanup();
         
         // 네비게이션 모니터링 정리
-        this.stopNavigationMonitoring();
+        this.navigationMonitor.cleanup();
     }
     
-    /**
-     * 네비게이션 모니터링 중지
-     */
-    stopNavigationMonitoring() {
-        if (this.navigationCheckInterval) {
-            clearInterval(this.navigationCheckInterval);
-            this.navigationCheckInterval = null;
-        }
-    }
+    // stopNavigationMonitoring 메서드는 NavigationMonitor로 이동됨
     
     showLoginScreen() {
         this.loginScreen.style.display = 'flex';
