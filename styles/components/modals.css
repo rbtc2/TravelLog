@@ -125,10 +125,10 @@
 }
 
 .warning-text {
-    color: var(--error-color) !important;
+    color: var(--error-color);
     font-weight: var(--font-medium);
     font-size: var(--font-sm);
-    margin-top: var(--spacing-lg) !important;
+    margin-top: var(--spacing-lg);
 }
 
 /* ===== 모달 푸터 ===== */
@@ -307,7 +307,7 @@
     
     .warning-text {
         font-size: var(--font-base);
-        margin-top: var(--spacing-xl) !important;
+        margin-top: var(--spacing-xl);
     }
     
     .modal-footer {

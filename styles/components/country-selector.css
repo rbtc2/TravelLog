@@ -160,20 +160,20 @@
     font-style: italic;
 }
 
-/* 모바일 최적화 */
+/* 모바일 최적화 - !important 제거, 자연스러운 CSS 우선순위 적용 */
 @media (max-width: 768px) {
     .country-selector-portal .selector-dropdown {
-        position: fixed !important;
-        top: 50% !important;
-        left: 20px !important;
-        right: 20px !important;
-        transform: translateY(-50%) !important;
+        position: fixed;
+        top: 50%;
+        left: 20px;
+        right: 20px;
+        transform: translateY(-50%);
         max-height: 70vh;
-        margin-top: 0 !important;
+        margin-top: 0;
     }
     
     .country-selector-portal .selector-dropdown.open {
-        transform: translateY(-50%) !important;
+        transform: translateY(-50%);
     }
 }
 

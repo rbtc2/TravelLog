@@ -138,12 +138,12 @@
     box-shadow: var(--shadow-md);
 }
 
-/* 버튼 비활성화 */
+/* 버튼 비활성화 - !important 제거 */
 .btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
+    transform: none;
+    box-shadow: none;
 }
 
 /* ===== 폼 컴포넌트 ===== */
