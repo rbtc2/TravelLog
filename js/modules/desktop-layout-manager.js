@@ -91,6 +91,13 @@ class DesktopLayoutManager {
      */
     setAutoMode() {
         const screenWidth = window.innerWidth;
+        const isMobileDevice = this.isMobileDevice();
+        
+        // 모바일 디바이스에서는 항상 모바일 모드 강제
+        if (isMobileDevice || screenWidth < this.breakpoints.smallDesktop) {
+            this.currentMode = 'mobile';
+            return;
+        }
         
         // 자동 모드 설정 규칙 - PHASE 1 정교화
         if (screenWidth >= this.breakpoints.extraLargeDesktop) {
@@ -116,10 +123,25 @@ class DesktopLayoutManager {
                     this.currentMode = 'desktop';
                 }
             }
-        } else {
-            // 태블릿 이하: 모바일 모드 강제
-            this.currentMode = 'mobile';
         }
+    }
+    
+    /**
+     * 모바일 디바이스 감지
+     */
+    isMobileDevice() {
+        // User Agent 기반 모바일 디바이스 감지
+        const userAgent = navigator.userAgent.toLowerCase();
+        const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+        
+        // 터치 지원 여부 확인
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        // 화면 크기와 터치 지원을 종합적으로 판단
+        const isMobileUA = mobileKeywords.some(keyword => userAgent.includes(keyword));
+        const isSmallScreen = window.innerWidth <= 768;
+        
+        return (isMobileUA || (hasTouch && isSmallScreen));
     }
     
     /**

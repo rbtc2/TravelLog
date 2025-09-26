@@ -39,8 +39,15 @@ export class DesktopLayoutController {
      * 데스크톱 레이아웃 토글 버튼 추가
      */
     addDesktopLayoutToggle() {
-        // 데스크톱에서만 표시
-        if (window.innerWidth < 1024) return;
+        // 모바일 디바이스나 태블릿에서는 토글 버튼을 표시하지 않음
+        if (this.isMobileDevice() || window.innerWidth < 1024) {
+            // 기존 버튼이 있다면 제거
+            const existingToggle = document.querySelector('.desktop-layout-toggle');
+            if (existingToggle) {
+                existingToggle.remove();
+            }
+            return;
+        }
         
         // 기존 버튼 제거
         const existingToggle = document.querySelector('.desktop-layout-toggle');
@@ -125,6 +132,43 @@ export class DesktopLayoutController {
         
         window.addEventListener('layoutModeChanged', layoutChangeHandler);
         this.eventListeners.push({ element: window, event: 'layoutModeChanged', handler: layoutChangeHandler });
+        
+        // 화면 크기 변경 시 토글 버튼 관리
+        const resizeHandler = () => {
+            this.handleResize();
+        };
+        
+        window.addEventListener('resize', resizeHandler);
+        this.eventListeners.push({ element: window, event: 'resize', handler: resizeHandler });
+    }
+    
+    /**
+     * 화면 크기 변경 처리
+     */
+    handleResize() {
+        // 디바운싱 적용
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(() => {
+            this.addDesktopLayoutToggle();
+        }, 150);
+    }
+    
+    /**
+     * 모바일 디바이스 감지
+     */
+    isMobileDevice() {
+        // User Agent 기반 모바일 디바이스 감지
+        const userAgent = navigator.userAgent.toLowerCase();
+        const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+        
+        // 터치 지원 여부 확인
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        // 화면 크기와 터치 지원을 종합적으로 판단
+        const isMobileUA = mobileKeywords.some(keyword => userAgent.includes(keyword));
+        const isSmallScreen = window.innerWidth <= 768;
+        
+        return (isMobileUA || (hasTouch && isSmallScreen));
     }
     
     /**
@@ -164,6 +208,11 @@ export class DesktopLayoutController {
             element.removeEventListener(event, handler);
         });
         this.eventListeners = [];
+        
+        // 타이머 정리
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
+        }
         
         // 토글 버튼 제거
         const toggleButton = document.querySelector('.desktop-layout-toggle');
