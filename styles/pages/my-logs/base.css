@@ -127,7 +127,11 @@
     border-radius: var(--border-radius-md);
     padding: 8px 12px;
     cursor: pointer;
-    transition: all var(--transition-normal);
+    /* 즉시 반응을 위해 transition 시간 단축 */
+    transition: background-color var(--transition-fast) ease,
+                border-color var(--transition-fast) ease,
+                color var(--transition-fast) ease,
+                transform 0.1s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -148,6 +152,12 @@
     color: var(--white);
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
+    /* 호버 시 즉시 반응 */
+    transition: background-color var(--transition-fast) ease,
+                border-color var(--transition-fast) ease,
+                color var(--transition-fast) ease,
+                transform 0.1s ease,
+                box-shadow var(--transition-fast) ease;
 }
 
 .view-mode-btn.active {
@@ -155,6 +165,11 @@
     color: var(--white);
     border-color: var(--primary-color);
     box-shadow: var(--shadow-md);
+    /* 액티브 상태 즉시 반응 */
+    transition: background var(--transition-fast) ease,
+                color var(--transition-fast) ease,
+                border-color var(--transition-fast) ease,
+                box-shadow var(--transition-fast) ease;
 }
 
 .view-mode-icon {

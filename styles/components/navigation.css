@@ -69,45 +69,45 @@
     height: var(--navigation-height);
 }
 
-/* Phase 4: 로그인 화면에서 네비게이션 숨김 처리 */
+/* Phase 4: 로그인 화면에서 네비게이션 숨김 처리 - 높은 특이성으로 !important 제거 */
 .main-app.hidden #tab-navigation,
 .main-app.hidden .navigation-container {
-    display: none !important;
+    display: none;
 }
 
-/* 로그인 화면이 표시될 때 네비게이션 완전 숨김 */
+/* 로그인 화면이 표시될 때 네비게이션 완전 숨김 - 높은 특이성으로 !important 제거 */
 #login-screen:not([style*="display: none"]) ~ #main-app #tab-navigation,
 #login-screen:not([style*="display: none"]) ~ #main-app .navigation-container {
-    display: none !important;
+    display: none;
 }
 
-/* PHASE 1: 데스크톱 모드에서 모바일 탭 네비게이션 숨김 */
+/* PHASE 1: 데스크톱 모드에서 모바일 탭 네비게이션 숨김 - 높은 특이성으로 !important 제거 */
 .main-app.desktop-mode #tab-navigation,
 .main-app.desktop-mode .navigation-container {
-    display: none !important;
+    display: none;
 }
 
-/* 네비게이션 탭 안정성 개선 - Page Visibility API 대응 */
+/* 네비게이션 탭 안정성 개선 - Page Visibility API 대응 - 높은 특이성으로 !important 제거 */
 #tab-navigation {
     /* 기본적으로 표시 상태 유지 */
-    display: flex !important;
+    display: flex;
     /* 페이지 가시성 변경 시에도 안정적으로 유지 */
-    visibility: visible !important;
-    opacity: 1 !important;
+    visibility: visible;
+    opacity: 1;
     /* GPU 가속으로 렌더링 안정성 향상 */
-    transform: translate3d(0, 0, 0) !important;
-    backface-visibility: hidden !important;
-    will-change: transform !important;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: transform;
 }
 
-/* 로그인 상태에서만 네비게이션 숨김 */
+/* 로그인 상태에서만 네비게이션 숨김 - 높은 특이성으로 !important 제거 */
 .main-app.hidden #tab-navigation {
-    display: none !important;
+    display: none;
 }
 
-/* 데스크톱 모드에서만 네비게이션 숨김 */
+/* 데스크톱 모드에서만 네비게이션 숨김 - 높은 특이성으로 !important 제거 */
 .main-app.desktop-mode #tab-navigation {
-    display: none !important;
+    display: none;
 }
 
 /* ===== 네비게이션 탭 ===== */
@@ -325,15 +325,17 @@
     will-change: transform;
 }
 
-/* 네비게이션 탭 전환 효과 최적화 */
+/* 네비게이션 탭 전환 효과 최적화 - 즉시 반응하도록 수정 */
 .navigation-tab,
 .tab-btn {
-    /* 기존 transition 속성 유지하면서 GPU 가속 추가 */
-    transition: all var(--transition-normal) cubic-bezier(0.4, 0, 0.2, 1);
+    /* 즉시 반응을 위해 transition 시간 단축 */
+    transition: background-color var(--transition-fast) ease,
+                border-color var(--transition-fast) ease,
+                color var(--transition-fast) ease;
     /* GPU 가속 최적화 */
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
-    will-change: transform, background-color, border-color;
+    will-change: background-color, border-color, color;
 }
 
 .navigation-tab:hover,
@@ -347,7 +349,8 @@
 .tab-btn:active {
     background-color: var(--gray-100);
     transform: scale3d(0.98, 0.98, 1);
-    /* 액티브 상태에서도 GPU 가속 유지 */
+    /* 액티브 상태에서 즉시 반응 */
+    transition: transform 0.1s ease, background-color 0.1s ease;
     backface-visibility: hidden;
 }
 

@@ -21,33 +21,33 @@
     
     /* 소형 데스크톱에서 기본적으로 숨김, 사용자 설정으로 활성화 */
     .main-app:not(.desktop-mode) .desktop-layout {
-        display: none !important;
+        display: none;
     }
     
     /* PHASE 1 수정: 로그인 화면에서 데스크톱 레이아웃 완전 숨김 */
     .main-app.hidden .desktop-layout {
-        display: none !important;
+        display: none;
     }
     
     /* 로그인 화면이 표시될 때 데스크톱 레이아웃 숨김 */
     #login-screen:not([style*="display: none"]) ~ .desktop-layout {
-        display: none !important;
+        display: none;
     }
     
     /* 로그인 화면이 표시될 때 모든 데스크톱 레이아웃 숨김 */
     #login-screen:not([style*="display: none"]) .desktop-layout {
-        display: none !important;
+        display: none;
     }
     
     /* 로그인 화면이 표시될 때 데스크톱 토글 버튼 숨김 */
     #login-screen:not([style*="display: none"]) ~ .desktop-layout-toggle {
-        display: none !important;
+        display: none;
     }
     
     /* PHASE 1: 데스크톱 레이아웃 내에서 모바일 탭 네비게이션 숨김 */
     .desktop-layout #tab-navigation,
     .desktop-layout .navigation-container {
-        display: none !important;
+        display: none;
     }
 }
 
@@ -71,7 +71,7 @@
     
     /* 데스크톱 모드에서만 표시 */
     .main-app:not(.desktop-mode) .desktop-sidebar {
-        display: none !important;
+        display: none;
     }
 }
 
@@ -114,7 +114,7 @@
     
     /* 데스크톱 모드에서만 표시 */
     .main-app:not(.desktop-mode) .desktop-main-content {
-        display: none !important;
+        display: none;
     }
 }
 
@@ -524,6 +524,6 @@
 /* ===== 모바일/태블릿에서 데스크톱 토글 버튼 숨김 ===== */
 @media (max-width: 1023px) {
     .desktop-layout-toggle {
-        display: none !important;
+        display: none;
     }
 }

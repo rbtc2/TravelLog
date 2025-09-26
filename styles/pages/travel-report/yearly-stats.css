@@ -10,10 +10,10 @@
 }
 
 .yearly-stats-section .section-header {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: var(--spacing-sm);
     gap: var(--spacing-sm);
 }
@@ -34,10 +34,10 @@
 /* 모바일에서도 연도 선택기 오른쪽 정렬 유지 */
 @media (max-width: 767px) {
     .yearly-stats-section .section-header {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
     }
     
     .year-selector-container {
@@ -57,7 +57,7 @@
 }
 
 .yearly-stats-section .section-title {
-    color: white !important;
+    color: white;
     font-size: var(--font-xl);
     font-weight: var(--font-bold);
     margin: 0;
@@ -317,7 +317,7 @@
 }
 
 .dark .yearly-stats-section .section-title {
-    color: var(--text-primary, #f7fafc) !important;
+    color: var(--text-primary, #f7fafc);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 

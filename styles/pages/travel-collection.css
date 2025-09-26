@@ -748,10 +748,10 @@
    다크모드 지원 (전체)
    =============================== */
 
-/* 다크모드 강제 적용 - .dark 클래스 사용 */
+/* 다크모드 스타일 - 높은 특이성으로 !important 제거 */
 .dark .collection-content {
-    background: var(--gray-900) !important;
-    color: var(--gray-100) !important;
+    background: var(--gray-900);
+    color: var(--gray-100);
 }
     
 
@@ -772,16 +772,16 @@
    =============================== */
 
 .dark .visited-country-card {
-    background: var(--gray-800) !important;
-    border: 1px solid var(--gray-700) !important;
-    color: var(--gray-100) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    background: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    color: var(--gray-100);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dark .visited-country-card:hover {
-    background: var(--gray-700) !important;
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+    background: var(--gray-700);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .dark .visited-country-card {
@@ -791,7 +791,7 @@
 }
 
 .dark .country-flag-section {
-    background: var(--gray-700) !important;
+    background: var(--gray-700);
 }
 
 .dark .country-flag-large {
@@ -799,49 +799,49 @@
 }
 
 .dark .country-basic-info {
-    background: transparent !important;
+    background: transparent;
 }
 
 .dark .country-name {
-    color: var(--gray-100) !important;
+    color: var(--gray-100);
 }
 
 .dark .country-name-en {
-    color: var(--gray-300) !important;
+    color: var(--gray-300);
 }
 
 .dark .country-visit-stats {
-    background: var(--gray-700) !important;
+    background: var(--gray-700);
 }
 
 .dark .visit-count-badge {
-    background: var(--primary-color) !important;
-    color: var(--white) !important;
+    background: var(--primary-color);
+    color: var(--white);
 }
 
 .dark .empty-state {
-    background: var(--gray-800) !important;
-    border: 1px solid var(--gray-700) !important;
-    color: var(--gray-300) !important;
+    background: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    color: var(--gray-300);
 }
 
 .dark .empty-state h3 {
-    color: var(--gray-100) !important;
+    color: var(--gray-100);
 }
 
 .dark .loading-indicator {
-    color: var(--gray-300) !important;
+    color: var(--gray-300);
 }
 
 .dark .loading-spinner {
-    border-color: var(--gray-600) !important;
-    border-top-color: var(--primary-color) !important;
+    border-color: var(--gray-600);
+    border-top-color: var(--primary-color);
 }
 
 .dark .error-message {
-    background: var(--gray-800) !important;
-    border: 1px solid var(--red-500) !important;
-    color: var(--red-300) !important;
+    background: var(--gray-800);
+    border: 1px solid var(--red-500);
+    color: var(--red-300);
 }
 
 

@@ -112,68 +112,68 @@
     color: var(--primary-color);
 }
 
-/* 토스트 메시지 */
-.toast-message {
-    position: fixed !important;
-    top: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) translateY(-20px) !important;
-    background: #333 !important;
-    color: white !important;
-    padding: 12px 20px !important;
-    border-radius: 8px !important;
-    font-size: 14px !important;
-    z-index: var(--z-system-overlay) !important;
-    opacity: 0 !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    max-width: 400px !important;
-    min-width: 200px !important;
-    width: auto !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
+/* 토스트 메시지 - 높은 특이성으로 !important 제거 */
+body .toast-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    z-index: var(--z-system-overlay);
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    min-width: 200px;
+    width: auto;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.toast-message.show {
-    transform: translateX(-50%) translateY(0) !important;
-    opacity: 1 !important;
+body .toast-message.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }
 
-/* 토스트 메시지 타입별 스타일 */
-.toast-success {
-    background: linear-gradient(135deg, #48bb78, #38a169) !important;
-    border: 1px solid #38a169 !important;
+/* 토스트 메시지 타입별 스타일 - 높은 특이성으로 !important 제거 */
+body .toast-success {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    border: 1px solid #38a169;
 }
 
-.toast-error {
-    background: linear-gradient(135deg, #f56565, #e53e3e) !important;
-    border: 1px solid #e53e3e !important;
+body .toast-error {
+    background: linear-gradient(135deg, #f56565, #e53e3e);
+    border: 1px solid #e53e3e;
 }
 
-.toast-warning {
-    background: linear-gradient(135deg, #ed8936, #dd6b20) !important;
-    border: 1px solid #dd6b20 !important;
+body .toast-warning {
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+    border: 1px solid #dd6b20;
 }
 
-.toast-info {
-    background: linear-gradient(135deg, #4299e1, #3182ce) !important;
-    border: 1px solid #3182ce !important;
+body .toast-info {
+    background: linear-gradient(135deg, #4299e1, #3182ce);
+    border: 1px solid #3182ce;
 }
 
-/* 토스트 아이콘 */
-.toast-icon {
-    font-size: 16px !important;
-    flex-shrink: 0 !important;
+/* 토스트 아이콘 - 높은 특이성으로 !important 제거 */
+body .toast-icon {
+    font-size: 16px;
+    flex-shrink: 0;
 }
 
-.toast-text {
-    flex: 1 !important;
-    text-align: left !important;
+body .toast-text {
+    flex: 1;
+    text-align: left;
 }
 
 /* 모바일 최적화 */
@@ -185,26 +185,26 @@
         max-width: none;
     }
     
-    .toast-message {
-        top: 16px !important;
-        left: 16px !important;
-        right: 16px !important;
-        transform: translateY(-20px) !important;
-        max-width: calc(100vw - 32px) !important;
-        min-width: auto !important;
-        width: auto !important;
-        white-space: normal !important;
-        overflow: visible !important;
-        text-overflow: unset !important;
-        text-align: left !important;
+    body .toast-message {
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        transform: translateY(-20px);
+        max-width: calc(100vw - 32px);
+        min-width: auto;
+        width: auto;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        text-align: left;
     }
     
-    .toast-message.show {
-        transform: translateY(0) !important;
+    body .toast-message.show {
+        transform: translateY(0);
     }
     
-    .toast-text {
-        text-align: left !important;
-        white-space: normal !important;
+    body .toast-text {
+        text-align: left;
+        white-space: normal;
     }
 }
