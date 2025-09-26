@@ -10,6 +10,7 @@
 
 import { memoryMonitor } from '../utils/memory-monitor.js';
 import { cleanupVerifier } from '../utils/cleanup-verifier.js';
+import { errorHandler, ERROR_TYPES, ERROR_SEVERITY } from '../utils/error-handler.js';
 
 export class TabManager {
     constructor(appManager) {
@@ -45,7 +46,9 @@ export class TabManager {
         this.bindTabEvents();
         this.setupMemoryTracking();
         this.setupCleanupVerification();
-        console.log('TabManager initialized with memory leak prevention');
+        if (this.options.enableLogging) {
+            console.log('TabManager initialized with memory leak prevention');
+        }
     }
     
     /**
@@ -94,7 +97,15 @@ export class TabManager {
             this.scrollToTop();
             
         } catch (error) {
-            console.error(`탭 전환 실패: ${tabName}`, error);
+            errorHandler.handleError({
+                type: ERROR_TYPES.SYSTEM_INITIALIZATION,
+                severity: ERROR_SEVERITY.HIGH,
+                message: `탭 전환 실패: ${tabName}`,
+                stack: error.stack,
+                source: 'TabManager.switchTab',
+                context: { tabName },
+                userMessage: `${tabName} 탭을 전환하는 중 문제가 발생했습니다.`
+            });
             this.showError(tabName, error);
         }
     }
@@ -120,7 +131,15 @@ export class TabManager {
             this.scrollToTop();
             
         } catch (error) {
-            console.error(`탭 로드 실패: ${tabName}`, error);
+            errorHandler.handleError({
+                type: ERROR_TYPES.SYSTEM_INITIALIZATION,
+                severity: ERROR_SEVERITY.HIGH,
+                message: `탭 로드 실패: ${tabName}`,
+                stack: error.stack,
+                source: 'TabManager.loadTab',
+                context: { tabName },
+                userMessage: `${tabName} 탭을 로드하는 중 문제가 발생했습니다.`
+            });
             this.showError(tabName, error);
         }
     }
@@ -337,7 +356,9 @@ export class TabManager {
                 moduleInstance.container = null;
             }
             
-            console.log(`TabManager: ${tabName} 탭 강제 정리 완료`);
+            if (this.options.enableLogging) {
+                console.log(`TabManager: ${tabName} 탭 강제 정리 완료`);
+            }
             
         } catch (error) {
             console.error(`TabManager: ${tabName} 탭 강제 정리 실패:`, error);
@@ -460,7 +481,9 @@ export class TabManager {
             if (module.default && typeof module.default.refresh === 'function') {
                 try {
                     module.default.refresh();
-                    console.log(`탭 ${this.currentTab}이 새로고침되었습니다.`);
+                    if (this.options.enableLogging) {
+                        console.log(`탭 ${this.currentTab}이 새로고침되었습니다.`);
+                    }
                 } catch (error) {
                     console.error(`탭 ${this.currentTab} 새로고침 실패:`, error);
                 }
@@ -499,7 +522,9 @@ export class TabManager {
             }
             
             this.finishCleanupTracking(cleanupId, { success: true });
-            console.log('TabManager cleaned up with memory leak prevention');
+            if (this.options.enableLogging) {
+                console.log('TabManager cleaned up with memory leak prevention');
+            }
             
         } catch (error) {
             this.finishCleanupTracking(cleanupId, { success: false, error });
@@ -703,7 +728,9 @@ export class TabManager {
                 memoryMonitor.recordMemorySnapshot();
             }
             
-            console.log('TabManager: 메모리 정리 수행됨');
+            if (this.options.enableLogging) {
+                console.log('TabManager: 메모리 정리 수행됨');
+            }
             
         } catch (error) {
             console.error('TabManager: 메모리 정리 실패:', error);

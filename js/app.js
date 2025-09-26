@@ -19,6 +19,7 @@ import { DevTools } from './modules/dev/dev-tools.js'; // Phase 4: 개발자 도
 import { DesktopLayoutController } from './modules/core/desktop-layout-controller.js'; // Phase 5: 데스크톱 레이아웃 컨트롤러
 import { memoryMonitor } from './modules/utils/memory-monitor.js'; // 메모리 누수 방지 모니터링 시스템
 import { cleanupVerifier } from './modules/utils/cleanup-verifier.js'; // Cleanup 검증 시스템
+import { errorHandler, ERROR_TYPES, ERROR_SEVERITY } from './modules/utils/error-handler.js'; // 통일된 에러 처리 시스템
 
 
 class AppManager {
@@ -26,6 +27,7 @@ class AppManager {
         this.isLoggedIn = false;
         this.isHandlingLoginSuccess = false;
         this.authManager = null;
+        this.isDevelopment = AppInfo.isDevelopment;
         
         this.desktopLayoutManager = new DesktopLayoutManager();
         this.tabManager = new TabManager(this);
@@ -52,7 +54,13 @@ class AppManager {
             const emailConfirmationHandler = new EmailConfirmationHandler();
             await emailConfirmationHandler.initialize();
         } catch (error) {
-            console.error('이메일 확인 핸들러 초기화 실패:', error);
+            errorHandler.handleError({
+                type: ERROR_TYPES.SYSTEM_INITIALIZATION,
+                severity: ERROR_SEVERITY.MEDIUM,
+                message: '이메일 확인 핸들러 초기화 실패',
+                stack: error.stack,
+                source: 'AppManager.initialize'
+            });
         }
 
         // 비밀번호 재설정 핸들러 초기화 (URL 토큰 확인)
@@ -60,14 +68,27 @@ class AppManager {
             const passwordResetHandler = new PasswordResetHandler();
             await passwordResetHandler.initialize();
         } catch (error) {
-            console.error('비밀번호 재설정 핸들러 초기화 실패:', error);
+            errorHandler.handleError({
+                type: ERROR_TYPES.SYSTEM_INITIALIZATION,
+                severity: ERROR_SEVERITY.MEDIUM,
+                message: '비밀번호 재설정 핸들러 초기화 실패',
+                stack: error.stack,
+                source: 'AppManager.initialize'
+            });
         }
 
         // 인증 관리자 초기화
         try {
             this.authManager = new AuthManager();
         } catch (error) {
-            console.error('인증 관리자 초기화 실패:', error);
+            errorHandler.handleError({
+                type: ERROR_TYPES.SYSTEM_INITIALIZATION,
+                severity: ERROR_SEVERITY.HIGH,
+                message: '인증 관리자 초기화 실패',
+                stack: error.stack,
+                source: 'AppManager.initialize',
+                userMessage: '인증 시스템을 초기화할 수 없습니다. 페이지를 새로고침해주세요.'
+            });
             this.showLoginScreen();
         }
 
@@ -75,7 +96,14 @@ class AppManager {
         try {
             await travelLogService.initialize();
         } catch (error) {
-            console.error('여행 로그 서비스 초기화 실패:', error);
+            errorHandler.handleError({
+                type: ERROR_TYPES.SYSTEM_INITIALIZATION,
+                severity: ERROR_SEVERITY.HIGH,
+                message: '여행 로그 서비스 초기화 실패',
+                stack: error.stack,
+                source: 'AppManager.initialize',
+                userMessage: '여행 로그 서비스를 초기화할 수 없습니다. 페이지를 새로고침해주세요.'
+            });
         }
         
         try {
@@ -114,7 +142,9 @@ class AppManager {
                 developerElement.textContent = `by ${versionInfo.developer}`;
             }
             
-            console.log('앱 정보가 업데이트되었습니다:', AppInfo.getAppInfoString());
+            if (this.isDevelopment) {
+                console.log('앱 정보가 업데이트되었습니다:', AppInfo.getAppInfoString());
+            }
         } catch (error) {
             console.error('앱 정보 업데이트 실패:', error);
         }
@@ -187,7 +217,14 @@ class AppManager {
             this.tabManager.cleanup();
             this.showLoginScreen();
         } catch (error) {
-            console.error('로그아웃 실패:', error);
+            errorHandler.handleError({
+                type: ERROR_TYPES.AUTHENTICATION,
+                severity: ERROR_SEVERITY.MEDIUM,
+                message: '로그아웃 실패',
+                stack: error.stack,
+                source: 'AppManager.logout',
+                userMessage: '로그아웃 중 문제가 발생했습니다. 페이지를 새로고침해주세요.'
+            });
         }
     }
     
@@ -197,7 +234,9 @@ class AppManager {
     setupMemoryLeakPrevention() {
         try {
         if (typeof memoryMonitor !== 'undefined' && memoryMonitor) {
-            console.log('AppManager: 메모리 모니터링 시스템 활성화됨');
+            if (this.isDevelopment) {
+                console.log('AppManager: 메모리 모니터링 시스템 활성화됨');
+            }
             
             window.addEventListener('memoryLeak', (event) => {
                 console.error('AppManager: 메모리 누수 감지됨', event.detail);
@@ -213,7 +252,9 @@ class AppManager {
         }
         
         if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
-            console.log('AppManager: Cleanup 검증 시스템 활성화됨');
+            if (this.isDevelopment) {
+                console.log('AppManager: Cleanup 검증 시스템 활성화됨');
+            }
             
             window.addEventListener('cleanupVerifier:issues', (event) => {
                 console.warn('AppManager: Cleanup 이슈 발견', event.detail);
@@ -230,16 +271,22 @@ class AppManager {
             try {
                 if (typeof this.devTools.addMemoryMonitor === 'function') {
                     this.devTools.addMemoryMonitor(memoryMonitor);
-                    console.log('AppManager: 개발자 도구에 메모리 모니터 추가됨');
+                    if (this.isDevelopment) {
+                        console.log('AppManager: 개발자 도구에 메모리 모니터 추가됨');
+                    }
                 } else {
-                    console.log('AppManager: 개발자 도구에 메모리 모니터 기능이 없습니다.');
+                    if (this.isDevelopment) {
+                        console.log('AppManager: 개발자 도구에 메모리 모니터 기능이 없습니다.');
+                    }
                 }
             } catch (error) {
                 console.warn('AppManager: 개발자 도구에 메모리 모니터 추가 실패:', error);
             }
         }
             
-            console.log('AppManager: 메모리 누수 방지 시스템 설정 완료');
+            if (this.isDevelopment) {
+                console.log('AppManager: 메모리 누수 방지 시스템 설정 완료');
+            }
             
         } catch (error) {
             console.error('AppManager: 메모리 누수 방지 시스템 설정 실패:', error);
@@ -281,7 +328,9 @@ class AppManager {
      */
     performEmergencyCleanup() {
         try {
-            console.log('AppManager: 응급 정리 수행 중...');
+            if (this.isDevelopment) {
+                console.log('AppManager: 응급 정리 수행 중...');
+            }
             
             this.cleanup();
             
@@ -293,7 +342,9 @@ class AppManager {
                 memoryMonitor.recordMemorySnapshot();
             }
             
-            console.log('AppManager: 응급 정리 완료');
+            if (this.isDevelopment) {
+                console.log('AppManager: 응급 정리 완료');
+            }
             
         } catch (error) {
             console.error('AppManager: 응급 정리 실패:', error);
@@ -305,7 +356,9 @@ class AppManager {
      */
     performPreventiveCleanup() {
         try {
-            console.log('AppManager: 예방적 정리 수행 중...');
+            if (this.isDevelopment) {
+                console.log('AppManager: 예방적 정리 수행 중...');
+            }
             
             if (this.tabManager && typeof this.tabManager.cleanupCurrentTab === 'function') {
                 this.tabManager.cleanupCurrentTab();
@@ -315,7 +368,9 @@ class AppManager {
                 memoryMonitor.recordMemorySnapshot();
             }
             
-            console.log('AppManager: 예방적 정리 완료');
+            if (this.isDevelopment) {
+                console.log('AppManager: 예방적 정리 완료');
+            }
             
         } catch (error) {
             console.error('AppManager: 예방적 정리 실패:', error);
@@ -403,7 +458,9 @@ class AppManager {
                 cleanupVerifier.finishCleanup(cleanupId, { success: true });
             }
             
-            console.log('AppManager cleaned up with memory leak prevention');
+            if (this.isDevelopment) {
+                console.log('AppManager cleaned up with memory leak prevention');
+            }
             
         } catch (error) {
             if (cleanupId && typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
@@ -428,7 +485,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // 페이지 언로드 시 정리
 window.addEventListener('beforeunload', async () => {
     try {
-        console.log('페이지 언로드: 메모리 누수 방지 정리 시작');
+        if (AppInfo.isDevelopment) {
+            console.log('페이지 언로드: 메모리 누수 방지 정리 시작');
+        }
         
         if (window.appManager && typeof window.appManager.cleanup === 'function') {
             await window.appManager.cleanup();
@@ -438,7 +497,9 @@ window.addEventListener('beforeunload', async () => {
             memoryMonitor.recordMemorySnapshot();
         }
         
-        console.log('페이지 언로드: 메모리 누수 방지 정리 완료');
+        if (AppInfo.isDevelopment) {
+            console.log('페이지 언로드: 메모리 누수 방지 정리 완료');
+        }
         
     } catch (error) {
         console.error('페이지 언로드 정리 중 오류:', error);

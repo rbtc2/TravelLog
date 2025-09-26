@@ -3,6 +3,7 @@ import { createCountrySelector } from '../modules/ui-components/country-selector
 import { ValidationUtils } from '../modules/utils/validation-utils.js';
 import { DateUtils } from '../modules/utils/date-utils.js';
 import { cleanupVerifier } from '../modules/utils/cleanup-verifier.js';
+import { errorHandler, ERROR_TYPES, ERROR_SEVERITY } from '../modules/utils/error-handler.js';
 
 /**
  * 일지 추가 탭 모듈
@@ -23,6 +24,9 @@ class AddLogTab {
         
         /** @type {Array<{element: Element, event: string, handler: Function}>} 등록된 이벤트 리스너 목록 */
         this.eventListeners = [];
+        
+        /** @type {boolean} 개발 환경 여부 */
+        this.isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
         // CleanupVerifier에 모듈 등록
         if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
@@ -94,7 +98,9 @@ class AddLogTab {
                 inputId: 'country-selector-input'
             });
 
-            console.log('AddLogTab: CountrySelector 초기화 완료');
+            if (this.isDevelopment) {
+                console.log('AddLogTab: CountrySelector 초기화 완료');
+            }
 
         } catch (error) {
             console.error('AddLogTab: CountrySelector 초기화 실패:', error);
@@ -132,8 +138,10 @@ class AddLogTab {
         // 검증 에러 제거
         this.showFieldError('country', '');
         
-        // 콘솔 로그
-        console.log(`AddLogTab: 국가 선택됨 - ${selectedCountry.name} (${selectedCountry.code})`);
+        // 개발 환경에서만 로그 출력
+        if (this.isDevelopment) {
+            console.log(`AddLogTab: 국가 선택됨 - ${selectedCountry.name} (${selectedCountry.code})`);
+        }
     }
 
     /**
@@ -586,6 +594,18 @@ class AddLogTab {
         if (errorElement) {
             errorElement.textContent = message;
             errorElement.style.display = message ? 'block' : 'none';
+            
+            // 검증 에러 로깅 (에러가 있는 경우에만)
+            if (message) {
+                errorHandler.handleError({
+                    type: ERROR_TYPES.DATA_VALIDATION,
+                    severity: ERROR_SEVERITY.LOW,
+                    message: `필드 검증 실패: ${fieldName}`,
+                    source: 'AddLogTab.validateField',
+                    context: { fieldName, message },
+                    userMessage: message
+                }, { showToast: false, logToConsole: false });
+            }
         }
     }
     
@@ -753,7 +773,9 @@ class AddLogTab {
         // 현재는 가상의 지연 시간만 추가
         await new Promise(resolve => setTimeout(resolve, FORM_CONFIG.ui.loadingDelay));
         
-        console.log('저장된 일지 데이터:', this.formData);
+        if (this.isDevelopment) {
+            console.log('저장된 일지 데이터:', this.formData);
+        }
         
         // 로컬 스토리지에 저장
         try {
@@ -767,7 +789,9 @@ class AddLogTab {
             existingLogs.unshift(newLog); // 맨 앞에 추가 (최신 순)
             localStorage.setItem('travelLogs', JSON.stringify(existingLogs));
             
-            console.log('로컬 스토리지에 저장 완료:', newLog);
+            if (this.isDevelopment) {
+                console.log('로컬 스토리지에 저장 완료:', newLog);
+            }
         } catch (error) {
             console.error('로컬 스토리지 저장 실패:', error);
         }

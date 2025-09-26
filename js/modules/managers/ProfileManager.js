@@ -16,6 +16,8 @@ class ProfileManager {
         this.eventManager = eventManager;
         this.dispatchEvent = dispatchEvent;
         this.storageKey = 'travelLog_profile';
+        this.lastLoadedName = null; // 마지막으로 로드된 이름을 추적
+        this.isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     }
 
     /**
@@ -99,10 +101,17 @@ class ProfileManager {
             if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
                 const currentUser = window.appManager.authManager.authController.getCurrentUser();
                 if (currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name) {
+                    const userName = currentUser.user_metadata.full_name;
                     const profileName = document.getElementById('profile-name');
+                    
                     if (profileName) {
-                        profileName.textContent = currentUser.user_metadata.full_name;
-                        console.log('사용자 이름 로드됨:', currentUser.user_metadata.full_name);
+                        profileName.textContent = userName;
+                        
+                        // 중복 로그 방지: 이전에 로드된 이름과 다를 때만 로그 출력
+                        if (this.lastLoadedName !== userName && this.isDevelopment) {
+                            console.log('사용자 이름 로드됨:', userName);
+                            this.lastLoadedName = userName;
+                        }
                         return;
                     }
                 }
@@ -111,8 +120,14 @@ class ProfileManager {
             // AuthController가 없거나 사용자 정보가 없는 경우 기본값 사용
             const profileName = document.getElementById('profile-name');
             if (profileName) {
-                profileName.textContent = '여행자';
-                console.log('기본 이름 사용: 여행자');
+                const defaultName = '여행자';
+                profileName.textContent = defaultName;
+                
+                // 중복 로그 방지: 이전에 로드된 이름과 다를 때만 로그 출력
+                if (this.lastLoadedName !== defaultName && this.isDevelopment) {
+                    console.log('기본 이름 사용: 여행자');
+                    this.lastLoadedName = defaultName;
+                }
             }
         } catch (error) {
             console.error('사용자 프로필 이름 로드 실패:', error);

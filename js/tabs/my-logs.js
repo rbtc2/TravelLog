@@ -317,7 +317,10 @@ class MyLogsTab {
      * @param {string} message - 메시지 내용
      */
     showMessage(type, message) {
-        console.log('showMessage called:', { type, message }); // 디버깅용 로그
+        // 개발 환경에서만 디버깅 로그 출력
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log('showMessage called:', { type, message });
+        }
         
         if (type === 'info') {
             ToastManager.info(message);
