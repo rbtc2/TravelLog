@@ -458,12 +458,12 @@
     .performance-transition,
     .performance-transition-fast,
     .performance-transition-slow {
-        animation: none !important;
-        transition: none !important;
+        animation: none;
+        transition: none;
     }
     
     .hover-optimized:hover {
-        transform: none !important;
+        transform: none;
     }
 }
 

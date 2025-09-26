@@ -319,12 +319,12 @@ body:has(.tooltip.visible) .country-selector {
  */
 
 .force-top-priority {
-    z-index: var(--z-country-portal) !important;
-    position: relative !important;
+    z-index: var(--z-country-portal);
+    position: relative;
 }
 
 .force-country-selector-top {
-    z-index: calc(var(--z-country-dropdown) + 1000) !important;
+    z-index: calc(var(--z-country-dropdown) + 1000);
 }
 
 /* ===== CONFLICT RESOLUTION LOGGING ===== */

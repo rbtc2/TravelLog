@@ -39,7 +39,7 @@ body {
 /* 테마 전환 시 애니메이션을 비활성화해야 하는 요소들 */
 .no-theme-transition,
 .no-theme-transition * {
-    transition: none !important;
+    transition: none;
 }
 
 /* 다크모드 전환 시 특별한 효과 */
@@ -165,11 +165,11 @@ body {
     scrollbar-color: var(--gray-400) var(--gray-100);
 }
 
-/* 테마 전환 시 접근성 고려 */
+/* 테마 전환 시 접근성 고려 - !important 제거 */
 @media (prefers-reduced-motion: reduce) {
     * {
-        transition: none !important;
-        animation: none !important;
+        transition: none;
+        animation: none;
     }
 }
 
