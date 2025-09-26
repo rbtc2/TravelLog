@@ -21,7 +21,7 @@
     padding: var(--spacing-md) var(--spacing-lg);
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: var(--z-content);
 }
 
 .my-logs-tab .profile-edit-view .header-with-back {
@@ -158,7 +158,7 @@
     justify-content: center;
     cursor: pointer;
     transition: all var(--transition-normal);
-    z-index: 2;
+    z-index: var(--z-elevated);
 }
 
 .my-logs-tab .profile-edit-view .profile-avatar-edit:hover {
@@ -307,7 +307,7 @@
     border-top: 2px solid #f1f3f4;
     position: sticky;
     bottom: 0;
-    z-index: 10;
+    z-index: var(--z-content);
     justify-content: center;
     align-items: center;
 }
@@ -319,7 +319,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1000;
+    z-index: var(--z-modal);
     display: flex;
     align-items: center;
     justify-content: center;

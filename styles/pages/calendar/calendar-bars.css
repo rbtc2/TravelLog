@@ -28,7 +28,7 @@
 
 .travel-log-bar:hover {
     transform: scale(1.05);
-    z-index: 2;
+    z-index: var(--z-elevated);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -115,7 +115,7 @@
     padding: 1px 4px;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    z-index: 3;
+    z-index: var(--z-floating);
     cursor: pointer;
     transition: all 0.2s ease;
     line-height: 1;

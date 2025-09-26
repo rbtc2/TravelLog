@@ -782,7 +782,7 @@
     margin-bottom: 20px;
     padding: 20px 0;
     position: relative;
-    z-index: 10;
+    z-index: var(--z-content);
 }
 
 .action-btn.primary {

@@ -107,7 +107,7 @@
 .calendar-day:hover {
     background: #f7fafc;
     transform: scale(1.02);
-    z-index: 1;
+    z-index: var(--z-base);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -141,7 +141,7 @@
     color: white !important;
     font-weight: var(--font-bold);
     position: relative;
-    z-index: 2;
+    z-index: var(--z-elevated);
 }
 
 /* 다크모드 다른 달 날짜 */
@@ -160,7 +160,7 @@
     background: linear-gradient(135deg, #4dabf7 0%, #9775fa 100%) !important;
     color: white !important;
     position: relative;
-    z-index: 2;
+    z-index: var(--z-elevated);
 }
 
 .dark .calendar-day.today .day-number {

@@ -195,7 +195,7 @@
 
 .back-btn {
     left: 0;
-    z-index: 10;
+    z-index: var(--z-content);
 }
 
 .back-btn:hover {
@@ -316,7 +316,7 @@
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
+    z-index: var(--z-modal);
     padding: 16px 24px;
     border-radius: 12px;
     font-weight: 500;

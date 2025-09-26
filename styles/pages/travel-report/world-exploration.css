@@ -90,7 +90,7 @@
     background: var(--knob-color);
     border-radius: 9999px;
     box-shadow: var(--shadow-sm);
-    z-index: 2;
+    z-index: var(--z-elevated);
 }
 
 /* 총 국가 수 라벨 (::before) */
@@ -106,7 +106,7 @@
     line-height: 1;
     white-space: nowrap;
     pointer-events: none;
-    z-index: 1;
+    z-index: var(--z-base);
 }
 
 .progress__fill {
@@ -132,7 +132,7 @@
     white-space: nowrap;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transition: all 0.3s ease;
-    z-index: 10;
+    z-index: var(--z-content);
     pointer-events: auto;
     user-select: none;
     display: block;

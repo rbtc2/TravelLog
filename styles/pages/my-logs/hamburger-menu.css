@@ -271,7 +271,7 @@ body.hamburger-menu-open .hamburger-menu::-webkit-scrollbar-thumb:hover {
     background: var(--white);
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: var(--z-content);
 }
 
 /* 다크모드 햄버거 메뉴 헤더 */

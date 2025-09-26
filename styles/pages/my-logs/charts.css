@@ -185,7 +185,7 @@
     transform: scale(1.15);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-color: var(--primary-color, #667eea);
-    z-index: 10;
+    z-index: var(--z-content);
     position: relative;
 }
 
