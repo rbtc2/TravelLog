@@ -2,7 +2,7 @@
  * 애플리케이션 설정 및 메타데이터
  * 앱 버전, 빌드 번호, 개발사 정보 등
  * @version 1.0.0
- * @since 2024-12-29
+ * @since 2025-09-26
  */
 
 export const APP_CONFIG = {
@@ -21,10 +21,10 @@ export const APP_CONFIG = {
     // 앱 메타데이터
     metadata: {
         author: 'REDIPX',
-        copyright: '© 2024 REDIPX. All rights reserved.',
+        copyright: '© 2025 REDIPX. All rights reserved.',
         license: 'MIT',
-        lastUpdated: '2024-12-29',
-        buildDate: '2025-09-01',
+        lastUpdated: '2025-09-26',
+        buildDate: '2025-09-26',
         environment: 'production'
     },
     
@@ -223,6 +223,60 @@ export const FeatureManager = {
 };
 
 /**
+ * 현재 날짜를 가져오는 유틸리티 함수들
+ */
+export const DateUtils = {
+    /**
+     * 현재 날짜를 YYYY-MM-DD 형식으로 반환합니다
+     * @returns {string} 현재 날짜
+     */
+    getCurrentDate: () => {
+        return new Date().toISOString().split('T')[0];
+    },
+    
+    /**
+     * 현재 날짜를 한국어 형식으로 반환합니다
+     * @returns {string} 한국어 형식의 현재 날짜
+     */
+    getCurrentDateKorean: () => {
+        return new Date().toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long'
+        });
+    },
+    
+    /**
+     * 현재 시간을 HH:MM:SS 형식으로 반환합니다
+     * @returns {string} 현재 시간
+     */
+    getCurrentTime: () => {
+        return new Date().toLocaleTimeString('ko-KR', {
+            hour12: false,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    },
+    
+    /**
+     * 현재 날짜와 시간을 모두 반환합니다
+     * @returns {Object} 날짜와 시간 정보
+     */
+    getCurrentDateTime: () => {
+        const now = new Date();
+        return {
+            date: DateUtils.getCurrentDate(),
+            dateKorean: DateUtils.getCurrentDateKorean(),
+            time: DateUtils.getCurrentTime(),
+            timestamp: now.getTime(),
+            iso: now.toISOString()
+        };
+    }
+};
+
+/**
  * 앱 설정을 업데이트하는 함수들
  */
 export const AppConfigUpdater = {
@@ -252,5 +306,29 @@ export const AppConfigUpdater = {
         APP_CONFIG.app.developer = developer;
         APP_CONFIG.metadata.author = developer;
         console.log(`개발사가 ${developer}으로 업데이트되었습니다.`);
+    },
+    
+    /**
+     * 현재 날짜로 메타데이터를 업데이트합니다
+     */
+    updateToCurrentDate: () => {
+        const currentDate = DateUtils.getCurrentDate();
+        APP_CONFIG.metadata.lastUpdated = currentDate;
+        APP_CONFIG.metadata.buildDate = currentDate;
+        console.log(`메타데이터가 현재 날짜(${currentDate})로 업데이트되었습니다.`);
+    },
+    
+    /**
+     * 앱 정보를 현재 날짜로 완전히 업데이트합니다
+     */
+    updateAppInfo: () => {
+        const currentDate = DateUtils.getCurrentDate();
+        const currentYear = new Date().getFullYear();
+        
+        APP_CONFIG.metadata.lastUpdated = currentDate;
+        APP_CONFIG.metadata.buildDate = currentDate;
+        APP_CONFIG.metadata.copyright = `© ${currentYear} REDIPX. All rights reserved.`;
+        
+        console.log(`앱 정보가 현재 날짜(${currentDate})로 업데이트되었습니다.`);
     }
 };
