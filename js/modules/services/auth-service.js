@@ -411,9 +411,15 @@ class AuthService {
             'Invalid API key': 'API 키가 유효하지 않습니다.',
             'Service unavailable': '서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.',
             'Database error saving new user': '사용자 정보 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-            'Database error': '데이터베이스 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+            'Database error': '데이터베이스 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            'duplicate key value violates unique constraint': '이미 등록된 이메일입니다. 다른 이메일을 사용하거나 로그인을 시도해주세요.'
         };
 
+        // 중복 키 오류 특별 처리
+        if (error.message && error.message.includes('duplicate key value violates unique constraint')) {
+            return '이미 등록된 이메일입니다. 다른 이메일을 사용하거나 로그인을 시도해주세요.';
+        }
+        
         return errorMessages[error.message] || error.message || '알 수 없는 오류가 발생했습니다.';
     }
 
