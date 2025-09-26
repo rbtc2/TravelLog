@@ -314,7 +314,7 @@ class AddLogTab {
                     <!-- 제출 버튼 -->
                     <div class="form-actions">
                         <button type="submit" class="submit-btn" id="submit-btn">
-                            ${FORM_CONFIG.messages.submit}
+                            💾 저장
                         </button>
                         <button type="button" class="reset-btn" id="reset-btn">
                             🔄 초기화
