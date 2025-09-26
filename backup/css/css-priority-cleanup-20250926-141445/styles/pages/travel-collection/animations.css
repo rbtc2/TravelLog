@@ -1,0 +1,271 @@
+/**
+ * Travel Collection - Animations Module
+ * 
+ * @description 애니메이션 및 트랜지션 관련 스타일
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+
+/* ===============================
+   기본 트랜지션
+   =============================== */
+
+.progress-fill {
+    transition: width 1s ease-out;
+}
+
+.continent-card {
+    transition: all var(--transition-normal);
+}
+
+.continent-card::before {
+    transition: opacity var(--transition-normal);
+}
+
+.continent-progress-fill {
+    transition: width 0.8s ease-out;
+}
+
+.visited-country-card {
+    transition: all var(--transition-normal);
+}
+
+.retry-btn {
+    transition: all var(--transition-normal);
+}
+
+.collection-tab {
+    transition: all 0.3s ease;
+}
+
+/* ===============================
+   키프레임 애니메이션
+   =============================== */
+
+/* 진행률 바 shimmer 효과 */
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-fill::after {
+    animation: shimmer 2s infinite;
+}
+
+/* 컨트롤 컨테이너 등장 애니메이션 */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modern-collection-controls {
+    animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 필터 그룹 스태거드 애니메이션 */
+.modern-filter-group {
+    animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+
+.modern-sort-group {
+    animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+}
+
+/* 화살표 회전 애니메이션 */
+@keyframes arrowRotate {
+    from {
+        transform: translateY(-50%) rotate(0deg);
+    }
+    to {
+        transform: translateY(-50%) rotate(180deg);
+    }
+}
+
+.modern-select:focus + .select-arrow {
+    animation: arrowRotate 0.3s ease-out forwards;
+}
+
+/* 그라데이션 배경 애니메이션 */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.modern-collection-controls::before {
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+}
+
+/* 로딩 상태 애니메이션 */
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.modern-select:disabled {
+    background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* 모던 통계 카드 애니메이션 */
+.modern-stats-card {
+    animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+
+/* 아이콘 글로우 애니메이션 */
+@keyframes iconGlow {
+    0%, 100% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+.stats-icon-glow {
+    animation: iconGlow 2s ease-in-out infinite;
+}
+
+/* 장식 점 펄스 애니메이션 */
+@keyframes decorationPulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.2);
+    }
+}
+
+.decoration-dot {
+    animation: decorationPulse 2s ease-in-out infinite;
+}
+
+.decoration-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.decoration-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* 로딩 스피너 애니메이션 */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* ===============================
+   호버 및 인터랙션 효과
+   =============================== */
+
+.modern-select {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.modern-select:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease-out;
+}
+
+.select-arrow {
+    transition: all 0.3s ease;
+}
+
+.modern-select:hover + .select-arrow {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.modern-select:focus + .select-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* ===============================
+   터치 디바이스 최적화
+   =============================== */
+
+@media (hover: none) and (pointer: coarse) {
+    .modern-select:hover {
+        transform: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+    
+    .modern-select:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .modern-select:focus {
+        transform: none;
+    }
+}
+
+/* ===============================
+   접근성 개선 (움직임 감소)
+   =============================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .modern-collection-controls,
+    .modern-filter-group,
+    .modern-sort-group {
+        animation: none;
+    }
+    
+    .modern-collection-controls::before {
+        animation: none;
+    }
+    
+    .modern-select {
+        transition: none;
+    }
+    
+    .modern-select:hover {
+        transform: none;
+    }
+    
+    .modern-select:focus + .select-arrow {
+        animation: none;
+    }
+    
+    .country-card,
+    .continent-card,
+    .badge,
+    .flag-emoji,
+    .progress-fill,
+    .continent-progress-fill {
+        transition: none;
+    }
+    
+    .loading-spinner {
+        animation: none;
+    }
+    
+    .progress-fill::after {
+        animation: none;
+    }
+}

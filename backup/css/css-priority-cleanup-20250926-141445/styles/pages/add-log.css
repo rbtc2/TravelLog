@@ -1,0 +1,359 @@
+/* ===== 일지 추가 페이지 스타일 ===== */
+
+/* 일지 추가 탭 컨테이너 - 네임스페이스 격리 */
+.add-log-tab .add-log-container {
+    max-width: var(--container-desktop-md);
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+    /* Phase 3: 새로운 네비게이션 유틸리티 클래스 직접 적용 */
+    padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 120px);
+}
+
+/* 반응형 일지 추가 컨테이너 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .add-log-tab .add-log-container {
+        max-width: var(--container-desktop-sm);
+        padding: var(--spacing-xl);
+        padding-bottom: calc(var(--spacing-xl) + var(--navigation-height, 80px) + 100px);
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .add-log-tab .add-log-container {
+        max-width: var(--container-desktop-md);
+        padding: var(--spacing-2xl);
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .add-log-tab .add-log-container {
+        max-width: var(--container-desktop-lg);
+        padding: var(--spacing-3xl);
+    }
+}
+
+@media (min-width: 1600px) {
+    .add-log-tab .add-log-container {
+        max-width: var(--container-desktop-xl);
+        padding: var(--spacing-3xl);
+        /* 초대형 데스크톱에서 충분한 하단 여백 */
+        padding-bottom: calc(var(--spacing-3xl) + var(--navigation-height, 80px) + 80px);
+    }
+}
+
+/* 태블릿 크기에서 충분한 하단 여백 */
+@media (min-width: 769px) and (max-width: 1023px) {
+    .add-log-tab .add-log-container {
+        padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 100px);
+    }
+    
+    .form-actions {
+        margin-bottom: 50px;
+        padding-bottom: 20px;
+    }
+}
+
+/* 모바일에서는 기본 여백 유지 */
+@media (max-width: 768px) {
+    .add-log-tab .add-log-container {
+        padding-bottom: calc(var(--spacing-lg) + var(--navigation-height, 80px) + 80px);
+    }
+}
+
+/* 데스크톱에서 일지 추가 페이지 여백 최적화 */
+@media (min-width: 1024px) {
+    .add-log-tab .add-log-container {
+        /* 데스크톱에서 더 많은 하단 여백 확보 - 버튼이 가려지지 않도록 */
+        padding-bottom: calc(var(--spacing-xl) + var(--navigation-height, 80px) + 150px);
+    }
+}
+
+/* 기존 방식 - Phase 3 완료 후 제거 예정 */
+/* padding-bottom: calc(20px + 80px); */
+
+.add-log-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 24px 0;
+    border-bottom: 2px solid #f1f3f4;
+}
+
+.add-log-title {
+    font-size: var(--font-3xl);
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.add-log-subtitle {
+    font-size: var(--font-base);
+    color: #718096;
+    font-weight: 400;
+}
+
+/* 데스크톱에서 제목과 부제목 크기 증가 */
+@media (min-width: 1024px) {
+    .add-log-title {
+        font-size: var(--font-3xl-desktop);
+    }
+    
+    .add-log-subtitle {
+        font-size: var(--font-base-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 제목과 부제목 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .add-log-title {
+        font-size: var(--font-3xl-large);
+    }
+    
+    .add-log-subtitle {
+        font-size: var(--font-base-large);
+    }
+}
+
+.add-log-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* 폼 액션 버튼 */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid #f1f3f4;
+    /* 데스크톱에서 추가 하단 여백으로 탭에 가려지지 않도록 */
+    margin-bottom: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 데스크톱에서 폼 액션 버튼 여백 추가 */
+@media (min-width: 1024px) {
+    .form-actions {
+        margin-bottom: 60px;
+        padding-bottom: 20px;
+    }
+}
+
+.submit-btn, .reset-btn {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: var(--font-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px;
+    max-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+/* 데스크톱에서 버튼 폰트 크기 증가 */
+@media (min-width: 1024px) {
+    .submit-btn, .reset-btn {
+        font-size: var(--font-base-desktop);
+        padding: 18px 28px;
+        min-height: 52px;
+    }
+}
+
+/* 대형 데스크톱에서 버튼 폰트 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .submit-btn, .reset-btn {
+        font-size: var(--font-base-large);
+        padding: 20px 32px;
+        min-height: 56px;
+    }
+}
+
+.submit-btn {
+    background-color: #667eea;
+    color: white;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: #5a67d8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+}
+
+.submit-btn:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.reset-btn {
+    background-color: #e2e8f0;
+    color: #4a5568;
+}
+
+.reset-btn:hover {
+    background-color: #cbd5e0;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(203, 213, 224, 0.25);
+}
+
+/* 메시지 스타일 */
+.success-message, .error-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: var(--z-modal);
+    animation: slideInRight 0.3s ease;
+}
+
+.success-content, .error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    font-weight: 500;
+    font-size: var(--font-base);
+}
+
+/* 데스크톱에서 메시지 폰트 크기 증가 */
+@media (min-width: 1024px) {
+    .success-content, .error-content {
+        font-size: var(--font-base-desktop);
+        padding: 18px 24px;
+    }
+}
+
+/* 대형 데스크톱에서 메시지 폰트 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .success-content, .error-content {
+        font-size: var(--font-base-large);
+        padding: 20px 28px;
+    }
+}
+
+.success-content {
+    background-color: #f0fff4;
+    border: 2px solid #68d391;
+    color: #22543d;
+}
+
+.error-content {
+    background-color: #fed7d7;
+    border: 2px solid #fc8181;
+    color: #742a2a;
+}
+
+.success-icon, .error-icon {
+    font-size: var(--font-lg);
+    flex-shrink: 0;
+}
+
+/* 데스크톱에서 아이콘 크기 증가 */
+@media (min-width: 1024px) {
+    .success-icon, .error-icon {
+        font-size: var(--font-lg-desktop);
+    }
+}
+
+/* 대형 데스크톱에서 아이콘 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .success-icon, .error-icon {
+        font-size: var(--font-lg-large);
+    }
+}
+
+/* ===== 일지 추가 페이지 반응형 스타일 ===== */
+@media (max-width: 768px) {
+    .add-log-tab .add-log-container {
+        padding: 16px;
+        margin: 0;
+    }
+    
+    .add-log-header {
+        margin-bottom: 24px;
+        padding: 16px 0;
+    }
+    
+    .add-log-title {
+        font-size: var(--font-2xl);
+    }
+    
+    .add-log-subtitle {
+        font-size: var(--font-sm);
+    }
+    
+    .add-log-form {
+        gap: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: row;
+        gap: 12px;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        justify-content: center;
+    }
+    
+    .submit-btn, .reset-btn {
+        min-height: 44px;
+        font-size: var(--font-sm);
+        padding: 12px 16px;
+        max-width: 120px;
+    }
+    
+    .success-message, .error-message {
+        top: 16px;
+        right: 16px;
+        left: 16px;
+        position: fixed;
+    }
+    
+    .success-content, .error-content {
+        padding: 14px 16px;
+        font-size: var(--font-sm);
+    }
+}
+
+@media (min-width: 1024px) {
+    .add-log-tab .add-log-container {
+        max-width: 900px;
+        padding: 32px;
+    }
+    
+    .form-actions {
+        justify-content: center;
+        max-width: 320px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 16px;
+    }
+    
+    .submit-btn, .reset-btn {
+        max-width: 180px;
+        padding: 16px 24px;
+        white-space: nowrap;
+    }
+}
+
+/* 대형 데스크톱에서 버튼 너비 추가 확장 */
+@media (min-width: 1440px) {
+    .form-actions {
+        max-width: 400px;
+        gap: 20px;
+    }
+    
+    .submit-btn, .reset-btn {
+        max-width: 200px;
+        padding: 18px 28px;
+    }
+}

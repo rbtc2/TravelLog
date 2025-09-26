@@ -1,0 +1,103 @@
+/* ===== 캘린더 다크모드 스타일 ===== */
+
+/* 다크 모드 지원 (향후 확장) */
+@media (prefers-color-scheme: dark) {
+    .calendar-tab .calendar-container {
+        background: #1a202c;
+        color: #e2e8f0;
+    }
+    
+    .calendar-header {
+        border-bottom-color: #4a5568;
+    }
+    
+    .calendar-navigation,
+    .calendar-grid-container,
+    .calendar-details {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    .calendar-day {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .calendar-day:hover {
+        background: #4a5568;
+    }
+    
+    .calendar-day.other-month {
+        background: #1a202c;
+        color: #718096;
+    }
+    
+    /* 다크 모드 날짜 피커 */
+    .date-picker-content {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .date-picker-content .modal-header {
+        border-bottom-color: #4a5568;
+    }
+    
+    .date-picker-content .modal-header h3 {
+        color: #e2e8f0;
+    }
+    
+    .modal-close-btn {
+        color: #a0aec0;
+    }
+    
+    .modal-close-btn:hover {
+        background: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .year-selector {
+        background: #1a202c;
+    }
+    
+    .year-nav-btn {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .year-nav-btn:hover {
+        background: #667eea;
+        color: white;
+    }
+    
+    .current-year-display {
+        color: #e2e8f0;
+    }
+    
+    .month-btn {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .month-btn:hover {
+        background: #4a5568;
+        border-color: #718096;
+    }
+    
+    .date-picker-content .modal-footer {
+        border-top-color: #4a5568;
+    }
+    
+    .modal-btn {
+        background: #2d3748;
+        border-color: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .modal-btn:hover {
+        background: #4a5568;
+        border-color: #718096;
+    }
+}

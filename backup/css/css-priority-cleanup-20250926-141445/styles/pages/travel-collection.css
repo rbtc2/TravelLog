@@ -1,0 +1,21 @@
+﻿/**
+ * Travel Collection CSS - 모듈화 완료 버전
+ * 
+ * 이 파일은 모듈화된 CSS 파일들을 참조하는 메인 파일입니다.
+ * 실제 스타일은 하위 모듈들에 정의되어 있습니다.
+ * 
+ * 모듈화 완료일: 2024-12-29
+ * 원본 파일 크기: 1628줄
+ * 모듈화 후: 9개 모듈 (총 2238줄)
+ */
+
+/* Travel Collection 모듈 Import */
+@import url('./travel-collection/statistics.css');
+@import url('./travel-collection/filters.css');
+@import url('./travel-collection/grid.css');
+@import url('./travel-collection/dark-mode.css');
+@import url('./travel-collection/animations.css');
+@import url('./travel-collection/accessibility.css');
+@import url('./travel-collection/responsive.css');
+@import url('./travel-collection/map-collection.css');
+@import url('./travel-collection/collection-tabs.css');

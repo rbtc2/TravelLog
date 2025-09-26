@@ -1,0 +1,223 @@
+/* ===== 반응형 디자인 유틸리티 ===== */
+/* 
+ * 다양한 화면 크기에 대응하는 반응형 스타일
+ * 키워드: responsive, mobile, tablet, desktop, media-query
+ */
+
+/* 태블릿 (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .login-container {
+        padding: 50px;
+        max-width: 450px;
+    }
+    
+    .main-app {
+        /* 태블릿에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 모바일 앱 스타일의 border 제거 */
+    }
+    
+    #main-content {
+        padding: 30px;
+    }
+    
+    .tab-btn {
+        padding: 16px 12px;
+        min-height: 70px;
+        font-size: 14px;
+    }
+    
+    .tab-icon {
+        font-size: 24px;
+    }
+}
+
+/* 소형 데스크톱 (1024px - 1280px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .main-app {
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
+    }
+    
+    #main-content {
+        padding: 40px;
+    }
+    
+    .tab-btn {
+        padding: 18px 14px;
+        min-height: 75px;
+        font-size: 15px;
+    }
+    
+    .tab-icon {
+        font-size: 26px;
+    }
+}
+
+/* 중형 데스크톱 (1280px - 1440px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .main-app {
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
+    }
+    
+    #main-content {
+        padding: 50px;
+    }
+    
+    .tab-btn {
+        padding: 20px 16px;
+        min-height: 80px;
+        font-size: 16px;
+    }
+    
+    .tab-icon {
+        font-size: 28px;
+    }
+}
+
+/* 대형 데스크톱 (1440px - 1600px) */
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .main-app {
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
+    }
+    
+    #main-content {
+        padding: 60px;
+    }
+    
+    .tab-btn {
+        padding: 22px 18px;
+        min-height: 85px;
+        font-size: 17px;
+    }
+    
+    .tab-icon {
+        font-size: 30px;
+    }
+}
+
+/* 초대형 데스크톱 (1600px+) */
+@media (min-width: 1600px) {
+    .main-app {
+        /* 데스크톱에서는 전체 화면 사용 */
+        width: 100%;
+        max-width: none;
+        /* 데스크톱에서 border 제거로 더 넓은 화면 활용 */
+    }
+    
+    #main-content {
+        padding: 70px;
+    }
+    
+    .tab-btn {
+        padding: 24px 20px;
+        min-height: 90px;
+        font-size: 18px;
+    }
+    
+    .tab-icon {
+        font-size: 32px;
+    }
+}
+
+/* 모바일 환경 최적화 (768px 이하) */
+@media (max-width: 768px) {
+    /* 터치 영역 최적화 */
+    button, .tab-btn, .login-btn, .demo-btn {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* 입력 필드 최적화 */
+    .form-input {
+        font-size: 16px; /* iOS 자동 줌 방지 */
+        min-height: 44px;
+        touch-action: manipulation;
+        -webkit-appearance: none;
+        appearance: none;
+        border-radius: 8px;
+    }
+    
+    /* 체크박스 터치 영역 확대 */
+    .checkbox-label input[type="checkbox"] {
+        min-width: 20px;
+        min-height: 20px;
+        margin-right: 12px;
+    }
+    
+    /* 링크 터치 영역 확대 */
+    .forgot-password, .signup-btn {
+        padding: 8px 4px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* 탭 네비게이션 터치 최적화 */
+    .tab-btn {
+        padding: 12px 8px;
+        touch-action: manipulation;
+    }
+    
+    /* 로그인 컨테이너 모바일 최적화 */
+    .login-container {
+        padding: 30px 20px;
+        margin: 20px;
+        border-radius: 16px;
+    }
+    
+    /* 폼 그룹 간격 조정 */
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    /* 버튼 간격 조정 */
+    .login-btn, .demo-btn {
+        margin-bottom: 24px;
+        padding: 16px;
+    }
+}
+
+/* 고해상도 디스플레이 최적화 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .form-input {
+        border-width: 1px;
+    }
+    
+    button, .tab-btn, .login-btn, .demo-btn {
+        border-width: 1px;
+    }
+}
+
+/* 터치 디바이스 전용 스타일 */
+@media (hover: none) and (pointer: coarse) {
+    /* 터치 시 피드백 효과 - 즉시 반응 */
+    button:active, .tab-btn:active, .login-btn:active, .demo-btn:active, .view-mode-btn:active {
+        transform: scale(0.98);
+        transition: transform 0.05s ease;
+    }
+    
+    /* 입력 필드 포커스 효과 */
+    .form-input:focus {
+        transform: scale(1.02);
+        transition: transform 0.2s ease;
+    }
+    
+    /* 링크 터치 효과 */
+    .forgot-password:active, .signup-btn:active {
+        opacity: 0.7;
+        transition: opacity 0.1s ease;
+    }
+}

@@ -1,0 +1,98 @@
+/* ===== 에러 폴백 UI 스타일 ===== */
+
+/* 에러 폴백 UI */
+.error-fallback {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6b7280;
+}
+
+.error-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.error-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+}
+
+.error-description {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    color: #6b7280;
+}
+
+.retry-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.retry-btn:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+/* ===== 에러 폴백 UI 반응형 스타일 ===== */
+@media (max-width: 768px) {
+    .error-fallback {
+        padding: 40px 16px;
+    }
+    
+    .error-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+    }
+    
+    .error-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .error-description {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+    
+    .retry-btn {
+        padding: 14px 20px;
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .error-fallback {
+        padding: 80px 32px 80px 32px; /* 탭 네비게이션 높이만큼 하단 여백 추가 */
+    }
+    
+    .error-icon {
+        font-size: 80px;
+        margin-bottom: 24px;
+    }
+    
+    .error-title {
+        font-size: 28px;
+        margin-bottom: 16px;
+    }
+    
+    .error-description {
+        font-size: 18px;
+        margin-bottom: 36px;
+    }
+    
+    .retry-btn {
+        padding: 16px 32px;
+        font-size: 18px;
+    }
+}

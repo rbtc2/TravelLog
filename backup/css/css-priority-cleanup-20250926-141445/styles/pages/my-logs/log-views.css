@@ -1,0 +1,395 @@
+/* ===== 로그 뷰 스타일 ===== */
+
+/* 카드뷰 스타일 */
+.log-item-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-lg);
+    border: 1px solid var(--gray-200);
+}
+
+/* 다크모드 로그 아이템 카드 */
+.dark .log-item-card {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 카드뷰 헤더 레이아웃 최적화 */
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-md);
+}
+
+.log-header-left {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
+.log-location-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+    min-width: 0;
+}
+
+.log-country {
+    font-weight: var(--font-semibold);
+    font-size: var(--font-lg);
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+/* 다크모드 로그 아이템 텍스트 */
+.dark .log-country {
+    color: var(--text-primary, #f7fafc);
+}
+
+.log-country-badge {
+    font-size: var(--font-sm);
+    padding: 2px 6px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--border-radius-sm);
+    font-weight: var(--font-medium);
+    flex-shrink: 0;
+}
+
+.log-city {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.log-header-right {
+    flex-shrink: 0;
+}
+
+.log-action-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+/* 칩 행 스타일 */
+.log-chips-row {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* 리스트뷰 스타일 */
+.log-item-list {
+    background: var(--white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-md);
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--primary-color);
+}
+
+.log-item-list:hover {
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+    border-left-color: var(--secondary-color);
+}
+
+.log-list-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    min-height: 60px;
+}
+
+.log-list-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+    min-width: 0;
+}
+
+.log-list-flag {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.log-list-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.log-list-location {
+    font-weight: var(--font-semibold);
+    font-size: var(--font-base);
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.log-list-dates {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.log-list-center {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+.log-list-chips {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.log-list-chip {
+    background: var(--gray-100);
+    color: var(--text-secondary);
+    padding: 4px 8px;
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-xs);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+}
+
+.log-list-chip.duration {
+    background: var(--blue-100);
+    color: var(--blue-700);
+}
+
+.log-list-chip.purpose {
+    background: var(--green-100);
+    color: var(--green-700);
+}
+
+.log-list-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+.log-list-rating {
+    font-size: var(--font-sm);
+    color: var(--yellow-500);
+    margin-right: var(--spacing-xs);
+}
+
+.log-list-actions {
+    display: flex;
+    gap: 4px;
+}
+
+/* ===== 액션 버튼 스타일 ===== */
+
+/* Ghost 스타일 액션 버튼 */
+.log-action-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    color: #718096;
+    min-width: 44px; /* 터치 친화성을 위한 최소 크기 */
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.log-action-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: scale(1.1);
+}
+
+.log-action-btn:active {
+    transform: scale(0.95);
+}
+
+.edit-btn:hover {
+    background: rgba(56, 178, 172, 0.1);
+    color: #38b2ac;
+}
+
+.delete-btn:hover {
+    background: rgba(229, 62, 62, 0.1);
+    color: #e53e3e;
+}
+
+/* ===== 반응형 스타일 ===== */
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .log-item-card {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .log-header {
+        flex-direction: row;
+        gap: var(--spacing-sm);
+        align-items: center;
+    }
+    
+    .log-header-left {
+        flex: 1;
+    }
+    
+    .log-location-info {
+        gap: var(--spacing-xs);
+    }
+    
+    .log-country {
+        font-size: var(--font-base);
+    }
+    
+    .log-city {
+        font-size: var(--font-xs);
+    }
+    
+    .log-action-buttons {
+        justify-content: flex-end;
+        margin-top: var(--spacing-sm);
+    }
+    
+    .log-chips-row {
+        gap: var(--spacing-xs);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .log-item-list {
+        padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .log-list-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-sm);
+        min-height: auto;
+    }
+    
+    .log-list-left {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .log-list-flag {
+        font-size: 20px;
+    }
+    
+    .log-list-location {
+        font-size: var(--font-sm);
+    }
+    
+    .log-list-dates {
+        font-size: var(--font-xs);
+    }
+    
+    .log-list-center {
+        justify-content: flex-start;
+    }
+    
+    .log-list-chips {
+        gap: var(--spacing-xs);
+    }
+    
+    .log-list-chip {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+    
+    .log-list-right {
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .log-list-rating {
+        font-size: var(--font-xs);
+    }
+    
+    .log-action-btn {
+        min-width: 40px;
+        height: 40px;
+        font-size: 14px;
+        padding: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .log-item-card {
+        padding: var(--spacing-sm);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .log-header {
+        gap: var(--spacing-xs);
+    }
+    
+    .log-country {
+        font-size: var(--font-sm);
+    }
+    
+    .log-city {
+        font-size: 11px;
+    }
+    
+    .log-chips-row {
+        gap: 4px;
+    }
+    
+    .log-item-list {
+        padding: var(--spacing-xs);
+        margin-bottom: 4px;
+    }
+    
+    .log-list-content {
+        gap: var(--spacing-xs);
+    }
+    
+    .log-list-flag {
+        font-size: 18px;
+    }
+    
+    .log-list-location {
+        font-size: var(--font-xs);
+    }
+    
+    .log-list-dates {
+        font-size: 10px;
+    }
+    
+    .log-list-chip {
+        font-size: 9px;
+        padding: 2px 4px;
+    }
+    
+    .log-action-btn {
+        min-width: 36px;
+        height: 36px;
+        font-size: 12px;
+        padding: 4px;
+    }
+}

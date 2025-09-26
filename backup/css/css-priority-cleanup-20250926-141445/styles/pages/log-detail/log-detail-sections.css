@@ -1,0 +1,276 @@
+/* 
+ * Log Detail Sections Styles
+ * 섹션별 스타일 (메모, 사진, 메타 등)
+ * @version 1.0.0
+ * @since 2024-12-29
+ * @module log-detail-sections
+ */
+
+/* 메모 섹션 */
+.detail-notes {
+    background: #fef5e7;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #f6ad55;
+}
+
+.notes-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #744210;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notes-content {
+    color: #744210;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* 사진 섹션 */
+.detail-photos {
+    background: #f0f9ff;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #0ea5e9;
+}
+
+.photos-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0c4a6e;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.log-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.log-photo {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.log-photo:hover {
+    transform: scale(1.05);
+}
+
+/* 메타 정보 */
+.detail-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-top: 1px solid #e2e8f0;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.meta-label {
+    color: #718096;
+    font-weight: 500;
+}
+
+.meta-value {
+    color: #4a5568;
+    font-weight: 600;
+}
+
+/* 요약 카드 스타일 */
+.summary-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.location-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.country-city {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.country {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.city {
+    font-size: 1.2rem;
+    color: #718096;
+    font-weight: 500;
+}
+
+.flag {
+    font-size: 3rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.trip-meta {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.trip-meta .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #f7fafc;
+    border-radius: 25px;
+    border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+}
+
+.meta-icon {
+    font-size: 1.2rem;
+}
+
+.meta-text {
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 16px;
+    color: white;
+}
+
+.date-range .date-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-range .date-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.date-range .date-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.date-separator {
+    font-size: 1.5rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.travel-style {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    background: #edf2f7;
+    border-radius: 12px;
+    border-left: 4px solid #4299e1;
+}
+
+.style-icon {
+    font-size: 1.3rem;
+}
+
+.style-text {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.memo-section {
+    background: #fef5e7;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #f6ad55;
+}
+
+.memo-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.memo-icon {
+    font-size: 1.2rem;
+}
+
+.memo-title {
+    font-weight: 600;
+    color: #744210;
+    font-size: 1.1rem;
+}
+
+.memo-content {
+    color: #744210;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* 섹션 공통 스타일 */
+.section-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 10px 0;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: #718096;
+    margin: 0;
+    font-weight: 400;
+}

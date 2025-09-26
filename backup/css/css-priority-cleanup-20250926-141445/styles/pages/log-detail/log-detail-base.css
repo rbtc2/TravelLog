@@ -1,0 +1,93 @@
+/* 
+ * Log Detail Base Styles
+ * 기본 컨테이너 및 공통 스타일
+ * @version 1.0.0
+ * @since 2024-12-29
+ * @module log-detail-base
+ */
+
+/* 기본 컨테이너 스타일 */
+.log-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: calc(20px + 100px); /* 탭 네비게이션 높이 + 여유 공간 */
+    min-height: calc(100vh - 100px); /* 최소 높이 보장 */
+}
+
+/* My Logs 탭용 로그 상세 헤더 - 네임스페이스 격리 */
+.my-logs-tab .log-detail-container .log-detail-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    gap: 16px;
+    min-height: 60px;
+}
+
+/* 데스크톱에서 My Logs 탭 로그 상세 헤더 개선 */
+@media (min-width: 1024px) {
+    .my-logs-tab .log-detail-container .log-detail-header {
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        min-height: 70px;
+    }
+}
+
+.my-logs-tab .log-detail-container .log-detail-country {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* 데스크톱에서 My Logs 탭 로그 상세 국가 정보 개선 */
+@media (min-width: 1024px) {
+    .my-logs-tab .log-detail-container .log-detail-country {
+        gap: 16px;
+    }
+}
+
+.country-flag {
+    font-size: 2rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.country-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.my-logs-tab .log-detail-container .log-detail-actions {
+    display: flex !important;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* 데스크톱에서 My Logs 탭 로그 상세 액션 버튼들 개선 */
+@media (min-width: 1024px) {
+    .my-logs-tab .log-detail-container .log-detail-actions {
+        gap: 16px;
+    }
+    
+    .my-logs-tab .log-detail-container .log-detail-actions .btn {
+        padding: 12px 20px;
+        font-size: 16px;
+        min-height: 48px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .my-logs-tab .log-detail-container .log-detail-actions .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+}

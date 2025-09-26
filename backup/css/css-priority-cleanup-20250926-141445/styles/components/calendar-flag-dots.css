@@ -1,0 +1,830 @@
+/**
+ * 캘린더 국기 도트 멀티 레이어 시스템 CSS
+ * TravelLog Calendar Flag Dots Multi-Layer System
+ * 
+ * @description 해외 체류 일정을 국기 도트와 멀티 레이어로 시각화하는 스타일
+ * @version 2.0.0
+ * @author TravelLog Team
+ */
+
+/* ========================================
+   여행 로그 표시기 컨테이너
+   ======================================== */
+.travel-log-indicators {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    pointer-events: auto;
+    overflow: hidden;
+    z-index: var(--z-content);
+}
+
+/* ========================================
+   국기 도트 개별 요소
+   ======================================== */
+.travel-log-indicator {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.travel-log-indicator:hover {
+    transform: scale(1.3);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    z-index: var(--z-elevated);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.travel-log-indicator:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+    transform: scale(1.2);
+}
+
+/* 여행 기간별 상태 표시 */
+.travel-log-indicator.start-day {
+    border: 2px solid #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+}
+
+.travel-log-indicator.end-day {
+    border: 2px dashed #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+}
+
+.travel-log-indicator.middle-day {
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+}
+
+/* 국기 이모지 */
+.flag-emoji {
+    font-size: 8px;
+    line-height: 1;
+    display: block;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+/* 시작/종료 표시기 */
+.start-indicator,
+.end-indicator {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    font-size: 4px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.start-indicator {
+    background: #10b981;
+    color: white;
+}
+
+.end-indicator {
+    background: #ef4444;
+    color: white;
+}
+
+/* ========================================
+   더 보기 카운터
+   ======================================== */
+.travel-log-more {
+    position: relative;
+    min-width: 16px;
+    height: 12px;
+    background: rgba(107, 114, 128, 0.9);
+    color: white;
+    border-radius: 6px;
+    font-size: 8px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.travel-log-more:hover {
+    transform: scale(1.2);
+    background: rgba(75, 85, 99, 0.95);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.travel-log-more:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+    transform: scale(1.1);
+}
+
+/* ========================================
+   툴팁 시스템
+   ======================================== */
+.calendar-tooltip {
+    position: absolute;
+    background: rgba(17, 24, 39, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    max-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none; /* 마우스 이벤트 방지 */
+    z-index: var(--z-modal);
+    will-change: opacity, transform; /* GPU 가속 */
+}
+
+.calendar-tooltip.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 툴팁 화살표 */
+.calendar-tooltip::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: rgba(17, 24, 39, 0.95);
+}
+
+/* 툴팁 내용 스타일 */
+.tooltip-content {
+    text-align: center;
+}
+
+.tooltip-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+
+.tooltip-flag {
+    font-size: 14px;
+}
+
+.tooltip-country {
+    color: #f3f4f6;
+}
+
+.tooltip-details {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+.tooltip-day {
+    margin-bottom: 2px;
+    font-weight: 500;
+}
+
+.tooltip-action {
+    font-style: italic;
+}
+
+.tooltip-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.tooltip-description {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* ========================================
+   캘린더 날짜 셀 개선
+   ======================================== */
+.calendar-day {
+    position: relative;
+    min-height: 80px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.calendar-day:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.calendar-day.has-travel-log {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.calendar-day.has-travel-log:hover {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.calendar-day.selected {
+    background: #dbeafe;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.calendar-day.today {
+    background: #fef3c7;
+    border-color: #f59e0b;
+}
+
+.calendar-day.today.has-travel-log {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+/* 날짜 숫자 스타일 */
+.day-number {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    z-index: var(--z-base);
+}
+
+.calendar-day.today .day-number {
+    color: #92400e;
+    font-weight: 600;
+}
+
+.calendar-day.selected .day-number {
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+/* ========================================
+   접근성 개선
+   ======================================== */
+.calendar-day:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
+    z-index: var(--z-content);
+}
+
+.calendar-day[tabindex="0"]:focus {
+    box-shadow: 0 0 0 2px #2563eb, 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+/* 스크린 리더 전용 텍스트 */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ========================================
+   반응형 디자인
+   ======================================== */
+@media (max-width: 768px) {
+    .calendar-day {
+        min-height: 60px;
+    }
+    
+    .travel-log-indicators {
+        height: 14px;
+        bottom: 2px;
+        left: 2px;
+        right: 2px;
+    }
+    
+    .travel-log-indicator {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .flag-emoji {
+        font-size: 6px;
+    }
+    
+    .travel-log-more {
+        height: 10px;
+        font-size: 6px;
+        min-width: 12px;
+    }
+    
+    .calendar-tooltip {
+        max-width: 160px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    /* 캘린더 상세 정보 모바일 최적화 */
+    .calendar-details {
+        margin-top: 16px;
+        padding: 12px;
+    }
+    
+    .details-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .details-header h3 {
+        font-size: 16px;
+    }
+    
+    .travel-log-item {
+        padding: 12px;
+    }
+    
+    .log-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .log-flag-country {
+        gap: 6px;
+    }
+    
+    .log-flag {
+        font-size: 18px;
+    }
+    
+    .log-country-name {
+        font-size: 13px;
+    }
+    
+    .log-country-code {
+        font-size: 10px;
+    }
+    
+    .log-title {
+        font-size: 14px;
+    }
+    
+    .log-details > div {
+        font-size: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .period-label,
+    .purpose-label,
+    .rating-label {
+        min-width: 35px;
+    }
+    
+    /* 미니멀 카드 모바일 최적화 */
+    .minimal-travel-card {
+        padding: 10px 12px;
+        min-height: 50px;
+    }
+    
+    .card-line-1 {
+        font-size: 13px;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+    
+    .card-flag {
+        font-size: 14px;
+    }
+    
+    .card-location {
+        font-size: 13px;
+    }
+    
+    .card-rating {
+        font-size: 12px;
+    }
+    
+    .card-line-2 {
+        font-size: 12px;
+    }
+    
+    .card-more-btn {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+    
+    /* 카드 별점 모바일 최적화 */
+    .card-rating {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-day {
+        min-height: 50px;
+    }
+    
+    .day-number {
+        font-size: 12px;
+    }
+    
+    .travel-log-indicators {
+        height: 12px;
+    }
+    
+    .travel-log-indicator {
+        width: 8px;
+        height: 8px;
+    }
+    
+    .flag-emoji {
+        font-size: 5px;
+    }
+    
+    .travel-log-more {
+        height: 8px;
+        font-size: 5px;
+        min-width: 10px;
+    }
+}
+
+/* ========================================
+   다크 모드 지원
+   ======================================== */
+@media (prefers-color-scheme: dark) {
+    .calendar-day {
+        background: #1f2937;
+        border-color: #374151;
+        color: #f9fafb;
+    }
+    
+    .calendar-day:hover {
+        background: #374151;
+        border-color: #4b5563;
+    }
+    
+    .calendar-day.has-travel-log {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+    
+    .calendar-day.has-travel-log:hover {
+        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    }
+    
+    .calendar-day.selected {
+        background: #1e3a8a;
+        border-color: #3b82f6;
+    }
+    
+    .calendar-day.today {
+        background: #78350f;
+        border-color: #f59e0b;
+    }
+    
+    .day-number {
+        color: #f9fafb;
+    }
+    
+    .calendar-day.today .day-number {
+        color: #fbbf24;
+    }
+    
+    .calendar-day.selected .day-number {
+        color: #93c5fd;
+    }
+    
+    .travel-log-indicator {
+        background: rgba(31, 41, 55, 0.95);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .travel-log-more {
+        background: rgba(75, 85, 99, 0.9);
+    }
+    
+    /* 캘린더 상세 정보 다크 모드 */
+    .calendar-details {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .details-header h3 {
+        color: #f9fafb;
+    }
+    
+    .travel-log-item {
+        background: #111827;
+        border-color: #374151;
+    }
+    
+    .travel-log-item:hover {
+        background: #1f2937;
+        border-color: #4b5563;
+    }
+    
+    .log-country-name {
+        color: #f9fafb;
+    }
+    
+    .log-title {
+        color: #f9fafb;
+    }
+    
+    .period-value,
+    .purpose-value {
+        color: #d1d5db;
+    }
+    
+    .placeholder-title {
+        color: #f9fafb;
+    }
+    
+    /* 미니멀 카드 다크 모드 */
+    .minimal-travel-card {
+        background: #111827;
+        border-color: #374151;
+    }
+    
+    .minimal-travel-card:hover {
+        background: #1f2937;
+        border-color: #4b5563;
+    }
+    
+    .card-location {
+        color: #f9fafb;
+    }
+    
+    .card-period {
+        color: #d1d5db;
+    }
+    
+    
+    /* 카드 별점 다크 모드 */
+    .card-rating {
+        color: #fbbf24;
+    }
+}
+
+/* ========================================
+   애니메이션 최적화
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    .travel-log-indicator,
+    .travel-log-more,
+    .calendar-tooltip,
+    .calendar-day {
+        transition: none;
+    }
+    
+    .travel-log-indicator:hover,
+    .travel-log-more:hover {
+        transform: none;
+    }
+}
+
+/* ========================================
+   캘린더 상세 정보 스타일 (미니멀 카드 디자인)
+   ======================================== */
+.calendar-details {
+    margin-top: 20px;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+}
+
+.details-content {
+    width: 100%;
+}
+
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.details-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.travel-count {
+    background: #3b82f6;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.travel-logs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ========================================
+   미니멀 여행 카드 스타일
+   ======================================== */
+.minimal-travel-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    height: auto;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.minimal-travel-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-line-1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.card-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.card-flag {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.card-location {
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-rating {
+    flex-shrink: 0;
+    margin-left: 12px;
+    color: #f59e0b;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.card-line-2 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.card-period {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+
+
+/* 플레이스홀더 스타일 */
+.details-placeholder {
+    text-align: center;
+    padding: 20px 16px;
+    color: #6b7280;
+}
+
+.placeholder-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+}
+
+.placeholder-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.placeholder-description {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #6b7280;
+}
+
+/* ========================================
+   에러 상태 스타일
+   ======================================== */
+.calendar-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.error-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.error-message {
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: #374151;
+}
+
+.retry-btn {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.retry-btn:hover {
+    background: #1d4ed8;
+}
+
+.retry-btn:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+/* ========================================
+   고대비 모드 지원
+   ======================================== */
+@media (prefers-contrast: high) {
+    .travel-log-indicator.start-day,
+    .travel-log-indicator.end-day {
+        border-width: 3px;
+        border-color: #0000ff;
+    }
+    
+    .travel-log-indicator.middle-day {
+        background: #e6f3ff;
+        border: 2px solid #0000ff;
+    }
+    
+    .travel-log-indicator {
+        border-width: 2px;
+        border-color: #000000;
+    }
+    
+    .calendar-day:focus {
+        outline-width: 3px;
+    }
+}

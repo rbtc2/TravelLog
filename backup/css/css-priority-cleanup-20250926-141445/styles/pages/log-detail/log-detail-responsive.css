@@ -163,9 +163,9 @@
         font-size: 1.1rem;
     }
     
-     /* 세로 배치된 날짜 정보 모바일 스타일 - 가로 배치 유지 - !important 제거 */
+     /* 세로 배치된 날짜 정보 모바일 스타일 - 가로 배치 유지 */
      .detail-dates-vertical {
-         flex-direction: row;
+         flex-direction: row !important;
          gap: 15px;
          padding: 15px;
          margin-bottom: 15px;
@@ -400,9 +400,9 @@
         padding-bottom: calc(8px + 80px);
     }
     
-    /* 480px 이하에서도 가로 배치 유지 - !important 제거 */
+    /* 480px 이하에서도 가로 배치 유지 */
     .detail-dates-vertical {
-        flex-direction: row;
+        flex-direction: row !important;
         gap: 12px;
         padding: 12px;
         margin-bottom: 12px;
@@ -410,7 +410,7 @@
     }
     
     .date-range {
-        flex-direction: row;
+        flex-direction: row !important;
         gap: 8px;
         padding: 12px;
     }

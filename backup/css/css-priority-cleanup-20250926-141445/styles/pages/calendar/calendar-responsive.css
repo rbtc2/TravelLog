@@ -52,7 +52,7 @@
     }
     
     .calendar-navigation .nav-label {
-        display: inline; /* 모바일에서도 텍스트 표시 - !important 제거 */
+        display: inline !important; /* 모바일에서도 텍스트 표시 */
     }
     
     /* 모바일에서 버튼 순서 재배치 */
@@ -154,7 +154,7 @@
     }
     
     .calendar-navigation .nav-label {
-        display: none; /* 매우 작은 화면에서만 아이콘만 표시 - !important 제거 */
+        display: none !important; /* 매우 작은 화면에서만 아이콘만 표시 */
     }
     
     .view-icon {

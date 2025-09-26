@@ -1,0 +1,329 @@
+/* ===== 캘린더 그리드 스타일 ===== */
+
+/* 캘린더 그리드 컨테이너 - 스크롤 완전 제거 */
+.calendar-grid-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    /* 스크롤 완전 제거 - 상위 컨테이너에서만 스크롤 */
+    overflow: visible !important;
+    margin-bottom: 30px;
+    /* 하드웨어 가속 */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* 다크모드 캘린더 그리드 컨테이너 */
+.dark .calendar-grid-container {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 다크모드 캘린더 그리드 */
+.dark .calendar-grid {
+    background: var(--bg-secondary, #2d2d2d);
+}
+
+.calendar-grid {
+    width: 100%;
+}
+
+/* 요일 헤더 */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #f7fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.weekday {
+    padding: 16px 8px;
+    text-align: center;
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    font-size: 14px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.weekday:last-child {
+    border-right: none;
+}
+
+/* 일요일과 토요일 스타일 */
+.weekday:first-child {
+    color: #e53e3e; /* 일요일 빨간색 */
+}
+
+.weekday:last-child {
+    color: #3182ce; /* 토요일 파란색 */
+}
+
+/* 다크모드 요일 헤더 */
+.dark .calendar-weekdays {
+    background: var(--bg-tertiary, #2d3748);
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+.dark .weekday {
+    color: var(--text-primary, #f7fafc);
+    border-right-color: var(--gray-400, #718096);
+}
+
+.dark .weekday:first-child {
+    color: #ff6b6b; /* 다크모드 일요일 빨간색 */
+}
+
+.dark .weekday:last-child {
+    color: #4dabf7; /* 다크모드 토요일 파란색 */
+}
+
+/* 날짜 그리드 */
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+}
+
+.calendar-day {
+    position: relative;
+    min-height: 140px; /* 바 형태 시스템을 위해 높이 증가 */
+    padding: 12px 8px;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.calendar-day:last-child {
+    border-right: none;
+}
+
+.calendar-day:hover {
+    background: #f7fafc;
+    transform: scale(1.02);
+    z-index: var(--z-base);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 다크모드 날짜 셀 */
+.dark .calendar-day {
+    background: var(--bg-secondary, #2d2d2d);
+    border-right-color: var(--gray-400, #718096);
+    border-bottom-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .calendar-day:hover {
+    background: var(--bg-tertiary, #2d3748);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 다른 달 날짜 */
+.calendar-day.other-month {
+    background: #f8f9fa;
+    color: #a0aec0;
+}
+
+.calendar-day.other-month:hover {
+    background: #edf2f7;
+    color: var(--text-secondary);
+}
+
+/* 오늘 날짜 - 높은 특이성으로 !important 제거 */
+.calendar-day.today {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: var(--font-bold);
+    position: relative;
+    z-index: var(--z-elevated);
+}
+
+/* 다크모드 다른 달 날짜 */
+.dark .calendar-day.other-month {
+    background: var(--bg-tertiary, #2d3748);
+    color: var(--text-muted, #a0aec0);
+}
+
+.dark .calendar-day.other-month:hover {
+    background: var(--gray-200, #4a5568);
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 다크모드 오늘 날짜 - 높은 특이성으로 !important 제거 */
+.dark .calendar-day.today {
+    background: linear-gradient(135deg, #4dabf7 0%, #9775fa 100%);
+    color: white;
+    position: relative;
+    z-index: var(--z-elevated);
+}
+
+.dark .calendar-day.today .day-number {
+    color: white;
+    font-weight: var(--font-bold);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.calendar-day.today:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    color: white;
+    transform: scale(1.05);
+}
+
+/* 선택된 날짜 */
+.calendar-day.selected {
+    background: #e6fffa;
+    border: 2px solid #38b2ac;
+    box-shadow: 0 0 0 3px rgba(56, 178, 172, 0.1);
+}
+
+.calendar-day.selected:hover {
+    background: #b2f5ea;
+}
+
+/* 다크모드 선택된 날짜 */
+.dark .calendar-day.selected {
+    background: var(--bg-tertiary, #2d3748);
+    border: 2px solid #4dabf7;
+    box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .calendar-day.selected:hover {
+    background: var(--gray-200, #4a5568);
+}
+
+/* 여행 로그가 있는 날짜 - 미묘한 중성 톤 */
+.calendar-day.has-travel-log {
+    background: linear-gradient(135deg, #fafbff 0%, #f8fafc 100%);
+    border-left: 2px solid #e2e8f0;
+}
+
+.calendar-day.has-travel-log:hover {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+/* 다크모드 여행 로그가 있는 날짜 - 미묘한 중성 톤 */
+.dark .calendar-day.has-travel-log {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    border-left: 2px solid #4a5568;
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .calendar-day.has-travel-log:hover {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+}
+
+/* 날짜 번호 */
+.day-number {
+    font-size: 16px;
+    font-weight: var(--font-semibold);
+    margin-bottom: 8px;
+    line-height: 1;
+}
+
+.calendar-day.today .day-number {
+    color: white;
+    font-weight: var(--font-bold);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 오늘 표시기 */
+.today-indicator {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+}
+
+/* ===== 여행 로그 표시기 (레거시 - 호환성 유지) ===== */
+.travel-log-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: auto;
+    width: 100%;
+}
+
+.travel-log-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    font-size: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.travel-log-indicator:hover {
+    transform: scale(1.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.travel-log-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: var(--font-bold);
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.travel-log-more:hover {
+    background: #5a67d8;
+    transform: scale(1.2);
+}
+
+/* 다크모드 여행 로그 표시기 */
+.dark .travel-log-indicator {
+    background: var(--bg-primary, #1a1a1a);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dark .travel-log-indicator:hover {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.dark .travel-log-more {
+    background: #4dabf7;
+    color: white;
+    box-shadow: 0 2px 4px rgba(77, 171, 247, 0.3);
+}
+
+.dark .travel-log-more:hover {
+    background: #339af0;
+    box-shadow: 0 4px 8px rgba(77, 171, 247, 0.4);
+}

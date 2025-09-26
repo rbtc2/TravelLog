@@ -1,0 +1,243 @@
+/* ========================================
+ * CountrySelector - 통합 스타일 시스템
+ * DOM 구조와 CSS 완전 통합
+ * ======================================== */
+
+/* 국가 선택기 컨테이너 - 통합 스타일 */
+.country-selector-container {
+    position: relative;
+    width: 100%;
+    font-family: var(--font-family-base);
+    /* Portal 시스템이 z-index 문제를 해결 */
+}
+
+/* 입력 필드 스타일링 */
+.country-selector-container .selector-input {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.country-selector-container .selector-input input {
+    width: 100%;
+    padding: 12px 40px 12px 16px; /* 오른쪽 패딩 추가 (화살표 공간) */
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 16px;
+    background: #ffffff;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
+    font-family: var(--font-family-base);
+}
+
+.country-selector-container .selector-input input:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.country-selector-container .selector-input input::placeholder {
+    color: #9ca3af;
+}
+
+/* 드롭다운 화살표 */
+.country-selector-container .dropdown-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #6b7280;
+    transition: color 0.3s ease;
+    z-index: var(--z-elevated);
+}
+
+.country-selector-container .dropdown-arrow:hover {
+    color: #667eea;
+}
+
+.country-selector-container .arrow-icon {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.country-selector-container.open .arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* 드롭다운 - Portal 방식으로 body에 직접 추가될 스타일 */
+.country-selector-portal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: var(--z-country-portal);
+}
+
+.country-selector-portal .selector-dropdown {
+    position: absolute;
+    background: #ffffff;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 4px;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.country-selector-portal .selector-dropdown.open {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 드롭다운 내용 */
+.country-selector-portal .countries-section {
+    padding: 16px;
+}
+
+.country-selector-portal .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.country-selector-portal .countries-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.country-selector-portal .country-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+    gap: 12px;
+}
+
+.country-selector-portal .country-item:hover,
+.country-selector-portal .country-item.selected {
+    background-color: #f3f4f6;
+}
+
+.country-selector-portal .country-flag {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.country-selector-portal .country-name {
+    font-weight: 500;
+    color: #111827;
+    flex: 1;
+}
+
+.country-selector-portal .country-name-en {
+    font-size: 14px;
+    color: #6b7280;
+    margin-left: 8px;
+}
+
+/* 검색 결과 없음 */
+.country-selector-portal .no-countries {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+    .country-selector-portal .selector-dropdown {
+        position: fixed !important;
+        top: 50% !important;
+        left: 20px !important;
+        right: 20px !important;
+        transform: translateY(-50%) !important;
+        max-height: 70vh;
+        margin-top: 0 !important;
+    }
+    
+    .country-selector-portal .selector-dropdown.open {
+        transform: translateY(-50%) !important;
+    }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    .country-selector-container .selector-input input {
+        background: #1f2937;
+        border-color: #374151;
+        color: #f9fafb;
+    }
+    
+    .country-selector-container .selector-input input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+    
+    .country-selector-container .selector-input input::placeholder {
+        color: #9ca3af;
+    }
+    
+    .country-selector-portal .selector-dropdown {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .country-selector-portal .section-title {
+        color: #f9fafb;
+        border-bottom-color: #374151;
+    }
+    
+    .country-selector-portal .country-item:hover,
+    .country-selector-portal .country-item.selected {
+        background-color: #374151;
+    }
+    
+    .country-selector-portal .country-name {
+        color: #f9fafb;
+    }
+    
+    .country-selector-portal .country-name-en {
+        color: #9ca3af;
+    }
+    
+    .country-selector-portal .no-countries {
+        color: #9ca3af;
+    }
+}
+
+/* 접근성 개선 */
+.country-selector-container .selector-input input:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+.country-selector-portal .country-item:focus {
+    outline: 2px solid #667eea;
+    outline-offset: -2px;
+}
+
+/* 애니메이션 성능 최적화 */
+.country-selector-portal .selector-dropdown {
+    will-change: transform, opacity;
+}
+
+.country-selector-container .arrow-icon {
+    will-change: transform;
+}

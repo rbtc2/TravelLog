@@ -1,0 +1,222 @@
+/* ===== 로그아웃 확인 모달 스타일 ===== */
+
+.logout-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-modal);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-normal);
+}
+
+.logout-confirmation-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.logout-confirmation-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+}
+
+/* 다크모드 오버레이 */
+.dark .logout-confirmation-overlay {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+}
+
+.logout-confirmation-content {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 400px;
+    width: 100%;
+    transform: scale(0.9);
+    transition: transform var(--transition-normal);
+    overflow: hidden;
+}
+
+.logout-confirmation-modal.show .logout-confirmation-content {
+    transform: scale(1);
+}
+
+/* 다크모드 모달 컨텐츠 */
+.dark .logout-confirmation-content {
+    background: var(--bg-secondary, #2d2d2d);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.logout-confirmation-header {
+    padding: var(--spacing-xl);
+    text-align: center;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+/* 다크모드 헤더 */
+.dark .logout-confirmation-header {
+    border-bottom-color: var(--gray-400, #718096);
+}
+
+.logout-confirmation-title {
+    color: var(--text-primary);
+    font-size: var(--font-xl);
+    font-weight: var(--font-semibold);
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+/* 다크모드 제목 */
+.dark .logout-confirmation-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.logout-confirmation-message {
+    color: var(--text-secondary);
+    font-size: var(--font-base);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* 다크모드 메시지 */
+.dark .logout-confirmation-message {
+    color: var(--text-secondary, #a0aec0);
+}
+
+.logout-confirmation-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-xl);
+}
+
+.logout-confirmation-btn {
+    flex: 1;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-base);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+}
+
+.logout-confirmation-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.logout-confirmation-btn.cancel-btn {
+    background: var(--gray-100);
+    color: var(--text-primary);
+    border: 1px solid var(--gray-300);
+}
+
+.logout-confirmation-btn.cancel-btn:hover:not(:disabled) {
+    background: var(--gray-200);
+    border-color: var(--gray-400);
+    transform: translateY(-1px);
+}
+
+.logout-confirmation-btn.confirm-btn {
+    background: var(--error-color);
+    color: var(--white);
+    border: 1px solid var(--error-color);
+}
+
+.logout-confirmation-btn.confirm-btn:hover:not(:disabled) {
+    background: var(--error-dark);
+    border-color: var(--error-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+/* 다크모드 버튼 */
+.dark .logout-confirmation-btn.cancel-btn {
+    background: var(--gray-100, #4a5568);
+    color: var(--text-primary, #f7fafc);
+    border-color: var(--gray-400, #718096);
+}
+
+.dark .logout-confirmation-btn.cancel-btn:hover:not(:disabled) {
+    background: var(--gray-200, #2d3748);
+    border-color: var(--gray-500, #4a5568);
+}
+
+.dark .logout-confirmation-btn.confirm-btn {
+    background: var(--error-color, #e53e3e);
+    border-color: var(--error-color, #e53e3e);
+}
+
+.dark .logout-confirmation-btn.confirm-btn:hover:not(:disabled) {
+    background: var(--error-dark, #c53030);
+    border-color: var(--error-dark, #c53030);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 480px) {
+    .logout-confirmation-overlay {
+        padding: var(--spacing-md);
+    }
+    
+    .logout-confirmation-content {
+        max-width: 100%;
+    }
+    
+    .logout-confirmation-header {
+        padding: var(--spacing-lg);
+    }
+    
+    .logout-confirmation-actions {
+        padding: var(--spacing-lg);
+        flex-direction: column;
+    }
+    
+    .logout-confirmation-btn {
+        width: 100%;
+    }
+}
+
+/* 애니메이션 */
+@keyframes logoutModalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes logoutModalFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+.logout-confirmation-modal.show .logout-confirmation-content {
+    animation: logoutModalFadeIn 0.3s ease-out;
+}
+
+.logout-confirmation-modal:not(.show) .logout-confirmation-content {
+    animation: logoutModalFadeOut 0.3s ease-in;
+}

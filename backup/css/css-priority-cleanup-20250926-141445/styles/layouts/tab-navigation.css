@@ -1,0 +1,55 @@
+/* ===== 탭 네비게이션 레이아웃 스타일 ===== */
+/* 
+ * Phase 4: 완전한 중앙화 및 최적화
+ * 기존 #tab-navigation 스타일을 완전히 제거하고 새로운 네비게이션 컴포넌트로 이전
+ */
+
+/* Phase 4: 기존 #tab-navigation 스타일 완전 제거 */
+/* 
+ * 기존 스타일은 이제 styles/components/navigation.css에서 관리
+ * 이 파일은 레이아웃 관련 설정만 유지
+ */
+
+/* 네비게이션 컨테이너 레이아웃 설정 */
+.navigation-container {
+    /* Phase 4: 완전한 중앙화 - 모든 스타일을 navigation.css로 이전 */
+    /* 기본 레이아웃 속성만 유지 */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+}
+
+/* Phase 4 완료 후 제거 예정: 기존 #tab-navigation 스타일 */
+/*
+#tab-navigation {
+    display: flex;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--gray-200);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+    height: var(--navigation-height, 80px);
+}
+
+.navigation-container {
+    display: flex;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--gray-200);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+    height: var(--navigation-height, 80px);
+}
+*/
+
+/* 탭 버튼 스타일은 components/buttons.css로 분리됨 */

@@ -1,0 +1,204 @@
+/* 
+ * Log Detail Dark Mode Styles
+ * 다크모드 스타일
+ * @version 1.0.0
+ * @since 2024-12-29
+ * @module log-detail-dark-mode
+ */
+
+/* 다크모드 뒤로 가기 버튼 */
+.dark .top-actions .back-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--gray-400, #718096);
+    color: var(--text-primary, #f7fafc);
+}
+
+/* 다크모드 기본 컨테이너 */
+.dark .log-detail-container {
+    background: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
+}
+
+/* 다크모드 컴팩트 섹션 */
+.dark .detail-section-compact {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+    color: var(--text-primary, #f7fafc);
+}
+
+/* 다크모드 도시 정보 */
+.dark .detail-city {
+    color: var(--text-primary, #f7fafc);
+}
+
+/* 다크모드 목적 */
+.dark .detail-purpose {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 다크모드 메모 섹션 */
+.dark .detail-notes {
+    background: var(--warning-background, #2d1b00);
+    border-left-color: var(--warning-primary, #f6ad55);
+}
+
+.dark .notes-label {
+    color: var(--warning-primary, #f6ad55);
+}
+
+.dark .notes-content {
+    color: var(--warning-primary, #f6ad55);
+}
+
+/* 다크모드 사진 섹션 */
+.dark .detail-photos {
+    background: var(--accent-background, #1e3a8a);
+    border-left-color: var(--accent-primary, #3b82f6);
+}
+
+.dark .photos-label {
+    color: var(--accent-primary, #3b82f6);
+}
+
+/* 다크모드 메타 정보 */
+.dark .detail-meta {
+    border-top-color: var(--border-medium, #4a5568);
+}
+
+.dark .meta-label {
+    color: var(--text-tertiary, #9ca3af);
+}
+
+.dark .meta-value {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 다크모드 요약 카드 */
+.dark .summary-card {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .country {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .city {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .meta-item {
+    background: var(--bg-tertiary, #374151);
+    border-color: var(--border-medium, #4a5568);
+}
+
+.dark .meta-text {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .travel-style {
+    background: var(--bg-tertiary, #374151);
+    border-left-color: var(--accent-primary, #3b82f6);
+}
+
+.dark .style-text {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .memo-section {
+    background: var(--warning-background, #2d1b00);
+    border-left-color: var(--warning-primary, #f6ad55);
+}
+
+.dark .memo-title {
+    color: var(--warning-primary, #f6ad55);
+}
+
+.dark .memo-content {
+    color: var(--warning-primary, #f6ad55);
+}
+
+/* 다크모드 섹션 헤더 */
+.dark .section-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .section-subtitle {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 다크모드 분석 카드 */
+.dark .analysis-card {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+}
+
+.dark .card-title {
+    color: var(--text-primary, #f7fafc);
+}
+
+.dark .card-status {
+    background: var(--error-background, #2d1b1b);
+    color: var(--error-primary, #f87171);
+}
+
+/* 다크모드 지도 컨테이너 */
+.dark .map-container {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+}
+
+.dark .map-text {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .map-subtext {
+    color: var(--text-tertiary, #9ca3af);
+}
+
+.dark .map-btn {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+    color: var(--text-tertiary, #9ca3af);
+}
+
+.dark .map-btn:hover:not(.disabled) {
+    border-color: var(--accent-primary, #3b82f6);
+    color: var(--accent-primary, #3b82f6);
+}
+
+/* 다크모드 통계 카드 */
+.dark .stat-card {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+}
+
+.dark .stat-title {
+    color: var(--text-secondary, #e2e8f0);
+}
+
+/* 다크모드 액션 버튼 */
+.dark .action-btn.secondary {
+    background: var(--bg-secondary, #2d2d2d);
+    border-color: var(--border-medium, #4a5568);
+    color: var(--text-secondary, #e2e8f0);
+}
+
+.dark .action-btn.secondary:hover {
+    border-color: var(--accent-primary, #3b82f6);
+    color: var(--accent-primary, #3b82f6);
+}
+
+/* 다크모드 스켈레톤 */
+.dark .skeleton-item {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+}
+
+.dark .skeleton-value {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+}
+
+.dark .skeleton-label {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+}

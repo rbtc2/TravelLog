@@ -1,0 +1,352 @@
+/* ========================================
+ * Z-Index Conflict Resolution Utilities
+ * ========================================
+ * 
+ * 이 파일은 z-index 충돌을 감지하고 해결하는 유틸리티 클래스들을 제공합니다.
+ * Country Selector와 다른 UI 요소들 간의 충돌을 자동으로 방지합니다.
+ * 
+ * 주요 기능:
+ * - 자동 충돌 감지 및 해결
+ * - 동적 z-index 조정
+ * - 폴백 메커니즘 제공
+ * - 개발자 도구 지원
+ */
+
+/* ===== CONFLICT DETECTION SYSTEM ===== */
+
+/* 
+ * 충돌 감지를 위한 CSS 변수들
+ * JavaScript에서 동적으로 업데이트됩니다.
+ */
+:root {
+    /* 현재 활성화된 드롭다운/모달의 z-index */
+    --active-dropdown-z: 0;
+    --active-modal-z: 0;
+    --active-tooltip-z: 0;
+    
+    /* Country Selector 우선순위 */
+    --country-selector-priority: 1;
+    
+    /* 충돌 해결을 위한 동적 z-index */
+    --dynamic-z-base: 0;
+    --dynamic-z-dropdown: 0;
+    --dynamic-z-modal: 0;
+}
+
+/* ===== AUTOMATIC CONFLICT RESOLUTION ===== */
+
+/* 
+ * Country Selector가 다른 요소와 충돌할 때 자동으로 해결
+ * CSS의 :has() 선택자를 사용하여 충돌 상황 감지
+ */
+
+/* 모달이 열려있을 때 Country Selector 우선순위 조정 */
+body:has(.modal.open) .country-selector {
+    z-index: calc(var(--z-modal) + 10);
+}
+
+/* 다른 드롭다운이 열려있을 때 Country Selector 우선순위 조정 */
+body:has(.dropdown.open:not(.country-selector)) .country-selector {
+    z-index: calc(var(--z-dropdown) + 20);
+}
+
+/* 툴팁이 표시될 때 Country Selector 우선순위 조정 */
+body:has(.tooltip.visible) .country-selector {
+    z-index: calc(var(--z-tooltip) + 10);
+}
+
+/* ===== DYNAMIC Z-INDEX ADJUSTMENT ===== */
+
+/* 
+ * JavaScript에서 동적으로 z-index를 조정할 때 사용하는 클래스들
+ */
+
+/* Country Selector 동적 우선순위 */
+.country-selector.dynamic-priority {
+    z-index: var(--dynamic-z-dropdown);
+    transition: z-index 0.3s ease;
+}
+
+/* 모달과의 충돌 해결 */
+.country-selector.modal-conflict {
+    z-index: calc(var(--z-modal) + 50);
+}
+
+/* 다른 드롭다운과의 충돌 해결 */
+.country-selector.dropdown-conflict {
+    z-index: calc(var(--z-dropdown) + 100);
+}
+
+/* 폼 요소와의 충돌 해결 */
+.country-selector.form-conflict {
+    z-index: calc(var(--z-form-overlay) + 10);
+}
+
+/* ===== FALLBACK MECHANISMS ===== */
+
+/* 
+ * 모바일 환경에서의 폴백 메커니즘
+ * 작은 화면에서는 fullscreen 모달로 전환
+ */
+
+@media (max-width: 768px) {
+    /* 모바일에서 Country Selector가 다른 요소에 가려질 때 */
+    .country-selector.mobile-fallback {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: var(--z-system-overlay);
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+    }
+    
+    .country-selector-v2.mobile-fallback .selector-dropdown {
+        position: fixed;
+        top: 50%;
+        left: 20px;
+        right: 20px;
+        transform: translateY(-50%);
+        max-height: 70vh;
+        z-index: calc(var(--z-system-overlay) + 10);
+    }
+}
+
+/* ===== ISOLATION STRATEGIES ===== */
+
+/* 
+ * Stacking Context 격리를 위한 유틸리티 클래스들
+ */
+
+/* 독립적인 stacking context 생성 */
+.isolate-stacking-context {
+    isolation: isolate;
+    position: relative;
+}
+
+/* 새로운 stacking context 생성 */
+.create-stacking-context {
+    position: relative;
+    z-index: var(--z-base);
+}
+
+/* 부모 stacking context에서 분리 */
+.break-stacking-context {
+    position: fixed;
+    z-index: var(--z-country-dropdown);
+}
+
+/* ===== CONFLICT PREVENTION ===== */
+
+/* 
+ * 충돌을 사전에 방지하는 유틸리티 클래스들
+ */
+
+/* 다른 요소들이 Country Selector를 가리지 않도록 */
+.prevent-overlap {
+    z-index: var(--z-base);
+}
+
+/* Country Selector가 열렸을 때 다른 요소들 숨김 */
+.country-selector.open ~ * {
+    z-index: var(--z-base);
+}
+
+/* 특정 요소들만 낮은 z-index로 설정 */
+.low-priority {
+    z-index: var(--z-base);
+}
+
+.medium-priority {
+    z-index: var(--z-content);
+}
+
+.high-priority {
+    z-index: var(--z-country-selector);
+}
+
+/* ===== DEBUGGING UTILITIES ===== */
+
+/* 
+ * 개발 환경에서 z-index 충돌을 시각적으로 확인할 수 있는 도구들
+ */
+
+/* z-index 시각화 */
+.debug-z-index .country-selector {
+    outline: 3px solid #ff0000;
+    outline-offset: 3px;
+}
+
+.debug-z-index .country-selector .selector-dropdown {
+    outline: 3px solid #00ff00;
+    outline-offset: 3px;
+}
+
+.debug-z-index .modal {
+    outline: 3px solid #0000ff;
+    outline-offset: 3px;
+}
+
+.debug-z-index .dropdown:not(.country-selector) {
+    outline: 3px solid #ffff00;
+    outline-offset: 3px;
+}
+
+/* z-index 값 표시 */
+.debug-z-index .country-selector::after {
+    content: "CS: " attr(data-z-index);
+    position: absolute;
+    top: -25px;
+    left: 0;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    border-radius: 3px;
+    z-index: var(--z-country-portal);
+}
+
+.debug-z-index .modal::after {
+    content: "Modal: " attr(data-z-index);
+    position: absolute;
+    top: -25px;
+    left: 0;
+    background: rgba(0, 0, 255, 0.8);
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    border-radius: 3px;
+    z-index: var(--z-country-portal);
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+
+/* 
+ * z-index 변경 시 성능 최적화
+ */
+
+/* GPU 가속 활성화 */
+.gpu-accelerated {
+    will-change: transform, z-index;
+    transform: translateZ(0);
+}
+
+/* 리페인트 최소화 */
+.optimize-repaint {
+    contain: layout style paint;
+}
+
+/* ===== ACCESSIBILITY CONSIDERATIONS ===== */
+
+/* 
+ * 접근성을 고려한 z-index 관리
+ */
+
+/* 스크린 리더를 위한 z-index 정보 */
+.sr-z-index-info {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 포커스 트랩을 위한 z-index 관리 */
+.focus-trap {
+    z-index: var(--z-country-dropdown);
+}
+
+/* ===== BROWSER COMPATIBILITY ===== */
+
+/* 
+ * 다양한 브라우저에서의 z-index 호환성 보장
+ */
+
+/* Safari에서의 z-index 버그 수정 */
+@supports (-webkit-appearance: none) {
+    .country-selector {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}
+
+/* Firefox에서의 z-index 최적화 */
+@-moz-document url-prefix() {
+    .country-selector .selector-dropdown {
+        -moz-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}
+
+/* ===== RESPONSIVE Z-INDEX MANAGEMENT ===== */
+
+/* 
+ * 반응형 환경에서의 z-index 관리
+ */
+
+/* 태블릿 환경 */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .country-selector {
+        z-index: calc(var(--z-country-selector) + 10);
+    }
+    
+    .country-selector .selector-dropdown {
+        z-index: calc(var(--z-country-dropdown) + 10);
+    }
+}
+
+/* 데스크톱 환경 */
+@media (min-width: 1024px) {
+    .country-selector {
+        z-index: var(--z-country-selector);
+    }
+    
+    .country-selector .selector-dropdown {
+        z-index: var(--z-country-dropdown);
+    }
+}
+
+/* ===== EMERGENCY OVERRIDE ===== */
+
+/* 
+ * 긴급 상황에서 사용할 수 있는 강제 우선순위 클래스
+ * 일반적인 상황에서는 사용하지 않는 것을 권장
+ */
+
+.force-top-priority {
+    z-index: var(--z-country-portal) !important;
+    position: relative !important;
+}
+
+.force-country-selector-top {
+    z-index: calc(var(--z-country-dropdown) + 1000) !important;
+}
+
+/* ===== CONFLICT RESOLUTION LOGGING ===== */
+
+/* 
+ * 개발 환경에서 충돌 해결 과정을 로깅하기 위한 스타일
+ */
+
+.log-conflict-resolution .country-selector {
+    border: 2px dashed #ff6b6b;
+}
+
+.log-conflict-resolution .country-selector.conflict-resolved {
+    border-color: #48bb78;
+}
+
+.log-conflict-resolution .country-selector.conflict-failed {
+    border-color: #e53e3e;
+    animation: conflict-warning 1s infinite;
+}
+
+@keyframes conflict-warning {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}

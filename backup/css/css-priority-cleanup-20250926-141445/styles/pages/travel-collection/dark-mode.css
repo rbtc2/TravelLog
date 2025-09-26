@@ -1,0 +1,184 @@
+/**
+ * Travel Collection - Dark Mode Module
+ * 
+ * @description 다크모드 관련 스타일
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+
+/* ===============================
+   다크모드 지원 (전체)
+   =============================== */
+
+/* 다크모드 스타일 - 높은 특이성으로 !important 제거 */
+.dark .collection-content {
+    background: var(--gray-900);
+    color: var(--gray-100);
+}
+
+.dark .collection-items {
+    background: transparent;
+}
+
+.dark .countries-grid {
+    background: transparent;
+}
+
+/* ===============================
+   다크모드 스타일 (통합)
+   =============================== */
+
+.dark .visited-country-card {
+    background: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    color: var(--gray-100);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .visited-country-card:hover {
+    background: var(--gray-700);
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dark .visited-country-card {
+    @media (max-width: 768px) {
+        margin-bottom: var(--spacing-sm);
+    }
+}
+
+.dark .country-flag-section {
+    background: var(--gray-700);
+}
+
+.dark .country-flag-large {
+    filter: brightness(1.1);
+}
+
+.dark .country-basic-info {
+    background: transparent;
+}
+
+.dark .country-name {
+    color: var(--gray-100);
+}
+
+.dark .country-name-en {
+    color: var(--gray-300);
+}
+
+.dark .country-visit-stats {
+    background: var(--gray-700);
+}
+
+.dark .visit-count-badge {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.dark .empty-state {
+    background: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    color: var(--gray-300);
+}
+
+.dark .empty-state h3 {
+    color: var(--gray-100);
+}
+
+.dark .loading-indicator {
+    color: var(--gray-300);
+}
+
+.dark .loading-spinner {
+    border-color: var(--gray-600);
+    border-top-color: var(--primary-color);
+}
+
+.dark .error-message {
+    background: var(--gray-800);
+    border: 1px solid var(--red-500);
+    color: var(--red-300);
+}
+
+/* ===============================
+   다크모드 지원 (기본 카드들)
+   =============================== */
+
+@media (prefers-color-scheme: dark) {
+    .country-card {
+        background: var(--gray-800);
+        border-color: var(--gray-700);
+        color: var(--gray-100);
+    }
+    
+    .country-card.visited {
+        background: linear-gradient(135deg, var(--gray-800) 0%, rgba(72, 187, 120, 0.1) 100%);
+    }
+    
+    .continent-card {
+        background: var(--gray-800);
+        border-color: var(--gray-700);
+        color: var(--gray-100);
+    }
+    
+    .continent-select,
+    .sort-select,
+    .filter-control,
+    .sort-control {
+        background: var(--gray-800);
+        border-color: var(--gray-700);
+        color: var(--gray-100);
+    }
+    
+    .country-continent {
+        background: var(--gray-700);
+        color: var(--gray-300);
+    }
+    
+    .continent-progress {
+        background: var(--gray-700);
+        color: var(--gray-300);
+    }
+}
+
+/* ===============================
+   다크모드 지원 (지도 컬렉션)
+   =============================== */
+
+.dark .map-placeholder {
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, var(--surface-tertiary) 100%);
+}
+
+.dark .map-stats {
+    background: var(--surface-primary);
+    border-color: var(--border-light);
+}
+
+.dark .stat-item {
+    background: var(--surface-secondary);
+    border-color: var(--border-subtle);
+}
+
+/* ===============================
+   다크모드 지원 (컬렉션 탭)
+   =============================== */
+
+.dark .collection-tab {
+    color: #9CA3AF;
+}
+
+.dark .collection-tab:hover {
+    background: rgba(102, 126, 234, 0.15);
+    color: #60A5FA;
+}
+
+.dark .collection-tab.active {
+    background: #667eea;
+    color: white;
+}
+
+.dark .collection-tab:not(.active) .tab-count {
+    background: rgba(102, 126, 234, 0.15);
+    color: #60A5FA;
+}

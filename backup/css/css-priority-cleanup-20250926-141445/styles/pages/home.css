@@ -1,0 +1,142 @@
+/* ===== 홈 페이지 스타일 ===== */
+
+/* 홈 탭 페이지 컨테이너 - 네임스페이스 격리 */
+.home-tab .home-container {
+    max-width: var(--container-desktop-md);
+    margin: 0 auto;
+    padding: 20px;
+    /* Phase 4: 네비게이션 여백 적용 - 콘텐츠가 가려지지 않도록 */
+    padding-bottom: calc(20px + var(--navigation-height, 80px) + 40px);
+}
+
+/* 반응형 홈 컨테이너 최적화 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+    .home-tab .home-container {
+        max-width: var(--container-desktop-sm);
+        padding: 30px;
+    }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+    .home-tab .home-container {
+        max-width: var(--container-desktop-md);
+        padding: 40px;
+    }
+}
+
+@media (min-width: 1440px) and (max-width: 1599px) {
+    .home-tab .home-container {
+        max-width: var(--container-desktop-lg);
+        padding: 50px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .home-tab .home-container {
+        max-width: var(--container-desktop-xl);
+        padding: 60px;
+        /* 초대형 데스크톱에서 충분한 하단 여백 */
+        padding-bottom: calc(60px + var(--navigation-height, 80px) + 80px);
+    }
+}
+
+/* 데스크톱에서 홈 페이지 여백 최적화 */
+@media (min-width: 1024px) {
+    .home-tab .home-container {
+        /* 데스크톱에서 더 많은 하단 여백 확보 */
+        padding-bottom: calc(30px + var(--navigation-height, 80px) + 80px);
+    }
+}
+
+/* 다크모드 홈 페이지 컨테이너 */
+.dark .home-tab .home-container {
+    background-color: var(--bg-primary, #1a1a1a);
+    color: var(--text-primary, #f7fafc);
+}
+
+/* 홈 페이지 헤더 */
+.home-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.home-title {
+    font-size: 2.5rem;
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.home-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+}
+
+/* 홈 페이지 콘텐츠 */
+.home-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+/* 홈 페이지 카드 */
+.home-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+}
+
+.home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* 다크모드 홈 페이지 카드 */
+.dark .home-card {
+    background: var(--bg-secondary, #2d2d2d);
+    color: var(--text-primary, #f7fafc);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark .home-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.home-card-title {
+    font-size: 1.5rem;
+    font-weight: var(--font-semibold);
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.home-card-description {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .home-tab .home-container {
+        padding: 16px;
+        /* Phase 4: 모바일에서도 네비게이션 여백 적용 */
+        padding-bottom: calc(16px + var(--navigation-height, 80px));
+    }
+    
+    .home-title {
+        font-size: 2rem;
+    }
+    
+    .home-subtitle {
+        font-size: 1rem;
+    }
+    
+    .home-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}

@@ -182,37 +182,31 @@ body.hamburger-menu-open #tab-content::-webkit-scrollbar {
     display: none;
 }
 
-/* 햄버거 메뉴 오픈 시 추가 스크롤 방지 - !important 제거, 구체적 선택자 사용 */
-body.hamburger-menu-open .main-app,
-body.hamburger-menu-open #main-content,
-body.hamburger-menu-open .page-container,
-body.hamburger-menu-open .tab-content {
-    /* 주요 레이아웃 요소의 스크롤 비활성화 */
-    overflow: hidden;
+/* 햄버거 메뉴 오픈 시 추가 스크롤 방지 */
+body.hamburger-menu-open * {
+    /* 모든 요소의 스크롤 비활성화 */
+    overflow: hidden !important;
     /* 터치 스크롤 비활성화 */
-    touch-action: none;
+    touch-action: none !important;
     /* 스크롤바 완전 숨김 */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
 }
 
-/* Webkit 브라우저 주요 요소 스크롤바 숨김 - !important 제거, 구체적 선택자 사용 */
-body.hamburger-menu-open .main-app::-webkit-scrollbar,
-body.hamburger-menu-open #main-content::-webkit-scrollbar,
-body.hamburger-menu-open .page-container::-webkit-scrollbar,
-body.hamburger-menu-open .tab-content::-webkit-scrollbar {
-    display: none;
+/* Webkit 브라우저 모든 요소 스크롤바 숨김 */
+body.hamburger-menu-open *::-webkit-scrollbar {
+    display: none !important;
 }
 
-/* 햄버거 메뉴 자체는 스크롤 가능하도록 예외 처리 - !important 제거 */
+/* 햄버거 메뉴 자체는 스크롤 가능하도록 예외 처리 */
 body.hamburger-menu-open .hamburger-menu {
-    overflow-y: auto;
-    touch-action: auto;
+    overflow-y: auto !important;
+    touch-action: auto !important;
 }
 
-/* 햄버거 메뉴 내부 스크롤바는 표시 - !important 제거 */
+/* 햄버거 메뉴 내부 스크롤바는 표시 */
 body.hamburger-menu-open .hamburger-menu::-webkit-scrollbar {
-    display: block;
+    display: block !important;
     width: 4px;
 }
 

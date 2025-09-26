@@ -1,0 +1,213 @@
+/* ===== 검색 페이지 반응형 스타일 ===== */
+
+@media (max-width: 768px) {
+    .search-container {
+        padding: 16px;
+        /* Phase 3: 모바일에서도 네비게이션 유틸리티 클래스 직접 적용 */
+        padding-bottom: calc(16px + var(--navigation-height, 80px));
+    }
+    
+    .search-title {
+        font-size: 24px;
+    }
+    
+    .search-subtitle {
+        font-size: 14px;
+    }
+    
+    .search-input-wrapper {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+    }
+    
+    .search-input {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .search-btn {
+        width: 100%;
+        padding: 14px;
+    }
+    
+    .filter-header {
+        padding: 16px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+    
+    .filter-toggle-btn {
+        justify-content: center;
+    }
+    
+    .filter-content {
+        padding: 16px;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    /* 모바일에서 안내 섹션 조정 */
+    .guide-content {
+        padding: 30px 16px;
+    }
+    
+    .guide-icon {
+        font-size: 48px;
+    }
+    
+    .guide-title {
+        font-size: 20px;
+    }
+    
+    .guide-description {
+        font-size: 14px;
+    }
+    
+    .guide-tips {
+        gap: 12px;
+    }
+    
+    .tip-item {
+        padding: 12px;
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+    
+    .tip-item:hover {
+        transform: translateY(-2px);
+    }
+    
+    .results-header {
+        padding: 16px;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+    
+    .results-content {
+        padding: 16px;
+    }
+    
+    .search-result-item {
+        padding: 16px;
+    }
+    
+    .result-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .matched-tags {
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .sort-section {
+        padding: 16px;
+    }
+    
+    .sort-options {
+        flex-direction: row;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    
+    .sort-option {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 16px;
+    }
+    
+    .sort-icon {
+        font-size: 12px;
+    }
+    
+    /* 모바일 Search 탭 로그 상세 화면 */
+    .search-tab .log-detail-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+    }
+    
+    .log-detail-title h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .log-detail-content {
+        padding: 16px;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        padding: 16px 0;
+    }
+    
+    .info-label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .info-value {
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    .log-detail-memo {
+        padding: 12px;
+    }
+    
+    .log-detail-memo h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    
+    .log-detail-memo p {
+        font-size: 13px;
+    }
+    
+    .search-tab .log-detail-header .back-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .search-container {
+        padding: 24px;
+        max-width: 900px;
+    }
+    
+    .guide-tips {
+        max-width: 600px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .search-container {
+        padding: 32px;
+        max-width: 1000px;
+    }
+    
+    .search-input-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .guide-tips {
+        max-width: 700px;
+    }
+}

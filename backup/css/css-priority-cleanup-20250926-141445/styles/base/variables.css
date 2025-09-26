@@ -1,0 +1,21 @@
+/* ===== CSS 변수 정의 ===== */
+/* 
+ * 모든 CSS 변수 및 디자인 토큰
+ * 키워드: variables, design-tokens, css-custom-properties
+ */
+
+/* ===== PHASE 1: CSS 변수 통합 완료 ===== */
+/* 
+ * 이제 모든 변수가 design-tokens.css에서 관리됩니다.
+ * 기존 변수들은 호환성을 위해 design-tokens.css에서 참조됩니다.
+ * 
+ * 중복 제거된 변수들:
+ * - 색상 변수: design-tokens.css의 호환성 레이어 사용
+ * - 간격 변수: design-tokens.css의 호환성 레이어 사용
+ * - 폰트 변수: design-tokens.css의 호환성 레이어 사용
+ * - 기타 모든 변수: design-tokens.css로 통합
+ * 
+ * Z-INDEX 시스템도 design-tokens.css로 통합됨
+ * 모든 Z-Index 변수들이 design-tokens.css로 이동되었습니다.
+ * 호환성을 위해 design-tokens.css에서 참조됩니다.
+ */

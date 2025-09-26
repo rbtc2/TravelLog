@@ -21,9 +21,9 @@
     color: var(--text-primary, #f7fafc);
 }
 
-/* Phase 4: 로그인 화면 관련 스타일 복원 - !important 제거 */
+/* Phase 4: 로그인 화면 관련 스타일 복원 */
 .main-app.hidden {
-    display: none;
+    display: none !important;
 }
 
 /* 메인 콘텐츠 영역 */
@@ -115,14 +115,14 @@
         padding: 0 var(--spacing-md);
     }
     
-    /* PHASE 1: 모바일에서 데스크톱 레이아웃 완전 숨김 - !important 제거 */
+    /* PHASE 1: 모바일에서 데스크톱 레이아웃 완전 숨김 */
     .desktop-layout {
-        display: none;
+        display: none !important;
     }
     
-    /* 모바일에서 데스크톱 토글 버튼 완전 숨김 - !important 제거 */
+    /* 모바일에서 데스크톱 토글 버튼 완전 숨김 */
     .desktop-layout-toggle {
-        display: none;
+        display: none !important;
     }
 }
 
@@ -139,14 +139,14 @@
         padding: 0 var(--spacing-lg);
     }
     
-    /* PHASE 1: 태블릿에서 데스크톱 레이아웃 숨김 - !important 제거 */
+    /* PHASE 1: 태블릿에서 데스크톱 레이아웃 숨김 */
     .desktop-layout {
-        display: none;
+        display: none !important;
     }
     
-    /* 태블릿에서 데스크톱 토글 버튼 완전 숨김 - !important 제거 */
+    /* 태블릿에서 데스크톱 토글 버튼 완전 숨김 */
     .desktop-layout-toggle {
-        display: none;
+        display: none !important;
     }
 }
 
@@ -170,9 +170,9 @@
         padding: 0 var(--spacing-xl);
     }
     
-    /* PHASE 1: 중형 데스크톱에서 데스크톱 레이아웃 활성화 옵션 - !important 제거 */
+    /* PHASE 1: 중형 데스크톱에서 데스크톱 레이아웃 활성화 옵션 */
     .main-app.desktop-mode .desktop-layout {
-        display: flex;
+        display: flex !important;
     }
     
     .main-app.desktop-mode #main-content {
@@ -187,9 +187,9 @@
         padding: 0 var(--spacing-2xl);
     }
     
-    /* PHASE 1: 대형 데스크톱에서 데스크톱 레이아웃 기본 활성화 - !important 제거 */
+    /* PHASE 1: 대형 데스크톱에서 데스크톱 레이아웃 기본 활성화 */
     .main-app.desktop-mode .desktop-layout {
-        display: flex;
+        display: flex !important;
     }
     
     .main-app.desktop-mode #main-content {
@@ -204,9 +204,9 @@
         padding: 0 var(--spacing-3xl);
     }
     
-    /* PHASE 1: 초대형 데스크톱에서 데스크톱 레이아웃 기본 활성화 - !important 제거 */
+    /* PHASE 1: 초대형 데스크톱에서 데스크톱 레이아웃 기본 활성화 */
     .main-app.desktop-mode .desktop-layout {
-        display: flex;
+        display: flex !important;
     }
     
     .main-app.desktop-mode #main-content {

@@ -1,0 +1,570 @@
+/* ===== 디자인 토큰 시스템 ===== */
+/* 
+ * 확장된 디자인 토큰 및 CSS 변수 시스템
+ * 일관된 디자인을 위한 체계적인 토큰 관리
+ */
+
+:root {
+  /* ===== 색상 팔레트 확장 ===== */
+  
+  /* Primary 색상 계열 - 기존 변수와 호환성 유지 */
+  --primary-50: #f0f4ff;
+  --primary-100: #e0e7ff;
+  --primary-200: #c7d2fe;
+  --primary-300: #a5b4fc;
+  --primary-400: #818cf8;
+  --primary-500: #667eea;  /* --primary-color와 동일 */
+  --primary-600: #5a67d8;  /* --primary-dark와 동일 */
+  --primary-700: #4c51bf;
+  --primary-800: #434190;
+  --primary-900: #3c366b;
+  
+  /* 기존 변수 호환성 레이어 */
+  --primary-color: var(--primary-500);
+  --primary-dark: var(--primary-600);
+  --primary-light: var(--primary-400);
+  
+  /* Secondary 색상 계열 - 기존 변수와 호환성 유지 */
+  --secondary-50: #faf5ff;
+  --secondary-100: #f3e8ff;
+  --secondary-200: #e9d5ff;
+  --secondary-300: #d8b4fe;
+  --secondary-400: #c084fc;
+  --secondary-500: #764ba2;  /* --secondary-color와 동일 */
+  --secondary-600: #6b46c1;  /* --secondary-dark와 동일 */
+  --secondary-700: #5b21b6;
+  --secondary-800: #4c1d95;
+  --secondary-900: #3b0764;
+  
+  /* 기존 변수 호환성 레이어 */
+  --secondary-color: var(--secondary-500);
+  --secondary-dark: var(--secondary-600);
+  
+  /* Success 색상 계열 - 기존 변수와 호환성 유지 */
+  --success-50: #f0fff4;
+  --success-100: #c6f6d5;
+  --success-200: #9ae6b4;
+  --success-300: #68d391;
+  --success-400: #48bb78;  /* --success-color와 동일 */
+  --success-500: #38a169;  /* --success-dark와 동일 */
+  --success-600: #2f855a;
+  --success-700: #276749;
+  --success-800: #22543d;
+  --success-900: #1a202c;
+  
+  /* 기존 변수 호환성 레이어 */
+  --success-color: var(--success-400);
+  --success-dark: var(--success-500);
+  
+  /* Error 색상 계열 - 기존 변수와 호환성 유지 */
+  --error-50: #fed7d7;
+  --error-100: #feb2b2;
+  --error-200: #fc8181;
+  --error-300: #f56565;
+  --error-400: #e53e3e;  /* --error-color와 동일 */
+  --error-500: #c53030;  /* --error-dark와 동일 */
+  --error-600: #9c2626;
+  --error-700: #742a2a;
+  --error-800: #5c2626;
+  --error-900: #4a1a1a;
+  
+  /* 기존 변수 호환성 레이어 */
+  --error-color: var(--error-400);
+  --error-dark: var(--error-500);
+  
+  /* Warning 색상 계열 - 기존 변수와 호환성 유지 */
+  --warning-50: #fffbeb;
+  --warning-100: #fef3c7;
+  --warning-200: #fde68a;
+  --warning-300: #fcd34d;
+  --warning-400: #fbbf24;  /* --warning-color와 동일 */
+  --warning-500: #f59e0b;  /* --warning-dark와 동일 */
+  --warning-600: #d97706;
+  --warning-700: #b45309;
+  --warning-800: #92400e;
+  --warning-900: #78350f;
+  
+  /* 기존 변수 호환성 레이어 */
+  --warning-color: var(--warning-400);
+  --warning-dark: var(--warning-500);
+  
+  /* Info 색상 계열 */
+  --info-50: #ebf8ff;
+  --info-100: #bee3f8;
+  --info-200: #90cdf4;
+  --info-300: #63b3ed;
+  --info-400: #4299e1;
+  --info-500: #3182ce;
+  --info-600: #2b6cb0;
+  --info-700: #2c5282;
+  --info-800: #2a4365;
+  --info-900: #1a365d;
+  
+  /* ===== 텍스트 색상 시스템 ===== */
+  
+  /* 텍스트 색상 계열 */
+  --text-50: #f7fafc;
+  --text-100: #edf2f7;
+  --text-200: #e2e8f0;
+  --text-300: #cbd5e0;
+  --text-400: #a0aec0;
+  --text-500: #718096;
+  --text-600: #4a5568;
+  --text-700: #2d3748;
+  --text-800: #1a202c;
+  --text-900: #171923;
+  
+  /* 배경 색상 계열 */
+  --bg-50: #f7fafc;
+  --bg-100: #edf2f7;
+  --bg-200: #e2e8f0;
+  --bg-300: #cbd5e0;
+  --bg-400: #a0aec0;
+  --bg-500: #718096;
+  --bg-600: #4a5568;
+  --bg-700: #2d3748;
+  --bg-800: #1a202c;
+  --bg-900: #171923;
+  
+  /* ===== 간격 시스템 확장 ===== */
+  
+  /* 기본 간격 - 기존 변수와 호환성 유지 */
+  --space-0: 0;
+  --space-1: 4px;   /* --spacing-xs와 동일 */
+  --space-2: 8px;   /* --spacing-sm와 동일 */
+  --space-3: 12px;
+  --space-4: 16px;  /* --spacing-md와 동일 */
+  --space-5: 20px;
+  --space-6: 24px;  /* --spacing-lg와 동일 */
+  --space-8: 32px;  /* --spacing-xl와 동일 */
+  --space-10: 40px; /* --spacing-2xl와 동일 */
+  --space-12: 48px; /* --spacing-3xl와 동일 */
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+  --space-40: 160px;
+  --space-48: 192px;
+  --space-56: 224px;
+  --space-64: 256px;
+  
+  /* 기존 변수 호환성 레이어 */
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-4);
+  --spacing-lg: var(--space-6);
+  --spacing-xl: var(--space-8);
+  --spacing-2xl: var(--space-10);
+  --spacing-3xl: var(--space-12);
+  
+  /* ===== 타이포그래피 시스템 ===== */
+  
+  /* 폰트 크기 - 기존 변수와 호환성 유지 */
+  --text-xs: 12px;   /* --font-xs와 동일 */
+  --text-sm: 14px;   /* --font-sm와 동일 */
+  --text-base: 16px; /* --font-base와 동일 */
+  --text-lg: 18px;   /* --font-lg와 동일 */
+  --text-xl: 20px;   /* --font-xl와 동일 */
+  --text-2xl: 24px;  /* --font-2xl와 동일 */
+  --text-3xl: 28px;  /* --font-3xl와 동일 */
+  --text-4xl: 32px;  /* --font-4xl와 동일 */
+  --text-5xl: 36px;
+  --text-6xl: 48px;
+  --text-7xl: 56px;
+  --text-8xl: 64px;
+  --text-9xl: 72px;
+  
+  /* 기존 변수 호환성 레이어 */
+  --font-xs: var(--text-xs);
+  --font-sm: var(--text-sm);
+  --font-base: var(--text-base);
+  --font-lg: var(--text-lg);
+  --font-xl: var(--text-xl);
+  --font-2xl: var(--text-2xl);
+  --font-3xl: var(--text-3xl);
+  --font-4xl: var(--text-4xl);
+  
+  /* 폰트 두께 - 기존 변수와 호환성 유지 */
+  --font-thin: 100;
+  --font-extralight: 200;
+  --font-light: 300;
+  --font-normal: 400;    /* 기존 변수와 동일 */
+  --font-medium: 500;   /* 기존 변수와 동일 */
+  --font-semibold: 600; /* 기존 변수와 동일 */
+  --font-bold: 700;     /* 기존 변수와 동일 */
+  --font-extrabold: 800;
+  --font-black: 900;
+  
+  /* 기존 변수 호환성 레이어 (이미 동일하므로 별도 정의 불필요) */
+  
+  /* 줄 높이 */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  
+  /* ===== 보더 시스템 ===== */
+  
+  /* 보더 반지름 - 기존 변수와 호환성 유지 */
+  --radius-none: 0;
+  --radius-sm: 4px;   /* --border-radius-sm와 동일 */
+  --radius-md: 6px;   /* --border-radius-md와 동일 */
+  --radius-lg: 8px;   /* --border-radius-lg와 동일 */
+  --radius-xl: 12px;  /* --border-radius-xl와 동일 */
+  --radius-2xl: 16px; /* --border-radius-2xl와 동일 */
+  --radius-3xl: 24px;
+  --radius-full: 9999px; /* --border-radius-full와 동일 */
+  
+  /* 기존 변수 호환성 레이어 */
+  --border-radius-sm: var(--radius-sm);
+  --border-radius-md: var(--radius-md);
+  --border-radius-lg: var(--radius-lg);
+  --border-radius-xl: var(--radius-xl);
+  --border-radius-2xl: var(--radius-2xl);
+  --border-radius-full: var(--radius-full);
+  
+  /* 보더 두께 */
+  --border-0: 0;
+  --border-1: 1px;
+  --border-2: 2px;
+  --border-4: 4px;
+  --border-8: 8px;
+  
+  /* ===== 그림자 시스템 ===== */
+  
+  /* 그림자 크기 - 기존 변수와 호환성 유지 */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);  /* 기존 변수와 동일 */
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);  /* 기존 변수와 동일 */
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);  /* 기존 변수와 동일 */
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);  /* 기존 변수와 동일 */
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  
+  /* 기존 변수 호환성 레이어 (이미 동일하므로 별도 정의 불필요) */
+  
+  /* ===== 애니메이션 시스템 ===== */
+  
+  /* 지속 시간 */
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 200ms;
+  --duration-300: 300ms;
+  --duration-500: 500ms;
+  --duration-700: 700ms;
+  --duration-1000: 1000ms;
+  
+  /* 이징 함수 - 기존 변수와 호환성 유지 */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* 기존 변수 호환성 레이어 */
+  --transition-fast: var(--duration-200) var(--ease-out);
+  --transition-normal: var(--duration-300) var(--ease-out);
+  --transition-slow: var(--duration-500) var(--ease-out);
+  
+  /* ===== Z-Index 시스템 ===== */
+  
+  --z-0: 0;
+  --z-10: 10;
+  --z-20: 20;
+  --z-30: 30;
+  --z-40: 40;
+  --z-50: 50;
+  --z-auto: auto;
+  
+  /* 특정 용도 Z-Index - 기존 변수와 호환성 유지 */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+  
+  /* 기존 변수 호환성 레이어 (variables.css의 Z-Index 시스템과 통합) */
+  --z-base: var(--z-0);
+  --z-content: var(--z-10);
+  --z-elevated: var(--z-20);
+  --z-floating: var(--z-30);
+  --z-card: 100;
+  --z-panel: 110;
+  --z-widget: 120;
+  --z-overlay-content: 130;
+  --z-navigation: 200;
+  --z-header: 210;
+  --z-sidebar: 220;
+  --z-footer: 230;
+  --z-breadcrumb: 240;
+  --z-country-selector: 2000;
+  --z-country-dropdown: 2100;
+  --z-country-portal: 9999;
+  --z-critical-dropdown: 2300;
+  --z-loading: 9000;
+  --z-error: 9100;
+  --z-notification: 9200;
+  --z-system-overlay: 9300;
+  
+  /* ===== 브레이크포인트 시스템 ===== */
+  
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;  /* variables.css와 통합 */
+  --breakpoint-3xl: 1600px;  /* variables.css에서 추가 */
+  
+  /* ===== 컨테이너 시스템 ===== */
+  
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  
+  /* 기존 변수 호환성 레이어 (variables.css의 컨테이너 시스템과 통합) */
+  --container-mobile: 100%;
+  --container-tablet: 90%;
+  --container-desktop-sm: 1000px;
+  --container-desktop-md: 1200px;
+  --container-desktop-lg: 1400px;
+  --container-desktop-xl: 1600px;
+  
+  /* ===== 그리드 시스템 ===== */
+  
+  --grid-cols-1: repeat(1, minmax(0, 1fr));
+  --grid-cols-2: repeat(2, minmax(0, 1fr));
+  --grid-cols-3: repeat(3, minmax(0, 1fr));
+  --grid-cols-4: repeat(4, minmax(0, 1fr));
+  --grid-cols-5: repeat(5, minmax(0, 1fr));
+  --grid-cols-6: repeat(6, minmax(0, 1fr));
+  --grid-cols-12: repeat(12, minmax(0, 1fr));
+  
+  /* ===== 플렉스 시스템 ===== */
+  
+  --flex-1: 1 1 0%;
+  --flex-auto: 1 1 auto;
+  --flex-initial: 0 1 auto;
+  --flex-none: none;
+  
+  /* ===== 포지션 시스템 ===== */
+  
+  --position-static: static;
+  --position-relative: relative;
+  --position-absolute: absolute;
+  --position-fixed: fixed;
+  --position-sticky: sticky;
+  
+  /* ===== 디스플레이 시스템 ===== */
+  
+  --display-block: block;
+  --display-inline-block: inline-block;
+  --display-inline: inline;
+  --display-flex: flex;
+  --display-inline-flex: inline-flex;
+  --display-grid: grid;
+  --display-inline-grid: inline-grid;
+  --display-hidden: none;
+}
+
+/* ===== 다크모드 토큰 ===== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 다크모드 텍스트 색상 */
+    --text-primary: var(--text-50);
+    --text-secondary: var(--text-200);
+    --text-muted: var(--text-400);
+    --text-light: var(--text-500);
+    
+    /* 다크모드 배경 색상 */
+    --bg-primary: var(--bg-900);
+    --bg-secondary: var(--bg-800);
+    --bg-tertiary: var(--bg-700);
+    
+    /* 다크모드 보더 색상 */
+    --border-color: var(--bg-600);
+    
+    /* 다크모드 그림자 */
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* 다크모드 클래스 */
+.dark {
+  /* 다크모드 텍스트 색상 */
+  --text-primary: var(--text-50);
+  --text-secondary: var(--text-200);
+  --text-muted: var(--text-400);
+  --text-light: var(--text-500);
+  
+  /* 다크모드 배경 색상 */
+  --bg-primary: var(--bg-900);
+  --bg-secondary: var(--bg-800);
+  --bg-tertiary: var(--bg-700);
+  
+  /* 다크모드 보더 색상 */
+  --border-color: var(--bg-600);
+  
+  /* 다크모드 그림자 */
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== 유틸리티 클래스 ===== */
+
+/* 색상 유틸리티 */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-success { color: var(--success-500); }
+.text-error { color: var(--error-500); }
+.text-warning { color: var(--warning-500); }
+.text-info { color: var(--info-500); }
+
+.bg-primary { background-color: var(--bg-primary); }
+.bg-secondary { background-color: var(--bg-secondary); }
+.bg-success { background-color: var(--success-500); }
+.bg-error { background-color: var(--error-500); }
+.bg-warning { background-color: var(--warning-500); }
+.bg-info { background-color: var(--info-500); }
+
+/* 간격 유틸리티 */
+.p-0 { padding: var(--space-0); }
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+
+.m-0 { margin: var(--space-0); }
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-6 { margin: var(--space-6); }
+.m-8 { margin: var(--space-8); }
+
+/* 타이포그래피 유틸리티 */
+.text-xs { font-size: var(--text-xs); }
+.text-sm { font-size: var(--text-sm); }
+.text-base { font-size: var(--text-base); }
+.text-lg { font-size: var(--text-lg); }
+.text-xl { font-size: var(--text-xl); }
+.text-2xl { font-size: var(--text-2xl); }
+.text-3xl { font-size: var(--text-3xl); }
+
+.font-thin { font-weight: var(--font-thin); }
+.font-normal { font-weight: var(--font-normal); }
+.font-medium { font-weight: var(--font-medium); }
+.font-semibold { font-weight: var(--font-semibold); }
+.font-bold { font-weight: var(--font-bold); }
+
+/* 보더 유틸리티 */
+.rounded-none { border-radius: var(--radius-none); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-full { border-radius: var(--radius-full); }
+
+/* 그림자 유틸리티 */
+.shadow-xs { box-shadow: var(--shadow-xs); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-2xl { box-shadow: var(--shadow-2xl); }
+
+/* ===== 추가 호환성 변수 ===== */
+
+/* 기존 variables.css의 추가 변수들 */
+--white: #ffffff;
+--gray-50: #f8f9fa;
+--gray-100: #f7fafc;
+--gray-200: #edf2f7;
+--gray-300: #e2e8f0;
+--gray-400: #cbd5e0;
+--gray-500: #a0aec0;
+--gray-600: #718096;
+--gray-700: #4a5568;
+--gray-800: #2d3748;
+--gray-900: #1a202c;
+
+/* 텍스트 색상 */
+--text-primary: #2d3748;
+--text-secondary: #4a5568;
+--text-muted: #718096;
+--text-light: #a0aec0;
+
+/* 배경 색상 */
+--bg-primary: #ffffff;
+--bg-secondary: #f8f9fa;
+--bg-tertiary: #f7fafc;
+
+/* 데스크톱용 폰트 크기 */
+--font-xs-desktop: 14px;
+--font-sm-desktop: 16px;
+--font-base-desktop: 18px;
+--font-lg-desktop: 20px;
+--font-xl-desktop: 22px;
+--font-2xl-desktop: 26px;
+--font-3xl-desktop: 30px;
+--font-4xl-desktop: 36px;
+
+/* 대형 데스크톱용 폰트 크기 */
+--font-xs-large: 16px;
+--font-sm-large: 18px;
+--font-base-large: 20px;
+--font-lg-large: 22px;
+--font-xl-large: 24px;
+--font-2xl-large: 28px;
+--font-3xl-large: 32px;
+--font-4xl-large: 40px;
+
+/* 폰트 패밀리 */
+--font-family-base: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+--font-family-mono: 'Pretendard Variable', Pretendard, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+--font-family-heading: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+/* 스크롤 최적화 */
+--scroll-behavior: smooth;
+--scroll-timing: cubic-bezier(0.4, 0, 0.2, 1);
+--scroll-duration: 0.3s;
+
+/* 데스크톱 최적화 컨테이너 시스템 */
+--desktop-container-sm: 1200px;
+--desktop-container-md: 1400px;
+--desktop-container-lg: 1600px;
+--desktop-container-xl: 1800px;
+
+/* 데스크톱 그리드 시스템 */
+--desktop-grid-cols-sm: 2;
+--desktop-grid-cols-md: 3;
+--desktop-grid-cols-lg: 4;
+--desktop-grid-cols-xl: 5;
+
+/* 데스크톱 사이드바 시스템 */
+--sidebar-width-sm: 240px;
+--sidebar-width-md: 280px;
+--sidebar-width-lg: 320px;
+--sidebar-width-xl: 360px;
+
+/* 데스크톱 여백 시스템 */
+--desktop-padding-sm: 24px;
+--desktop-padding-md: 32px;
+--desktop-padding-lg: 40px;
+--desktop-padding-xl: 48px;
