@@ -14,7 +14,7 @@
  * 
  * @class HubView
  * @version 2.0.0 (리팩토링 완료)
- * @since 2024-12-29
+ * @since 2025-09-25
  */
 import { EventManager } from '../../../modules/utils/event-manager.js';
 import { ScrollManager } from '../../../modules/utils/ScrollManager.js';
