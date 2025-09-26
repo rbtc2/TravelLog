@@ -17,14 +17,14 @@
 }
 
 .my-logs-container .hub-section.travel-report-section .section-header .section-title {
-    color: white !important;
+    color: white;
     font-size: var(--font-xl);
     font-weight: var(--font-bold);
     margin-bottom: var(--spacing-lg);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block;
+    visibility: visible;
+    opacity: 1;
     text-align: center;
     letter-spacing: 0.5px;
     line-height: 1.3;

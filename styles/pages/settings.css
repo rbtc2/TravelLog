@@ -190,9 +190,9 @@ input:disabled + .toggle-slider {
     background: #a0aec0;
 }
 
-/* 정보 섹션 */
+/* 정보 섹션 - !important 제거 */
 .info-section {
-    background: #f7fafc !important;
+    background: #f7fafc;
     border: 1px solid #e2e8f0;
 }
 

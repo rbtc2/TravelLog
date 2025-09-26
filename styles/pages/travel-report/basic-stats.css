@@ -15,14 +15,14 @@
 }
 
 .my-logs-container .hub-section.basic-stats-section .section-title {
-    color: white !important;
+    color: white;
     font-size: var(--font-xl);
     font-weight: var(--font-bold);
     margin-bottom: 0;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block;
+    visibility: visible;
+    opacity: 1;
 }
 
 /* 통계 그리드 스타일 */
@@ -114,7 +114,7 @@
     }
     
     .stats-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-sm);
         grid-template-rows: repeat(2, 1fr);
     }
@@ -208,7 +208,7 @@
 }
 
 .dark .my-logs-container .hub-section.basic-stats-section .section-title {
-    color: var(--text-primary, #f7fafc) !important;
+    color: var(--text-primary, #f7fafc);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 

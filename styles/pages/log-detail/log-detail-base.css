@@ -15,11 +15,11 @@
     min-height: calc(100vh - 100px); /* 최소 높이 보장 */
 }
 
-/* My Logs 탭용 로그 상세 헤더 - 네임스페이스 격리 */
+/* My Logs 탭용 로그 상세 헤더 - 네임스페이스 격리, !important 제거 */
 .my-logs-tab .log-detail-container .log-detail-header {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 20px;
     padding: 15px 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -65,7 +65,7 @@
 }
 
 .my-logs-tab .log-detail-container .log-detail-actions {
-    display: flex !important;
+    display: flex;
     gap: 12px;
     align-items: center;
     flex-shrink: 0;

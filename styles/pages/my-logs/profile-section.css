@@ -389,13 +389,13 @@
 .profile-action-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    transform: none !important;
-    box-shadow: var(--shadow-sm) !important;
+    transform: none;
+    box-shadow: var(--shadow-sm);
 }
 
 .profile-action-btn:disabled:hover {
-    transform: none !important;
-    box-shadow: var(--shadow-sm) !important;
+    transform: none;
+    box-shadow: var(--shadow-sm);
 }
 
 /* ===== 프로필 섹션 반응형 스타일 ===== */
