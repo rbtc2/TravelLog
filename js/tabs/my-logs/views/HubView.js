@@ -334,8 +334,12 @@ class HubView {
             this.profileManager.cleanup();
         }
         
-        if (this.eventManager) {
-            this.eventManager.cleanup();
+        if (this.eventManager && typeof this.eventManager.cleanup === 'function') {
+            try {
+                this.eventManager.cleanup();
+            } catch (error) {
+                console.warn('HubView: EventManager 정리 중 오류 (무시됨):', error.message);
+            }
         }
         
         this.container = null;

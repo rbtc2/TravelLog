@@ -45,6 +45,7 @@ import LogDetailModule from '../modules/log-detail.js';
 import { ToastManager } from '../modules/ui-components/toast-manager.js';
 import { EventManager } from '../modules/utils/event-manager.js';
 import { ModalManager } from '../modules/ui-components/modal-manager.js';
+import { cleanupVerifier } from '../modules/utils/cleanup-verifier.js';
 
 // 새로운 모듈들 import
 import { MyLogsController } from './my-logs/controllers/MyLogsController.js';
@@ -84,6 +85,16 @@ class MyLogsTab {
             collection: new TravelCollectionView(this.controller),
             logs: new LogsListView(this.controller)
         };
+        
+        // CleanupVerifier에 모듈 등록
+        if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+            cleanupVerifier.registerModule('my-logs', this, {
+                requireCleanup: true,
+                cleanupMethod: 'cleanup',
+                timeout: 5000,
+                critical: false
+            });
+        }
         
         // 기존 모듈들 (재사용)
         this.logEditModule = new LogEditModule();
@@ -449,7 +460,11 @@ class MyLogsTab {
         // View 모듈들 정리
         Object.values(this.views).forEach(view => {
             if (view && typeof view.cleanup === 'function') {
-                view.cleanup();
+                try {
+                    view.cleanup();
+                } catch (error) {
+                    console.warn('MyLogsTab: View 정리 중 오류 (무시됨):', error.message);
+                }
             }
         });
         

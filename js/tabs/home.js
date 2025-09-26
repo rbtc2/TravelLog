@@ -3,11 +3,23 @@
  * 독립적으로 동작하며, 다른 탭에 영향을 주지 않음
  */
 
+import { cleanupVerifier } from '../modules/utils/cleanup-verifier.js';
+
 class HomeTab {
     constructor() {
         this.isInitialized = false;
         this.isRendering = false;
         this.eventListeners = [];
+        
+        // CleanupVerifier에 모듈 등록
+        if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+            cleanupVerifier.registerModule('home', this, {
+                requireCleanup: true,
+                cleanupMethod: 'cleanup',
+                timeout: 3000,
+                critical: false
+            });
+        }
     }
     
     render(container) {

@@ -19,6 +19,9 @@ import { SwipeGestureHandler } from '../modules/calendar/handlers/SwipeGestureHa
 // 모달 모듈들 import
 import { DatePickerModal } from '../modules/calendar/modals/DatePickerModal.js';
 
+// CleanupVerifier import
+import { cleanupVerifier } from '../modules/utils/cleanup-verifier.js';
+
 // 로그 상세 모듈 import
 import LogDetailModule from '../modules/log-detail.js';
 
@@ -42,6 +45,16 @@ class CalendarTab {
         // 핵심 모듈들 초기화
         this.dataManager = new CalendarDataManager();
         this.renderer = null;
+        
+        // CleanupVerifier에 모듈 등록
+        if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+            cleanupVerifier.registerModule('calendar', this, {
+                requireCleanup: true,
+                cleanupMethod: 'cleanup',
+                timeout: 5000,
+                critical: false
+            });
+        }
         
         // 이벤트 핸들러들 초기화
         this.eventHandler = null;

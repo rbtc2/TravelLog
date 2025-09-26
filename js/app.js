@@ -17,6 +17,8 @@ import { TabManager } from './modules/core/tab-manager.js'; // Phase 2: 탭 관�
 import { NavigationMonitor } from './modules/core/navigation-monitor.js'; // Phase 3: 네비게이션 모니터링 모듈
 import { DevTools } from './modules/dev/dev-tools.js'; // Phase 4: 개발자 도구 모듈
 import { DesktopLayoutController } from './modules/core/desktop-layout-controller.js'; // Phase 5: 데스크톱 레이아웃 컨트롤러
+import { memoryMonitor } from './modules/utils/memory-monitor.js'; // 메모리 누수 방지 모니터링 시스템
+import { cleanupVerifier } from './modules/utils/cleanup-verifier.js'; // Cleanup 검증 시스템
 
 // Phase 1: 모바일 최적화는 별도 모듈로 분리됨
 // Phase 2: 탭 관리는 별도 모듈로 분리됨
@@ -47,6 +49,9 @@ class AppManager {
         
         // PHASE 5: 데스크톱 레이아웃 컨트롤러 초기화
         this.desktopLayoutController = new DesktopLayoutController(this.desktopLayoutManager);
+        
+        // 메모리 누수 방지 시스템 초기화
+        this.setupMemoryLeakPrevention();
         
             // Z-Index 충돌 관리 시스템 초기화
             this.zIndexManager = window.zIndexManager;
@@ -263,6 +268,266 @@ class AppManager {
             console.error('로그아웃 실패:', error);
         }
     }
+    
+    /**
+     * 메모리 누수 방지 시스템 설정
+     */
+    setupMemoryLeakPrevention() {
+        try {
+            // 메모리 모니터링 활성화
+            if (typeof memoryMonitor !== 'undefined' && memoryMonitor) {
+                console.log('AppManager: 메모리 모니터링 시스템 활성화됨');
+                
+                // 메모리 누수 이벤트 리스너
+                window.addEventListener('memoryLeak', (event) => {
+                    console.error('AppManager: 메모리 누수 감지됨', event.detail);
+                    this.handleMemoryLeak(event.detail);
+                });
+                
+                // 메모리 경고 이벤트 리스너
+                window.addEventListener('memoryWarning', (event) => {
+                    console.warn('AppManager: 메모리 경고', event.detail);
+                    this.handleMemoryWarning(event.detail);
+                });
+            } else {
+                console.warn('AppManager: 메모리 모니터링 시스템을 사용할 수 없습니다.');
+            }
+            
+            // Cleanup 검증 시스템 활성화
+            if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+                console.log('AppManager: Cleanup 검증 시스템 활성화됨');
+                
+                // Cleanup 이벤트 리스너
+                window.addEventListener('cleanupVerifier:issues', (event) => {
+                    console.warn('AppManager: Cleanup 이슈 발견', event.detail);
+                });
+                
+                window.addEventListener('cleanupVerifier:timeout', (event) => {
+                    console.error('AppManager: Cleanup 타임아웃', event.detail);
+                });
+            } else {
+                console.warn('AppManager: Cleanup 검증 시스템을 사용할 수 없습니다.');
+            }
+            
+            // 개발자 도구에 메모리 모니터링 추가 (안전한 방식)
+            if (this.devTools && typeof memoryMonitor !== 'undefined' && memoryMonitor) {
+                try {
+                    // 메서드 존재 여부 확인 후 호출
+                    if (typeof this.devTools.addMemoryMonitor === 'function') {
+                        this.devTools.addMemoryMonitor(memoryMonitor);
+                        console.log('AppManager: 개발자 도구에 메모리 모니터 추가됨');
+                    } else {
+                        console.log('AppManager: 개발자 도구에 메모리 모니터 기능이 없습니다.');
+                    }
+                } catch (error) {
+                    console.warn('AppManager: 개발자 도구에 메모리 모니터 추가 실패:', error);
+                }
+            }
+            
+            console.log('AppManager: 메모리 누수 방지 시스템 설정 완료');
+            
+        } catch (error) {
+            console.error('AppManager: 메모리 누수 방지 시스템 설정 실패:', error);
+            // 시스템 설정 실패해도 앱은 정상 동작해야 함
+        }
+    }
+    
+    /**
+     * 메모리 누수 처리
+     * @param {Object} leakInfo - 누수 정보
+     */
+    handleMemoryLeak(leakInfo) {
+        try {
+            console.error('AppManager: 메모리 누수 감지됨', leakInfo);
+            
+            // 강제 정리 수행
+            this.performEmergencyCleanup();
+            
+            // 사용자에게 알림 (필요시)
+            this.notifyMemoryIssue('memory_leak', leakInfo);
+        } catch (error) {
+            console.error('AppManager: 메모리 누수 처리 중 오류:', error);
+        }
+    }
+    
+    /**
+     * 메모리 경고 처리
+     * @param {Object} warningInfo - 경고 정보
+     */
+    handleMemoryWarning(warningInfo) {
+        try {
+            console.warn('AppManager: 메모리 경고', warningInfo);
+            
+            // 예방적 정리 수행
+            this.performPreventiveCleanup();
+            
+            // 사용자에게 알림 (필요시)
+            this.notifyMemoryIssue('memory_warning', warningInfo);
+        } catch (error) {
+            console.error('AppManager: 메모리 경고 처리 중 오류:', error);
+        }
+    }
+    
+    /**
+     * 응급 정리 수행
+     */
+    performEmergencyCleanup() {
+        try {
+            console.log('AppManager: 응급 정리 수행 중...');
+            
+            // 모든 모듈 강제 정리
+            this.cleanup();
+            
+            // 가비지 컬렉션 힌트
+            if (typeof window.gc === 'function') {
+                window.gc();
+            }
+            
+            // 메모리 스냅샷 기록
+            if (typeof memoryMonitor !== 'undefined' && memoryMonitor) {
+                memoryMonitor.recordMemorySnapshot();
+            }
+            
+            console.log('AppManager: 응급 정리 완료');
+            
+        } catch (error) {
+            console.error('AppManager: 응급 정리 실패:', error);
+        }
+    }
+    
+    /**
+     * 예방적 정리 수행
+     */
+    performPreventiveCleanup() {
+        try {
+            console.log('AppManager: 예방적 정리 수행 중...');
+            
+            // 현재 탭만 정리
+            if (this.tabManager && typeof this.tabManager.cleanupCurrentTab === 'function') {
+                this.tabManager.cleanupCurrentTab();
+            }
+            
+            // 메모리 스냅샷 기록
+            if (typeof memoryMonitor !== 'undefined' && memoryMonitor) {
+                memoryMonitor.recordMemorySnapshot();
+            }
+            
+            console.log('AppManager: 예방적 정리 완료');
+            
+        } catch (error) {
+            console.error('AppManager: 예방적 정리 실패:', error);
+        }
+    }
+    
+    /**
+     * 메모리 이슈 알림
+     * @param {string} type - 이슈 타입
+     * @param {Object} info - 이슈 정보
+     */
+    notifyMemoryIssue(type, info) {
+        try {
+            // 개발 모드에서만 콘솔에 상세 정보 출력
+            if (AppInfo.isDevelopment) {
+                console.group(`🚨 메모리 이슈: ${type}`);
+                console.log('상세 정보:', info);
+                
+                // 안전한 메모리 상태 확인
+                if (typeof memoryMonitor !== 'undefined' && memoryMonitor) {
+                    console.log('현재 메모리 상태:', memoryMonitor.getMemoryInfo());
+                } else {
+                    console.log('현재 메모리 상태: N/A');
+                }
+                
+                // 안전한 TabManager 통계 확인
+                if (this.tabManager && typeof this.tabManager.getStats === 'function') {
+                    console.log('TabManager 통계:', this.tabManager.getStats());
+                } else {
+                    console.log('TabManager 통계: N/A');
+                }
+                
+                console.groupEnd();
+            }
+            
+            // 필요시 사용자에게 토스트 메시지 표시
+            // toastManager.show('메모리 사용량이 높습니다. 페이지를 새로고침해주세요.', 'warning');
+        } catch (error) {
+            console.error('AppManager: 메모리 이슈 알림 중 오류:', error);
+        }
+    }
+    
+    /**
+     * 앱 매니저 정리 (강화된 버전)
+     */
+    async cleanup() {
+        const cleanupId = (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) ? 
+            cleanupVerifier.startCleanup('AppManager', { 
+                appManager: true, 
+                timestamp: Date.now() 
+            }) : null;
+        
+        try {
+            // 탭 매니저 정리
+            if (this.tabManager && typeof this.tabManager.cleanup === 'function') {
+                await this.tabManager.cleanup();
+            }
+            
+            // 네비게이션 모니터 정리
+            if (this.navigationMonitor && typeof this.navigationMonitor.cleanup === 'function') {
+                this.navigationMonitor.cleanup();
+            }
+            
+            // 데스크톱 레이아웃 컨트롤러 정리
+            if (this.desktopLayoutController && typeof this.desktopLayoutController.cleanup === 'function') {
+                this.desktopLayoutController.cleanup();
+            }
+            
+            // 데스크톱 레이아웃 매니저 정리
+            if (this.desktopLayoutManager && typeof this.desktopLayoutManager.cleanup === 'function') {
+                this.desktopLayoutManager.cleanup();
+            }
+            
+            // 개발자 도구 정리
+            if (this.devTools && typeof this.devTools.cleanup === 'function') {
+                this.devTools.cleanup();
+            }
+            
+            // 인증 관리자 정리
+            if (this.authManager && typeof this.authManager.cleanup === 'function') {
+                this.authManager.cleanup();
+            }
+            
+            // 여행 로그 서비스 정리
+            if (typeof travelLogService !== 'undefined' && travelLogService && typeof travelLogService.cleanup === 'function') {
+                travelLogService.cleanup();
+            }
+            
+            // 메모리 모니터링 시스템 정리
+            if (typeof memoryMonitor !== 'undefined' && memoryMonitor && typeof memoryMonitor.cleanup === 'function') {
+                memoryMonitor.cleanup();
+            }
+            
+            // Cleanup 검증 시스템 정리
+            if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier && typeof cleanupVerifier.cleanup === 'function') {
+                cleanupVerifier.cleanup();
+            }
+            
+            // 정리 완료 추적
+            if (cleanupId && typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+                cleanupVerifier.finishCleanup(cleanupId, { success: true });
+            }
+            
+            console.log('AppManager cleaned up with memory leak prevention');
+            
+        } catch (error) {
+            // 정리 실패 추적
+            if (cleanupId && typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+                cleanupVerifier.failCleanup(cleanupId, error);
+            }
+            
+            console.error('AppManager cleanup failed:', error);
+            // 정리 실패해도 앱은 계속 동작해야 함
+        }
+    }
 }
 
 
@@ -271,13 +536,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // 앱 매니저 초기화
     const appManager = new AppManager();
     
+    // 전역 변수로 설정 (페이지 언로드 시 정리를 위해)
+    window.appManager = appManager;
+    
     // PHASE 4: 개발자 도구에서 전역 설정 처리
     appManager.devTools.setupAppManager(appManager);
     appManager.devTools.setupTabManager(appManager);
 });
 
-// 페이지 언로드 시 정리
-window.addEventListener('beforeunload', () => {
-    // 모든 탭 모듈 정리
-    // 실제 구현에서는 각 모듈의 cleanup 메서드 호출
+// 페이지 언로드 시 정리 (강화된 버전)
+window.addEventListener('beforeunload', async () => {
+    try {
+        console.log('페이지 언로드: 메모리 누수 방지 정리 시작');
+        
+        // 앱 매니저 정리
+        if (window.appManager && typeof window.appManager.cleanup === 'function') {
+            await window.appManager.cleanup();
+        }
+        
+        // 메모리 모니터링 최종 스냅샷
+        if (typeof memoryMonitor !== 'undefined' && memoryMonitor && typeof memoryMonitor.recordMemorySnapshot === 'function') {
+            memoryMonitor.recordMemorySnapshot();
+        }
+        
+        console.log('페이지 언로드: 메모리 누수 방지 정리 완료');
+        
+    } catch (error) {
+        console.error('페이지 언로드 정리 중 오류:', error);
+    }
 });

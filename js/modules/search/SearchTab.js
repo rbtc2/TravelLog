@@ -11,6 +11,7 @@ import { SearchUIRenderer } from './renderers/SearchUIRenderer.js';
 import { SearchEventHandler } from './handlers/SearchEventHandler.js';
 import { StorageManager } from '../utils/storage-manager.js';
 import { DemoData } from '../utils/demo-data.js';
+import { cleanupVerifier } from '../utils/cleanup-verifier.js';
 
 export class SearchTab {
     constructor() {
@@ -25,6 +26,16 @@ export class SearchTab {
         this.uiRenderer = new SearchUIRenderer();
         this.eventHandler = new SearchEventHandler();
         this.storageManager = new StorageManager();
+        
+        // CleanupVerifier에 모듈 등록
+        if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+            cleanupVerifier.registerModule('search', this, {
+                requireCleanup: true,
+                cleanupMethod: 'cleanup',
+                timeout: 5000,
+                critical: false
+            });
+        }
         
         // 디바운스 관련
         this.searchTimeout = null;

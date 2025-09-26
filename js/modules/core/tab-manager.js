@@ -1,11 +1,15 @@
 /**
  * 탭 관리 모듈
  * 탭 전환, 로딩, 렌더링, 정리를 담당
+ * 메모리 누수 방지 및 강화된 cleanup 시스템 포함
  * 
- * @version 1.0.0
+ * @version 2.0.0
  * @since 2024-12-29
  * @author REDIPX
  */
+
+import { memoryMonitor } from '../utils/memory-monitor.js';
+import { cleanupVerifier } from '../utils/cleanup-verifier.js';
 
 export class TabManager {
     constructor(appManager) {
@@ -13,6 +17,19 @@ export class TabManager {
         this.currentTab = null;
         this.tabModules = new Map();
         this.currentTabModule = null;
+        
+        // 메모리 누수 방지 설정
+        this.options = {
+            enableMemoryTracking: true,
+            enableCleanupVerification: true,
+            enableForceCleanup: true,
+            cleanupTimeout: 3000, // 3초
+            enableLogging: false
+        };
+        
+        // 탭 전환 히스토리 (메모리 누수 감지용)
+        this.tabSwitchHistory = [];
+        this.cleanupHistory = new Map();
         
         // DOM 요소들
         this.tabContent = document.getElementById('tab-content');
@@ -26,7 +43,9 @@ export class TabManager {
      */
     init() {
         this.bindTabEvents();
-        console.log('TabManager initialized');
+        this.setupMemoryTracking();
+        this.setupCleanupVerification();
+        console.log('TabManager initialized with memory leak prevention');
     }
     
     /**
@@ -199,26 +218,158 @@ export class TabManager {
     }
     
     /**
-     * 현재 탭 정리
+     * 현재 탭 정리 (강화된 버전)
      */
     async cleanupCurrentTab() {
-        // 데스크톱 레이아웃에서 탭 정리
-        if (this.appManager.desktopLayoutManager.isDesktopMode()) {
-            await this.cleanupDesktopTab();
+        if (!this.currentTab) {
+            return;
         }
         
-        if (this.currentTab && this.tabModules.has(this.currentTab)) {
-            const module = this.tabModules.get(this.currentTab);
+        const cleanupId = this.startCleanupTracking(this.currentTab);
+        const startTime = Date.now();
+        
+        try {
+            // 데스크톱 레이아웃에서 탭 정리
+            if (this.appManager.desktopLayoutManager.isDesktopMode()) {
+                await this.cleanupDesktopTab();
+            }
             
-            // 모듈에 cleanup 메서드가 있다면 호출
-            if (module.default && typeof module.default.cleanup === 'function') {
-                try {
-                    await module.default.cleanup();
-                } catch (error) {
-                    console.error(`탭 정리 실패: ${this.currentTab}`, error);
+            if (this.tabModules.has(this.currentTab)) {
+                const module = this.tabModules.get(this.currentTab);
+                
+                // 강화된 모듈 정리
+                await this.performModuleCleanup(module, this.currentTab);
+            }
+            
+            // 탭 전환 히스토리 기록
+            this.recordTabSwitch(this.currentTab, 'cleanup', Date.now() - startTime);
+            
+            // 정리 완료 추적
+            this.finishCleanupTracking(cleanupId, { success: true });
+            
+        } catch (error) {
+            console.error(`탭 정리 실패: ${this.currentTab}`, error);
+            this.finishCleanupTracking(cleanupId, { success: false, error });
+            throw error;
+        }
+    }
+    
+    /**
+     * 모듈 정리 수행 (강화된 버전)
+     * @param {Object} module - 정리할 모듈
+     * @param {string} tabName - 탭 이름
+     */
+    async performModuleCleanup(module, tabName) {
+        if (!module || !module.default) {
+            return;
+        }
+        
+        const moduleInstance = module.default;
+        
+        // cleanup 메서드가 있는지 확인
+        if (typeof moduleInstance.cleanup === 'function') {
+            // 타임아웃 설정
+            const cleanupPromise = moduleInstance.cleanup();
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Cleanup timeout')), this.options.cleanupTimeout);
+            });
+            
+            try {
+                await Promise.race([cleanupPromise, timeoutPromise]);
+                
+                if (this.options.enableLogging) {
+                    console.log(`TabManager: ${tabName} 탭 정리 완료`);
+                }
+                
+            } catch (error) {
+                if (error.message === 'Cleanup timeout') {
+                    console.warn(`TabManager: ${tabName} 탭 정리 타임아웃`);
+                    
+                    // 강제 정리 시도
+                    if (this.options.enableForceCleanup) {
+                        await this.forceCleanupModule(moduleInstance, tabName);
+                    }
+                } else {
+                    throw error;
                 }
             }
         }
+        
+        // 추가 정리 작업
+        await this.performAdditionalCleanup(moduleInstance, tabName);
+    }
+    
+    /**
+     * 강제 모듈 정리
+     * @param {Object} moduleInstance - 모듈 인스턴스
+     * @param {string} tabName - 탭 이름
+     */
+    async forceCleanupModule(moduleInstance, tabName) {
+        try {
+            // 이벤트 리스너 강제 정리
+            if (moduleInstance.eventListeners && Array.isArray(moduleInstance.eventListeners)) {
+                moduleInstance.eventListeners.forEach(listener => {
+                    try {
+                        if (listener.element && listener.event && listener.handler) {
+                            listener.element.removeEventListener(listener.event, listener.handler);
+                        }
+                    } catch (error) {
+                        console.warn(`TabManager: 강제 정리 중 이벤트 리스너 제거 실패:`, error);
+                    }
+                });
+                moduleInstance.eventListeners = [];
+            }
+            
+            // 타이머 강제 정리
+            if (moduleInstance.timeouts && Array.isArray(moduleInstance.timeouts)) {
+                moduleInstance.timeouts.forEach(timeout => {
+                    try {
+                        clearTimeout(timeout);
+                    } catch (error) {
+                        console.warn(`TabManager: 강제 정리 중 타이머 정리 실패:`, error);
+                    }
+                });
+                moduleInstance.timeouts = [];
+            }
+            
+            // 컨테이너 정리
+            if (moduleInstance.container) {
+                moduleInstance.container = null;
+            }
+            
+            console.log(`TabManager: ${tabName} 탭 강제 정리 완료`);
+            
+        } catch (error) {
+            console.error(`TabManager: ${tabName} 탭 강제 정리 실패:`, error);
+        }
+    }
+    
+    /**
+     * 추가 정리 작업 수행
+     * @param {Object} moduleInstance - 모듈 인스턴스
+     * @param {string} tabName - 탭 이름
+     */
+    async performAdditionalCleanup(moduleInstance, tabName) {
+        // 메모리 정리
+        if (this.options.enableMemoryTracking && memoryMonitor) {
+            memoryMonitor.recordMemorySnapshot();
+        }
+        
+        // 모듈 상태 초기화
+        if (moduleInstance.isInitialized !== undefined) {
+            moduleInstance.isInitialized = false;
+        }
+        
+        // 컨테이너 참조 정리
+        if (moduleInstance.container) {
+            moduleInstance.container = null;
+        }
+        
+        // 정리 히스토리 기록
+        this.cleanupHistory.set(tabName, {
+            timestamp: Date.now(),
+            success: true
+        });
     }
     
     /**
@@ -327,16 +478,54 @@ export class TabManager {
     }
     
     /**
-     * 탭 매니저 정리
+     * 탭 매니저 정리 (강화된 버전)
      */
-    cleanup() {
-        // 모든 탭 정리
-        this.cleanupCurrentTab();
+    async cleanup() {
+        const cleanupId = this.startCleanupTracking('TabManager');
         
-        // 상태 초기화
-        this.resetTabState();
+        try {
+            // 모든 탭 정리
+            await this.cleanupCurrentTab();
+            
+            // 모든 모듈 강제 정리
+            await this.forceCleanupAllModules();
+            
+            // 상태 초기화
+            this.resetTabState();
+            
+            // 메모리 정리
+            if (this.options.enableMemoryTracking && memoryMonitor) {
+                memoryMonitor.recordMemorySnapshot();
+            }
+            
+            this.finishCleanupTracking(cleanupId, { success: true });
+            console.log('TabManager cleaned up with memory leak prevention');
+            
+        } catch (error) {
+            this.finishCleanupTracking(cleanupId, { success: false, error });
+            console.error('TabManager cleanup failed:', error);
+            throw error;
+        }
+    }
+    
+    /**
+     * 모든 모듈 강제 정리
+     */
+    async forceCleanupAllModules() {
+        const cleanupPromises = [];
         
-        console.log('TabManager cleaned up');
+        this.tabModules.forEach((module, tabName) => {
+            if (module && module.default) {
+                cleanupPromises.push(
+                    this.performModuleCleanup(module, tabName)
+                        .catch(error => {
+                            console.error(`TabManager: ${tabName} 모듈 강제 정리 실패:`, error);
+                        })
+                );
+            }
+        });
+        
+        await Promise.allSettled(cleanupPromises);
     }
     
     /**
@@ -353,5 +542,267 @@ export class TabManager {
      */
     getTabModules() {
         return this.tabModules;
+    }
+    
+    // ===============================
+    // 메모리 누수 방지 유틸리티 메서드들
+    // ===============================
+    
+    /**
+     * 메모리 추적 설정
+     */
+    setupMemoryTracking() {
+        if (!this.options.enableMemoryTracking || !memoryMonitor) {
+            return;
+        }
+        
+        // 메모리 누수 이벤트 리스너
+        window.addEventListener('memoryLeak', (event) => {
+            console.warn('TabManager: 메모리 누수 감지됨', event.detail);
+            this.handleMemoryLeak(event.detail);
+        });
+        
+        // 메모리 경고 이벤트 리스너
+        window.addEventListener('memoryWarning', (event) => {
+            console.warn('TabManager: 메모리 경고', event.detail);
+            this.handleMemoryWarning(event.detail);
+        });
+    }
+    
+    /**
+     * Cleanup 검증 설정
+     */
+    setupCleanupVerification() {
+        if (!this.options.enableCleanupVerification || !cleanupVerifier) {
+            return;
+        }
+        
+        // TabManager 자체를 등록
+        cleanupVerifier.registerModule('TabManager', this, {
+            requireCleanup: true,
+            cleanupMethod: 'cleanup',
+            timeout: this.options.cleanupTimeout,
+            critical: true
+        });
+    }
+    
+    /**
+     * Cleanup 추적 시작
+     * @param {string} moduleId - 모듈 ID
+     * @returns {string} 추적 ID
+     */
+    startCleanupTracking(moduleId) {
+        if (!cleanupVerifier) {
+            return null;
+        }
+        
+        return cleanupVerifier.startCleanup(moduleId, {
+            tabManager: true,
+            timestamp: Date.now()
+        });
+    }
+    
+    /**
+     * Cleanup 추적 완료
+     * @param {string} cleanupId - 추적 ID
+     * @param {Object} result - 결과 정보
+     */
+    finishCleanupTracking(cleanupId, result) {
+        if (!cleanupId || !cleanupVerifier) {
+            return;
+        }
+        
+        if (result.success) {
+            cleanupVerifier.finishCleanup(cleanupId, result);
+        } else {
+            cleanupVerifier.failCleanup(cleanupId, result.error);
+        }
+    }
+    
+    /**
+     * 탭 전환 기록
+     * @param {string} tabName - 탭 이름
+     * @param {string} action - 액션 ('switch', 'cleanup')
+     * @param {number} duration - 소요 시간
+     */
+    recordTabSwitch(tabName, action, duration) {
+        const record = {
+            tabName,
+            action,
+            duration,
+            timestamp: Date.now(),
+            memorySnapshot: this.options.enableMemoryTracking && memoryMonitor ? 
+                memoryMonitor.getMemoryInfo() : null
+        };
+        
+        this.tabSwitchHistory.push(record);
+        
+        // 히스토리 크기 제한 (최근 50개만 유지)
+        if (this.tabSwitchHistory.length > 50) {
+            this.tabSwitchHistory = this.tabSwitchHistory.slice(-50);
+        }
+        
+        // 메모리 누수 감지
+        this.detectTabSwitchMemoryLeak();
+    }
+    
+    /**
+     * 탭 전환 메모리 누수 감지
+     */
+    detectTabSwitchMemoryLeak() {
+        if (this.tabSwitchHistory.length < 5) {
+            return;
+        }
+        
+        const recentSwitches = this.tabSwitchHistory.slice(-5);
+        const memoryGrowth = this.calculateMemoryGrowth(recentSwitches);
+        
+        if (memoryGrowth > 5 * 1024 * 1024) { // 5MB 증가
+            console.warn('TabManager: 탭 전환 중 메모리 누수 의심', {
+                memoryGrowth: this.formatBytes(memoryGrowth),
+                recentSwitches: recentSwitches.length
+            });
+            
+            // 메모리 정리 시도
+            this.performMemoryCleanup();
+        }
+    }
+    
+    /**
+     * 메모리 증가량 계산
+     * @param {Array} switches - 탭 전환 기록
+     * @returns {number} 메모리 증가량
+     */
+    calculateMemoryGrowth(switches) {
+        if (switches.length < 2) {
+            return 0;
+        }
+        
+        const first = switches[0];
+        const last = switches[switches.length - 1];
+        
+        if (!first.memorySnapshot || !last.memorySnapshot) {
+            return 0;
+        }
+        
+        return last.memorySnapshot.used - first.memorySnapshot.used;
+    }
+    
+    /**
+     * 메모리 정리 수행
+     */
+    performMemoryCleanup() {
+        try {
+            // 가비지 컬렉션 힌트
+            if (window.gc) {
+                window.gc();
+            }
+            
+            // 메모리 스냅샷 기록
+            if (memoryMonitor) {
+                memoryMonitor.recordMemorySnapshot();
+            }
+            
+            console.log('TabManager: 메모리 정리 수행됨');
+            
+        } catch (error) {
+            console.error('TabManager: 메모리 정리 실패:', error);
+        }
+    }
+    
+    /**
+     * 메모리 누수 처리
+     * @param {Object} leakInfo - 누수 정보
+     */
+    handleMemoryLeak(leakInfo) {
+        console.error('TabManager: 메모리 누수 감지됨', leakInfo);
+        
+        // 강제 정리 수행
+        this.performMemoryCleanup();
+        
+        // 모든 탭 강제 정리
+        this.forceCleanupAllModules();
+    }
+    
+    /**
+     * 메모리 경고 처리
+     * @param {Object} warningInfo - 경고 정보
+     */
+    handleMemoryWarning(warningInfo) {
+        console.warn('TabManager: 메모리 경고', warningInfo);
+        
+        // 예방적 정리 수행
+        this.performMemoryCleanup();
+    }
+    
+    /**
+     * 바이트를 읽기 쉬운 형식으로 변환
+     * @param {number} bytes - 바이트 수
+     * @returns {string} 포맷된 문자열
+     */
+    formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(Math.abs(bytes)) / Math.log(k));
+        
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    /**
+     * 탭 매니저 통계 가져오기
+     * @returns {Object} 통계 정보
+     */
+    getStats() {
+        return {
+            currentTab: this.currentTab,
+            loadedModules: this.tabModules.size,
+            switchHistory: this.tabSwitchHistory.length,
+            cleanupHistory: this.cleanupHistory.size,
+            memoryInfo: this.options.enableMemoryTracking && memoryMonitor ? 
+                memoryMonitor.getMemoryInfo() : null,
+            recentSwitches: this.tabSwitchHistory.slice(-10)
+        };
+    }
+    
+    /**
+     * 메모리 누수 감지 결과 가져오기
+     * @returns {Object} 감지 결과
+     */
+    detectMemoryLeaks() {
+        const leaks = [];
+        
+        // 정리되지 않은 모듈 체크
+        this.tabModules.forEach((module, tabName) => {
+            const cleanupRecord = this.cleanupHistory.get(tabName);
+            if (!cleanupRecord) {
+                leaks.push({
+                    type: 'uncleaned_module',
+                    tabName,
+                    description: '정리되지 않은 탭 모듈'
+                });
+            }
+        });
+        
+        // 메모리 증가 체크
+        if (this.tabSwitchHistory.length >= 10) {
+            const recentSwitches = this.tabSwitchHistory.slice(-10);
+            const memoryGrowth = this.calculateMemoryGrowth(recentSwitches);
+            
+            if (memoryGrowth > 10 * 1024 * 1024) { // 10MB
+                leaks.push({
+                    type: 'memory_growth',
+                    growth: memoryGrowth,
+                    description: `탭 전환 중 메모리 증가: ${this.formatBytes(memoryGrowth)}`
+                });
+            }
+        }
+        
+        return {
+            hasLeaks: leaks.length > 0,
+            leaks,
+            stats: this.getStats()
+        };
     }
 }

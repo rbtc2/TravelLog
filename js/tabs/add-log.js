@@ -2,6 +2,7 @@ import { FORM_CONFIG, VALIDATION_RULES } from '../config/form-config.js';
 import { createCountrySelector } from '../modules/ui-components/country-selector.js';
 import { ValidationUtils } from '../modules/utils/validation-utils.js';
 import { DateUtils } from '../modules/utils/date-utils.js';
+import { cleanupVerifier } from '../modules/utils/cleanup-verifier.js';
 
 /**
  * 일지 추가 탭 모듈
@@ -22,6 +23,16 @@ class AddLogTab {
         
         /** @type {Array<{element: Element, event: string, handler: Function}>} 등록된 이벤트 리스너 목록 */
         this.eventListeners = [];
+        
+        // CleanupVerifier에 모듈 등록
+        if (typeof cleanupVerifier !== 'undefined' && cleanupVerifier) {
+            cleanupVerifier.registerModule('add-log', this, {
+                requireCleanup: true,
+                cleanupMethod: 'cleanup',
+                timeout: 5000,
+                critical: false
+            });
+        }
         
         /** @type {Object} 폼 데이터 객체 */
         this.formData = {
