@@ -24,6 +24,10 @@ export class SignupView extends BaseAuthView {
 
         this.countrySelector = null;
         this.isCountrySelectorInitializing = false;
+        
+        // 이벤트 핸들러 바인딩
+        this.handleCountrySelection = this.handleCountrySelection.bind(this);
+        this.handleCountrySelectorEvent = this.handleCountrySelectorEvent.bind(this);
     }
 
     /**
@@ -142,17 +146,28 @@ export class SignupView extends BaseAuthView {
             // 초기화 상태 표시
             this.countrySelector.isInitialized = true;
 
-            // 국가 선택 이벤트 리스너
-            container.addEventListener('country-selected', (event) => {
-                const selectedCountry = event.detail.country;
-                this.handleCountrySelection(selectedCountry);
-            });
+            // 국가 선택 이벤트 리스너 (document에서 이벤트 수신)
+            document.addEventListener('country-selected', this.handleCountrySelectorEvent);
 
             this.isCountrySelectorInitializing = false;
 
         } catch (error) {
             console.error('SignupView: Country Selector 초기화 실패:', error);
             this.isCountrySelectorInitializing = false;
+        }
+    }
+
+    /**
+     * Country selector 이벤트를 처리합니다
+     * @param {Event} event - 이벤트 객체
+     */
+    handleCountrySelectorEvent(event) {
+        const container = document.getElementById('signup-country-selector-container');
+        // 이벤트가 이 컨테이너와 관련된 것인지 확인
+        if (event.detail.element === container) {
+            const selectedCountry = event.detail.country;
+            console.log('SignupView: 국가 선택됨:', selectedCountry);
+            this.handleCountrySelection(selectedCountry);
         }
     }
 
@@ -164,7 +179,31 @@ export class SignupView extends BaseAuthView {
         const hiddenInput = document.getElementById('signup-residence-country');
         if (hiddenInput && selectedCountry) {
             hiddenInput.value = selectedCountry.code;
-            console.log('선택된 거주국:', selectedCountry.nameKo, selectedCountry.code);
+            console.log('SignupView: 선택된 거주국:', selectedCountry.name, selectedCountry.code);
+            console.log('SignupView: Hidden input 값:', hiddenInput.value);
+            
+            // 폼 유효성 검사 상태 업데이트
+            this.updateFormValidation();
+        } else {
+            console.warn('SignupView: 국가 선택 처리 실패 - hiddenInput 또는 selectedCountry가 없음');
+        }
+    }
+    
+    /**
+     * 폼 유효성 검사 상태를 업데이트합니다
+     */
+    updateFormValidation() {
+        const hiddenInput = document.getElementById('signup-residence-country');
+        const formGroup = hiddenInput?.closest('.form-group');
+        
+        if (formGroup) {
+            if (hiddenInput.value) {
+                formGroup.classList.remove('error');
+                formGroup.classList.add('success');
+            } else {
+                formGroup.classList.remove('success');
+                formGroup.classList.add('error');
+            }
         }
     }
 
@@ -204,6 +243,20 @@ export class SignupView extends BaseAuthView {
      */
     handleSubmit() {
         const formData = this.getFormData('signup-form');
+        
+        // 거주국 값이 비어있는 경우 Country selector에서 직접 가져오기
+        if (!formData.residenceCountry || formData.residenceCountry.trim() === '') {
+            const hiddenInput = document.getElementById('signup-residence-country');
+            if (hiddenInput && hiddenInput.value) {
+                formData.residenceCountry = hiddenInput.value;
+            }
+        }
+        
+        // 디버깅을 위한 로그
+        console.log('SignupView: 폼 데이터:', formData);
+        console.log('SignupView: 거주국 값:', formData.residenceCountry);
+        console.log('SignupView: Hidden input 직접 확인:', document.getElementById('signup-residence-country')?.value);
+        
         const validation = this.validateSignupForm(formData);
 
         if (!validation.isValid) {
@@ -323,6 +376,9 @@ export class SignupView extends BaseAuthView {
             this.countrySelector.destroy();
             this.countrySelector = null;
         }
+        
+        // 이벤트 리스너 정리
+        document.removeEventListener('country-selected', this.handleCountrySelectorEvent);
         
         this.isCountrySelectorInitializing = false;
         super.cleanup();

@@ -114,6 +114,10 @@ class AuthService {
             });
 
             if (error) {
+                console.error('Supabase signUp 오류 상세:', error);
+                console.error('오류 코드:', error.code);
+                console.error('오류 메시지:', error.message);
+                console.error('오류 세부사항:', error.details);
                 throw new Error(this.getErrorMessage(error));
             }
 
@@ -405,7 +409,9 @@ class AuthService {
             'Too many requests': '너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.',
             'Network request failed': '네트워크 연결을 확인해주세요.',
             'Invalid API key': 'API 키가 유효하지 않습니다.',
-            'Service unavailable': '서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.'
+            'Service unavailable': '서비스를 사용할 수 없습니다. 잠시 후 다시 시도해주세요.',
+            'Database error saving new user': '사용자 정보 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            'Database error': '데이터베이스 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
         };
 
         return errorMessages[error.message] || error.message || '알 수 없는 오류가 발생했습니다.';

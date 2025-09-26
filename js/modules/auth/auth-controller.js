@@ -206,6 +206,8 @@ class AuthController {
             
         } catch (error) {
             console.error('회원가입 실패:', error);
+            console.error('오류 스택:', error.stack);
+            console.error('전달된 데이터:', { email, fullName, residenceCountry });
             // 에러 메시지는 authService에서 toast로 표시됨
             return { success: false, error: error.message };
         }
