@@ -82,7 +82,7 @@ class ProfileEditView {
                             <input type="file" id="profile-image-input" accept="image/*" style="display: none;">
                         </div>
                         <div class="avatar-options">
-                            <h3 class="avatar-options-title">기본 아바타 선택</h3>
+                            <h3 class="avatar-options-title">기본 프로필 선택</h3>
                             <div class="avatar-options-grid">
                                 <button class="avatar-option" data-avatar="✈️" title="비행기">✈️</button>
                                 <button class="avatar-option" data-avatar="🌍" title="지구본">🌍</button>
@@ -120,7 +120,7 @@ class ProfileEditView {
                         </div>
                         
                         <div class="form-group">
-                            <label for="profile-bio-input" class="form-label">한마디 소개</label>
+                            <label for="profile-bio-input" class="form-label">바이오</label>
                             <textarea 
                                 id="profile-bio-input" 
                                 class="form-textarea" 

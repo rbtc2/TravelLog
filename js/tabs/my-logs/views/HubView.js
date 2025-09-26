@@ -80,7 +80,7 @@ class HubView {
                         </div>
                         <div class="profile-info">
                             <div class="profile-name" id="profile-name">여행자</div>
-                            <div class="profile-bio" id="profile-bio" data-placeholder="한마디 메시지를 입력하세요...">I am new to TravelLog.</div>
+                            <div class="profile-bio" id="profile-bio" data-placeholder="바이오를 입력하세요...">I am new to TravelLog.</div>
                         </div>
                     </div>
                     
