@@ -84,6 +84,14 @@
 @import url('./pages/travel-report/ranking.css');
 @import url('./pages/travel-report/travel-report-section.css');
 
-/* 컬렉션 탭 스타일 */
-@import url('./pages/travel-collection.css');
+/* 컬렉션 탭 스타일 - 완전 모듈화된 버전 */
+@import url('./pages/travel-collection/statistics.css');
+@import url('./pages/travel-collection/filters.css');
+@import url('./pages/travel-collection/grid.css');
+@import url('./pages/travel-collection/dark-mode.css');
+@import url('./pages/travel-collection/animations.css');
+@import url('./pages/travel-collection/accessibility.css');
+@import url('./pages/travel-collection/responsive.css');
+@import url('./pages/travel-collection/map-collection.css');
+@import url('./pages/travel-collection/collection-tabs.css');
 

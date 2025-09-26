@@ -1,0 +1,147 @@
+/**
+ * Travel Collection - Collection Tabs Module
+ * 
+ * @description 컬렉션 탭 네비게이션 관련 스타일
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+
+/* ===============================
+   컬렉션 탭 네비게이션 스타일
+   =============================== */
+
+.collection-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+    color: #718096;
+}
+
+.collection-tab:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    transform: translateY(-1px);
+}
+
+.collection-tab.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3);
+}
+
+.collection-tab.active:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+.tab-icon {
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.tab-label {
+    font-weight: 500;
+}
+
+.tab-count {
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+.collection-tab:not(.active) .tab-count {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+/* ===============================
+   반응형 디자인
+   =============================== */
+
+/* 데스크톱에서 컬렉션 탭 크기 증가 */
+@media (min-width: 1024px) {
+    .collection-tab {
+        font-size: var(--font-base-desktop);
+        padding: 16px 20px;
+        gap: 10px;
+    }
+    
+    .tab-count {
+        font-size: var(--font-sm-desktop);
+        padding: 4px 8px;
+        min-width: 24px;
+        border-radius: 10px;
+    }
+}
+
+/* 대형 데스크톱에서 컬렉션 탭 크기 추가 증가 */
+@media (min-width: 1440px) {
+    .collection-tab {
+        font-size: var(--font-base-large);
+        padding: 18px 24px;
+        gap: 12px;
+    }
+    
+    .tab-count {
+        font-size: var(--font-sm-large);
+        padding: 6px 10px;
+        min-width: 28px;
+        border-radius: 12px;
+    }
+}
+
+/* ===============================
+   다크 모드 지원
+   =============================== */
+
+.dark .collection-tab {
+    color: #9CA3AF;
+}
+
+.dark .collection-tab:hover {
+    background: rgba(102, 126, 234, 0.15);
+    color: #60A5FA;
+}
+
+.dark .collection-tab.active {
+    background: #667eea;
+    color: white;
+}
+
+.dark .collection-tab:not(.active) .tab-count {
+    background: rgba(102, 126, 234, 0.15);
+    color: #60A5FA;
+}
+
+/* ===============================
+   접근성 개선
+   =============================== */
+
+.collection-tab:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* 터치 디바이스 최적화 */
+@media (hover: none) {
+    .collection-tab:hover {
+        transform: none;
+    }
+    
+    .collection-tab:active {
+        transform: scale(0.98);
+    }
+}

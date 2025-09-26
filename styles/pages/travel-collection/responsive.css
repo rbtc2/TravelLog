@@ -1,0 +1,325 @@
+/**
+ * Travel Collection - Responsive Module
+ * 
+ * @description 반응형 디자인 관련 스타일
+ * @version 1.0.0
+ * @since 2024-12-29
+ */
+
+/* ===============================
+   모바일 반응형 (768px 이하)
+   =============================== */
+
+@media (max-width: 768px) {
+    /* 통계 헤더 */
+    .stats-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .stats-icon {
+        width: 50px;
+        height: 50px;
+        font-size: var(--font-2xl);
+    }
+    
+    .stats-percentage {
+        font-size: var(--font-2xl);
+    }
+    
+    /* 대륙 그리드 */
+    .continent-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    /* 컬렉션 그리드 */
+    .collection-grid,
+    .countries-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+    
+    /* 국가 카드 */
+    .visited-country-card {
+        padding: var(--spacing-sm);
+        min-height: 100px;
+    }
+    
+    .country-flag-large {
+        font-size: 28px;
+    }
+    
+    .country-name {
+        font-size: var(--font-sm);
+    }
+    
+    .country-name-en {
+        font-size: 10px;
+    }
+    
+    /* 모던 컨트롤 */
+    .modern-collection-controls {
+        padding: var(--spacing-md);
+        margin: var(--spacing-md) 0;
+        border-radius: var(--border-radius-lg);
+    }
+    
+    .controls-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .modern-select {
+        padding: var(--spacing-sm) var(--spacing-md);
+        padding-right: 40px;
+        font-size: var(--font-size-xs);
+    }
+    
+    .select-arrow {
+        right: var(--spacing-sm);
+    }
+    
+    /* 모던 통계 카드 */
+    .modern-stats-card {
+        padding: var(--spacing-md);
+        margin: var(--spacing-md) 0;
+    }
+    
+    .stats-content {
+        gap: var(--spacing-md);
+    }
+    
+    .stats-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .stats-icon-glow {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+    }
+    
+    .stats-label {
+        font-size: var(--font-size-base);
+    }
+    
+    /* 지도 플레이스홀더 */
+    .map-placeholder {
+        min-height: 400px;
+        padding: var(--space-6);
+    }
+    
+    .map-icon {
+        font-size: 3rem;
+        margin-bottom: var(--space-4);
+    }
+    
+    .map-placeholder h3 {
+        font-size: var(--font-xl);
+        margin-bottom: var(--space-3);
+    }
+    
+    .map-placeholder p {
+        font-size: var(--font-sm);
+        margin-bottom: var(--space-4);
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-3);
+    }
+    
+    .stat-item {
+        padding: var(--space-3);
+    }
+    
+    .stat-value {
+        font-size: var(--font-2xl);
+    }
+    
+    /* 다크모드 모바일 */
+    .dark .visited-country-card {
+        margin-bottom: var(--spacing-sm);
+    }
+}
+
+/* ===============================
+   매우 작은 화면 (480px 이하)
+   =============================== */
+
+@media (max-width: 480px) {
+    .modern-collection-controls {
+        padding: var(--spacing-sm);
+        margin: var(--spacing-sm) 0;
+    }
+    
+    .controls-container {
+        gap: var(--spacing-md);
+    }
+    
+    .modern-select {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        padding-right: 36px;
+    }
+    
+    .collection-grid,
+    .countries-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xs);
+    }
+    
+    .visited-country-card {
+        padding: var(--spacing-xs);
+        min-height: 90px;
+    }
+    
+    .country-flag-large {
+        font-size: 24px;
+    }
+    
+    .country-name {
+        font-size: 12px;
+    }
+    
+    .country-name-en {
+        font-size: 9px;
+    }
+    
+    .visit-count-badge {
+        padding: 2px var(--spacing-xs);
+        font-size: 9px;
+    }
+}
+
+/* ===============================
+   태블릿 (769px - 1023px)
+   =============================== */
+
+@media (min-width: 769px) and (max-width: 1023px) {
+    .continent-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .collection-grid,
+    .countries-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }
+}
+
+/* ===============================
+   데스크톱 (1024px 이상)
+   =============================== */
+
+@media (min-width: 1024px) {
+    .continent-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .collection-grid,
+    .countries-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-xl);
+    }
+    
+    /* 대형 화면에서 최대 너비 제한 */
+    .travel-collection-container {
+        max-width: 1400px;
+    }
+    
+    /* 국가 정보 크기 증가 */
+    .country-name {
+        font-size: var(--font-lg-desktop);
+    }
+    
+    .country-name-en {
+        font-size: var(--font-sm-desktop);
+    }
+    
+    /* 방문 통계 크기 증가 */
+    .visit-count-badge {
+        font-size: var(--font-sm-desktop);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .last-visit-info {
+        font-size: var(--font-sm-desktop);
+    }
+    
+    /* 컬렉션 탭 크기 증가 */
+    .collection-tab {
+        font-size: var(--font-base-desktop);
+        padding: 16px 20px;
+        gap: 10px;
+    }
+    
+    /* 탭 카운트 크기 증가 */
+    .tab-count {
+        font-size: var(--font-sm-desktop);
+        padding: 4px 8px;
+        min-width: 24px;
+        border-radius: 10px;
+    }
+}
+
+/* ===============================
+   대형 데스크톱 (1440px 이상)
+   =============================== */
+
+@media (min-width: 1440px) {
+    /* 국가 정보 크기 추가 증가 */
+    .country-name {
+        font-size: var(--font-lg-large);
+    }
+    
+    .country-name-en {
+        font-size: var(--font-sm-large);
+    }
+    
+    /* 방문 통계 크기 추가 증가 */
+    .visit-count-badge {
+        font-size: var(--font-sm-large);
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    
+    .last-visit-info {
+        font-size: var(--font-sm-large);
+    }
+    
+    /* 컬렉션 탭 크기 추가 증가 */
+    .collection-tab {
+        font-size: var(--font-base-large);
+        padding: 18px 24px;
+        gap: 12px;
+    }
+    
+    /* 탭 카운트 크기 추가 증가 */
+    .tab-count {
+        font-size: var(--font-sm-large);
+        padding: 6px 10px;
+        min-width: 28px;
+        border-radius: 12px;
+    }
+}
+
+/* ===============================
+   초대형 화면 (1600px 이상)
+   =============================== */
+
+@media (min-width: 1600px) {
+    .collection-grid,
+    .countries-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 1600px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: var(--spacing-2xl);
+    }
+}
