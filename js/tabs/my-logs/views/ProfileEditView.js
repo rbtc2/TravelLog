@@ -62,7 +62,6 @@ class ProfileEditView {
                             <h1 class="my-logs-title">✏️ 프로필 편집</h1>
                             <p class="my-logs-subtitle">프로필 정보를 수정하세요</p>
                         </div>
-                        <button class="save-btn" id="save-profile-btn" disabled>저장</button>
                     </div>
                 </div>
                 
@@ -169,8 +168,8 @@ class ProfileEditView {
                 
                 <!-- 저장/취소 버튼 -->
                 <div class="profile-edit-actions">
-                    <button class="cancel-btn" id="cancel-profile-edit">취소</button>
                     <button class="save-btn primary" id="save-profile-edit" disabled>저장</button>
+                    <button class="cancel-btn" id="cancel-profile-edit">취소</button>
                 </div>
                 
                 <!-- 변경사항 확인 모달 (스켈레톤) -->
@@ -202,13 +201,6 @@ class ProfileEditView {
             });
         }
         
-        // 헤더 저장 버튼
-        const headerSaveBtn = document.getElementById('save-profile-btn');
-        if (headerSaveBtn) {
-            this.eventManager.add(headerSaveBtn, 'click', () => {
-                this.onSaveProfile();
-            });
-        }
         
         // 하단 저장 버튼
         const saveBtn = document.getElementById('save-profile-edit');
@@ -678,10 +670,10 @@ class ProfileEditView {
         this.hasUnsavedChanges = JSON.stringify(currentData) !== JSON.stringify(this.originalData);
         
         // 저장 버튼 활성화/비활성화
-        const saveButtons = document.querySelectorAll('#save-profile-btn, #save-profile-edit');
-        saveButtons.forEach(btn => {
-            btn.disabled = !this.hasUnsavedChanges;
-        });
+        const saveBtn = document.getElementById('save-profile-edit');
+        if (saveBtn) {
+            saveBtn.disabled = !this.hasUnsavedChanges;
+        }
     }
 
     /**
@@ -754,10 +746,10 @@ class ProfileEditView {
             this.hasUnsavedChanges = false;
             
             // 저장 버튼 비활성화
-            const saveButtons = document.querySelectorAll('#save-profile-btn, #save-profile-edit');
-            saveButtons.forEach(btn => {
-                btn.disabled = true;
-            });
+            const saveBtn = document.getElementById('save-profile-edit');
+            if (saveBtn) {
+                saveBtn.disabled = true;
+            }
             
             this.dispatchEvent('showMessage', {
                 type: 'success',
