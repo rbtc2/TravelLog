@@ -73,34 +73,6 @@
     line-height: 1.4;
 }
 
-.my-logs-tab .profile-edit-view .save-btn {
-    background: var(--primary-color);
-    border: none;
-    border-radius: var(--border-radius-md);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    color: white;
-    font-size: var(--font-sm);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    min-width: 60px;
-}
-
-.my-logs-tab .profile-edit-view .save-btn:hover:not(:disabled) {
-    background: var(--primary-color-dark);
-    transform: translateY(-1px);
-}
-
-.my-logs-tab .profile-edit-view .save-btn:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-.my-logs-tab .profile-edit-view .save-btn:disabled {
-    background: var(--surface-tertiary);
-    color: var(--text-disabled);
-    cursor: not-allowed;
-    transform: none;
-}
 
 /* ===== 섹션 스타일 ===== */
 .my-logs-tab .profile-edit-view .hub-section {
@@ -450,11 +422,6 @@
         font-size: var(--font-xs);
     }
     
-    .my-logs-tab .profile-edit-view .save-btn {
-        padding: var(--spacing-sm) var(--spacing-md);
-        min-width: 50px;
-        font-size: var(--font-xs);
-    }
     
     .my-logs-tab .profile-edit-view .hub-section {
         margin: var(--spacing-md);
@@ -492,6 +459,7 @@
         justify-content: center;
         align-items: center;
     }
+    
     
     
     .my-logs-tab .profile-edit-view .modal-content {
@@ -545,6 +513,7 @@
         padding-bottom: 20px;
     }
     
+    
 }
 
 /* 대형 데스크톱에서 버튼 너비 추가 확장 */
@@ -557,6 +526,7 @@
         max-width: 400px;
         gap: 20px;
     }
+    
     
 }
 
