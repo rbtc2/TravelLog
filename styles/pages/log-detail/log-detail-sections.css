@@ -145,7 +145,7 @@
     flex-wrap: wrap;
 }
 
-.meta-item {
+.trip-meta .meta-item {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -182,20 +182,20 @@
     color: white;
 }
 
-.date-item {
+.date-range .date-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
 }
 
-.date-label {
+.date-range .date-label {
     font-size: 0.9rem;
     opacity: 0.8;
     font-weight: 500;
 }
 
-.date-value {
+.date-range .date-value {
     font-size: 1.3rem;
     font-weight: 700;
 }
