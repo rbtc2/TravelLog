@@ -63,10 +63,6 @@ class ProfileView {
                                 <img src="" alt="프로필 이미지" class="profile-image" style="display: none;">
                                 <div class="profile-avatar-placeholder">✈️</div>
                             </div>
-                            <button class="profile-avatar-edit" id="profile-avatar-edit" title="프로필 이미지 변경">
-                                <span class="camera-icon">📷</span>
-                            </button>
-                            <input type="file" id="profile-image-input" accept="image/*" autocomplete="off" style="display: none;">
                         </div>
                         <div class="profile-details">
                             <div class="profile-name" id="profile-name">여행자</div>
@@ -206,30 +202,14 @@ class ProfileView {
             });
         }
 
-        // 프로필 이미지 업로드
-        this.bindProfileImageEvents();
 
         // 설정 버튼들
         this.bindSettingEvents();
+
+        // 프로필 편집 뷰에서 오는 이벤트들
+        this.bindProfileEditEvents();
     }
 
-    /**
-     * 프로필 이미지 관련 이벤트를 바인딩합니다
-     */
-    bindProfileImageEvents() {
-        const avatarEditBtn = document.getElementById('profile-avatar-edit');
-        const imageInput = document.getElementById('profile-image-input');
-        
-        if (avatarEditBtn && imageInput) {
-            this.eventManager.add(avatarEditBtn, 'click', () => {
-                imageInput.click();
-            });
-            
-            this.eventManager.add(imageInput, 'change', (e) => {
-                this.handleImageUpload(e);
-            });
-        }
-    }
 
     /**
      * 설정 관련 이벤트를 바인딩합니다
@@ -283,53 +263,34 @@ class ProfileView {
     }
 
     /**
-     * 이미지 업로드를 처리합니다
-     * @param {Event} event - 파일 입력 이벤트
+     * 프로필 편집 뷰에서 오는 이벤트들을 바인딩합니다
      */
-    handleImageUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        // 파일 크기 검증 (5MB 제한)
-        if (file.size > 5 * 1024 * 1024) {
-            this.dispatchEvent('showMessage', {
-                type: 'error',
-                message: '이미지 크기는 5MB 이하여야 합니다.'
+    bindProfileEditEvents() {
+        // 프로필 편집 뷰에서 사용자 정보 새로고침 이벤트 처리
+        if (this.container) {
+            this.eventManager.add(this.container, 'profileEditView:refreshUserData', () => {
+                this.refreshUserData();
             });
-            return;
         }
-
-        // 이미지 타입 검증
-        if (!file.type.startsWith('image/')) {
-            this.dispatchEvent('showMessage', {
-                type: 'error',
-                message: '이미지 파일만 업로드할 수 있습니다.'
-            });
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            this.updateProfileImage(e.target.result);
-            this.saveProfileData();
-        };
-        reader.readAsDataURL(file);
     }
 
     /**
-     * 프로필 이미지를 업데이트합니다
-     * @param {string} imageData - 이미지 데이터 URL
+     * 사용자 정보를 새로고침합니다
+     * 프로필 편집 후 업데이트된 정보를 반영
      */
-    updateProfileImage(imageData) {
-        const profileImage = document.querySelector('.profile-image');
-        const placeholder = document.querySelector('.profile-avatar-placeholder');
-        
-        if (profileImage && placeholder) {
-            profileImage.src = imageData;
-            profileImage.style.display = 'block';
-            placeholder.style.display = 'none';
+    refreshUserData() {
+        try {
+            console.log('ProfileView - 사용자 정보 새로고침 시작');
+            
+            // 프로필 데이터 다시 로드
+            this.loadProfileData();
+            
+            console.log('ProfileView - 사용자 정보 새로고침 완료');
+        } catch (error) {
+            console.error('ProfileView - 사용자 정보 새로고침 실패:', error);
         }
     }
+
 
     /**
      * 프로필 편집
@@ -410,9 +371,10 @@ class ProfileView {
                     profileEmail.textContent = profileData.email;
                 }
                 
-                if (profileData.image) {
-                    this.updateProfileImage(profileData.image);
-                }
+                // 프로필 이미지는 ProfileEditView에서만 편집 가능
+                // if (profileData.image) {
+                //     this.updateProfileImage(profileData.image);
+                // }
             }
             
             // 실제 사용자 정보 업데이트
@@ -552,8 +514,9 @@ class ProfileView {
     saveProfileData() {
         const profileData = {
             name: document.getElementById('profile-name')?.textContent || '여행자',
-            email: document.getElementById('profile-email')?.textContent || 'user@example.com',
-            image: document.querySelector('.profile-image')?.src || null
+            email: document.getElementById('profile-email')?.textContent || 'user@example.com'
+            // 프로필 이미지는 ProfileEditView에서만 편집 가능
+            // image: document.querySelector('.profile-image')?.src || null
         };
 
         try {

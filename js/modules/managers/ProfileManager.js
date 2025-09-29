@@ -24,30 +24,15 @@ class ProfileManager {
      * 프로필 관련 이벤트를 바인딩합니다
      */
     bindProfileEvents() {
-        // 프로필 이름 편집
-        const profileName = document.getElementById('profile-name');
-        if (profileName) {
-            this.eventManager.add(profileName, 'click', () => {
-                this.editProfileName();
-            });
-        }
+        // 프로필 이름 편집 기능은 ProfileEditView에서만 사용 가능
+        // const profileName = document.getElementById('profile-name');
+        // if (profileName) {
+        //     this.eventManager.add(profileName, 'click', () => {
+        //         this.editProfileName();
+        //     });
+        // }
     }
 
-    /**
-     * 프로필 이름을 편집합니다
-     */
-    editProfileName() {
-        const profileName = document.getElementById('profile-name');
-        if (!profileName) return;
-
-        const currentName = profileName.textContent;
-        const newName = prompt('이름을 입력하세요:', currentName);
-        
-        if (newName && newName.trim() && newName !== currentName) {
-            profileName.textContent = newName.trim();
-            this.saveProfileData();
-        }
-    }
 
     /**
      * 프로필 데이터를 저장합니다

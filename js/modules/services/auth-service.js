@@ -321,8 +321,15 @@ class AuthService {
         try {
             // Supabase auth 사용자 정보 업데이트
             const authUpdates = {};
-            if (updates.full_name) authUpdates.data = { full_name: updates.full_name };
-            if (updates.avatar_url) authUpdates.data = { ...authUpdates.data, avatar_url: updates.avatar_url };
+            const userMetadata = {};
+            
+            if (updates.full_name) userMetadata.full_name = updates.full_name;
+            if (updates.residence_country) userMetadata.residence_country = updates.residence_country;
+            if (updates.avatar_url) userMetadata.avatar_url = updates.avatar_url;
+            
+            if (Object.keys(userMetadata).length > 0) {
+                authUpdates.data = userMetadata;
+            }
 
             if (Object.keys(authUpdates).length > 0) {
                 const { error: authError } = await this.client.auth.updateUser(authUpdates);

@@ -15,6 +15,7 @@
  * @version 1.0.0
  * @since 2024-12-29
  */
+
 import { EventManager } from '../../../modules/utils/event-manager.js';
 
 class ProfileEditView {
@@ -701,12 +702,12 @@ class ProfileEditView {
     /**
      * 저장 버튼 클릭
      */
-    onSaveProfile() {
+    async onSaveProfile() {
         if (!this.validateForm()) {
             return;
         }
         
-        this.saveProfileData();
+        await this.saveProfileData();
     }
 
     /**
@@ -723,7 +724,7 @@ class ProfileEditView {
     /**
      * 프로필 데이터를 저장합니다
      */
-    saveProfileData() {
+    async saveProfileData() {
         const nameInput = document.getElementById('profile-name-input');
         const bioInput = document.getElementById('profile-bio-input');
         const countrySelect = document.getElementById('profile-country-input');
@@ -739,6 +740,10 @@ class ProfileEditView {
         };
         
         try {
+            // Supabase 사용자 정보 업데이트
+            await this.updateSupabaseProfile(profileData);
+            
+            // 로컬 스토리지에도 저장 (기존 호환성 유지)
             localStorage.setItem('travelLog_profile', JSON.stringify(profileData));
             
             // 원본 데이터 업데이트
@@ -756,9 +761,9 @@ class ProfileEditView {
                 message: '프로필이 저장되었습니다.'
             });
             
-            // 프로필 뷰로 이동
+            // 프로필 뷰로 이동 (사용자 정보 새로고침 포함)
             setTimeout(() => {
-                this.navigateToProfile();
+                this.navigateToProfileWithRefresh();
             }, 1000);
             
         } catch (error) {
@@ -767,6 +772,57 @@ class ProfileEditView {
                 type: 'error',
                 message: '프로필 저장에 실패했습니다.'
             });
+        }
+    }
+
+    /**
+     * Supabase 사용자 프로필을 업데이트합니다
+     * @param {Object} profileData - 업데이트할 프로필 데이터
+     */
+    async updateSupabaseProfile(profileData) {
+        try {
+            // AuthService 인스턴스 가져오기
+            const authService = await this.getAuthService();
+            if (!authService) {
+                throw new Error('인증 서비스를 찾을 수 없습니다.');
+            }
+
+            // Supabase 업데이트용 데이터 준비
+            const updates = {
+                full_name: profileData.name,
+                bio: profileData.bio,
+                residence_country: profileData.residenceCountry
+            };
+
+            // 프로필 업데이트 실행
+            await authService.updateProfile(updates);
+            
+            console.log('Supabase 프로필 업데이트 성공:', updates);
+            
+        } catch (error) {
+            console.error('Supabase 프로필 업데이트 실패:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * AuthService 인스턴스를 가져옵니다
+     * @returns {AuthService|null} AuthService 인스턴스 또는 null
+     */
+    async getAuthService() {
+        try {
+            // 동적 import를 사용하여 AuthService 가져오기
+            const { authService } = await import('../../../modules/services/auth-service.js');
+            
+            if (authService && authService.isInitialized) {
+                return authService;
+            }
+            
+            console.warn('AuthService가 초기화되지 않았습니다.');
+            return null;
+        } catch (error) {
+            console.error('AuthService 인스턴스 가져오기 실패:', error);
+            return null;
         }
     }
 
@@ -803,6 +859,18 @@ class ProfileEditView {
      * 상위 뷰인 ProfileView로 복귀
      */
     navigateToProfile() {
+        this.dispatchEvent('navigate', { view: 'profile' });
+    }
+
+    /**
+     * 프로필 뷰로 이동하면서 사용자 정보를 새로고침합니다
+     * 프로필 편집 완료 후 업데이트된 정보가 반영되도록 함
+     */
+    navigateToProfileWithRefresh() {
+        // 사용자 정보 새로고침 이벤트 발생
+        this.dispatchEvent('refreshUserData');
+        
+        // 프로필 뷰로 이동
         this.dispatchEvent('navigate', { view: 'profile' });
     }
 
