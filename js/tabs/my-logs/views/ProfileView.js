@@ -286,6 +286,7 @@ class ProfileView {
             this.loadUserProfileName();
             this.loadUserProfileEmail();
             this.loadUserProfileJoinDate();
+            this.loadUserProfileBio();
             this.updateUserInfo();
             
             console.log('ProfileView - 사용자 정보 새로고침 완료');
@@ -374,6 +375,9 @@ class ProfileView {
                 //     this.updateProfileImage(profileData.image);
                 // }
             }
+            
+            // 바이오 정보 로드 (로컬 스토리지에서)
+            this.loadUserProfileBio();
             
             // 실제 사용자 정보 업데이트
             this.updateUserInfo();
@@ -483,6 +487,44 @@ class ProfileView {
             const profileJoinDate = document.getElementById('profile-join-date');
             if (profileJoinDate) {
                 profileJoinDate.textContent = '가입일: 2024년 12월 29일';
+            }
+        }
+    }
+
+    /**
+     * 사용자 프로필 바이오를 로드합니다
+     */
+    loadUserProfileBio() {
+        try {
+            // 로컬 스토리지에서 바이오 정보 가져오기
+            const savedData = localStorage.getItem('travelLog_profile');
+            let bioText = '';
+            
+            if (savedData) {
+                const profileData = JSON.parse(savedData);
+                bioText = profileData.bio || '';
+            }
+            
+            const profileBio = document.getElementById('profile-bio');
+            if (profileBio) {
+                if (bioText && bioText.trim()) {
+                    profileBio.textContent = bioText;
+                    profileBio.classList.remove('placeholder');
+                    console.log('ProfileView - 사용자 바이오 로드됨:', bioText);
+                } else {
+                    // 바이오가 없는 경우 기본값 또는 플레이스홀더 표시
+                    const placeholder = profileBio.getAttribute('data-placeholder') || '바이오를 입력하세요...';
+                    profileBio.textContent = placeholder;
+                    profileBio.classList.add('placeholder');
+                    console.log('ProfileView - 기본 바이오 플레이스홀더 사용');
+                }
+            }
+        } catch (error) {
+            console.error('ProfileView - 사용자 프로필 바이오 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileBio = document.getElementById('profile-bio');
+            if (profileBio) {
+                profileBio.textContent = 'I am new to TravelLog.';
             }
         }
     }

@@ -38,8 +38,12 @@ class ProfileManager {
      * 프로필 데이터를 저장합니다
      */
     saveProfileData() {
+        const profileName = document.getElementById('profile-name');
+        const profileBio = document.getElementById('profile-bio');
+        
         const profileData = {
-            name: document.getElementById('profile-name')?.textContent || '여행자'
+            name: profileName?.textContent || '여행자',
+            bio: profileBio?.textContent || ''
         };
 
         try {
@@ -74,6 +78,9 @@ class ProfileManager {
                 // 프로필 데이터 로드 (이미지 제외)
                 this.applyProfileData(profileData);
             }
+            
+            // 바이오 정보 로드 (로컬 스토리지에서)
+            this.loadUserProfileBio();
         } catch (error) {
             console.error('프로필 데이터 로드 실패:', error);
         }
@@ -227,6 +234,48 @@ class ProfileManager {
     }
 
     /**
+     * 사용자 프로필 바이오를 로드합니다
+     */
+    loadUserProfileBio() {
+        try {
+            // 로컬 스토리지에서 바이오 정보 가져오기
+            const savedData = localStorage.getItem(this.storageKey);
+            let bioText = '';
+            
+            if (savedData) {
+                const profileData = JSON.parse(savedData);
+                bioText = profileData.bio || '';
+            }
+            
+            const profileBio = document.getElementById('profile-bio');
+            if (profileBio) {
+                if (bioText && bioText.trim()) {
+                    profileBio.textContent = bioText;
+                    if (this.isDevelopment) {
+                        console.log('사용자 바이오 로드됨:', bioText);
+                    }
+                } else {
+                    // 바이오가 없는 경우 기본값 또는 플레이스홀더 표시
+                    const placeholder = profileBio.getAttribute('data-placeholder') || '바이오를 입력하세요...';
+                    profileBio.textContent = placeholder;
+                    profileBio.classList.add('placeholder');
+                    
+                    if (this.isDevelopment) {
+                        console.log('기본 바이오 플레이스홀더 사용');
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('사용자 프로필 바이오 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileBio = document.getElementById('profile-bio');
+            if (profileBio) {
+                profileBio.textContent = 'I am new to TravelLog.';
+            }
+        }
+    }
+
+    /**
      * 프로필 데이터를 UI에 적용합니다
      * @param {Object} profileData - 적용할 프로필 데이터
      */
@@ -237,6 +286,14 @@ class ProfileManager {
                 profileName.textContent = profileData.name;
             }
         }
+        
+        if (profileData.bio) {
+            const profileBio = document.getElementById('profile-bio');
+            if (profileBio) {
+                profileBio.textContent = profileData.bio;
+                profileBio.classList.remove('placeholder');
+            }
+        }
     }
 
     /**
@@ -245,8 +302,11 @@ class ProfileManager {
      */
     getCurrentProfileData() {
         const profileName = document.getElementById('profile-name');
+        const profileBio = document.getElementById('profile-bio');
+        
         return {
-            name: profileName?.textContent || '여행자'
+            name: profileName?.textContent || '여행자',
+            bio: profileBio?.textContent || ''
         };
     }
 
@@ -262,12 +322,31 @@ class ProfileManager {
     }
 
     /**
+     * 프로필 바이오를 설정합니다
+     * @param {string} bio - 설정할 바이오
+     */
+    setProfileBio(bio) {
+        const profileBio = document.getElementById('profile-bio');
+        if (profileBio) {
+            if (bio && bio.trim()) {
+                profileBio.textContent = bio.trim();
+                profileBio.classList.remove('placeholder');
+            } else {
+                const placeholder = profileBio.getAttribute('data-placeholder') || '바이오를 입력하세요...';
+                profileBio.textContent = placeholder;
+                profileBio.classList.add('placeholder');
+            }
+        }
+    }
+
+    /**
      * 프로필 데이터를 초기화합니다
      */
     resetProfileData() {
         try {
             localStorage.removeItem(this.storageKey);
             this.setProfileName('여행자');
+            this.setProfileBio('');
             console.log('프로필 데이터 초기화됨');
         } catch (error) {
             console.error('프로필 데이터 초기화 실패:', error);
