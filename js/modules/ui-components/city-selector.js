@@ -28,7 +28,8 @@ export class CitySelector {
         this.input = null;
         this.arrow = null;
         this.selectedIndex = -1;
-        this.filteredCities = [];
+        this.allCities = [];           // 원본 도시 데이터 저장
+        this.filteredCities = [];      // 검색 결과만 저장
         this.eventListeners = new Map();
         this.selectedCountry = null;
         this.isLoading = false;
@@ -68,9 +69,13 @@ export class CitySelector {
         try {
             this.setLoading(true);
             await this.loadCitiesByCountry(country.nameEn);
+            // 원본 데이터와 검색 결과 모두 설정
+            this.filteredCities = [...this.allCities];
             this.updateDropdownContent();
         } catch (error) {
             console.error('도시 데이터 로드 실패:', error);
+            this.allCities = [];
+            this.filteredCities = [];
             this.showError('도시 데이터를 불러오는데 실패했습니다.');
         } finally {
             this.setLoading(false);
@@ -106,14 +111,14 @@ export class CitySelector {
                 throw new Error('API 응답 데이터 형식이 올바르지 않습니다.');
             }
             
-            // 도시 데이터 변환
-            this.filteredCities = data.data.map(cityName => ({
+            // 원본 도시 데이터 저장
+            this.allCities = data.data.map(cityName => ({
                 name: cityName,
                 nameEn: cityName,
                 country: countryName
             }));
             
-            console.log(`${countryName}의 도시 ${this.filteredCities.length}개 로드 완료`);
+            console.log(`${countryName}의 도시 ${this.allCities.length}개 로드 완료`);
             
         } catch (error) {
             console.error('도시 API 호출 실패:', error);
@@ -121,7 +126,7 @@ export class CitySelector {
             // 네트워크 오류 시 폴백 데이터 제공
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
                 console.warn('네트워크 연결 실패, 폴백 도시 데이터를 사용합니다.');
-                this.filteredCities = this.getFallbackCities(countryName);
+                this.allCities = this.getFallbackCities(countryName);
             } else {
                 throw error;
             }
@@ -405,20 +410,22 @@ export class CitySelector {
     }
     
     /**
-     * 검색 기능
+     * 검색 기능 (수정됨 - 원본 데이터 보존)
      * @param {string} query - 검색어
      */
     search(query) {
-        if (!this.selectedCountry || !this.filteredCities) {
+        if (!this.selectedCountry || !this.allCities) {
             return;
         }
         
         const searchTerm = query.toLowerCase().trim();
         
         if (searchTerm === '') {
-            this.filteredCities = this.filteredCities;
+            // 빈 검색어일 때는 원본 데이터 복원
+            this.filteredCities = [...this.allCities];
         } else {
-            this.filteredCities = this.filteredCities.filter(city => 
+            // 원본 데이터에서 필터링하여 새 배열 생성
+            this.filteredCities = this.allCities.filter(city => 
                 city.name.toLowerCase().includes(searchTerm) ||
                 city.nameEn.toLowerCase().includes(searchTerm)
             );
@@ -520,6 +527,11 @@ export class CitySelector {
         this.input.value = '';
         this.container.classList.add('disabled');
         this.close();
+        
+        // 데이터 초기화
+        this.allCities = [];
+        this.filteredCities = [];
+        this.selectedCountry = null;
     }
     
     /**
@@ -608,6 +620,7 @@ export class CitySelector {
             // 상태 초기화
             this.isOpen = false;
             this.selectedIndex = -1;
+            this.allCities = [];
             this.filteredCities = [];
             this.selectedCountry = null;
             this.isLoading = false;
