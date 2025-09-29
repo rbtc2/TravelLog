@@ -67,7 +67,7 @@ class ProfileView {
                         <div class="profile-details">
                             <div class="profile-name" id="profile-name">여행자</div>
                             <div class="profile-email" id="profile-email">user@example.com</div>
-                            <div class="profile-join-date">가입일: 2024년 12월 29일</div>
+                            <div class="profile-join-date" id="profile-join-date">가입일: 2024년 12월 29일</div>
                         </div>
                     </div>
                 </div>
@@ -282,9 +282,10 @@ class ProfileView {
         try {
             console.log('ProfileView - 사용자 정보 새로고침 시작');
             
-            // 프로필 데이터 다시 로드 (이름과 이메일 모두)
+            // 프로필 데이터 다시 로드 (이름, 이메일, 가입일 모두)
             this.loadUserProfileName();
             this.loadUserProfileEmail();
+            this.loadUserProfileJoinDate();
             this.updateUserInfo();
             
             console.log('ProfileView - 사용자 정보 새로고침 완료');
@@ -358,9 +359,10 @@ class ProfileView {
      */
     loadProfileData() {
         try {
-            // 먼저 실제 사용자 정보에서 이름과 이메일을 가져옵니다
+            // 먼저 실제 사용자 정보에서 이름, 이메일, 가입일을 가져옵니다
             this.loadUserProfileName();
             this.loadUserProfileEmail();
+            this.loadUserProfileJoinDate();
             
             // 그 다음 로컬 프로필 데이터를 로드합니다
             const savedData = localStorage.getItem('travelLog_profile');
@@ -444,6 +446,43 @@ class ProfileView {
             const profileEmail = document.getElementById('profile-email');
             if (profileEmail) {
                 profileEmail.textContent = 'user@example.com';
+            }
+        }
+    }
+
+    /**
+     * 실제 사용자 정보에서 프로필 가입일을 로드합니다
+     */
+    loadUserProfileJoinDate() {
+        try {
+            // AuthController를 통해 현재 사용자 정보 가져오기
+            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
+                const currentUser = window.appManager.authManager.authController.getCurrentUser();
+                if (currentUser && currentUser.created_at) {
+                    const profileJoinDate = document.getElementById('profile-join-date');
+                    if (profileJoinDate) {
+                        const joinDate = new Date(currentUser.created_at);
+                        const formattedDate = this.formatKoreanDate(joinDate);
+                        profileJoinDate.textContent = `가입일: ${formattedDate}`;
+                        console.log('ProfileView - 사용자 가입일 로드됨:', formattedDate);
+                        return;
+                    }
+                }
+            }
+            
+            // AuthController가 없거나 사용자 정보가 없는 경우 기본값 사용
+            const profileJoinDate = document.getElementById('profile-join-date');
+            if (profileJoinDate) {
+                const defaultDate = '2024년 12월 29일';
+                profileJoinDate.textContent = `가입일: ${defaultDate}`;
+                console.log('ProfileView - 기본 가입일 사용:', defaultDate);
+            }
+        } catch (error) {
+            console.error('ProfileView - 사용자 프로필 가입일 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileJoinDate = document.getElementById('profile-join-date');
+            if (profileJoinDate) {
+                profileJoinDate.textContent = '가입일: 2024년 12월 29일';
             }
         }
     }

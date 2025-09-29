@@ -62,9 +62,10 @@ class ProfileManager {
      */
     loadProfileData() {
         try {
-            // 먼저 실제 사용자 정보에서 이름과 이메일을 가져옵니다
+            // 먼저 실제 사용자 정보에서 이름, 이메일, 가입일을 가져옵니다
             this.loadUserProfileName();
             this.loadUserProfileEmail();
+            this.loadUserProfileJoinDate();
             
             // 그 다음 로컬 프로필 데이터를 로드합니다
             const savedData = localStorage.getItem(this.storageKey);
@@ -166,6 +167,63 @@ class ProfileManager {
                 profileEmail.textContent = 'user@example.com';
             }
         }
+    }
+
+    /**
+     * 실제 사용자 정보에서 프로필 가입일을 로드합니다
+     */
+    loadUserProfileJoinDate() {
+        try {
+            // AuthController를 통해 현재 사용자 정보 가져오기
+            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
+                const currentUser = window.appManager.authManager.authController.getCurrentUser();
+                if (currentUser && currentUser.created_at) {
+                    const profileJoinDate = document.getElementById('profile-join-date');
+                    
+                    if (profileJoinDate) {
+                        const joinDate = new Date(currentUser.created_at);
+                        const formattedDate = this.formatKoreanDate(joinDate);
+                        profileJoinDate.textContent = `가입일: ${formattedDate}`;
+                        
+                        if (this.isDevelopment) {
+                            console.log('사용자 가입일 로드됨:', formattedDate);
+                        }
+                        return;
+                    }
+                }
+            }
+            
+            // AuthController가 없거나 사용자 정보가 없는 경우 기본값 사용
+            const profileJoinDate = document.getElementById('profile-join-date');
+            if (profileJoinDate) {
+                const defaultDate = '2024년 12월 29일';
+                profileJoinDate.textContent = `가입일: ${defaultDate}`;
+                
+                if (this.isDevelopment) {
+                    console.log('기본 가입일 사용:', defaultDate);
+                }
+            }
+        } catch (error) {
+            console.error('사용자 프로필 가입일 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileJoinDate = document.getElementById('profile-join-date');
+            if (profileJoinDate) {
+                profileJoinDate.textContent = '가입일: 2024년 12월 29일';
+            }
+        }
+    }
+
+    /**
+     * 한국어 날짜 형식으로 포맷합니다
+     * @param {Date} date - 포맷할 날짜
+     * @returns {string} 한국어 형식의 날짜 문자열
+     */
+    formatKoreanDate(date) {
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        
+        return `${year}년 ${month}월 ${day}일`;
     }
 
     /**
