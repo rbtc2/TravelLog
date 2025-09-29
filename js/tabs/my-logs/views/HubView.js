@@ -210,6 +210,25 @@ class HubView {
         this.container.addEventListener('hubView:logout', () => {
             this.onLogout();
         });
+
+        // 프로필 새로고침 이벤트 리스너
+        this.container.addEventListener('refreshHubProfile', () => {
+            this.refreshProfileData();
+        });
+    }
+
+    /**
+     * 프로필 데이터를 새로고침합니다
+     * 프로필 편집 후 업데이트된 정보를 반영
+     */
+    refreshProfileData() {
+        try {
+            console.log('HubView - 프로필 데이터 새로고침 시작');
+            this.profileManager.loadProfileData();
+            console.log('HubView - 프로필 데이터 새로고침 완료');
+        } catch (error) {
+            console.error('HubView - 프로필 데이터 새로고침 실패:', error);
+        }
     }
 
     /**

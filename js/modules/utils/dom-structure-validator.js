@@ -73,27 +73,157 @@ export const DOM_TEMPLATES = {
     },
     'my-logs-tab': {
         required: `
-            <div class="my-logs-tab">
-                <div class="my-logs-container">
-                    <div class="hub-view">
-                        <!-- Hub 뷰 -->
-                    </div>
-                    <div class="logs-list-view">
-                        <!-- 로그 목록 뷰 -->
-                    </div>
-                    <div class="settings-view">
-                        <!-- 설정 뷰 -->
-                    </div>
-                    <div class="travel-report-view">
-                        <!-- 여행 리포트 뷰 -->
-                    </div>
-                    <div class="profile-view">
-                        <!-- 프로필 뷰 -->
-                    </div>
-                    <div class="travel-collection-view">
-                        <!-- 여행 컬렉션 뷰 -->
+            <div class="my-logs-container">
+                <div class="my-logs-header">
+                    <div class="header-content">
+                        <h1 class="my-logs-title"></h1>
+                        <p class="my-logs-subtitle"></p>
                     </div>
                 </div>
+                <div class="hub-section">
+                    <!-- 섹션 내용 -->
+                </div>
+            </div>
+        `
+    },
+    'hub-view': {
+        required: `
+            <div class="my-logs-container hub-view">
+                <div class="my-logs-header">
+                    <div class="header-with-settings">
+                        <div class="header-content">
+                            <h1 class="my-logs-title"></h1>
+                            <p class="my-logs-subtitle"></p>
+                        </div>
+                        <button class="settings-btn" id="settings-btn"></button>
+                    </div>
+                </div>
+                <div class="hub-section profile-section">
+                    <div class="profile-content">
+                        <div class="profile-avatar-container">
+                            <div class="profile-avatar" id="profile-avatar">
+                                <img src="" alt="프로필 이미지" class="profile-image" style="display: none;">
+                                <div class="profile-avatar-placeholder"></div>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name" id="profile-name"></div>
+                            <div class="profile-bio" id="profile-bio"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    'profile-view': {
+        required: `
+            <div class="my-logs-container profile-view">
+                <div class="my-logs-header">
+                    <div class="header-with-back">
+                        <button class="back-btn" id="back-to-hub-from-profile"></button>
+                        <div class="header-content">
+                            <h1 class="my-logs-title"></h1>
+                            <p class="my-logs-subtitle"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hub-section profile-info-section">
+                    <div class="section-header">
+                        <h2 class="section-title"></h2>
+                    </div>
+                    <div class="profile-info-content">
+                        <div class="profile-avatar-container">
+                            <div class="profile-avatar" id="profile-avatar">
+                                <img src="" alt="프로필 이미지" class="profile-image" style="display: none;">
+                                <div class="profile-avatar-placeholder"></div>
+                            </div>
+                        </div>
+                        <div class="profile-details">
+                            <div class="profile-name" id="profile-name"></div>
+                            <div class="profile-email" id="profile-email"></div>
+                            <div class="profile-join-date" id="profile-join-date"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    'logs-list-view': {
+        required: `
+            <div class="my-logs-container logs-list-view">
+                <div class="my-logs-header">
+                    <div class="header-with-back">
+                        <button class="back-btn" id="back-to-hub-from-logs"></button>
+                        <div class="header-content">
+                            <h1 class="my-logs-title"></h1>
+                            <p class="my-logs-subtitle"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="logs-content">
+                    <div class="logs-toolbar">
+                        <div class="view-mode-toggle">
+                            <button class="view-mode-btn" data-mode="card"></button>
+                            <button class="view-mode-btn" data-mode="list"></button>
+                        </div>
+                    </div>
+                    <div class="logs-list" id="logs-list"></div>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </div>
+        `
+    },
+    'settings-view': {
+        required: `
+            <div class="my-logs-container settings-view">
+                <div class="my-logs-header">
+                    <div class="header-with-back">
+                        <button class="back-btn" id="back-to-hub-from-settings"></button>
+                        <div class="header-content">
+                            <h1 class="my-logs-title"></h1>
+                            <p class="my-logs-subtitle"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="hub-section app-settings-section">
+                    <div class="section-header">
+                        <h2 class="section-title"></h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <div class="setting-icon"></div>
+                                <div class="setting-details">
+                                    <div class="setting-title"></div>
+                                    <div class="setting-description"></div>
+                                </div>
+                            </div>
+                            <div class="setting-control"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    'travel-collection-view': {
+        required: `
+            <div class="my-logs-container travel-collection-view">
+                <div class="my-logs-header">
+                    <div class="header-with-back">
+                        <button class="back-btn" id="back-to-hub-from-collection"></button>
+                        <div class="header-content">
+                            <h1 class="my-logs-title"></h1>
+                            <p class="my-logs-subtitle"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="collection-tabs">
+                    <div class="collection-tab" data-collection="map">
+                        <span class="tab-icon"></span>
+                        <span class="tab-title"></span>
+                    </div>
+                </div>
+                <div class="collection-content" id="travel-collection-content"></div>
             </div>
         `
     }

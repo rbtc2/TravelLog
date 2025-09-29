@@ -867,8 +867,11 @@ class ProfileEditView {
      * 프로필 편집 완료 후 업데이트된 정보가 반영되도록 함
      */
     navigateToProfileWithRefresh() {
-        // 사용자 정보 새로고침 이벤트 발생
+        // 사용자 정보 새로고침 이벤트 발생 (ProfileView용)
         this.dispatchEvent('refreshUserData');
+        
+        // HubView에서도 프로필 데이터 새로고침하도록 이벤트 발생
+        this.dispatchEvent('refreshHubProfile');
         
         // 프로필 뷰로 이동
         this.dispatchEvent('navigate', { view: 'profile' });

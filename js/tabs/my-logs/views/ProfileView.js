@@ -268,7 +268,7 @@ class ProfileView {
     bindProfileEditEvents() {
         // 프로필 편집 뷰에서 사용자 정보 새로고침 이벤트 처리
         if (this.container) {
-            this.eventManager.add(this.container, 'profileEditView:refreshUserData', () => {
+            this.eventManager.add(this.container, 'refreshUserData', () => {
                 this.refreshUserData();
             });
         }
@@ -287,6 +287,7 @@ class ProfileView {
             this.loadUserProfileEmail();
             this.loadUserProfileJoinDate();
             this.loadUserProfileBio();
+            this.loadUserProfileAvatar();
             this.updateUserInfo();
             
             console.log('ProfileView - 사용자 정보 새로고침 완료');
@@ -378,6 +379,9 @@ class ProfileView {
             
             // 바이오 정보 로드 (로컬 스토리지에서)
             this.loadUserProfileBio();
+            
+            // 아바타 정보 로드 (로컬 스토리지에서)
+            this.loadUserProfileAvatar();
             
             // 실제 사용자 정보 업데이트
             this.updateUserInfo();
@@ -525,6 +529,58 @@ class ProfileView {
             const profileBio = document.getElementById('profile-bio');
             if (profileBio) {
                 profileBio.textContent = 'I am new to TravelLog.';
+            }
+        }
+    }
+
+    /**
+     * 사용자 프로필 아바타를 로드합니다
+     */
+    loadUserProfileAvatar() {
+        try {
+            // 로컬 스토리지에서 아바타 정보 가져오기
+            const savedData = localStorage.getItem('travelLog_profile');
+            let avatarData = null;
+            
+            if (savedData) {
+                const profileData = JSON.parse(savedData);
+                avatarData = {
+                    avatar: profileData.avatar || null,
+                    defaultAvatar: profileData.defaultAvatar || '✈️'
+                };
+            }
+            
+            const profileAvatarPlaceholder = document.querySelector('.profile-avatar-placeholder');
+            const profileImage = document.querySelector('.profile-image');
+            
+            if (profileAvatarPlaceholder) {
+                if (avatarData && avatarData.avatar) {
+                    // 커스텀 이미지가 있는 경우
+                    if (profileImage) {
+                        profileImage.src = avatarData.avatar;
+                        profileImage.style.display = 'block';
+                        profileAvatarPlaceholder.style.display = 'none';
+                    }
+                } else {
+                    // 기본 아바타 사용
+                    const defaultAvatar = avatarData?.defaultAvatar || '✈️';
+                    profileAvatarPlaceholder.textContent = defaultAvatar;
+                    profileAvatarPlaceholder.style.display = 'block';
+                    
+                    if (profileImage) {
+                        profileImage.style.display = 'none';
+                    }
+                    
+                    console.log('ProfileView - 기본 아바타 로드됨:', defaultAvatar);
+                }
+            }
+        } catch (error) {
+            console.error('ProfileView - 사용자 프로필 아바타 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileAvatarPlaceholder = document.querySelector('.profile-avatar-placeholder');
+            if (profileAvatarPlaceholder) {
+                profileAvatarPlaceholder.textContent = '✈️';
+                profileAvatarPlaceholder.style.display = 'block';
             }
         }
     }
