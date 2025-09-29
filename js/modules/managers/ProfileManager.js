@@ -62,8 +62,9 @@ class ProfileManager {
      */
     loadProfileData() {
         try {
-            // 먼저 실제 사용자 정보에서 이름을 가져옵니다
+            // 먼저 실제 사용자 정보에서 이름과 이메일을 가져옵니다
             this.loadUserProfileName();
+            this.loadUserProfileEmail();
             
             // 그 다음 로컬 프로필 데이터를 로드합니다
             const savedData = localStorage.getItem(this.storageKey);
@@ -120,6 +121,49 @@ class ProfileManager {
             const profileName = document.getElementById('profile-name');
             if (profileName) {
                 profileName.textContent = '여행자';
+            }
+        }
+    }
+
+    /**
+     * 실제 사용자 정보에서 프로필 이메일을 로드합니다
+     */
+    loadUserProfileEmail() {
+        try {
+            // AuthController를 통해 현재 사용자 정보 가져오기
+            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
+                const currentUser = window.appManager.authManager.authController.getCurrentUser();
+                if (currentUser && currentUser.email) {
+                    const userEmail = currentUser.email;
+                    const profileEmail = document.getElementById('profile-email');
+                    
+                    if (profileEmail) {
+                        profileEmail.textContent = userEmail;
+                        
+                        if (this.isDevelopment) {
+                            console.log('사용자 이메일 로드됨:', userEmail);
+                        }
+                        return;
+                    }
+                }
+            }
+            
+            // AuthController가 없거나 사용자 정보가 없는 경우 기본값 사용
+            const profileEmail = document.getElementById('profile-email');
+            if (profileEmail) {
+                const defaultEmail = 'user@example.com';
+                profileEmail.textContent = defaultEmail;
+                
+                if (this.isDevelopment) {
+                    console.log('기본 이메일 사용:', defaultEmail);
+                }
+            }
+        } catch (error) {
+            console.error('사용자 프로필 이메일 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileEmail = document.getElementById('profile-email');
+            if (profileEmail) {
+                profileEmail.textContent = 'user@example.com';
             }
         }
     }

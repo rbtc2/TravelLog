@@ -282,8 +282,10 @@ class ProfileView {
         try {
             console.log('ProfileView - 사용자 정보 새로고침 시작');
             
-            // 프로필 데이터 다시 로드
-            this.loadProfileData();
+            // 프로필 데이터 다시 로드 (이름과 이메일 모두)
+            this.loadUserProfileName();
+            this.loadUserProfileEmail();
+            this.updateUserInfo();
             
             console.log('ProfileView - 사용자 정보 새로고침 완료');
         } catch (error) {
@@ -356,20 +358,14 @@ class ProfileView {
      */
     loadProfileData() {
         try {
-            // 먼저 실제 사용자 정보에서 이름을 가져옵니다
+            // 먼저 실제 사용자 정보에서 이름과 이메일을 가져옵니다
             this.loadUserProfileName();
+            this.loadUserProfileEmail();
             
             // 그 다음 로컬 프로필 데이터를 로드합니다
             const savedData = localStorage.getItem('travelLog_profile');
             if (savedData) {
                 const profileData = JSON.parse(savedData);
-                
-                const profileEmail = document.getElementById('profile-email');
-                
-                // 이름은 실제 사용자 정보를 우선하고, 이메일은 로컬 데이터를 사용
-                if (profileEmail && profileData.email) {
-                    profileEmail.textContent = profileData.email;
-                }
                 
                 // 프로필 이미지는 ProfileEditView에서만 편집 가능
                 // if (profileData.image) {
@@ -414,6 +410,40 @@ class ProfileView {
             const profileName = document.getElementById('profile-name');
             if (profileName) {
                 profileName.textContent = '여행자';
+            }
+        }
+    }
+
+    /**
+     * 실제 사용자 정보에서 프로필 이메일을 로드합니다
+     */
+    loadUserProfileEmail() {
+        try {
+            // AuthController를 통해 현재 사용자 정보 가져오기
+            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
+                const currentUser = window.appManager.authManager.authController.getCurrentUser();
+                if (currentUser && currentUser.email) {
+                    const profileEmail = document.getElementById('profile-email');
+                    if (profileEmail) {
+                        profileEmail.textContent = currentUser.email;
+                        console.log('ProfileView - 사용자 이메일 로드됨:', currentUser.email);
+                        return;
+                    }
+                }
+            }
+            
+            // AuthController가 없거나 사용자 정보가 없는 경우 기본값 사용
+            const profileEmail = document.getElementById('profile-email');
+            if (profileEmail) {
+                profileEmail.textContent = 'user@example.com';
+                console.log('ProfileView - 기본 이메일 사용: user@example.com');
+            }
+        } catch (error) {
+            console.error('ProfileView - 사용자 프로필 이메일 로드 실패:', error);
+            // 오류 발생 시 기본값 사용
+            const profileEmail = document.getElementById('profile-email');
+            if (profileEmail) {
+                profileEmail.textContent = 'user@example.com';
             }
         }
     }
