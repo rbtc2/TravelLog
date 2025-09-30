@@ -365,6 +365,80 @@
 }
 
 /* ========================================
+   도시 그룹 스타일 (프리미엄 vs API)
+   ======================================== */
+
+/* 도시 그룹 컨테이너 */
+.city-selector-portal .city-group {
+    margin-bottom: 16px;
+}
+
+.city-selector-portal .city-group:last-child {
+    margin-bottom: 0;
+}
+
+/* 그룹 헤더 */
+.city-selector-portal .group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.city-selector-portal .group-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.city-selector-portal .group-count {
+    font-size: 12px;
+    color: #64748b;
+    background: #e2e8f0;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* 프리미엄 그룹 스타일 */
+.city-selector-portal .premium-group .group-header {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: #3b82f6;
+}
+
+.city-selector-portal .premium-group .group-title {
+    color: #1e40af;
+}
+
+.city-selector-portal .premium-group .group-count {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+/* API 그룹 스타일 */
+.city-selector-portal .api-group .group-header {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-color: #94a3b8;
+}
+
+.city-selector-portal .api-group .group-title {
+    color: #475569;
+}
+
+.city-selector-portal .api-group .group-count {
+    background: #94a3b8;
+    color: #ffffff;
+}
+
+/* 그룹 내 도시 목록 */
+.city-selector-portal .group-cities {
+    padding-left: 8px;
+}
+
+/* ========================================
    프리미엄 도시 스타일 (한국어 지원)
    ======================================== */
 
@@ -443,5 +517,48 @@
     
     .city-selector-portal .premium-badge {
         color: #fbbf24;
+    }
+    
+    /* 다크 모드 도시 그룹 스타일 */
+    .city-selector-portal .group-header {
+        background: #1e293b;
+        border-color: #334155;
+    }
+    
+    .city-selector-portal .group-title {
+        color: #f1f5f9;
+    }
+    
+    .city-selector-portal .group-count {
+        background: #475569;
+        color: #f1f5f9;
+    }
+    
+    .city-selector-portal .premium-group .group-header {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        border-color: #60a5fa;
+    }
+    
+    .city-selector-portal .premium-group .group-title {
+        color: #dbeafe;
+    }
+    
+    .city-selector-portal .premium-group .group-count {
+        background: #60a5fa;
+        color: #1e293b;
+    }
+    
+    .city-selector-portal .api-group .group-header {
+        background: linear-gradient(135deg, #334155 0%, #475569 100%);
+        border-color: #64748b;
+    }
+    
+    .city-selector-portal .api-group .group-title {
+        color: #e2e8f0;
+    }
+    
+    .city-selector-portal .api-group .group-count {
+        background: #64748b;
+        color: #f1f5f9;
     }
 }

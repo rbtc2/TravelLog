@@ -108,18 +108,10 @@ export class CitySelector {
         try {
             this.setLoading(true);
             
-            // 1. 프리미엄 데이터가 있는지 먼저 확인
-            if (this.citySearchUtils && this.citySearchUtils.getCitiesByCountry(country.nameEn).length > 0) {
-                console.log(`${country.nameEn}의 프리미엄 도시 데이터를 사용합니다.`);
-                this.loadCitiesFromPremium(country.nameEn);
-                this.filteredCities = this.getAllCitiesForCountry();
-                this.updateDropdownContent();
-            } else {
-                // 2. 프리미엄 데이터가 없으면 API 호출
-                await this.loadCitiesByCountry(country.nameEn);
-                this.filteredCities = this.getAllCitiesForCountry();
-                this.updateDropdownContent();
-            }
+            // 프리미엄 도시와 API 도시를 모두 로드
+            await this.loadAllCitiesForCountry(country.nameEn);
+            this.filteredCities = this.getAllCitiesForCountry();
+            this.updateDropdownContent();
         } catch (error) {
             console.error('도시 데이터 로드 실패:', error);
             this.allCities = [];
@@ -128,6 +120,67 @@ export class CitySelector {
         } finally {
             this.setLoading(false);
         }
+    }
+    
+    /**
+     * 프리미엄 도시와 API 도시를 모두 로드
+     * @param {string} countryName - 국가명
+     * @async
+     */
+    async loadAllCitiesForCountry(countryName) {
+        this.allCities = [];
+        
+        // 1. 프리미엄 도시 로드
+        const premiumCities = this.loadCitiesFromPremium(countryName);
+        
+        // 2. API 도시 로드
+        const apiCities = await this.loadCitiesByCountry(countryName);
+        
+        // 3. 중복 제거 및 통합
+        this.mergeAndDeduplicateCities(premiumCities, apiCities);
+        
+        console.log(`${countryName}의 통합 도시 데이터 ${this.allCities.length}개 로드 완료 (프리미엄: ${premiumCities.length}, API: ${apiCities.length})`);
+    }
+    
+    /**
+     * 프리미엄 도시와 API 도시를 통합하고 중복 제거
+     * @param {Array} premiumCities - 프리미엄 도시 배열
+     * @param {Array} apiCities - API 도시 배열
+     */
+    mergeAndDeduplicateCities(premiumCities, apiCities) {
+        const cityMap = new Map();
+        
+        // 프리미엄 도시를 먼저 추가 (우선순위 높음)
+        premiumCities.forEach(city => {
+            const key = city.nameEn.toLowerCase();
+            cityMap.set(key, {
+                ...city,
+                source: 'premium',
+                priority: city.priority || 1
+            });
+        });
+        
+        // API 도시 추가 (중복되지 않는 것만)
+        apiCities.forEach(city => {
+            const key = city.nameEn.toLowerCase();
+            if (!cityMap.has(key)) {
+                cityMap.set(key, {
+                    ...city,
+                    source: 'api',
+                    priority: 3 // API 도시는 낮은 우선순위
+                });
+            }
+        });
+        
+        // Map을 배열로 변환하고 우선순위별로 정렬
+        this.allCities = Array.from(cityMap.values()).sort((a, b) => {
+            // 우선순위별 정렬 (낮은 숫자가 높은 우선순위)
+            if (a.priority !== b.priority) {
+                return a.priority - b.priority;
+            }
+            // 같은 우선순위면 알파벳 순
+            return a.nameEn.localeCompare(b.nameEn);
+        });
     }
     
     /**
@@ -180,30 +233,24 @@ export class CitySelector {
                 throw new Error('API 응답 데이터 형식이 올바르지 않습니다.');
             }
             
-            // 원본 도시 데이터 저장
-            this.allCities = data.data.map(cityName => ({
+            // API 도시 데이터 반환
+            const apiCities = data.data.map(cityName => ({
                 name: cityName,
                 nameEn: cityName,
-                country: countryName
+                country: countryName,
+                source: 'api'
             }));
             
-            console.log(`${countryName}의 도시 ${this.allCities.length}개 로드 완료`);
+            console.log(`${countryName}의 API 도시 ${apiCities.length}개 로드 완료`);
+            return apiCities;
             
         } catch (error) {
             console.error('도시 API 호출 실패:', error);
             console.error(`국가: ${countryName}, API 호출명: ${this.getAPICountryName(countryName)}`);
             
-            // 1. 프리미엄 데이터가 있는지 먼저 확인
-            if (this.citySearchUtils && this.citySearchUtils.getCitiesByCountry(countryName).length > 0) {
-                console.log('API 실패, 프리미엄 도시 데이터를 사용합니다.');
-                this.loadCitiesFromPremium(countryName);
-                return;
-            }
-            
-            // 2. 프리미엄 데이터가 없으면 폴백 데이터 사용
-            console.warn('API 오류로 인해 폴백 도시 데이터를 사용합니다.');
-            this.allCities = this.getFallbackCities(countryName);
-            this.filteredCities = [...this.allCities];
+            // API 실패 시 빈 배열 반환 (프리미엄 데이터는 별도로 처리됨)
+            console.warn('API 호출 실패, 빈 배열 반환');
+            return [];
         }
     }
     
@@ -214,13 +261,11 @@ export class CitySelector {
     loadCitiesFromPremium(countryName) {
         if (!this.citySearchUtils) {
             console.warn('프리미엄 도시 데이터가 로드되지 않았습니다.');
-            this.allCities = this.getFallbackCities(countryName);
-            this.filteredCities = [...this.allCities];
-            return;
+            return this.getFallbackCities(countryName);
         }
         
         const premiumCities = this.citySearchUtils.getCitiesByCountry(countryName);
-        this.allCities = premiumCities.map(city => ({
+        const formattedCities = premiumCities.map(city => ({
             name: city.ko,           // 한국어 표시명
             nameEn: city.en,         // 영어명
             country: countryName,
@@ -231,8 +276,8 @@ export class CitySelector {
             source: 'premium'        // 출처 구분
         }));
         
-        this.filteredCities = [...this.allCities];
-        console.log(`${countryName}의 프리미엄 도시 ${this.allCities.length}개 로드 완료`);
+        console.log(`${countryName}의 프리미엄 도시 ${formattedCities.length}개 로드 완료`);
+        return formattedCities;
     }
     
     /**
@@ -364,14 +409,34 @@ export class CitySelector {
         
         // 프리미엄 도시와 API 도시 분리
         const premiumCities = this.filteredCities.filter(city => city.source === 'premium');
-        const apiCities = this.filteredCities.filter(city => city.source !== 'premium');
+        const apiCities = this.filteredCities.filter(city => city.source === 'api');
         
         const content = `
             <div class="cities-section">
                 <h3 class="section-title">도시 검색</h3>
                 <div class="cities-list">
-                    ${this.renderCityList(premiumCities, 'premium')}
-                    ${this.renderCityList(apiCities, 'api')}
+                    ${premiumCities.length > 0 ? `
+                        <div class="city-group premium-group">
+                            <div class="group-header">
+                                <span class="group-title">주요 도시</span>
+                                <span class="group-count">${premiumCities.length}개</span>
+                            </div>
+                            <div class="group-cities">
+                                ${this.renderCityList(premiumCities, 'premium')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${apiCities.length > 0 ? `
+                        <div class="city-group api-group">
+                            <div class="group-header">
+                                <span class="group-title">전체 도시</span>
+                                <span class="group-count">${apiCities.length}개</span>
+                            </div>
+                            <div class="group-cities">
+                                ${this.renderCityList(apiCities, 'api')}
+                            </div>
+                        </div>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -388,7 +453,9 @@ export class CitySelector {
     renderCityList(cities, source) {
         if (!cities || cities.length === 0) return '';
         
-        const startIndex = source === 'premium' ? 0 : this.filteredCities.filter(city => city.source === 'premium').length;
+        // 전체 도시 목록에서의 시작 인덱스 계산
+        const premiumCities = this.filteredCities.filter(city => city.source === 'premium');
+        const startIndex = source === 'premium' ? 0 : premiumCities.length;
         
         return cities.map((city, index) => {
             const globalIndex = startIndex + index;
