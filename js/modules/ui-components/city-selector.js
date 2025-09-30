@@ -73,8 +73,8 @@ export class CitySelector {
         try {
             this.setLoading(true);
             await this.loadCitiesByCountry(country.nameEn);
-            // 원본 데이터와 검색 결과 모두 설정
-            this.filteredCities = [...this.allCities];
+            // 프리미엄 도시 + API 도시 통합 표시
+            this.filteredCities = this.getAllCitiesForCountry();
             this.updateDropdownContent();
         } catch (error) {
             console.error('도시 데이터 로드 실패:', error);
@@ -463,15 +463,15 @@ export class CitySelector {
      * @param {string} query - 검색어
      */
     search(query) {
-        if (!this.selectedCountry || !this.allCities) {
+        if (!this.selectedCountry) {
             return;
         }
         
         const searchTerm = query.toLowerCase().trim();
         
         if (searchTerm === '') {
-            // 빈 검색어일 때는 원본 데이터 복원
-            this.filteredCities = [...this.allCities];
+            // 빈 검색어일 때는 프리미엄 도시 + API 도시 모두 표시
+            this.filteredCities = this.getAllCitiesForCountry();
         } else {
             // 통합 검색: 프리미엄 도시 + API 도시
             const results = [];
@@ -483,11 +483,13 @@ export class CitySelector {
             }
             
             // 2. API 도시에서 영어 검색
-            const apiResults = this.allCities.filter(city => 
-                city.name.toLowerCase().includes(searchTerm) ||
-                city.nameEn.toLowerCase().includes(searchTerm)
-            );
-            results.push(...apiResults);
+            if (this.allCities) {
+                const apiResults = this.allCities.filter(city => 
+                    city.name.toLowerCase().includes(searchTerm) ||
+                    city.nameEn.toLowerCase().includes(searchTerm)
+                );
+                results.push(...apiResults);
+            }
             
             // 3. 중복 제거 및 정렬
             this.filteredCities = this.deduplicateAndSortResults(results);
@@ -495,6 +497,42 @@ export class CitySelector {
         
         this.selectedIndex = -1;
         this.updateDropdownContent();
+    }
+    
+    /**
+     * 국가의 모든 도시 목록 조회 (프리미엄 + API)
+     * @returns {Array} 통합된 도시 목록
+     */
+    getAllCitiesForCountry() {
+        const results = [];
+        
+        // 1. 프리미엄 도시 추가
+        if (this.citySearchUtils) {
+            const premiumCities = this.citySearchUtils.getCitiesByCountry(this.selectedCountry.nameEn);
+            const premiumResults = premiumCities.map(city => ({
+                name: city.ko,           // 한국어 표시명
+                nameEn: city.en,         // 영어명 (API 호출용)
+                country: this.selectedCountry.nameEn,
+                priority: city.priority,
+                category: city.category,
+                region: city.region,
+                isCapital: city.isCapital,
+                source: 'premium'        // 출처 구분
+            }));
+            results.push(...premiumResults);
+        }
+        
+        // 2. API 도시 추가
+        if (this.allCities) {
+            const apiResults = this.allCities.map(city => ({
+                ...city,
+                source: 'api'            // 출처 구분
+            }));
+            results.push(...apiResults);
+        }
+        
+        // 3. 중복 제거 및 정렬
+        return this.deduplicateAndSortResults(results);
     }
     
     /**
@@ -540,20 +578,32 @@ export class CitySelector {
             return acc;
         }, new Map());
         
-        // 배열로 변환 및 정렬
-        return Array.from(uniqueResults.values()).sort((a, b) => {
-            // 1. 프리미엄 도시 우선
-            if (a.source === 'premium' && b.source !== 'premium') return -1;
-            if (a.source !== 'premium' && b.source === 'premium') return 1;
-            
-            // 2. 우선순위별 정렬
+        // 배열로 변환
+        const allResults = Array.from(uniqueResults.values());
+        
+        // 프리미엄 도시와 API 도시 분리
+        const premiumResults = allResults.filter(city => city.source === 'premium');
+        const apiResults = allResults.filter(city => city.source !== 'premium');
+        
+        // 프리미엄 도시 정렬 (우선순위별, 그 다음 알파벳순)
+        premiumResults.sort((a, b) => {
+            // 1. 우선순위별 정렬
             if (a.priority && b.priority) {
-                return a.priority - b.priority;
+                const priorityDiff = a.priority - b.priority;
+                if (priorityDiff !== 0) return priorityDiff;
             }
             
-            // 3. 알파벳순 정렬
-            return a.name.localeCompare(b.name);
+            // 2. 알파벳순 정렬 (한국어 기준)
+            return a.name.localeCompare(b.name, 'ko');
         });
+        
+        // API 도시 정렬 (알파벳순)
+        apiResults.sort((a, b) => {
+            return a.name.localeCompare(b.name, 'en');
+        });
+        
+        // 프리미엄 도시를 먼저, 그 다음 API 도시
+        return [...premiumResults, ...apiResults];
     }
     
     /**
