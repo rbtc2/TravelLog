@@ -15,8 +15,10 @@
  * 
  * @class ProfileEditDataManager
  * @version 1.0.0
- * @since 2024-12-29
+ * @since 2025-09-30
  */
+
+import { getSupabaseClient } from '../../../../config/supabase-config.js';
 
 class ProfileEditDataManager {
     constructor() {
@@ -130,26 +132,29 @@ class ProfileEditDataManager {
                 return cached;
             }
             
-            // Supabase에서 사용자 정보 가져오기
-            const { data: { user }, error } = await this.getSupabaseClient().auth.getUser();
-            
-            if (error) {
-                throw new Error(`사용자 정보 조회 실패: ${error.message}`);
-            }
-            
-            if (!user) {
-                throw new Error('로그인된 사용자가 없습니다.');
-            }
-            
-            const userData = {
-                id: user.id,
-                email: user.email,
-                name: user.user_metadata?.full_name || '',
-                residenceCountry: user.user_metadata?.residence_country || '',
-                avatar: user.user_metadata?.avatar_url || null,
-                createdAt: user.created_at,
-                updatedAt: user.updated_at
+            // AuthController를 통한 사용자 정보 가져오기 (기존 방식과 호환)
+            let userData = {
+                id: null,
+                email: '',
+                name: '여행자',
+                residenceCountry: '',
+                avatar: null
             };
+            
+            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
+                const currentUser = window.appManager.authManager.authController.getCurrentUser();
+                if (currentUser) {
+                    userData = {
+                        id: currentUser.id,
+                        email: currentUser.email || '',
+                        name: currentUser.user_metadata?.full_name || '여행자',
+                        residenceCountry: currentUser.user_metadata?.residence_country || '',
+                        avatar: currentUser.user_metadata?.avatar_url || null,
+                        createdAt: currentUser.created_at,
+                        updatedAt: currentUser.updated_at
+                    };
+                }
+            }
             
             // 캐시에 저장
             this.cacheData('user', userData);
@@ -158,11 +163,11 @@ class ProfileEditDataManager {
             
         } catch (error) {
             console.error('사용자 정보 조회 실패:', error);
-            // 오류 발생 시 빈 객체 반환 (오프라인 모드 지원)
+            // 오류 발생 시 기본값 반환
             return {
                 id: null,
                 email: '',
-                name: '',
+                name: '여행자',
                 residenceCountry: '',
                 avatar: null
             };
@@ -175,37 +180,29 @@ class ProfileEditDataManager {
      * @returns {Promise<Object>} 업데이트 결과
      */
     async updateSupabaseProfile(profileData) {
-        const client = this.getSupabaseClient();
-        
-        // 재시도 로직과 함께 업데이트 실행
-        for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
-            try {
-                const { data, error } = await client.auth.updateUser({
-                    data: {
-                        full_name: profileData.name,
-                        residence_country: profileData.residenceCountry,
-                        avatar_url: profileData.avatar,
-                        updated_at: new Date().toISOString()
-                    }
-                });
-                
-                if (error) {
-                    throw new Error(`Supabase 업데이트 실패: ${error.message}`);
-                }
-                
-                return data;
-                
-            } catch (error) {
-                if (attempt === this.maxRetries) {
-                    throw error;
-                }
-                
-                // 지수 백오프로 재시도
-                const delay = this.retryDelay * Math.pow(2, attempt - 1);
-                console.warn(`Supabase 업데이트 실패 (시도 ${attempt}/${this.maxRetries}), ${delay}ms 후 재시도:`, error);
-                
-                await this.delay(delay);
+        try {
+            // AuthService를 통한 프로필 업데이트 (기존 방식과 호환)
+            const authService = await this.getAuthService();
+            if (!authService) {
+                throw new Error('인증 서비스를 찾을 수 없습니다.');
             }
+
+            // Supabase 업데이트용 데이터 준비
+            const updates = {
+                full_name: profileData.name,
+                bio: profileData.bio,
+                residence_country: profileData.residenceCountry
+            };
+
+            // 프로필 업데이트 실행
+            await authService.updateProfile(updates);
+            
+            console.log('Supabase 프로필 업데이트 성공:', updates);
+            return { success: true, data: updates };
+            
+        } catch (error) {
+            console.error('Supabase 프로필 업데이트 실패:', error);
+            throw error;
         }
     }
 
@@ -295,11 +292,32 @@ class ProfileEditDataManager {
      * @returns {Object} Supabase 클라이언트
      */
     getSupabaseClient() {
-        if (typeof window !== 'undefined' && window.supabase) {
-            return window.supabase;
+        const client = getSupabaseClient();
+        if (!client) {
+            throw new Error('Supabase 클라이언트가 초기화되지 않았습니다.');
         }
-        
-        throw new Error('Supabase 클라이언트를 사용할 수 없습니다.');
+        return client;
+    }
+
+    /**
+     * AuthService 인스턴스를 가져옵니다
+     * @returns {Promise<Object|null>} AuthService 인스턴스 또는 null
+     */
+    async getAuthService() {
+        try {
+            // 동적 import를 사용하여 AuthService 가져오기
+            const { authService } = await import('../../../../modules/services/auth-service.js');
+            
+            if (authService && authService.isInitialized) {
+                return authService;
+            }
+            
+            console.warn('AuthService가 초기화되지 않았습니다.');
+            return null;
+        } catch (error) {
+            console.error('AuthService 인스턴스 가져오기 실패:', error);
+            return null;
+        }
     }
 
     /**
