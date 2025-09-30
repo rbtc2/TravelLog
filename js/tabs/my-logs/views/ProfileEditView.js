@@ -19,6 +19,7 @@
 import { EventManager } from '../../../modules/utils/event-manager.js';
 import { ProfileEditRenderer } from './profile-edit/ProfileEditRenderer.js';
 import { ProfileEditFormManager } from './profile-edit/ProfileEditFormManager.js';
+import { ProfileEditDataManager } from './profile-edit/ProfileEditDataManager.js';
 
 class ProfileEditView {
     constructor(controller) {
@@ -32,6 +33,9 @@ class ProfileEditView {
         
         // 폼 관리 모듈
         this.formManager = new ProfileEditFormManager();
+        
+        // 데이터 관리 모듈
+        this.dataManager = new ProfileEditDataManager();
         
         // 편집 상태 관리
         this.isEditing = false;
@@ -47,8 +51,9 @@ class ProfileEditView {
         this.container.classList.add('profile-edit-view');
         this.container.innerHTML = this.renderer.getProfileEditHTML();
         
-        // 폼 매니저 콜백 설정
+        // 모듈 콜백 설정
         this.setupFormManagerCallbacks();
+        this.setupDataManagerCallbacks();
         
         this.bindEvents();
         
@@ -89,6 +94,43 @@ class ProfileEditView {
                     this.updateProfileImage(value);
                 } else if (type === 'default') {
                     this.renderer.selectDefaultAvatar(value);
+                }
+            }
+        });
+    }
+
+    /**
+     * 데이터 매니저 콜백을 설정합니다
+     */
+    setupDataManagerCallbacks() {
+        this.dataManager.setCallbacks({
+            onDataLoad: (profileData) => {
+                // 폼 매니저에 데이터 설정
+                this.formManager.populateForm(profileData);
+            },
+            onDataSave: (profileData) => {
+                // 저장 완료 후 폼 매니저에 알림
+                this.formManager.initializeFormData(profileData);
+                
+                // 성공 메시지 표시
+                this.dispatchEvent('showMessage', {
+                    type: 'success',
+                    message: '프로필이 성공적으로 저장되었습니다!'
+                });
+            },
+            onError: (message, error) => {
+                // 오류 메시지 표시
+                this.dispatchEvent('showMessage', {
+                    type: 'error',
+                    message: message
+                });
+            },
+            onLoadingChange: (isLoading) => {
+                // 로딩 상태에 따른 UI 업데이트
+                const saveBtn = document.getElementById('save-profile-edit');
+                if (saveBtn) {
+                    saveBtn.disabled = isLoading;
+                    saveBtn.textContent = isLoading ? '저장 중...' : '저장';
                 }
             }
         });
@@ -261,29 +303,8 @@ class ProfileEditView {
      */
     async loadUserData() {
         try {
-            // 현재 사용자 정보 로드
-            const userData = await this.getCurrentUserData();
-            
-            // 로컬 저장된 프로필 데이터 로드
-            const savedData = localStorage.getItem('travelLog_profile');
-            let profileData = {};
-            
-            if (savedData) {
-                profileData = JSON.parse(savedData);
-            }
-            
-            // 사용자 정보와 로컬 데이터 병합 (사용자 정보 우선)
-            const mergedData = {
-                name: userData.name || profileData.name || '여행자',
-                bio: profileData.bio || 'I am new to TravelLog.',
-                residenceCountry: userData.residenceCountry || profileData.residenceCountry || '',
-                avatar: profileData.avatar || null,
-                defaultAvatar: profileData.defaultAvatar || '✈️'
-            };
-            
-            // 폼 매니저에 데이터 설정 (아바타 설정도 포함)
-            this.formManager.populateForm(mergedData);
-            
+            // 데이터 매니저를 통해 프로필 데이터 로드
+            await this.dataManager.loadUserProfileData();
         } catch (error) {
             console.error('사용자 데이터 로드 실패:', error);
             this.dispatchEvent('showMessage', {
@@ -293,43 +314,6 @@ class ProfileEditView {
         }
     }
 
-    /**
-     * 현재 사용자 정보를 가져옵니다
-     * @returns {Promise<Object>} 사용자 데이터
-     */
-    async getCurrentUserData() {
-        try {
-            let userData = {
-                name: '여행자',
-                residenceCountry: ''
-            };
-            
-            // AuthController를 통한 사용자 정보 가져오기
-            if (window.appManager && window.appManager.authManager && window.appManager.authManager.authController) {
-                const currentUser = window.appManager.authManager.authController.getCurrentUser();
-                if (currentUser) {
-                    // 회원가입 시 입력한 이름 가져오기
-                    if (currentUser.user_metadata && currentUser.user_metadata.full_name) {
-                        userData.name = currentUser.user_metadata.full_name;
-                    }
-                    
-                    // 회원가입 시 선택한 거주국 가져오기
-                    if (currentUser.user_metadata && currentUser.user_metadata.residence_country) {
-                        userData.residenceCountry = currentUser.user_metadata.residence_country;
-                    }
-                }
-            }
-            
-            return userData;
-            
-        } catch (error) {
-            console.error('현재 사용자 정보 가져오기 실패:', error);
-            return {
-                name: '여행자',
-                residenceCountry: ''
-            };
-        }
-    }
 
     /**
      * 실제 사용자 정보에서 프로필 데이터를 로드합니다 (기존 메서드 유지)
@@ -476,25 +460,8 @@ class ProfileEditView {
         const profileData = this.formManager.getFormData();
         
         try {
-            // Supabase 사용자 정보 업데이트
-            await this.updateSupabaseProfile(profileData);
-            
-            // 로컬 스토리지에도 저장 (기존 호환성 유지)
-            localStorage.setItem('travelLog_profile', JSON.stringify(profileData));
-            
-            // 폼 매니저에 저장 완료 알림
-            this.formManager.initializeFormData(profileData);
-            
-            // 저장 버튼 비활성화
-            const saveBtn = document.getElementById('save-profile-edit');
-            if (saveBtn) {
-                saveBtn.disabled = true;
-            }
-            
-            this.dispatchEvent('showMessage', {
-                type: 'success',
-                message: '프로필이 저장되었습니다.'
-            });
+            // 데이터 매니저를 통해 프로필 데이터 저장
+            await this.dataManager.saveProfileData(profileData);
             
             // 프로필 뷰로 이동 (사용자 정보 새로고침 포함)
             setTimeout(() => {
@@ -510,56 +477,6 @@ class ProfileEditView {
         }
     }
 
-    /**
-     * Supabase 사용자 프로필을 업데이트합니다
-     * @param {Object} profileData - 업데이트할 프로필 데이터
-     */
-    async updateSupabaseProfile(profileData) {
-        try {
-            // AuthService 인스턴스 가져오기
-            const authService = await this.getAuthService();
-            if (!authService) {
-                throw new Error('인증 서비스를 찾을 수 없습니다.');
-            }
-
-            // Supabase 업데이트용 데이터 준비
-            const updates = {
-                full_name: profileData.name,
-                bio: profileData.bio,
-                residence_country: profileData.residenceCountry
-            };
-
-            // 프로필 업데이트 실행
-            await authService.updateProfile(updates);
-            
-            console.log('Supabase 프로필 업데이트 성공:', updates);
-            
-        } catch (error) {
-            console.error('Supabase 프로필 업데이트 실패:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * AuthService 인스턴스를 가져옵니다
-     * @returns {AuthService|null} AuthService 인스턴스 또는 null
-     */
-    async getAuthService() {
-        try {
-            // 동적 import를 사용하여 AuthService 가져오기
-            const { authService } = await import('../../../modules/services/auth-service.js');
-            
-            if (authService && authService.isInitialized) {
-                return authService;
-            }
-            
-            console.warn('AuthService가 초기화되지 않았습니다.');
-            return null;
-        } catch (error) {
-            console.error('AuthService 인스턴스 가져오기 실패:', error);
-            return null;
-        }
-    }
 
     /**
      * 변경사항 확인 모달을 표시합니다
@@ -630,6 +547,9 @@ class ProfileEditView {
         }
         if (this.formManager) {
             this.formManager.cleanup();
+        }
+        if (this.dataManager) {
+            this.dataManager.cleanup();
         }
         this.container = null;
         this.isInitialized = false;
