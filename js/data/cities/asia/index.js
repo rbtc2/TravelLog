@@ -8,11 +8,19 @@
  */
 
 import { SOUTH_KOREA_CITIES } from './south-korea.js';
+import { JAPAN_CITIES } from './japan.js';
+import { CHINA_CITIES } from './china.js';
+import { THAILAND_CITIES } from './thailand.js';
+import { SINGAPORE_CITIES } from './singapore.js';
 
 export const ASIA_CITIES = {
     // 국가별 데이터
     countries: {
-        'South Korea': SOUTH_KOREA_CITIES
+        'South Korea': SOUTH_KOREA_CITIES,
+        'Japan': JAPAN_CITIES,
+        'China': CHINA_CITIES,
+        'Thailand': THAILAND_CITIES,
+        'Singapore': SINGAPORE_CITIES
     },
     
     // 통합 검색 인덱스

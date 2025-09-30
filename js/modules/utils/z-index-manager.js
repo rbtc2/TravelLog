@@ -12,14 +12,14 @@
  * - 개발자 도구 지원
  * 
  * @version 2.0.0
- * @since 2024-12-29
+ * @since 2025-09-30
  */
 
-import { ConflictDetector } from './core/ConflictDetector.js';
-import { ElementWatcher } from './core/ElementWatcher.js';
-import { EventHandler } from './handlers/EventHandler.js';
-import { DOMChangeHandler } from './handlers/DOMChangeHandler.js';
-import { PerformanceUtils } from './utils/PerformanceUtils.js';
+import { ConflictDetector } from './z-index/core/ConflictDetector.js';
+import { ElementWatcher } from './z-index/core/ElementWatcher.js';
+import { EventHandler } from './z-index/handlers/EventHandler.js';
+import { DOMChangeHandler } from './z-index/handlers/DOMChangeHandler.js';
+import { PerformanceUtils } from './z-index/utils/PerformanceUtils.js';
 
 export class ZIndexManager {
     constructor() {
@@ -173,7 +173,7 @@ export class ZIndexManager {
      */
     handleCountrySelectorClose(element) {
         const elementInfo = this.elementWatcher.watchedElements.get(element);
-        if (elementInfo) {
+            if (elementInfo) {
             this.setElementZIndex(element, elementInfo.originalZIndex);
         }
     }
@@ -321,29 +321,6 @@ export class ZIndexManager {
         });
     }
     
-    /**
-     * 디버그 모드 토글
-     * @param {boolean} enabled - 디버그 모드 활성화 여부
-     */
-    setDebugMode(enabled) {
-        this.debugMode = enabled;
-        
-        if (enabled) {
-            document.body.classList.add('debug-z-index');
-            console.log('Z-Index 디버그 모드 활성화');
-        } else {
-            document.body.classList.remove('debug-z-index');
-            console.log('Z-Index 디버그 모드 비활성화');
-        }
-    }
-    
-    /**
-     * 충돌 감지 활성화/비활성화
-     * @param {boolean} enabled - 충돌 감지 활성화 여부
-     */
-    setConflictDetection(enabled) {
-        this.conflictDetector.setEnabled(enabled);
-    }
     
     /**
      * 성능 통계 가져오기
@@ -375,6 +352,58 @@ export class ZIndexManager {
      */
     getActiveElements() {
         return this.elementWatcher.getActiveElements();
+    }
+    
+    // ===== 기존 API 호환성을 위한 래퍼 메서드들 =====
+    
+    /**
+     * 요소 감시 시작 (기존 API 호환성)
+     * @param {HTMLElement} element - 감시할 요소
+     * @param {string} type - 요소 타입
+     */
+    watchElement(element, type) {
+        this.elementWatcher.watchElement(element, type);
+    }
+    
+    /**
+     * 요소 감시 중지 (기존 API 호환성)
+     * @param {HTMLElement} element - 감시를 중지할 요소
+     */
+    unwatchElement(element) {
+        this.elementWatcher.unwatchElement(element);
+    }
+    
+    /**
+     * 요소가 활성 상태인지 확인 (기존 API 호환성)
+     * @param {HTMLElement} element - 요소
+     * @returns {boolean} 활성 상태 여부
+     */
+    isElementActive(element) {
+        return this.elementWatcher.isElementActive(element);
+    }
+    
+    /**
+     * 충돌 감지 활성화/비활성화 (기존 API 호환성)
+     * @param {boolean} enabled - 충돌 감지 활성화 여부
+     */
+    setConflictDetection(enabled) {
+        this.conflictDetector.setEnabled(enabled);
+    }
+    
+    /**
+     * 디버그 모드 토글 (기존 API 호환성)
+     * @param {boolean} enabled - 디버그 모드 활성화 여부
+     */
+    setDebugMode(enabled) {
+        this.debugMode = enabled;
+        
+        if (enabled) {
+            document.body.classList.add('debug-z-index');
+            console.log('Z-Index 디버그 모드 활성화');
+        } else {
+            document.body.classList.remove('debug-z-index');
+            console.log('Z-Index 디버그 모드 비활성화');
+        }
     }
     
     /**
