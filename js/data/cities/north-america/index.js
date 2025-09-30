@@ -9,6 +9,8 @@
 import { UNITED_STATES_CITIES } from './united-states.js';
 import { CANADA_CITIES } from './canada.js';
 import { MEXICO_CITIES } from './mexico.js';
+import { DOMINICAN_REPUBLIC_CITIES } from './dominican-republic.js';
+import { DOMINICA_CITIES } from './dominica.js';
 
 /**
  * 북아메리카 대륙 도시 데이터 통합
@@ -19,6 +21,8 @@ export const NORTH_AMERICA_CITIES = {
         'United States': UNITED_STATES_CITIES,
         'Canada': CANADA_CITIES,
         'Mexico': MEXICO_CITIES,
+        'Dominican Republic': DOMINICAN_REPUBLIC_CITIES,
+        'Dominica': DOMINICA_CITIES,
     },
 
     // 통합 검색 인덱스
@@ -29,7 +33,7 @@ export const NORTH_AMERICA_CITIES = {
 
     // 통계 정보
     stats: {
-        totalCountries: 3,
+        totalCountries: 5,
         totalCities: 0,
         capitalCities: 0,
         majorCities: 0,

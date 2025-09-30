@@ -8,6 +8,7 @@
 // 국가별 도시 데이터 import
 import { BRAZIL_CITIES } from './brazil.js';
 import { ARGENTINA_CITIES } from './argentina.js';
+import { PERU_CITIES } from './peru.js';
 
 /**
  * 남아메리카 대륙 도시 데이터 통합
@@ -17,6 +18,7 @@ export const SOUTH_AMERICA_CITIES = {
     countries: {
         'Brazil': BRAZIL_CITIES,
         'Argentina': ARGENTINA_CITIES,
+        'Peru': PERU_CITIES,
     },
 
     // 통합 검색 인덱스
@@ -27,7 +29,7 @@ export const SOUTH_AMERICA_CITIES = {
 
     // 통계 정보
     stats: {
-        totalCountries: 2,
+        totalCountries: 3,
         totalCities: 0,
         capitalCities: 0,
         majorCities: 0,

@@ -16,6 +16,12 @@ import { NETHERLANDS_CITIES } from './netherlands.js';
 import { SWITZERLAND_CITIES } from './switzerland.js';
 import { AUSTRIA_CITIES } from './austria.js';
 import { CZECH_REPUBLIC_CITIES } from './czech-republic.js';
+import { GREECE_CITIES } from './greece.js';
+import { SWEDEN_CITIES } from './sweden.js';
+import { FINLAND_CITIES } from './finland.js';
+import { CROATIA_CITIES } from './croatia.js';
+import { MALTA_CITIES } from './malta.js';
+import { BELARUS_CITIES } from './belarus.js';
 
 export const EUROPE_CITIES = {
     // 국가별 데이터
@@ -28,7 +34,13 @@ export const EUROPE_CITIES = {
         'Netherlands': NETHERLANDS_CITIES,
         'Switzerland': SWITZERLAND_CITIES,
         'Austria': AUSTRIA_CITIES,
-        'Czech Republic': CZECH_REPUBLIC_CITIES
+        'Czech Republic': CZECH_REPUBLIC_CITIES,
+        'Greece': GREECE_CITIES,
+        'Sweden': SWEDEN_CITIES,
+        'Finland': FINLAND_CITIES,
+        'Croatia': CROATIA_CITIES,
+        'Malta': MALTA_CITIES,
+        'Belarus': BELARUS_CITIES
     },
     
     // 통합 검색 인덱스
