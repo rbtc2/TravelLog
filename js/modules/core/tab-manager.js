@@ -10,6 +10,7 @@
 
 import { memoryMonitor } from '../utils/memory-monitor.js';
 import { cleanupVerifier } from '../utils/cleanup-verifier.js';
+import { portalCleanup } from '../utils/portal-cleanup.js';
 import { errorHandler, ERROR_TYPES, ERROR_SEVERITY } from '../utils/error-handler.js';
 
 export class TabManager {
@@ -69,6 +70,9 @@ export class TabManager {
      */
     async switchTab(tabName) {
         try {
+            // 탭 전환 시 즉시 모든 Portal 정리
+            portalCleanup.cleanupAllPortals();
+            
             // 현재 탭 정리
             await this.cleanupCurrentTab();
             
@@ -248,6 +252,9 @@ export class TabManager {
         const startTime = Date.now();
         
         try {
+            // 먼저 모든 Portal 요소 강제 정리
+            portalCleanup.cleanupAllPortals();
+            
             // 데스크톱 레이아웃에서 탭 정리
             if (this.appManager.desktopLayoutManager.isDesktopMode()) {
                 await this.cleanupDesktopTab();

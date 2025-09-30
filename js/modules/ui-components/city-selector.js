@@ -775,6 +775,14 @@ export class CitySelector {
      */
     cleanup() {
         try {
+            // 먼저 드롭다운을 강제로 닫기
+            if (this.isOpen) {
+                this.forceClose();
+            }
+            
+            // z-index-manager에서 요소 unwatch
+            this.unwatchFromZIndexManager();
+            
             // 이벤트 리스너 제거
             this.eventListeners.forEach((listeners, element) => {
                 listeners.forEach(({ event, handler }) => {
@@ -783,9 +791,21 @@ export class CitySelector {
             });
             this.eventListeners.clear();
             
-            // Portal 제거
-            if (this.portal && this.portal.parentNode) {
-                this.portal.parentNode.removeChild(this.portal);
+            // Portal 제거 (강화된 버전)
+            if (this.portal) {
+                // 드롭다운 애니메이션 완료 후 제거
+                if (this.dropdown && this.dropdown.classList.contains('open')) {
+                    this.dropdown.classList.remove('open');
+                    setTimeout(() => {
+                        if (this.portal && this.portal.parentNode) {
+                            this.portal.parentNode.removeChild(this.portal);
+                        }
+                    }, 300);
+                } else {
+                    if (this.portal.parentNode) {
+                        this.portal.parentNode.removeChild(this.portal);
+                    }
+                }
             }
             
             // 상태 초기화
@@ -795,10 +815,84 @@ export class CitySelector {
             this.filteredCities = [];
             this.selectedCountry = null;
             this.isLoading = false;
+            this.portal = null;
+            this.dropdown = null;
             
             console.log('CitySelector 정리 완료');
         } catch (error) {
             console.error('CitySelector 정리 실패:', error);
+        }
+    }
+    
+    /**
+     * z-index-manager에서 요소 unwatch
+     */
+    unwatchFromZIndexManager() {
+        if (window.zIndexManager) {
+            try {
+                // Portal 요소 unwatch
+                if (this.portal) {
+                    window.zIndexManager.unwatchElement(this.portal);
+                }
+                
+                // 드롭다운 요소 unwatch
+                if (this.dropdown) {
+                    window.zIndexManager.unwatchElement(this.dropdown);
+                }
+                
+                // 컨테이너 요소 unwatch
+                if (this.container) {
+                    window.zIndexManager.unwatchElement(this.container);
+                }
+                
+                console.log('CitySelector z-index-manager unwatch 완료');
+            } catch (error) {
+                console.warn('CitySelector z-index-manager unwatch 실패:', error);
+            }
+        }
+    }
+    
+    /**
+     * 강제로 드롭다운 닫기 (애니메이션 없이)
+     */
+    forceClose() {
+        if (!this.isOpen) return;
+        
+        try {
+            // 드롭다운 내부 요소들의 포커스 제거
+            const focusedElement = document.activeElement;
+            if (focusedElement && this.dropdown && this.dropdown.contains(focusedElement)) {
+                focusedElement.blur();
+            }
+            
+            // 포커스를 입력 필드로 이동
+            if (this.input) {
+                this.input.focus();
+            }
+            
+            // 즉시 닫기 (애니메이션 없이)
+            if (this.dropdown) {
+                this.dropdown.classList.remove('open');
+                this.dropdown.style.display = 'none';
+            }
+            
+            this.container.classList.remove('open');
+            this.input.setAttribute('aria-expanded', 'false');
+            
+            // 접근성 속성 설정
+            if (this.portal) {
+                this.portal.setAttribute('aria-hidden', 'true');
+            }
+            if (this.dropdown) {
+                this.dropdown.setAttribute('aria-hidden', 'true');
+            }
+            
+            this.isOpen = false;
+            this.selectedIndex = -1;
+            
+            console.log('CitySelector 강제 닫기 완료');
+        } catch (error) {
+            console.error('CitySelector 강제 닫기 실패:', error);
         }
     }
 }

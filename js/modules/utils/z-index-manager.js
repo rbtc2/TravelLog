@@ -532,13 +532,19 @@ class ZIndexManager {
     isElementActive(element) {
         // 요소 유효성 검사
         if (!element || !(element instanceof Element)) {
-            console.warn('isElementActive: Invalid element provided', element);
+            // DOM에서 제거된 요소는 자동으로 unwatch
+            if (this.watchedElements.has(element)) {
+                this.unwatchElement(element);
+            }
             return false;
         }
         
         // 요소가 DOM에 연결되어 있는지 확인
         if (!document.contains(element)) {
-            console.warn('isElementActive: Element not in DOM', element);
+            // DOM에서 제거된 요소는 자동으로 unwatch
+            if (this.watchedElements.has(element)) {
+                this.unwatchElement(element);
+            }
             return false;
         }
         
