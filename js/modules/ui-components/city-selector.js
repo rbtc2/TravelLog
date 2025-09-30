@@ -38,7 +38,42 @@ export class CitySelector {
         this.premiumCities = null;
         this.loadPremiumCities();
         
+        // 국가명 별칭 매핑 (API 호출용)
+        this.countryAliases = {
+            'Türkiye': 'Turkey',
+            'Republic of Türkiye': 'Turkey',
+            '튀르키예': 'Turkey',
+            'Czech Republic': 'Czechia',
+            'Republic of Korea': 'South Korea',
+            '대한민국': 'South Korea',
+            'United States of America': 'United States',
+            'USA': 'United States',
+            '미국': 'United States',
+            'United Kingdom': 'United Kingdom',
+            'UK': 'United Kingdom',
+            '영국': 'United Kingdom',
+            'People\'s Republic of China': 'China',
+            '중국': 'China',
+            'Russian Federation': 'Russia',
+            '러시아': 'Russia'
+        };
+        
         this.init();
+    }
+    
+    /**
+     * API 호출용 국가명 별칭 반환
+     * @param {string} countryName - 원본 국가명
+     * @returns {string} API 호출용 국가명
+     */
+    getAPICountryName(countryName) {
+        // 별칭 매핑에서 찾기
+        if (this.countryAliases[countryName]) {
+            return this.countryAliases[countryName];
+        }
+        
+        // 별칭이 없으면 원본 이름 반환
+        return countryName;
     }
     
     /**
@@ -109,6 +144,10 @@ export class CitySelector {
      */
     async loadCitiesByCountry(countryName) {
         try {
+            // API 호출용 국가명 별칭 적용
+            const apiCountryName = this.getAPICountryName(countryName);
+            console.log(`API 호출: ${countryName} → ${apiCountryName}`);
+            
             const response = await fetch('https://countriesnow.space/api/v0.1/countries/cities', {
                 method: 'POST',
                 headers: {
@@ -116,7 +155,7 @@ export class CitySelector {
                     'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    country: countryName
+                    country: apiCountryName
                 }),
                 // 타임아웃 설정 (10초)
                 signal: AbortSignal.timeout(10000)
@@ -143,14 +182,19 @@ export class CitySelector {
             
         } catch (error) {
             console.error('도시 API 호출 실패:', error);
+            console.error(`국가: ${countryName}, API 호출명: ${this.getAPICountryName(countryName)}`);
             
             // 네트워크 오류 시 폴백 데이터 제공
             if (error.name === 'TypeError' && error.message.includes('fetch')) {
                 console.warn('네트워크 연결 실패, 폴백 도시 데이터를 사용합니다.');
                 this.allCities = this.getFallbackCities(countryName);
             } else {
-                throw error;
+                console.warn('API 오류로 인해 폴백 도시 데이터를 사용합니다.');
+                this.allCities = this.getFallbackCities(countryName);
             }
+            
+            // 폴백 데이터로 필터링된 도시 목록 업데이트
+            this.filteredCities = [...this.allCities];
         }
     }
     
@@ -186,6 +230,30 @@ export class CitySelector {
                 { name: '피닉스', nameEn: 'Phoenix', country: 'United States' },
                 { name: '필라델피아', nameEn: 'Philadelphia', country: 'United States' },
                 { name: '샌안토니오', nameEn: 'San Antonio', country: 'United States' }
+            ],
+            'Türkiye': [
+                { name: '이스탄불', nameEn: 'Istanbul', country: 'Türkiye' },
+                { name: '앙카라', nameEn: 'Ankara', country: 'Türkiye' },
+                { name: '이즈미르', nameEn: 'Izmir', country: 'Türkiye' },
+                { name: '부르사', nameEn: 'Bursa', country: 'Türkiye' },
+                { name: '안탈리아', nameEn: 'Antalya', country: 'Türkiye' },
+                { name: '가지안테프', nameEn: 'Gaziantep', country: 'Türkiye' },
+                { name: '콘야', nameEn: 'Konya', country: 'Türkiye' },
+                { name: '아다나', nameEn: 'Adana', country: 'Türkiye' },
+                { name: '트라브존', nameEn: 'Trabzon', country: 'Türkiye' },
+                { name: '디야르바키르', nameEn: 'Diyarbakir', country: 'Türkiye' }
+            ],
+            'Turkey': [
+                { name: '이스탄불', nameEn: 'Istanbul', country: 'Turkey' },
+                { name: '앙카라', nameEn: 'Ankara', country: 'Turkey' },
+                { name: '이즈미르', nameEn: 'Izmir', country: 'Turkey' },
+                { name: '부르사', nameEn: 'Bursa', country: 'Turkey' },
+                { name: '안탈리아', nameEn: 'Antalya', country: 'Turkey' },
+                { name: '가지안테프', nameEn: 'Gaziantep', country: 'Turkey' },
+                { name: '콘야', nameEn: 'Konya', country: 'Turkey' },
+                { name: '아다나', nameEn: 'Adana', country: 'Turkey' },
+                { name: '트라브존', nameEn: 'Trabzon', country: 'Turkey' },
+                { name: '디야르바키르', nameEn: 'Diyarbakir', country: 'Turkey' }
             ]
         };
         
