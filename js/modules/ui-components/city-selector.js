@@ -107,10 +107,19 @@ export class CitySelector {
         
         try {
             this.setLoading(true);
-            await this.loadCitiesByCountry(country.nameEn);
-            // 프리미엄 도시 + API 도시 통합 표시
-            this.filteredCities = this.getAllCitiesForCountry();
-            this.updateDropdownContent();
+            
+            // 1. 프리미엄 데이터가 있는지 먼저 확인
+            if (this.citySearchUtils && this.citySearchUtils.getCitiesByCountry(country.nameEn).length > 0) {
+                console.log(`${country.nameEn}의 프리미엄 도시 데이터를 사용합니다.`);
+                this.loadCitiesFromPremium(country.nameEn);
+                this.filteredCities = this.getAllCitiesForCountry();
+                this.updateDropdownContent();
+            } else {
+                // 2. 프리미엄 데이터가 없으면 API 호출
+                await this.loadCitiesByCountry(country.nameEn);
+                this.filteredCities = this.getAllCitiesForCountry();
+                this.updateDropdownContent();
+            }
         } catch (error) {
             console.error('도시 데이터 로드 실패:', error);
             this.allCities = [];
@@ -184,53 +193,62 @@ export class CitySelector {
             console.error('도시 API 호출 실패:', error);
             console.error(`국가: ${countryName}, API 호출명: ${this.getAPICountryName(countryName)}`);
             
-            // 네트워크 오류 시 폴백 데이터 제공
-            if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                console.warn('네트워크 연결 실패, 폴백 도시 데이터를 사용합니다.');
-                this.allCities = this.getFallbackCities(countryName);
-            } else {
-                console.warn('API 오류로 인해 폴백 도시 데이터를 사용합니다.');
-                this.allCities = this.getFallbackCities(countryName);
+            // 1. 프리미엄 데이터가 있는지 먼저 확인
+            if (this.citySearchUtils && this.citySearchUtils.getCitiesByCountry(countryName).length > 0) {
+                console.log('API 실패, 프리미엄 도시 데이터를 사용합니다.');
+                this.loadCitiesFromPremium(countryName);
+                return;
             }
             
-            // 폴백 데이터로 필터링된 도시 목록 업데이트
+            // 2. 프리미엄 데이터가 없으면 폴백 데이터 사용
+            console.warn('API 오류로 인해 폴백 도시 데이터를 사용합니다.');
+            this.allCities = this.getFallbackCities(countryName);
             this.filteredCities = [...this.allCities];
         }
     }
     
     /**
+     * 프리미엄 도시 데이터에서 로드
+     * @param {string} countryName - 국가명
+     */
+    loadCitiesFromPremium(countryName) {
+        if (!this.citySearchUtils) {
+            console.warn('프리미엄 도시 데이터가 로드되지 않았습니다.');
+            this.allCities = this.getFallbackCities(countryName);
+            this.filteredCities = [...this.allCities];
+            return;
+        }
+        
+        const premiumCities = this.citySearchUtils.getCitiesByCountry(countryName);
+        this.allCities = premiumCities.map(city => ({
+            name: city.ko,           // 한국어 표시명
+            nameEn: city.en,         // 영어명
+            country: countryName,
+            priority: city.priority,
+            category: city.category,
+            region: city.region,
+            isCapital: city.isCapital,
+            source: 'premium'        // 출처 구분
+        }));
+        
+        this.filteredCities = [...this.allCities];
+        console.log(`${countryName}의 프리미엄 도시 ${this.allCities.length}개 로드 완료`);
+    }
+    
+    /**
      * 폴백 도시 데이터 (네트워크 실패 시)
+     * 프리미엄 데이터가 없는 국가에 대해서만 최소한의 데이터 제공
      * @param {string} countryName - 국가명
      */
     getFallbackCities(countryName) {
+        // 프리미엄 데이터가 있는 국가들은 프리미엄 데이터를 우선 사용
+        if (this.citySearchUtils && this.citySearchUtils.getCitiesByCountry(countryName).length > 0) {
+            console.log(`${countryName}의 프리미엄 도시 데이터를 사용합니다.`);
+            return [];
+        }
+        
+        // 프리미엄 데이터가 없는 국가들에 대한 최소한의 폴백 데이터
         const fallbackCities = {
-            'South Korea': [
-                { name: '서울', nameEn: 'Seoul', country: 'South Korea' },
-                { name: '부산', nameEn: 'Busan', country: 'South Korea' },
-                { name: '대구', nameEn: 'Daegu', country: 'South Korea' },
-                { name: '인천', nameEn: 'Incheon', country: 'South Korea' },
-                { name: '광주', nameEn: 'Gwangju', country: 'South Korea' },
-                { name: '대전', nameEn: 'Daejeon', country: 'South Korea' },
-                { name: '울산', nameEn: 'Ulsan', country: 'South Korea' }
-            ],
-            'Japan': [
-                { name: '도쿄', nameEn: 'Tokyo', country: 'Japan' },
-                { name: '오사카', nameEn: 'Osaka', country: 'Japan' },
-                { name: '교토', nameEn: 'Kyoto', country: 'Japan' },
-                { name: '요코하마', nameEn: 'Yokohama', country: 'Japan' },
-                { name: '나고야', nameEn: 'Nagoya', country: 'Japan' },
-                { name: '삿포로', nameEn: 'Sapporo', country: 'Japan' },
-                { name: '후쿠오카', nameEn: 'Fukuoka', country: 'Japan' }
-            ],
-            'United States': [
-                { name: '뉴욕', nameEn: 'New York', country: 'United States' },
-                { name: '로스앤젤레스', nameEn: 'Los Angeles', country: 'United States' },
-                { name: '시카고', nameEn: 'Chicago', country: 'United States' },
-                { name: '휴스턴', nameEn: 'Houston', country: 'United States' },
-                { name: '피닉스', nameEn: 'Phoenix', country: 'United States' },
-                { name: '필라델피아', nameEn: 'Philadelphia', country: 'United States' },
-                { name: '샌안토니오', nameEn: 'San Antonio', country: 'United States' }
-            ],
             'Türkiye': [
                 { name: '이스탄불', nameEn: 'Istanbul', country: 'Türkiye' },
                 { name: '앙카라', nameEn: 'Ankara', country: 'Türkiye' },
