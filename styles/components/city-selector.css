@@ -363,3 +363,85 @@
         background: #9ca3af;
     }
 }
+
+/* ========================================
+   프리미엄 도시 스타일 (한국어 지원)
+   ======================================== */
+
+/* 프리미엄 도시 아이템 */
+.city-selector-portal .city-item.premium-city {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-left: 3px solid #3b82f6;
+    position: relative;
+}
+
+.city-selector-portal .city-item.premium-city:hover {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    border-left-color: #1d4ed8;
+}
+
+.city-selector-portal .city-item.premium-city.selected {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-left-color: #1d4ed8;
+}
+
+/* 도시 정보 레이아웃 */
+.city-selector-portal .city-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.city-selector-portal .city-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 14px;
+}
+
+.city-selector-portal .city-name-en {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 400;
+}
+
+/* 프리미엄 배지 */
+.city-selector-portal .premium-badge {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    color: #f59e0b;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 다크 모드 프리미엄 도시 스타일 */
+@media (prefers-color-scheme: dark) {
+    .city-selector-portal .city-item.premium-city {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-left-color: #60a5fa;
+    }
+    
+    .city-selector-portal .city-item.premium-city:hover {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border-left-color: #3b82f6;
+    }
+    
+    .city-selector-portal .city-item.premium-city.selected {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        border-left-color: #60a5fa;
+    }
+    
+    .city-selector-portal .city-name {
+        color: #f1f5f9;
+    }
+    
+    .city-selector-portal .city-name-en {
+        color: #94a3b8;
+    }
+    
+    .city-selector-portal .premium-badge {
+        color: #fbbf24;
+    }
+}

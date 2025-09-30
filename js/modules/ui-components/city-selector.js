@@ -1,9 +1,9 @@
 /**
  * CitySelector - 도시 선택 컴포넌트
  * CountrySelector와 동일한 패턴으로 구현
- * API 기반 도시 데이터 로드 및 검색 기능
+ * API 기반 도시 데이터 로드 및 한국어 검색 기능
  * 
- * @version 1.0.0
+ * @version 1.1.0
  * @since 2024-12-29
  * @author REDIPX
  */
@@ -33,6 +33,10 @@ export class CitySelector {
         this.eventListeners = new Map();
         this.selectedCountry = null;
         this.isLoading = false;
+        
+        // 프리미엄 도시 데이터 (한국어 지원)
+        this.premiumCities = null;
+        this.loadPremiumCities();
         
         this.init();
     }
@@ -79,6 +83,23 @@ export class CitySelector {
             this.showError('도시 데이터를 불러오는데 실패했습니다.');
         } finally {
             this.setLoading(false);
+        }
+    }
+    
+    /**
+     * 프리미엄 도시 데이터 로드 (한국어 지원)
+     * @async
+     */
+    async loadPremiumCities() {
+        try {
+            const { PREMIUM_CITIES, CitySearchUtils } = await import('../../data/cities/index.js');
+            this.premiumCities = PREMIUM_CITIES;
+            this.citySearchUtils = CitySearchUtils;
+            console.log('프리미엄 도시 데이터 로드 완료:', this.citySearchUtils.getStats());
+        } catch (error) {
+            console.warn('프리미엄 도시 데이터 로드 실패:', error);
+            this.premiumCities = null;
+            this.citySearchUtils = null;
         }
     }
     
@@ -255,25 +276,53 @@ export class CitySelector {
             return;
         }
         
+        // 프리미엄 도시와 API 도시 분리
+        const premiumCities = this.filteredCities.filter(city => city.source === 'premium');
+        const apiCities = this.filteredCities.filter(city => city.source !== 'premium');
+        
         const content = `
             <div class="cities-section">
                 <h3 class="section-title">도시 검색</h3>
                 <div class="cities-list">
-                    ${this.filteredCities.map((city, index) => `
-                        <div class="city-item ${index === this.selectedIndex ? 'selected' : ''}" 
-                             data-city="${city.nameEn}" 
-                             data-index="${index}"
-                             role="option"
-                             tabindex="0">
-                            <span class="city-name">${city.name}</span>
-                            <span class="city-name-en">${city.nameEn}</span>
-                        </div>
-                    `).join('')}
+                    ${this.renderCityList(premiumCities, 'premium')}
+                    ${this.renderCityList(apiCities, 'api')}
                 </div>
             </div>
         `;
 
         this.dropdown.innerHTML = content;
+    }
+    
+    /**
+     * 도시 목록 렌더링
+     * @param {Array} cities - 도시 배열
+     * @param {string} source - 출처 ('premium' 또는 'api')
+     * @returns {string} HTML 문자열
+     */
+    renderCityList(cities, source) {
+        if (!cities || cities.length === 0) return '';
+        
+        const startIndex = source === 'premium' ? 0 : this.filteredCities.filter(city => city.source === 'premium').length;
+        
+        return cities.map((city, index) => {
+            const globalIndex = startIndex + index;
+            const isSelected = globalIndex === this.selectedIndex;
+            const isPremium = source === 'premium';
+            
+            return `
+                <div class="city-item ${isSelected ? 'selected' : ''} ${isPremium ? 'premium-city' : ''}" 
+                     data-city="${city.nameEn}" 
+                     data-index="${globalIndex}"
+                     role="option"
+                     tabindex="0">
+                    <div class="city-info">
+                        <span class="city-name">${city.name}</span>
+                        ${city.name !== city.nameEn ? `<span class="city-name-en">${city.nameEn}</span>` : ''}
+                    </div>
+                    ${isPremium ? '<span class="premium-badge">★</span>' : ''}
+                </div>
+            `;
+        }).join('');
     }
     
     /**
@@ -410,7 +459,7 @@ export class CitySelector {
     }
     
     /**
-     * 검색 기능 (수정됨 - 원본 데이터 보존)
+     * 통합 검색 기능 (한국어 + 영어 지원)
      * @param {string} query - 검색어
      */
     search(query) {
@@ -424,15 +473,87 @@ export class CitySelector {
             // 빈 검색어일 때는 원본 데이터 복원
             this.filteredCities = [...this.allCities];
         } else {
-            // 원본 데이터에서 필터링하여 새 배열 생성
-            this.filteredCities = this.allCities.filter(city => 
+            // 통합 검색: 프리미엄 도시 + API 도시
+            const results = [];
+            
+            // 1. 프리미엄 도시에서 한국어 검색
+            if (this.citySearchUtils) {
+                const premiumResults = this.searchPremiumCities(query, this.selectedCountry.nameEn);
+                results.push(...premiumResults);
+            }
+            
+            // 2. API 도시에서 영어 검색
+            const apiResults = this.allCities.filter(city => 
                 city.name.toLowerCase().includes(searchTerm) ||
                 city.nameEn.toLowerCase().includes(searchTerm)
             );
+            results.push(...apiResults);
+            
+            // 3. 중복 제거 및 정렬
+            this.filteredCities = this.deduplicateAndSortResults(results);
         }
         
         this.selectedIndex = -1;
         this.updateDropdownContent();
+    }
+    
+    /**
+     * 프리미엄 도시 검색 (한국어 지원)
+     * @param {string} query - 검색어
+     * @param {string} countryName - 국가명
+     * @returns {Array} 검색 결과
+     */
+    searchPremiumCities(query, countryName) {
+        if (!this.citySearchUtils) return [];
+        
+        const results = this.citySearchUtils.searchCities(query, countryName);
+        
+        return results.map(city => ({
+            name: city.ko,           // 한국어 표시명
+            nameEn: city.en,         // 영어명 (API 호출용)
+            country: countryName,
+            priority: city.priority,
+            category: city.category,
+            region: city.region,
+            isCapital: city.isCapital,
+            source: 'premium'        // 출처 구분
+        }));
+    }
+    
+    /**
+     * 검색 결과 중복 제거 및 정렬
+     * @param {Array} results - 검색 결과 배열
+     * @returns {Array} 중복 제거 및 정렬된 결과
+     */
+    deduplicateAndSortResults(results) {
+        // 중복 제거 (영어명 기준)
+        const uniqueResults = results.reduce((acc, city) => {
+            const key = city.nameEn.toLowerCase();
+            if (!acc.has(key)) {
+                acc.set(key, city);
+            } else {
+                // 프리미엄 도시가 우선순위 높음
+                if (city.source === 'premium') {
+                    acc.set(key, city);
+                }
+            }
+            return acc;
+        }, new Map());
+        
+        // 배열로 변환 및 정렬
+        return Array.from(uniqueResults.values()).sort((a, b) => {
+            // 1. 프리미엄 도시 우선
+            if (a.source === 'premium' && b.source !== 'premium') return -1;
+            if (a.source !== 'premium' && b.source === 'premium') return 1;
+            
+            // 2. 우선순위별 정렬
+            if (a.priority && b.priority) {
+                return a.priority - b.priority;
+            }
+            
+            // 3. 알파벳순 정렬
+            return a.name.localeCompare(b.name);
+        });
     }
     
     /**
