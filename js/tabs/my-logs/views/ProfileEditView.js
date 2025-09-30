@@ -17,6 +17,7 @@
  */
 
 import { EventManager } from '../../../modules/utils/event-manager.js';
+import { ProfileEditRenderer } from './profile-edit/ProfileEditRenderer.js';
 
 class ProfileEditView {
     constructor(controller) {
@@ -24,6 +25,9 @@ class ProfileEditView {
         this.eventManager = new EventManager();
         this.container = null;
         this.isInitialized = false;
+        
+        // UI 렌더링 모듈
+        this.renderer = new ProfileEditRenderer();
         
         // 편집 상태 관리
         this.isEditing = false;
@@ -40,7 +44,7 @@ class ProfileEditView {
         this.container = container;
         // 프로필 편집 뷰 CSS 네임스페이스 클래스 추가
         this.container.classList.add('profile-edit-view');
-        this.container.innerHTML = this.getProfileEditHTML();
+        this.container.innerHTML = this.renderer.getProfileEditHTML();
         this.bindEvents();
         
         // 사용자 정보 로드 및 폼에 채우기
@@ -49,146 +53,6 @@ class ProfileEditView {
         this.isInitialized = true;
     }
 
-    /**
-     * 프로필 편집 화면 HTML을 생성합니다
-     * @returns {string} HTML 문자열
-     */
-    getProfileEditHTML() {
-        return `
-            <div class="my-logs-container">
-                <div class="my-logs-header">
-                    <div class="header-with-back">
-                        <button class="back-btn" id="back-to-profile">◀ 뒤로</button>
-                        <div class="header-content">
-                            <h1 class="my-logs-title">✏️ 프로필 편집</h1>
-                            <p class="my-logs-subtitle">프로필 정보를 수정하세요</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 프로필 사진 섹션 -->
-                <div class="hub-section profile-photo-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📷 프로필 사진</h2>
-                    </div>
-                    <div class="profile-photo-content">
-                        <div class="profile-avatar-container">
-                            <div class="profile-avatar" id="profile-avatar">
-                                <img src="" alt="프로필 이미지" class="profile-image" style="display: none;">
-                                <div class="profile-avatar-placeholder">✈️</div>
-                            </div>
-                            <button class="profile-avatar-edit" id="profile-avatar-edit" title="프로필 이미지 변경">
-                                <span class="camera-icon">📷</span>
-                            </button>
-                            <input type="file" id="profile-image-input" accept="image/*" style="display: none;">
-                        </div>
-                        <div class="avatar-options">
-                            <h3 class="avatar-options-title">기본 프로필 선택</h3>
-                            <div class="avatar-options-grid">
-                                <button class="avatar-option" data-avatar="✈️" title="비행기">✈️</button>
-                                <button class="avatar-option" data-avatar="🌍" title="지구본">🌍</button>
-                                <button class="avatar-option" data-avatar="🎒" title="여행가방">🎒</button>
-                                <button class="avatar-option" data-avatar="📷" title="카메라">📷</button>
-                                <button class="avatar-option" data-avatar="🗺️" title="지도">🗺️</button>
-                                <button class="avatar-option" data-avatar="🏖️" title="해변">🏖️</button>
-                                <button class="avatar-option" data-avatar="🏔️" title="산">🏔️</button>
-                                <button class="avatar-option" data-avatar="🌆" title="도시">🌆</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 기본 정보 섹션 -->
-                <div class="hub-section profile-info-section">
-                    <div class="section-header">
-                        <h2 class="section-title">📋 기본 정보</h2>
-                    </div>
-                    <div class="profile-info-content">
-                        <div class="form-group">
-                            <label for="profile-name-input" class="form-label">
-                                이름
-                                <span class="required-indicator">*</span>
-                            </label>
-                            <input 
-                                type="text" 
-                                id="profile-name-input" 
-                                class="form-input" 
-                                placeholder="이름을 입력하세요"
-                                maxlength="20"
-                                required
-                            >
-                            <div class="form-error" id="name-error"></div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profile-bio-input" class="form-label">바이오</label>
-                            <textarea 
-                                id="profile-bio-input" 
-                                class="form-textarea" 
-                                placeholder="자신을 소개해주세요 (선택사항)" 
-                                rows="3"
-                                maxlength="100"
-                            ></textarea>
-                            <div class="form-char-count" id="bio-char-count">0/100</div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profile-country-input" class="form-label">
-                                거주국
-                                <span class="required-indicator">*</span>
-                            </label>
-                            <select id="profile-country-input" class="form-select" required>
-                                <option value="">거주국을 선택하세요</option>
-                                <option value="KR">🇰🇷 대한민국</option>
-                                <option value="US">🇺🇸 미국</option>
-                                <option value="JP">🇯🇵 일본</option>
-                                <option value="CN">🇨🇳 중국</option>
-                                <option value="GB">🇬🇧 영국</option>
-                                <option value="DE">🇩🇪 독일</option>
-                                <option value="FR">🇫🇷 프랑스</option>
-                                <option value="IT">🇮🇹 이탈리아</option>
-                                <option value="ES">🇪🇸 스페인</option>
-                                <option value="CA">🇨🇦 캐나다</option>
-                                <option value="AU">🇦🇺 호주</option>
-                                <option value="SG">🇸🇬 싱가포르</option>
-                                <option value="TH">🇹🇭 태국</option>
-                                <option value="VN">🇻🇳 베트남</option>
-                                <option value="ID">🇮🇩 인도네시아</option>
-                                <option value="MY">🇲🇾 말레이시아</option>
-                                <option value="PH">🇵🇭 필리핀</option>
-                                <option value="IN">🇮🇳 인도</option>
-                                <option value="BR">🇧🇷 브라질</option>
-                                <option value="MX">🇲🇽 멕시코</option>
-                                <option value="RU">🇷🇺 러시아</option>
-                                <option value="other">기타</option>
-                            </select>
-                            <div class="form-error" id="country-error"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 저장/취소 버튼 -->
-                <div class="profile-edit-actions">
-                    <button class="save-btn primary" id="save-profile-edit" disabled>저장</button>
-                    <button class="cancel-btn" id="cancel-profile-edit">취소</button>
-                </div>
-                
-                <!-- 변경사항 확인 모달 (스켈레톤) -->
-                <div class="unsaved-changes-modal" id="unsaved-changes-modal" style="display: none;">
-                    <div class="modal-overlay">
-                        <div class="modal-content">
-                            <h3 class="modal-title">저장하지 않은 변경사항</h3>
-                            <p class="modal-message">변경사항이 저장되지 않았습니다. 정말로 나가시겠습니까?</p>
-                            <div class="modal-actions">
-                                <button class="modal-btn secondary" id="modal-cancel">계속 편집</button>
-                                <button class="modal-btn danger" id="modal-discard">변경사항 버리기</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
 
     /**
      * 프로필 편집 화면의 이벤트를 바인딩합니다
@@ -519,27 +383,7 @@ class ProfileEditView {
      * @param {string} avatar - 아바타 이모지
      */
     selectDefaultAvatar(avatar) {
-        // 아바타 옵션 버튼들 업데이트
-        const avatarOptions = document.querySelectorAll('.avatar-option');
-        avatarOptions.forEach(option => {
-            option.classList.remove('selected');
-            if (option.dataset.avatar === avatar) {
-                option.classList.add('selected');
-            }
-        });
-        
-        // 프로필 아바타 업데이트
-        const placeholder = document.querySelector('.profile-avatar-placeholder');
-        const profileImage = document.querySelector('.profile-image');
-        
-        if (placeholder) {
-            placeholder.textContent = avatar;
-            placeholder.style.display = 'block';
-        }
-        
-        if (profileImage) {
-            profileImage.style.display = 'none';
-        }
+        this.renderer.selectDefaultAvatar(avatar);
         
         this.currentData.defaultAvatar = avatar;
         this.currentData.avatar = null; // 기본 아바타 사용 시 커스텀 이미지 해제
@@ -551,14 +395,7 @@ class ProfileEditView {
      * @param {string} imageData - 이미지 데이터 URL
      */
     updateProfileImage(imageData) {
-        const profileImage = document.querySelector('.profile-image');
-        const placeholder = document.querySelector('.profile-avatar-placeholder');
-        
-        if (profileImage && placeholder) {
-            profileImage.src = imageData;
-            profileImage.style.display = 'block';
-            placeholder.style.display = 'none';
-        }
+        this.renderer.updateProfileImage(imageData);
     }
 
     /**
@@ -611,17 +448,9 @@ class ProfileEditView {
      */
     updateBioCharCount() {
         const bioInput = document.getElementById('profile-bio-input');
-        const charCount = document.getElementById('bio-char-count');
-        
-        if (bioInput && charCount) {
+        if (bioInput) {
             const count = bioInput.value.length;
-            charCount.textContent = `${count}/100`;
-            
-            if (count > 100) {
-                charCount.classList.add('over-limit');
-            } else {
-                charCount.classList.remove('over-limit');
-            }
+            this.renderer.updateBioCharCount(count);
         }
     }
 
@@ -631,11 +460,7 @@ class ProfileEditView {
      * @param {string} message - 오류 메시지
      */
     showFieldError(errorId, message) {
-        const errorElement = document.getElementById(errorId);
-        if (errorElement) {
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-        }
+        this.renderer.showFieldError(errorId, message);
     }
 
     /**
@@ -643,11 +468,7 @@ class ProfileEditView {
      * @param {string} errorId - 오류 요소 ID
      */
     clearFieldError(errorId) {
-        const errorElement = document.getElementById(errorId);
-        if (errorElement) {
-            errorElement.textContent = '';
-            errorElement.style.display = 'none';
-        }
+        this.renderer.clearFieldError(errorId);
     }
 
     /**
@@ -671,10 +492,7 @@ class ProfileEditView {
         this.hasUnsavedChanges = JSON.stringify(currentData) !== JSON.stringify(this.originalData);
         
         // 저장 버튼 활성화/비활성화
-        const saveBtn = document.getElementById('save-profile-edit');
-        if (saveBtn) {
-            saveBtn.disabled = !this.hasUnsavedChanges;
-        }
+        this.renderer.updateSaveButtonState(this.hasUnsavedChanges);
     }
 
     /**
@@ -830,20 +648,14 @@ class ProfileEditView {
      * 변경사항 확인 모달을 표시합니다
      */
     showUnsavedChangesModal() {
-        const modal = document.getElementById('unsaved-changes-modal');
-        if (modal) {
-            modal.style.display = 'block';
-        }
+        this.renderer.showUnsavedChangesModal();
     }
 
     /**
      * 변경사항 확인 모달을 숨깁니다
      */
     hideUnsavedChangesModal() {
-        const modal = document.getElementById('unsaved-changes-modal');
-        if (modal) {
-            modal.style.display = 'none';
-        }
+        this.renderer.hideUnsavedChangesModal();
     }
 
     /**
@@ -895,6 +707,9 @@ class ProfileEditView {
     cleanup() {
         if (this.eventManager) {
             this.eventManager.cleanup();
+        }
+        if (this.renderer) {
+            this.renderer.cleanup();
         }
         this.container = null;
         this.isInitialized = false;
