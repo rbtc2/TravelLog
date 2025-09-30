@@ -1,9 +1,9 @@
 /**
  * @fileoverview 국가 데이터 관리 모듈
  * @description 국가 정보를 로드, 캐싱, 관리하는 클래스
- * @author TravelLog Team
+ * @author REDIPX
  * @version 1.0.0
- * @since 2024-01-01
+ * @since 2025-09-30
  * @license MIT
  */
 

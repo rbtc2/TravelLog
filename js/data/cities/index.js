@@ -9,12 +9,14 @@
 
 import { ASIA_CITIES, AsiaCityUtils } from './asia/index.js';
 import { EUROPE_CITIES, EuropeCityUtils } from './europe/index.js';
+import { AMERICAS_CITIES, AmericasCityUtils } from './americas/index.js';
 
 export const PREMIUM_CITIES = {
     // 대륙별 데이터
     continents: {
         'Asia': ASIA_CITIES,
-        'Europe': EUROPE_CITIES
+        'Europe': EUROPE_CITIES,
+        'Americas': AMERICAS_CITIES
     },
     
     // 글로벌 검색 인덱스
@@ -27,7 +29,7 @@ export const PREMIUM_CITIES = {
     
     // 통계
     globalStats: {
-        totalContinents: 2,
+        totalContinents: 3,
         totalCountries: 0,
         totalCities: 0,
         lastUpdated: '2025-09-30'
