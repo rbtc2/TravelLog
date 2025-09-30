@@ -18,6 +18,7 @@
 
 import { EventManager } from '../../../modules/utils/event-manager.js';
 import { ProfileEditRenderer } from './profile-edit/ProfileEditRenderer.js';
+import { ProfileEditFormManager } from './profile-edit/ProfileEditFormManager.js';
 
 class ProfileEditView {
     constructor(controller) {
@@ -29,11 +30,11 @@ class ProfileEditView {
         // UI 렌더링 모듈
         this.renderer = new ProfileEditRenderer();
         
+        // 폼 관리 모듈
+        this.formManager = new ProfileEditFormManager();
+        
         // 편집 상태 관리
         this.isEditing = false;
-        this.hasUnsavedChanges = false;
-        this.originalData = {};
-        this.currentData = {};
     }
 
     /**
@@ -45,6 +46,10 @@ class ProfileEditView {
         // 프로필 편집 뷰 CSS 네임스페이스 클래스 추가
         this.container.classList.add('profile-edit-view');
         this.container.innerHTML = this.renderer.getProfileEditHTML();
+        
+        // 폼 매니저 콜백 설정
+        this.setupFormManagerCallbacks();
+        
         this.bindEvents();
         
         // 사용자 정보 로드 및 폼에 채우기
@@ -53,6 +58,41 @@ class ProfileEditView {
         this.isInitialized = true;
     }
 
+    /**
+     * 폼 매니저 콜백을 설정합니다
+     */
+    setupFormManagerCallbacks() {
+        this.formManager.setCallbacks({
+            onValidationChange: (fieldName, isValid, message) => {
+                if (isValid) {
+                    this.renderer.clearFieldError(this.formManager.fieldConfig[fieldName].errorElementId);
+                } else {
+                    this.renderer.showFieldError(this.formManager.fieldConfig[fieldName].errorElementId, message);
+                }
+            },
+            onDataChange: (hasChanges, formData) => {
+                this.renderer.updateSaveButtonState(hasChanges);
+            },
+            onErrorChange: (elementId, content, isOverLimit) => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.textContent = content;
+                    if (isOverLimit) {
+                        element.classList.add('over-limit');
+                    } else {
+                        element.classList.remove('over-limit');
+                    }
+                }
+            },
+            onAvatarChange: (type, value) => {
+                if (type === 'image') {
+                    this.updateProfileImage(value);
+                } else if (type === 'default') {
+                    this.renderer.selectDefaultAvatar(value);
+                }
+            }
+        });
+    }
 
     /**
      * 프로필 편집 화면의 이벤트를 바인딩합니다
@@ -128,8 +168,8 @@ class ProfileEditView {
         const nameInput = document.getElementById('profile-name-input');
         if (nameInput) {
             this.eventManager.add(nameInput, 'input', () => {
-                this.validateName();
-                this.checkForChanges();
+                this.formManager.validateName();
+                this.formManager.checkForChanges();
             });
         }
         
@@ -137,8 +177,8 @@ class ProfileEditView {
         const bioInput = document.getElementById('profile-bio-input');
         if (bioInput) {
             this.eventManager.add(bioInput, 'input', () => {
-                this.updateBioCharCount();
-                this.checkForChanges();
+                this.formManager.updateBioCharCount();
+                this.formManager.checkForChanges();
             });
         }
         
@@ -146,8 +186,8 @@ class ProfileEditView {
         const countrySelect = document.getElementById('profile-country-input');
         if (countrySelect) {
             this.eventManager.add(countrySelect, 'change', () => {
-                this.validateCountry();
-                this.checkForChanges();
+                this.formManager.validateCountry();
+                this.formManager.checkForChanges();
             });
         }
     }
@@ -241,12 +281,8 @@ class ProfileEditView {
                 defaultAvatar: profileData.defaultAvatar || '✈️'
             };
             
-            // 원본 데이터와 현재 데이터 설정
-            this.originalData = { ...mergedData };
-            this.currentData = { ...mergedData };
-            
-            // 폼에 데이터 채우기
-            this.populateForm(mergedData);
+            // 폼 매니저에 데이터 설정 (아바타 설정도 포함)
+            this.formManager.populateForm(mergedData);
             
         } catch (error) {
             console.error('사용자 데이터 로드 실패:', error);
@@ -312,35 +348,6 @@ class ProfileEditView {
         }
     }
 
-    /**
-     * 폼에 데이터를 채웁니다
-     * @param {Object} data - 프로필 데이터
-     */
-    populateForm(data) {
-        const nameInput = document.getElementById('profile-name-input');
-        const bioInput = document.getElementById('profile-bio-input');
-        const countrySelect = document.getElementById('profile-country-input');
-        
-        if (nameInput) {
-            nameInput.value = data.name || '';
-        }
-        
-        if (bioInput) {
-            bioInput.value = data.bio || '';
-            this.updateBioCharCount();
-        }
-        
-        if (countrySelect) {
-            countrySelect.value = data.residenceCountry || '';
-        }
-        
-        // 아바타 설정
-        if (data.avatar) {
-            this.updateProfileImage(data.avatar);
-        } else if (data.defaultAvatar) {
-            this.selectDefaultAvatar(data.defaultAvatar);
-        }
-    }
 
     /**
      * 이미지 업로드를 처리합니다
@@ -371,9 +378,11 @@ class ProfileEditView {
         const reader = new FileReader();
         reader.onload = (e) => {
             this.updateProfileImage(e.target.result);
-            this.currentData.avatar = e.target.result;
-            this.currentData.defaultAvatar = null; // 커스텀 이미지 사용 시 기본 아바타 해제
-            this.checkForChanges();
+            // 폼 매니저를 통해 데이터 업데이트
+            this.formManager.updateFormData({
+                avatar: e.target.result,
+                defaultAvatar: null // 커스텀 이미지 사용 시 기본 아바타 해제
+            });
         };
         reader.readAsDataURL(file);
     }
@@ -385,9 +394,11 @@ class ProfileEditView {
     selectDefaultAvatar(avatar) {
         this.renderer.selectDefaultAvatar(avatar);
         
-        this.currentData.defaultAvatar = avatar;
-        this.currentData.avatar = null; // 기본 아바타 사용 시 커스텀 이미지 해제
-        this.checkForChanges();
+        // 폼 매니저를 통해 데이터 업데이트
+        this.formManager.updateFormData({
+            defaultAvatar: avatar,
+            avatar: null // 기본 아바타 사용 시 커스텀 이미지 해제
+        });
     }
 
     /**
@@ -398,61 +409,6 @@ class ProfileEditView {
         this.renderer.updateProfileImage(imageData);
     }
 
-    /**
-     * 이름 유효성을 검사합니다
-     */
-    validateName() {
-        const nameInput = document.getElementById('profile-name-input');
-        const errorElement = document.getElementById('name-error');
-        
-        if (!nameInput || !errorElement) return;
-        
-        const name = nameInput.value.trim();
-        
-        if (!name) {
-            this.showFieldError('name-error', '이름을 입력해주세요.');
-            return false;
-        }
-        
-        if (name.length < 2) {
-            this.showFieldError('name-error', '이름은 최소 2자 이상이어야 합니다.');
-            return false;
-        }
-        
-        this.clearFieldError('name-error');
-        return true;
-    }
-
-    /**
-     * 거주국 유효성을 검사합니다
-     */
-    validateCountry() {
-        const countrySelect = document.getElementById('profile-country-input');
-        const errorElement = document.getElementById('country-error');
-        
-        if (!countrySelect || !errorElement) return;
-        
-        const country = countrySelect.value;
-        
-        if (!country) {
-            this.showFieldError('country-error', '거주국을 선택해주세요.');
-            return false;
-        }
-        
-        this.clearFieldError('country-error');
-        return true;
-    }
-
-    /**
-     * Bio 글자 수를 업데이트합니다
-     */
-    updateBioCharCount() {
-        const bioInput = document.getElementById('profile-bio-input');
-        if (bioInput) {
-            const count = bioInput.value.length;
-            this.renderer.updateBioCharCount(count);
-        }
-    }
 
     /**
      * 필드 오류를 표시합니다
@@ -471,35 +427,12 @@ class ProfileEditView {
         this.renderer.clearFieldError(errorId);
     }
 
-    /**
-     * 변경사항이 있는지 확인합니다
-     */
-    checkForChanges() {
-        const nameInput = document.getElementById('profile-name-input');
-        const bioInput = document.getElementById('profile-bio-input');
-        const countrySelect = document.getElementById('profile-country-input');
-        
-        if (!nameInput || !bioInput || !countrySelect) return;
-        
-        const currentData = {
-            name: nameInput.value.trim(),
-            bio: bioInput.value.trim(),
-            residenceCountry: countrySelect.value,
-            avatar: this.currentData.avatar,
-            defaultAvatar: this.currentData.defaultAvatar
-        };
-        
-        this.hasUnsavedChanges = JSON.stringify(currentData) !== JSON.stringify(this.originalData);
-        
-        // 저장 버튼 활성화/비활성화
-        this.renderer.updateSaveButtonState(this.hasUnsavedChanges);
-    }
 
     /**
      * 뒤로가기 버튼 클릭
      */
     onBackToProfile() {
-        if (this.hasUnsavedChanges) {
+        if (this.formManager.hasChanges()) {
             this.showUnsavedChangesModal();
         } else {
             this.navigateToProfile();
@@ -533,29 +466,14 @@ class ProfileEditView {
      * @returns {boolean} 유효성 검사 결과
      */
     validateForm() {
-        const isNameValid = this.validateName();
-        const isCountryValid = this.validateCountry();
-        
-        return isNameValid && isCountryValid;
+        return this.formManager.validateForm();
     }
 
     /**
      * 프로필 데이터를 저장합니다
      */
     async saveProfileData() {
-        const nameInput = document.getElementById('profile-name-input');
-        const bioInput = document.getElementById('profile-bio-input');
-        const countrySelect = document.getElementById('profile-country-input');
-        
-        if (!nameInput || !bioInput || !countrySelect) return;
-        
-        const profileData = {
-            name: nameInput.value.trim(),
-            bio: bioInput.value.trim(),
-            residenceCountry: countrySelect.value,
-            avatar: this.currentData.avatar,
-            defaultAvatar: this.currentData.defaultAvatar
-        };
+        const profileData = this.formManager.getFormData();
         
         try {
             // Supabase 사용자 정보 업데이트
@@ -564,9 +482,8 @@ class ProfileEditView {
             // 로컬 스토리지에도 저장 (기존 호환성 유지)
             localStorage.setItem('travelLog_profile', JSON.stringify(profileData));
             
-            // 원본 데이터 업데이트
-            this.originalData = { ...profileData };
-            this.hasUnsavedChanges = false;
+            // 폼 매니저에 저장 완료 알림
+            this.formManager.initializeFormData(profileData);
             
             // 저장 버튼 비활성화
             const saveBtn = document.getElementById('save-profile-edit');
@@ -711,11 +628,11 @@ class ProfileEditView {
         if (this.renderer) {
             this.renderer.cleanup();
         }
+        if (this.formManager) {
+            this.formManager.cleanup();
+        }
         this.container = null;
         this.isInitialized = false;
-        this.hasUnsavedChanges = false;
-        this.originalData = {};
-        this.currentData = {};
     }
 }
 
