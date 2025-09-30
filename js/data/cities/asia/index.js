@@ -20,6 +20,12 @@ import { MALDIVES_CITIES } from './maldives.js';
 import { NEPAL_CITIES } from './nepal.js';
 import { MONGOLIA_CITIES } from './mongolia.js';
 import { MALAYSIA_CITIES } from './malaysia.js';
+import { AZERBAIJAN_CITIES } from './azerbaijan.js';
+import { BHUTAN_CITIES } from './bhutan.js';
+import { CAMBODIA_CITIES } from './cambodia.js';
+import { INDIA_CITIES } from './india.js';
+import { QATAR_CITIES } from './qatar.js';
+import { BANGLADESH_CITIES } from './bangladesh.js';
 
 export const ASIA_CITIES = {
     // 국가별 데이터
@@ -36,7 +42,13 @@ export const ASIA_CITIES = {
         'Maldives': MALDIVES_CITIES,
         'Nepal': NEPAL_CITIES,
         'Mongolia': MONGOLIA_CITIES,
-        'Malaysia': MALAYSIA_CITIES
+        'Malaysia': MALAYSIA_CITIES,
+        'Azerbaijan': AZERBAIJAN_CITIES,
+        'Bhutan': BHUTAN_CITIES,
+        'Cambodia': CAMBODIA_CITIES,
+        'India': INDIA_CITIES,
+        'Qatar': QATAR_CITIES,
+        'Bangladesh': BANGLADESH_CITIES
     },
     
     // 통합 검색 인덱스
