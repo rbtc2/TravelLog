@@ -9,7 +9,9 @@
 
 import { ASIA_CITIES, AsiaCityUtils } from './asia/index.js';
 import { EUROPE_CITIES, EuropeCityUtils } from './europe/index.js';
-import { AMERICAS_CITIES, AmericasCityUtils } from './americas/index.js';
+import { NORTH_AMERICA_CITIES, NorthAmericaCityUtils } from './north-america/index.js';
+import { SOUTH_AMERICA_CITIES, SouthAmericaCityUtils } from './south-america/index.js';
+import { AFRICA_CITIES, AfricaCityUtils } from './africa/index.js';
 import { OCEANIA_CITIES, OceaniaCityUtils } from './oceania/index.js';
 
 export const PREMIUM_CITIES = {
@@ -17,7 +19,9 @@ export const PREMIUM_CITIES = {
     continents: {
         'Asia': ASIA_CITIES,
         'Europe': EUROPE_CITIES,
-        'Americas': AMERICAS_CITIES,
+        'North America': NORTH_AMERICA_CITIES,
+        'South America': SOUTH_AMERICA_CITIES,
+        'Africa': AFRICA_CITIES,
         'Oceania': OCEANIA_CITIES
     },
     
@@ -31,7 +35,7 @@ export const PREMIUM_CITIES = {
     
     // 통계
     globalStats: {
-        totalContinents: 4,
+        totalContinents: 6,
         totalCountries: 0,
         totalCities: 0,
         lastUpdated: '2025-09-30'

@@ -16,8 +16,6 @@ import { NETHERLANDS_CITIES } from './netherlands.js';
 import { SWITZERLAND_CITIES } from './switzerland.js';
 import { AUSTRIA_CITIES } from './austria.js';
 import { CZECH_REPUBLIC_CITIES } from './czech-republic.js';
-import { TURKEY_CITIES } from './turkey.js';
-import { KAZAKHSTAN_CITIES } from './kazakhstan.js';
 
 export const EUROPE_CITIES = {
     // 국가별 데이터
@@ -30,9 +28,7 @@ export const EUROPE_CITIES = {
         'Netherlands': NETHERLANDS_CITIES,
         'Switzerland': SWITZERLAND_CITIES,
         'Austria': AUSTRIA_CITIES,
-        'Czech Republic': CZECH_REPUBLIC_CITIES,
-        'Turkey': TURKEY_CITIES,
-        'Kazakhstan': KAZAKHSTAN_CITIES
+        'Czech Republic': CZECH_REPUBLIC_CITIES
     },
     
     // 통합 검색 인덱스

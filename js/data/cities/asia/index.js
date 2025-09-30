@@ -32,6 +32,8 @@ import { PHILIPPINES_CITIES } from './philippines.js';
 import { PAKISTAN_CITIES } from './pakistan.js';
 import { SAUDI_ARABIA_CITIES } from './saudi-arabia.js';
 import { JORDAN_CITIES } from './jordan.js';
+import { KAZAKHSTAN_CITIES } from './kazakhstan.js';
+import { TURKEY_CITIES } from './turkey.js';
 
 export const ASIA_CITIES = {
     // 국가별 데이터
@@ -60,7 +62,9 @@ export const ASIA_CITIES = {
         'Philippines': PHILIPPINES_CITIES,
         'Pakistan': PAKISTAN_CITIES,
         'Saudi Arabia': SAUDI_ARABIA_CITIES,
-        'Jordan': JORDAN_CITIES
+        'Jordan': JORDAN_CITIES,
+        'Kazakhstan': KAZAKHSTAN_CITIES,
+        'Turkey': TURKEY_CITIES
     },
     
     // 통합 검색 인덱스
