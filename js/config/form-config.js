@@ -11,7 +11,7 @@ export const FORM_CONFIG = {
         maxLength: 56,
         minLength: 2,
         placeholder: "국가를 검색하세요",
-        hint: "195개국 중에서 선택하거나 검색하세요",
+        hint: "",
         searchable: true,
         showFlag: true,
         showEnglishName: true,
