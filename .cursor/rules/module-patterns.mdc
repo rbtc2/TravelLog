@@ -806,6 +806,416 @@ await authService.signOut();
 - **Performance**: Efficient state management and resource cleanup
 - **Reliability**: Comprehensive error handling and validation
 
+### **API Integration Pattern** ⭐ **NEW PATTERN**
+A comprehensive pattern for integrating external APIs with robust error handling and fallback systems:
+
+```javascript
+/**
+ * API Integration Architecture
+ * 
+ * Three-tier structure:
+ * Level 1: API Service Layer - External API communication
+ * Level 2: Data Manager - Data processing and caching
+ * Level 3: UI Component - User interface and interaction
+ */
+
+/**
+ * Level 1: API Service Layer
+ */
+class APIService {
+    constructor(config) {
+        this.baseURL = config.baseURL;
+        this.timeout = config.timeout || 10000;
+        this.retryAttempts = config.retryAttempts || 3;
+        this.cache = new Map();
+        this.cacheTimeout = config.cacheTimeout || 5 * 60 * 1000; // 5 minutes
+    }
+    
+    /**
+     * Generic API call with retry logic and caching
+     */
+    async callAPI(endpoint, options = {}) {
+        const cacheKey = this.generateCacheKey(endpoint, options);
+        
+        // Check cache first
+        if (this.cache.has(cacheKey)) {
+            const cached = this.cache.get(cacheKey);
+            if (Date.now() - cached.timestamp < this.cacheTimeout) {
+                return cached.data;
+            }
+        }
+        
+        // Retry logic
+        for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
+            try {
+                const response = await this.makeRequest(endpoint, options);
+                
+                // Cache successful response
+                this.cache.set(cacheKey, {
+                    data: response,
+                    timestamp: Date.now()
+                });
+                
+                return response;
+            } catch (error) {
+                if (attempt === this.retryAttempts) {
+                    throw error;
+                }
+                
+                // Exponential backoff
+                await this.delay(Math.pow(2, attempt) * 1000);
+            }
+        }
+    }
+    
+    /**
+     * Make HTTP request with timeout
+     */
+    async makeRequest(endpoint, options) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+        
+        try {
+            const response = await fetch(`${this.baseURL}${endpoint}`, {
+                ...options,
+                signal: controller.signal,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    ...options.headers
+                }
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`API 응답 오류: ${response.status} ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            
+            if (!data || !data.data) {
+                throw new Error('API 응답 데이터 형식이 올바르지 않습니다.');
+            }
+            
+            return data;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
+        }
+    }
+    
+    /**
+     * Generate cache key for request
+     */
+    generateCacheKey(endpoint, options) {
+        return `${endpoint}_${JSON.stringify(options)}`;
+    }
+    
+    /**
+     * Delay utility for retry logic
+     */
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+}
+
+/**
+ * Level 2: Data Manager with Fallback System
+ */
+class APIDataManager {
+    constructor(apiService, fallbackData) {
+        this.apiService = apiService;
+        this.fallbackData = fallbackData;
+        this.isOnline = navigator.onLine;
+        
+        // Monitor online status
+        window.addEventListener('online', () => {
+            this.isOnline = true;
+            this.clearCache();
+        });
+        
+        window.addEventListener('offline', () => {
+            this.isOnline = false;
+        });
+    }
+    
+    /**
+     * Get data with fallback system
+     */
+    async getData(key, apiCall) {
+        try {
+            // Try API first if online
+            if (this.isOnline) {
+                const data = await apiCall();
+                return this.processAPIData(data);
+            }
+        } catch (error) {
+            console.warn('API 호출 실패, 폴백 데이터 사용:', error);
+        }
+        
+        // Use fallback data
+        return this.getFallbackData(key);
+    }
+    
+    /**
+     * Process API response data
+     */
+    processAPIData(data) {
+        // Transform API data to internal format
+        return data.data.map(item => ({
+            name: item,
+            nameEn: item,
+            source: 'api'
+        }));
+    }
+    
+    /**
+     * Get fallback data
+     */
+    getFallbackData(key) {
+        const fallback = this.fallbackData[key];
+        if (!fallback) {
+            throw new Error(`폴백 데이터를 찾을 수 없습니다: ${key}`);
+        }
+        
+        return fallback.map(item => ({
+            ...item,
+            source: 'fallback'
+        }));
+    }
+    
+    /**
+     * Clear cache when coming back online
+     */
+    clearCache() {
+        this.apiService.cache.clear();
+    }
+}
+
+/**
+ * Level 3: UI Component with API Integration
+ */
+class APIIntegratedComponent {
+    constructor(container, dataManager, options = {}) {
+        this.container = container;
+        this.dataManager = dataManager;
+        this.options = {
+            placeholder: '검색하세요...',
+            maxResults: 50,
+            showLoading: true,
+            ...options
+        };
+        
+        this.isLoading = false;
+        this.data = [];
+        this.filteredData = [];
+        this.eventListeners = new Map();
+    }
+    
+    /**
+     * Load data with API integration
+     */
+    async loadData(key, apiCall) {
+        try {
+            this.setLoading(true);
+            
+            const data = await this.dataManager.getData(key, apiCall);
+            this.data = data;
+            this.filteredData = data;
+            
+            this.render();
+        } catch (error) {
+            console.error('데이터 로드 실패:', error);
+            this.showError('데이터를 불러오는데 실패했습니다.');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+    
+    /**
+     * Search with integrated data sources
+     */
+    search(query) {
+        const searchTerm = query.toLowerCase().trim();
+        
+        if (searchTerm === '') {
+            this.filteredData = this.data;
+        } else {
+            this.filteredData = this.data.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) ||
+                item.nameEn.toLowerCase().includes(searchTerm)
+            );
+        }
+        
+        this.render();
+    }
+    
+    /**
+     * Set loading state
+     */
+    setLoading(loading) {
+        this.isLoading = loading;
+        this.render();
+    }
+    
+    /**
+     * Show error message
+     */
+    showError(message) {
+        this.container.innerHTML = `
+            <div class="error-message">
+                <span class="error-icon">⚠️</span>
+                <span>${message}</span>
+            </div>
+        `;
+    }
+    
+    /**
+     * Render component
+     */
+    render() {
+        if (this.isLoading) {
+            this.container.innerHTML = `
+                <div class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                    <span>데이터를 불러오는 중...</span>
+                </div>
+            `;
+            return;
+        }
+        
+        if (this.filteredData.length === 0) {
+            this.container.innerHTML = `
+                <div class="no-data">
+                    <span>검색 결과가 없습니다.</span>
+                </div>
+            `;
+            return;
+        }
+        
+        // Render data items
+        this.container.innerHTML = this.filteredData.map(item => 
+            this.renderItem(item)
+        ).join('');
+    }
+    
+    /**
+     * Render individual item
+     */
+    renderItem(item) {
+        return `
+            <div class="data-item ${item.source === 'api' ? 'api-item' : 'fallback-item'}">
+                <span class="item-name">${item.name}</span>
+                ${item.name !== item.nameEn ? `<span class="item-name-en">${item.nameEn}</span>` : ''}
+                ${item.source === 'api' ? '<span class="api-badge">API</span>' : ''}
+            </div>
+        `;
+    }
+    
+    /**
+     * Cleanup resources
+     */
+    cleanup() {
+        this.eventListeners.forEach((listeners, element) => {
+            listeners.forEach(({ event, handler }) => {
+                element.removeEventListener(event, handler);
+            });
+        });
+        this.eventListeners.clear();
+    }
+}
+
+/**
+ * Usage Example: City Selector with API Integration
+ */
+class CitySelectorWithAPI extends APIIntegratedComponent {
+    constructor(container, options = {}) {
+        // API service configuration
+        const apiService = new APIService({
+            baseURL: 'https://countriesnow.space/api/v0.1',
+            timeout: 10000,
+            retryAttempts: 3,
+            cacheTimeout: 5 * 60 * 1000
+        });
+        
+        // Fallback data
+        const fallbackData = {
+            'South Korea': [
+                { name: '서울', nameEn: 'Seoul' },
+                { name: '부산', nameEn: 'Busan' },
+                { name: '대구', nameEn: 'Daegu' }
+            ],
+            'Japan': [
+                { name: '도쿄', nameEn: 'Tokyo' },
+                { name: '오사카', nameEn: 'Osaka' },
+                { name: '교토', nameEn: 'Kyoto' }
+            ]
+        };
+        
+        const dataManager = new APIDataManager(apiService, fallbackData);
+        
+        super(container, dataManager, options);
+    }
+    
+    /**
+     * Load cities for specific country
+     */
+    async loadCitiesForCountry(countryName) {
+        const apiCall = () => this.dataManager.apiService.callAPI('/countries/cities', {
+            method: 'POST',
+            body: JSON.stringify({ country: countryName })
+        });
+        
+        await this.loadData(countryName, apiCall);
+    }
+}
+```
+
+#### **Key Characteristics of API Integration Pattern:**
+
+1. **Three-Tier Architecture**: Clear separation between API service, data management, and UI components
+2. **Robust Error Handling**: Comprehensive error handling with retry logic and fallback systems
+3. **Caching Strategy**: Intelligent caching to reduce API calls and improve performance
+4. **Offline Support**: Graceful degradation when network is unavailable
+5. **Retry Logic**: Exponential backoff for failed requests
+6. **Data Transformation**: Consistent data format regardless of source (API or fallback)
+7. **Loading States**: Proper loading indicators and error messages
+8. **Resource Management**: Cleanup of resources and event listeners
+9. **Configurable**: Flexible configuration for different API endpoints and requirements
+10. **Type Safety**: Proper error handling and data validation
+
+#### **Usage Pattern for API Integration:**
+
+```javascript
+// Step 1: Configure API service
+const apiService = new APIService({
+    baseURL: 'https://api.example.com',
+    timeout: 10000,
+    retryAttempts: 3
+});
+
+// Step 2: Setup data manager with fallback
+const dataManager = new APIDataManager(apiService, fallbackData);
+
+// Step 3: Create component
+const component = new APIIntegratedComponent(container, dataManager);
+
+// Step 4: Load data
+await component.loadData('key', () => apiService.callAPI('/endpoint'));
+
+// Step 5: Handle user interactions
+component.search('query');
+```
+
+#### **Benefits of This Pattern:**
+
+- **Reliability**: Robust error handling and fallback systems ensure consistent user experience
+- **Performance**: Intelligent caching reduces API calls and improves response times
+- **Maintainability**: Clear separation of concerns makes the code easy to maintain and extend
+- **Flexibility**: Configurable components can be adapted for different APIs and use cases
+- **User Experience**: Proper loading states and error messages provide clear feedback
+
 ### **Extensible Sub-Tab Collection System Pattern** ⭐ **NEW PATTERN**
 A sophisticated pattern for creating expandable collection systems with dynamic sub-tab navigation:
 

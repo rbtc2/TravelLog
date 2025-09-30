@@ -692,6 +692,269 @@ class BasicPerformanceMonitor {
 - Missing advanced caching
 - Missing asset optimization
 
+### **API Integration Performance Guidelines** ⭐ **NEW**
+
+#### **API Call Optimization**
+```javascript
+/**
+ * Optimized API service for performance
+ */
+class OptimizedAPIService {
+    constructor(config) {
+        this.baseURL = config.baseURL;
+        this.timeout = config.timeout || 10000;
+        this.retryAttempts = config.retryAttempts || 3;
+        this.cache = new Map();
+        this.cacheTimeout = config.cacheTimeout || 5 * 60 * 1000; // 5 minutes
+        this.requestQueue = new Map(); // Prevent duplicate requests
+    }
+    
+    /**
+     * Optimized API call with caching and deduplication
+     */
+    async callAPI(endpoint, options = {}) {
+        const cacheKey = this.generateCacheKey(endpoint, options);
+        
+        // Check cache first
+        if (this.cache.has(cacheKey)) {
+            const cached = this.cache.get(cacheKey);
+            if (Date.now() - cached.timestamp < this.cacheTimeout) {
+                return cached.data;
+            }
+        }
+        
+        // Check if request is already in progress
+        if (this.requestQueue.has(cacheKey)) {
+            return this.requestQueue.get(cacheKey);
+        }
+        
+        // Create new request promise
+        const requestPromise = this.executeRequest(endpoint, options);
+        this.requestQueue.set(cacheKey, requestPromise);
+        
+        try {
+            const data = await requestPromise;
+            
+            // Cache successful response
+            this.cache.set(cacheKey, {
+                data,
+                timestamp: Date.now()
+            });
+            
+            return data;
+        } finally {
+            // Remove from queue
+            this.requestQueue.delete(cacheKey);
+        }
+    }
+    
+    /**
+     * Execute request with retry logic
+     */
+    async executeRequest(endpoint, options) {
+        for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
+            try {
+                const response = await this.makeRequest(endpoint, options);
+                return response;
+            } catch (error) {
+                if (attempt === this.retryAttempts) {
+                    throw error;
+                }
+                
+                // Exponential backoff
+                await this.delay(Math.pow(2, attempt) * 1000);
+            }
+        }
+    }
+    
+    /**
+     * Make HTTP request with timeout
+     */
+    async makeRequest(endpoint, options) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+        
+        try {
+            const response = await fetch(`${this.baseURL}${endpoint}`, {
+                ...options,
+                signal: controller.signal,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    ...options.headers
+                }
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`API 응답 오류: ${response.status} ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
+        }
+    }
+    
+    /**
+     * Generate cache key for request
+     */
+    generateCacheKey(endpoint, options) {
+        return `${endpoint}_${JSON.stringify(options)}`;
+    }
+    
+    /**
+     * Delay utility for retry logic
+     */
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    /**
+     * Clear expired cache entries
+     */
+    clearExpiredCache() {
+        const now = Date.now();
+        for (const [key, value] of this.cache.entries()) {
+            if (now - value.timestamp > this.cacheTimeout) {
+                this.cache.delete(key);
+            }
+        }
+    }
+}
+```
+
+#### **API Performance Best Practices**
+```javascript
+// ✅ Good - Efficient API data management
+class OptimizedAPIDataManager {
+    constructor(apiService, fallbackData) {
+        this.apiService = apiService;
+        this.fallbackData = fallbackData;
+        this.isOnline = navigator.onLine;
+        this.dataCache = new Map();
+        
+        // Monitor online status
+        window.addEventListener('online', () => {
+            this.isOnline = true;
+            this.clearCache();
+        });
+        
+        window.addEventListener('offline', () => {
+            this.isOnline = false;
+        });
+        
+        // Clear expired cache periodically
+        setInterval(() => {
+            this.apiService.clearExpiredCache();
+        }, 60000); // Every minute
+    }
+    
+    // Batch multiple API calls
+    async batchAPICalls(requests) {
+        const promises = requests.map(request => 
+            this.apiService.callAPI(request.endpoint, request.options)
+        );
+        
+        try {
+            const results = await Promise.allSettled(promises);
+            return results.map((result, index) => ({
+                request: requests[index],
+                success: result.status === 'fulfilled',
+                data: result.status === 'fulfilled' ? result.value : null,
+                error: result.status === 'rejected' ? result.reason : null
+            }));
+        } catch (error) {
+            console.error('Batch API calls failed:', error);
+            throw error;
+        }
+    }
+    
+    // Preload critical data
+    async preloadCriticalData(keys) {
+        const preloadPromises = keys.map(key => 
+            this.getData(key, () => this.apiService.callAPI(`/data/${key}`))
+        );
+        
+        try {
+            await Promise.allSettled(preloadPromises);
+            console.log('Critical data preloaded successfully');
+        } catch (error) {
+            console.warn('Some critical data failed to preload:', error);
+        }
+    }
+}
+
+// ✅ Good - Optimized API component rendering
+class OptimizedAPIIntegratedComponent {
+    constructor(container, dataManager, options = {}) {
+        this.container = container;
+        this.dataManager = dataManager;
+        this.options = {
+            placeholder: '검색하세요...',
+            maxResults: 50,
+            showLoading: true,
+            debounceDelay: 300,
+            ...options
+        };
+        
+        this.isLoading = false;
+        this.data = [];
+        this.filteredData = [];
+        this.eventListeners = new Map();
+        this.renderQueue = [];
+        this.isRendering = false;
+        
+        // Debounced search
+        this.debouncedSearch = this.debounce(this.search.bind(this), this.options.debounceDelay);
+    }
+    
+    // Debounce search to prevent excessive API calls
+    debounce(func, wait) {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+    
+    // Batch UI updates to prevent excessive reflows
+    batchRender(renderFunction) {
+        this.renderQueue.push(renderFunction);
+        
+        if (!this.isRendering) {
+            this.isRendering = true;
+            requestAnimationFrame(() => {
+                this.processRenderQueue();
+                this.isRendering = false;
+            });
+        }
+    }
+    
+    processRenderQueue() {
+        while (this.renderQueue.length > 0) {
+            const render = this.renderQueue.shift();
+            render();
+        }
+    }
+}
+```
+
+#### **API Performance Checklist**
+- ✅ Implement request caching to reduce API calls
+- ✅ Use request deduplication to prevent duplicate calls
+- ✅ Implement exponential backoff for retry logic
+- ✅ Batch multiple API calls when possible
+- ✅ Preload critical data for better user experience
+- ✅ Use debouncing for search and input operations
+- ✅ Implement proper error handling and fallback systems
+- ✅ Monitor online/offline status for graceful degradation
+- ✅ Clear expired cache entries periodically
+- ✅ Use requestAnimationFrame for smooth UI updates
+
 ### **Authentication Performance Guidelines** ⭐ **NEW**
 
 #### **Session Management Optimization**
